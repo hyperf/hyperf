@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ViewEngine\Stub;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ViewEngine\Component\Component;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 

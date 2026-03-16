@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Hyperf\Contract\IdGeneratorInterface;
@@ -19,6 +20,7 @@ use Hyperf\RpcClient\AbstractServiceClient;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcMultiplex\Contract\DataFetcherInterface;
 use Hyperf\RpcMultiplex\Exception\InvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Container\ContainerInterface;
 
 class Client extends AbstractServiceClient
@@ -34,14 +36,16 @@ class Client extends AbstractServiceClient
 
     private NormalizerInterface $normalizer;
 
-    /**
-     * @param $options = [
-     *     'service_interface' => '',
-     *     'load_balancer' => 'random',
-     * ]
-     */
-    public function __construct(ContainerInterface $container, string $serviceName, string $protocol = 'jsonrpc-http', array $options = [])
-    {
+    public function __construct(
+        ContainerInterface $container,
+        string $serviceName,
+        string $protocol = 'jsonrpc-http',
+        #[ArrayShape([
+            'service_interface' => 'string',
+            'load_balancer' => 'string',
+        ])]
+        array $options = []
+    ) {
         $this->serviceName = $serviceName;
         $this->protocol = $protocol;
         $this->setOptions($options);

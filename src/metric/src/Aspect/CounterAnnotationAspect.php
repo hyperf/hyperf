@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Aspect;
 
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Di\Exception\Exception;
 use Hyperf\Metric\Annotation\Counter;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
@@ -29,9 +31,9 @@ class CounterAnnotationAspect extends AbstractAspect
     }
 
     /**
-     * @return mixed return the value from process method of ProceedingJoinPoint, or the value that you handled
+     * @throws Exception
      */
-    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    public function process(ProceedingJoinPoint $proceedingJoinPoint): mixed
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);

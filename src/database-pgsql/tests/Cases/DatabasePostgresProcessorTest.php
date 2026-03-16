@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabasePostgresProcessorTest extends TestCase
 {
     public function testProcessColumnListing()

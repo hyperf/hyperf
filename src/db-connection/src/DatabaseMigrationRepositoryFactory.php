@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class DatabaseMigrationRepositoryFactory
 {

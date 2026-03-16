@@ -5,14 +5,15 @@
 ## 安装 Docker
 
 ```
-curl -sSL https://get.daocloud.io/docker | sh
-# curl -sSL https://get.docker.com/ | sh
+curl -sSL https://get.docker.com/ | sh
 ```
 
 修改文件 `/lib/systemd/system/docker.service`，允许使用 `TCP` 连接 `Docker`
 
+> 只需要追加后面的 -H tcp://0.0.0.0:2375 即可
+
 ```
-ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
 ```
 
 如果不是使用的 `root` 账户，可以通过以下命令，让每次执行 `docker` 时，不需要增加 `sudo`
@@ -156,24 +157,57 @@ gitlab_rails['smtp_domain'] = "exmail.qq.com"
 
 ## 初始化 Swarm 集群
 
-登录另外一台机器，初始化集群
+### 登录另外一台机器，初始化集群
 
 ```
 $ docker swarm init
 ```
 
-创建自定义 Overlay 网络
+### 创建自定义 Overlay 网络
 
-```
+以下提供三种方式创建网段，只需要执行其一即可
+
+1. 直接创建自定义 Overlay 网络
+
+```shell
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.1/8 \
 --opt encrypted \
 --attachable \
 default-network
 ```
 
-加入集群
+2. 有时可能因为网段冲突，导致 stack 启动失败，可以尝试修改 `--subnet`，不过这种方式，当前网段就只支持 65535 个 ip
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.1.0.1/16 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+3. 当然，因为大多数是 ingress 网络默认的网段与我们新建的网段冲突，所以我们可以删掉 ingress 网络，然后重新创建一个
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然后再创建 `--subnet` 为 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+### 加入集群
 
 ```
 # 显示manager节点的TOKEN
@@ -187,7 +221,7 @@ $ docker swarm join-token worker
 $ docker swarm join --token <token> ip:2377
 ```
 
-然后配置发布用的 gitlab-runner
+### 配置发布用的 gitlab-runner
 
 > 其他与 builder 一致，但是 tag 却不能一样。线上环境可以设置为 tags，测试环境设置为 test
 
@@ -239,7 +273,6 @@ tar xf data.tar -C /
 ## 创建一个 Demo 项目
 
 登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
-
 
 ## 配置镜像仓库
 
@@ -486,7 +519,7 @@ $ yum install gitlab-runner
 ```
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
@@ -514,4 +547,191 @@ docker service update --network-rm old-network service_name
 
 ```
 docker service update --with-registry-auth service_name
+```
+
+
+## 附录
+
+### 只安装 Docker Swarm
+
+如果你只需要安装并使用 Docker Swarm，可以根据以下文档进行操作。
+
+假设我们有三台机器 A B C，我们默认将 A 作为 Leader
+
+#### 安装 Docker
+
+三台机器都按照以下方式安装 Docker
+
+```
+curl -sSL https://get.docker.com/ | sh
+```
+
+修改文件 `/lib/systemd/system/docker.service`，允许使用 `TCP` 连接 `Docker`
+
+> 只需要追加后面的 -H tcp://0.0.0.0:2375 即可
+
+```
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
+```
+
+如果不是使用的 `root` 账户，可以通过以下命令，让每次执行 `docker` 时，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
+#### 初始化 Docker Swarm
+
+进入 A 机器，执行初始化命令
+
+```
+$ docker swarm init
+```
+
+因为大多数 ingress 网络默认的网段与我们新建的网段冲突，所以我们删掉 ingress 网络，然后重新创建一个
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然后再创建 `--subnet` 为 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+执行展示加入集群的命令
+
+> 因为我们只有三台机器，所以尽量都声明为 manager
+
+```
+$ docker swarm join-token manager
+```
+
+若后期需要加入新的 worker 节点，则执行以下命令得到对应的脚本
+
+```
+$ docker swarm join-token worker
+```
+
+#### 将另外两台节点加入到集群
+
+到 B C 两台机器中执行刚刚生成的命令
+
+```shell
+docker swarm join --token xxxx <ip>:2377
+```
+
+回到 A 机器，执行命令查看是否已经成功加入
+
+```shell
+docker node ls
+```
+
+如果能看到 B 和 C 的节点，则代表加入成功
+
+#### 使用云服务的镜像服务
+
+这里不详细说明如何使用了，请自己去对应云服务进行操作
+
+本文档默认开发者已经成功开通了对应的镜像服务，之后的文档全部默认使用阿里云的上海节点来讲述
+
+[阿里云](https://cr.console.aliyun.com/cn-shanghai/instances)
+
+#### 登录镜像
+
+三台机器 A B C 全部执行登录操作
+
+```shell
+docker login --username=xxxx registry.cn-shanghai.aliyuncs.com
+```
+
+#### 打包镜像
+
+这里可以在任何一台机器进行打包，也可以在开发环境打包（非上述三台机器的环境下，需要执行 docker login 进行登录）
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+#### 制作 stack yml 文件
+
+回到 A 机器上，到 /opt/www/your_project 目录下，编辑 deploy.yml 文件
+
+```shell
+version: '3.7'
+services:
+  your_project:
+    image: registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+    ports:
+      - "9501:9501"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      update_config:
+        parallelism: 2
+        delay: 5s
+        order: start-first
+    networks:
+      - default-network
+    configs:
+      - source: your_project_v1.1
+        target: /opt/www/.env
+configs:
+  your_project_v1.1:
+    file: /opt/www/your_project/.env
+networks:
+  default-network:
+    external: true
+```
+
+编辑 .env 文件，完成配置，注意，不要使用 127.0.0.1 链接 MySQL 等服务
+
+#### 启动服务
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
+```
+
+查看是否正常启动，执行下述三个指令，都应该存在对应的数据
+
+```shell
+docker stack ls
+docker service ls
+docker ps
+```
+
+#### 测试服务是否可用
+
+到三台机器上，全部进行 curl 测试，如果都能返回对应数据，代表服务启动成功
+
+```shell
+curl http://127.0.0.1:9501/
+```
+
+#### 更新服务
+
+开发机打包，并推送到镜像仓库中
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+会到 A 机器，进行重启
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
 ```

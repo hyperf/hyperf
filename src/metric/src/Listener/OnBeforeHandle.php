@@ -9,23 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Listener;
 
-use Hyperf\Command\Event\AfterExecute;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Timer;
 
 /**
  * Collect and handle metrics before command start.
@@ -40,23 +37,28 @@ class OnBeforeHandle implements ListenerInterface
 
     private ConfigInterface $config;
 
+    private Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
+        $this->timer = new Timer();
     }
 
     public function listen(): array
     {
         return [
             BeforeHandle::class,
-            AfterExecute::class,
         ];
     }
 
     public function process(object $event): void
     {
-        if ($event instanceof AfterExecute) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+        if (
+            ! $event instanceof BeforeHandle
+            || ! $event->getCommand()->getApplication()->isAutoExitEnabled() // Only enable in the command with auto exit.
+            || ! $this->config->get('metric.enable_command_metric', true) // Double check the config.
+        ) {
             return;
         }
 
@@ -108,16 +110,11 @@ class OnBeforeHandle implements ListenerInterface
         );
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics) {
+        $this->timer->tick($timerInterval, function () use ($metrics) {
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
-        });
-        // Clean up timer on worker exit;
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
         });
     }
 }

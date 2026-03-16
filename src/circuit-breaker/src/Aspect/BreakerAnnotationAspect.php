@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Aspect;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
@@ -30,12 +31,8 @@ class BreakerAnnotationAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var null|CircuitBreaker $annotation */
-        $annotation = $metadata->method[CircuitBreaker::class] ?? null;
-
-        if (! $annotation) {
-            return $proceedingJoinPoint->process();
-        }
+        /** @var CircuitBreaker $annotation */
+        $annotation = $metadata->method[CircuitBreaker::class];
 
         $handlerClass = $annotation->handler;
 

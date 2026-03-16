@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
 abstract class Migration
@@ -21,7 +22,7 @@ abstract class Migration
     /**
      * The name of the database connection to use.
      */
-    protected string $connection = 'default';
+    protected string $connection = '';
 
     /**
      * Get the migration connection name.

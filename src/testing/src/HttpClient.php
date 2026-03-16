@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing;
 
 use GuzzleHttp\Client;
+use Hyperf\Codec\Packer\JsonPacker;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -26,7 +27,7 @@ class HttpClient
 
     protected PackerInterface $packer;
 
-    public function __construct(protected ContainerInterface $container, PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
+    public function __construct(protected ContainerInterface $container, ?PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
     {
         $this->packer = $packer ?? new JsonPacker();
         $handler = null;
@@ -52,6 +53,26 @@ class HttpClient
     public function post(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $response = $this->client->post($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function put(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->put($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function patch(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->patch($uri, [
             'headers' => $headers,
             'form_params' => $data,
         ]);

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Annotation;
 
 use Attribute;
@@ -24,7 +25,8 @@ class FailCache extends AbstractAnnotation
         public ?string $value = null,
         public ?int $ttl = null,
         public ?string $listener = null,
-        public string $group = 'default'
+        public string $group = 'default',
+        public ?array $skipCacheResults = null
     ) {
     }
 

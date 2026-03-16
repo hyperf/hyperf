@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
@@ -35,6 +36,6 @@ class AmqpProducerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Producer';
+        return $this->getConfig()['namespace'] ?? 'App\Amqp\Producer';
     }
 }

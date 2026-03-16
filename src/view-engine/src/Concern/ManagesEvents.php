@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 

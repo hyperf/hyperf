@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -16,7 +17,7 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): Consumer
     {
         return new Consumer(
             $container,

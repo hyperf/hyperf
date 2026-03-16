@@ -1,6 +1,6 @@
 # 信號處理器
 
-信號處理器會監聽 `Worker` 進程和 `自定義` 進程啟動後，自動註冊到信號管理器中。
+信號處理器會監聽 `Worker` 進程和 `自定義` 進程啓動後，自動註冊到信號管理器中。
 
 ## 安裝
 
@@ -78,7 +78,6 @@ declare(strict_types=1);
 
 namespace App\Kernel\Signal;
 
-use Hyperf\AsyncQueue\Driver\Driver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Server\ServerManager;
@@ -112,7 +111,7 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
         ProcessManager::setRunning(false);
 
         foreach (ServerManager::list() as [$type, $server]) {
-            // 循環關閉開啟的服務
+            // 循環關閉開啓的服務
             $server->shutdown();
         }
     }

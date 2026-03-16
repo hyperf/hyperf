@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases\Stub;
 
 use Hyperf\Validation\Request\FormRequest;
@@ -18,6 +19,9 @@ class FooSceneRequest extends FormRequest
     public array $scenes = [
         'save' => ['mobile', 'name'],
         'info' => ['mobile'],
+        'get' => ['mobile' => 'string|required'],
+        'not-exists-field-1' => ['not-exists-field-1' => 'required'],
+        'not-exists-field-2' => ['not-exists-field-2'],
     ];
 
     public function authorize(): bool

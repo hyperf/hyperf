@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands;
 
+use Hyperf\CodeParser\Project;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\Ast\GenerateModelIDEVisitor;
@@ -19,8 +21,7 @@ use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Builder;
-use Hyperf\Utils\CodeGen\Project;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Lexer;
 use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
@@ -34,6 +35,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function Hyperf\Support\make;
 
 class ModelCommand extends Command
 {
@@ -149,14 +152,26 @@ class ModelCommand extends Command
         return $table === $this->config->get('databases.migrations', 'migrations');
     }
 
-    protected function createModel(string $table, ModelOption $option)
+    protected function createModel(string $table, ModelOption $option): void
     {
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
-        $columns = $this->formatColumns($builder->getColumnTypeListing($table));
+        $pureTable = Str::after($table, '.');
+        $databaseName = Str::contains($table, '.') ? Str::before($table, '.') : null;
+        $driver = $this->resolver->connection($option->getPool())->getConfig('driver');
+        $columns = match ($driver) {
+            'pgsql' => $this->formatColumns($builder->getColumnTypeListing($table, $databaseName)),
+            default => $this->formatColumns($builder->getColumnTypeListing($pureTable, $databaseName)),
+        };
+
+        if (empty($columns)) {
+            $this->output?->error(
+                sprintf('Query columns are empty, maybe the table `%s` does not exist. You can check it in the database.', $table)
+            );
+        }
 
         $project = new Project();
-        $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
+        $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($pureTable));
         $class = $project->namespace($option->getPath()) . $class;
         $path = BASE_PATH . '/' . $project->path($class);
 

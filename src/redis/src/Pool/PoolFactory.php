@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis\Pool;
 
 use Hyperf\Di\Container;
@@ -37,5 +38,12 @@ class PoolFactory
             $pool = new RedisPool($this->container, $name);
         }
         return $this->pools[$name] = $pool;
+    }
+
+    public function flushAll(): void
+    {
+        foreach ($this->pools as $pool) {
+            $pool->flushAll();
+        }
     }
 }

@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -24,7 +25,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Presence Verifier implementation.
      *
-     * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
+     * @var PresenceVerifierInterface
      */
     protected $verifier;
 
@@ -66,7 +67,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Validator resolver instance.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $resolver;
 
@@ -113,7 +114,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * Validate the given data against the provided rules.
      *
-     * @throws \Hyperf\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {
@@ -128,7 +129,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->extensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
@@ -140,7 +141,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->implicitExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
@@ -152,7 +153,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->dependentExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 

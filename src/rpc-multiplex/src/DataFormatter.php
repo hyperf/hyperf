@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Codec\Json;
 use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
@@ -18,7 +20,7 @@ use Hyperf\Rpc\Request;
 use Hyperf\Rpc\Response;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcMultiplex\Contract\DataFetcherInterface;
-use Hyperf\Utils\Codec\Json;
+use Throwable;
 
 class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 {
@@ -35,6 +37,7 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
             Constant::ID => $request->getId(),
             Constant::PATH => $request->getPath(),
             Constant::DATA => $request->getParams(),
+            Constant::EXTRA => $request->getExtra(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
@@ -51,7 +54,7 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
     public function formatErrorResponse(ErrorResponse $response): array
     {
         $exception = $response->getException();
-        if ($exception instanceof \Throwable) {
+        if ($exception instanceof Throwable) {
             $exception = [
                 'class' => get_class($exception),
                 'code' => $exception->getCode(),
@@ -71,10 +74,10 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 
     public function fetch(array $data): mixed
     {
-        if (array_key_exists(Constant::DATA, $data)) {
+        if (array_key_exists(Constant::RESULT, $data)) {
             $this->context->setData($data[Constant::CONTEXT] ?? []);
 
-            return $data[Constant::DATA];
+            return $data[Constant::RESULT];
         }
 
         if (array_key_exists(Constant::ERROR, $data)) {

@@ -9,12 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ */
 class HasOne extends HasOneOrMany
 {
     use SupportsDefaultModels;
@@ -56,7 +63,7 @@ class HasOne extends HasOneOrMany
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function newRelatedInstanceFor(Model $parent)
     {

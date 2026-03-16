@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout\Engine;
 
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
-use Hyperf\Utils\Collection as BaseCollection;
 
 abstract class Engine
 {

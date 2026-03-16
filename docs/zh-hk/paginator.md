@@ -11,7 +11,7 @@ composer require hyperf/paginator
 
 # 基本使用
 
-只需存在數據集和分頁需求，便可通過實例化一個 `Hyperf\Paginator\Paginator` 類來進行分頁處理，該類的構造函數接收 `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` 參數，我們只需以 `數組(Array)` 或 `Hyperf\Utils\Colletion` 集合類的形式傳遞數據集到 `$items` 參數，並設定每頁數據量 `$perPage` 和當前頁數 `$currentPage` 即可，`$options` 參數則可以通過 `Key-Value` 的形式定義分頁器實例內的所有屬性，具體可查閲分頁器類的內部屬性。
+只需存在數據集和分頁需求，便可通過實例化一個 `Hyperf\Paginator\Paginator` 類來進行分頁處理，該類的構造函數接收 `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` 參數，我們只需以 `數組(Array)` 或 `Hyperf\Collection\Colletion` 集合類的形式傳遞數據集到 `$items` 參數，並設定每頁數據量 `$perPage` 和當前頁數 `$currentPage` 即可，`$options` 參數則可以通過 `Key-Value` 的形式定義分頁器實例內的所有屬性，具體可查閲分頁器類的內部屬性。
 
 ```php
 <?php
@@ -21,7 +21,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Collection;
+use Hyperf\Collection\Collection;
 
 #[AutoController]
 class UserController

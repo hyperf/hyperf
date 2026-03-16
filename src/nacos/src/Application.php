@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos;
 
 use Hyperf\Nacos\Exception\InvalidArgumentException;
@@ -24,6 +25,7 @@ use Hyperf\Nacos\Provider\ServiceProvider;
  * @property InstanceProvider $instance
  * @property OperatorProvider $operator
  * @property ServiceProvider $service
+ * @property GrpcFactory $grpc
  */
 class Application
 {
@@ -33,12 +35,16 @@ class Application
         'instance' => InstanceProvider::class,
         'operator' => OperatorProvider::class,
         'service' => ServiceProvider::class,
+        'grpc' => GrpcFactory::class,
     ];
 
     protected array $providers = [];
 
-    public function __construct(protected Config $config)
+    protected Config $conf;
+
+    public function __construct(Config $config)
     {
+        $this->conf = $config;
     }
 
     public function __get($name)
@@ -51,7 +57,19 @@ class Application
             return $this->providers[$name];
         }
 
-        $class = $this->alias[$name];
-        return $this->providers[$name] = new $class($this, $this->config);
+        $class = $this->resolveVersionClass($this->alias[$name]);
+        return $this->providers[$name] = new $class($this, $this->conf);
+    }
+
+    public function resolveVersionClass(string $defaultClass): string
+    {
+        [$major] = array_pad(explode('.', $this->conf->getVersion()), 2, 0);
+        $classParts = explode('\\', $defaultClass);
+        $className = array_pop($classParts);
+        $classParts[] = 'V' . $major;
+        $classParts[] = $className;
+        $class = implode('\\', $classParts);
+
+        return class_exists($class) ? $class : $defaultClass;
     }
 }

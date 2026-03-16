@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Composer;
+use Hyperf\Support\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,7 +43,7 @@ class VendorPublishCommand extends SymfonyCommand
             ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Overwrite any existing files', false);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->force = $input->getOption('force') !== false;
@@ -77,9 +78,9 @@ class VendorPublishCommand extends SymfonyCommand
         }
 
         if ($id) {
-            $item = (Arr::where($publish, function ($item) use ($id) {
+            $item = Arr::where($publish, function ($item) use ($id) {
                 return $item['id'] == $id;
-            }));
+            });
 
             if (empty($item)) {
                 $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));

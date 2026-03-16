@@ -9,32 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\RemoteProxy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Metric\Contract\GaugeInterface;
-use Hyperf\Process\ProcessCollector;
+use Hyperf\Metric\Contract\MetricCollectorInterface;
 
 class Gauge implements GaugeInterface
 {
     /**
-     * @var string
-     */
-    protected const TARGET_PROCESS_NAME = 'metric';
-
-    /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var null|float
-     */
-    public $delta;
+    public ?float $delta;
 
-    /**
-     * @var null|float
-     */
-    public $value;
+    public ?float $value;
 
     public function __construct(public string $name, public array $labelNames)
     {
@@ -50,15 +41,19 @@ class Gauge implements GaugeInterface
     {
         $this->value = $value;
         $this->delta = null;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 
     public function add(float $delta): void
     {
         $this->delta = $delta;
         $this->value = null;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 }

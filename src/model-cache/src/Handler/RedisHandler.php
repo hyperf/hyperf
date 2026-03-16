@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache\Handler;
 
 use Hyperf\Contract\Arrayable;
@@ -18,10 +19,12 @@ use Hyperf\ModelCache\Redis\HashGetMultiple;
 use Hyperf\ModelCache\Redis\HashIncr;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
-class RedisHandler implements HandlerInterface
+use function Hyperf\Support\make;
+
+class RedisHandler implements HandlerInterface, DefaultValueInterface
 {
     use InteractsWithTime;
 
@@ -69,7 +72,7 @@ class RedisHandler implements HandlerInterface
             throw new CacheException('The value must is array.');
         }
 
-        $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
+        $data = array_merge([$this->defaultKey => $this->defaultValue], $data);
         $res = $this->redis->hMSet($key, $data);
         if ($ttl) {
             $seconds = $this->secondsUntil($ttl);
@@ -101,7 +104,6 @@ class RedisHandler implements HandlerInterface
         $data = $this->manager->handle(HashGetMultiple::class, (array) $keys);
         $result = [];
         foreach ($data as $item) {
-            unset($item[$this->defaultKey]);
             if (! empty($item)) {
                 $result[] = $item;
             }
@@ -116,7 +118,7 @@ class RedisHandler implements HandlerInterface
 
     public function deleteMultiple($keys): bool
     {
-        return $this->redis->del(...$keys) > 0;
+        return (bool) $this->redis->del(...$keys);
     }
 
     public function has($key): bool
@@ -134,5 +136,29 @@ class RedisHandler implements HandlerInterface
         $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount], 1);
 
         return is_numeric($data);
+    }
+
+    public function defaultValue(mixed $primaryValue): array
+    {
+        return [
+            $this->defaultKey => $primaryValue,
+        ];
+    }
+
+    public function isDefaultValue(array $data): bool
+    {
+        $value = current($data);
+        return $this->defaultValue($value) === $data;
+    }
+
+    public function getPrimaryValue(array $data): mixed
+    {
+        return current($data);
+    }
+
+    public function clearDefaultValue(array $data): array
+    {
+        unset($data[$this->defaultKey]);
+        return $data;
     }
 }

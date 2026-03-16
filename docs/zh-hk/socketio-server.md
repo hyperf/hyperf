@@ -41,7 +41,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 #[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
@@ -152,7 +152,7 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in 'game' room, including sender
 // 向 game 房間內的所有連接推送 bigger-announcement 事件。
@@ -205,7 +205,7 @@ class FooNamespace extends BaseNamespace {
 
 Socket.io 通過自定義命名空間實現多路複用。（注意：不是 PHP 的命名空間）
 
-1. 可以通過 `@SocketIONamespace("/xxx")` 將控制器映射為 xxx 的命名空間，
+1. 可以通過 `#[SocketIONamespace("/xxx")]` 將控制器映射為 xxx 的命名空間，
 
 2. 也可通過
 
@@ -218,7 +218,7 @@ SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 
 在路由中添加。
 
-### 開啟 Session 
+### 開啓 Session 
 
 安裝並配置好 hyperf/session 組件及其對應中間件，再通過 `SessionAspect` 切入 SocketIO 來使用 Session 。
 
@@ -309,7 +309,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@Event()` 註解，以方法名作為事件名來分發。此時應注意其他公有方法可能會和事件名衝突。
+2. 可以在控制器上添加 `#[Event]` 註解，以方法名作為事件名來分發。此時應注意其他公有方法可能會和事件名衝突。
 
 ```php
 <?php

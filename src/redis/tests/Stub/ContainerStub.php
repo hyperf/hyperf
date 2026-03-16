@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Redis\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -22,8 +24,10 @@ use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Support\value;
 
 class ContainerStub
 {
@@ -72,6 +76,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
             return Mockery::mock(StdoutLoggerInterface::class);
         }));
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         ApplicationContext::setContainer($container);
         return $container;

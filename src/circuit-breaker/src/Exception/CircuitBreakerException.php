@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Exception;
 
-class CircuitBreakerException extends \RuntimeException
-{
-    public $result;
+use RuntimeException;
 
-    public function setResult($result): static
+class CircuitBreakerException extends RuntimeException
+{
+    public mixed $result = null;
+
+    public function setResult(mixed $result): static
     {
         $this->result = $result;
         return $this;

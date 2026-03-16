@@ -9,14 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
+use function Hyperf\Tappable\tap;
+
 /**
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withTrashed(bool $withTrashed = true)
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder onlyTrashed()
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withoutTrashed()
+ * @method static \Hyperf\Database\Model\Builder<static> withTrashed(bool $withTrashed = true)
+ * @method static \Hyperf\Database\Model\Builder<static> onlyTrashed()
+ * @method static \Hyperf\Database\Model\Builder<static> withoutTrashed()
+ * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
+ * @method static static createOrRestore(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  */
 trait SoftDeletes
 {
@@ -40,6 +45,12 @@ trait SoftDeletes
      */
     public function forceDelete()
     {
+        if ($event = $this->fireModelEvent('forceDeleting')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
+        }
+
         $this->forceDeleting = true;
 
         return tap($this->delete(), function ($deleted) {

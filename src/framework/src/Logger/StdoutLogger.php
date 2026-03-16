@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
+use Stringable;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function sprintf;
 use function str_replace;
 
@@ -80,20 +83,23 @@ class StdoutLogger implements StdoutLoggerInterface
     public function log($level, $message, array $context = []): void
     {
         $config = $this->config->get(StdoutLoggerInterface::class, ['log_level' => []]);
+
+        // Check if the log level is allowed
         if (! in_array($level, $config['log_level'], true)) {
             return;
         }
-        $keys = array_keys($context);
-        $tags = [];
-        foreach ($keys as $k => $key) {
-            if (in_array($key, $this->tags, true)) {
-                $tags[$key] = $context[$key];
-                unset($keys[$k]);
+
+        $tags = array_intersect_key($context, array_flip($this->tags));
+        $context = array_diff_key($context, $tags);
+
+        // Handle objects that are not Stringable
+        foreach ($context as $key => $value) {
+            if (is_object($value) && ! $value instanceof Stringable) {
+                $context[$key] = '<OBJECT> ' . $value::class;
             }
         }
-        $search = array_map(function ($key) {
-            return sprintf('{%s}', $key);
-        }, $keys);
+
+        $search = array_map(fn ($key) => sprintf('{%s}', $key), array_keys($context));
         $message = str_replace($search, $context, $this->getMessage((string) $message, $level, $tags));
 
         $this->output->writeln($message);

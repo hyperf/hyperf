@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresGrammar;
 use Hyperf\Database\Schema\Blueprint;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabasePostgresSchemaGrammarTest extends TestCase
 {
     protected function tearDown(): void
@@ -74,6 +77,20 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $this->assertCount(2, $statements);
         $this->assertSame('create table "users" ("id" serial primary key not null, "email" varchar(255) not null)', $statements[0]);
         $this->assertSame('comment on column "users"."email" is \'my first comment\'', $statements[1]);
+    }
+
+    public function testCreateTableWithTableComment()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->comment('This is a user table');
+        $blueprint->increments('id');
+        $blueprint->string('email');
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(2, $statements);
+        $this->assertSame('create table "users" ("id" serial primary key not null, "email" varchar(255) not null)', $statements[0]);
+        $this->assertSame('comment on table "users" is \'This is a user table\'', $statements[1]);
     }
 
     public function testCreateTemporaryTable()
@@ -274,24 +291,24 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $this->assertSame('create index "baz" on "users" using hash ("foo", "bar")', $statements[0]);
     }
 
-    public function testAddingFulltextIndex()
+    public function testAddingFullTextIndex()
     {
         $blueprint = new Blueprint('users');
-        $blueprint->fulltext('body');
+        $blueprint->fullText('body');
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertCount(1, $statements);
-        $this->assertSame('create index "users_body_fulltext" on "users" using gin (to_tsvector(\'english\', "body"))', $statements[0]);
+        $this->assertSame('create index "users_body_fulltext" on "users" using gin ((to_tsvector(\'english\', "body")))', $statements[0]);
     }
 
-    public function testAddingFulltextIndexWithLanguage()
+    public function testAddingFullTextIndexWithLanguage()
     {
         $blueprint = new Blueprint('users');
-        $blueprint->fulltext('body')->language('spanish');
+        $blueprint->fullText('body')->language('spanish');
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertCount(1, $statements);
-        $this->assertSame('create index "users_body_fulltext" on "users" using gin (to_tsvector(\'spanish\', "body"))', $statements[0]);
+        $this->assertSame('create index "users_body_fulltext" on "users" using gin ((to_tsvector(\'spanish\', "body")))', $statements[0]);
     }
 
     public function testAddingSpatialIndex()
@@ -887,6 +904,66 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $this->assertSame('alter table "users" add constraint "users_parent_id_foreign" foreign key ("parent_id") references "parents" ("id") on delete cascade deferrable not valid', $statements[0]);
     }
 
+    public function testCompileForeignWithCascadeOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->cascadeOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete cascade', $statements[0]);
+    }
+
+    public function testCompileForeignWithRestrictOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete restrict', $statements[0]);
+    }
+
+    public function testCompileForeignWithNoActionOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete no action', $statements[0]);
+    }
+
+    public function testCompileForeignWithRestrictOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update restrict', $statements[0]);
+    }
+
+    public function testCompileForeignWithNullOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->nullOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update set null', $statements[0]);
+    }
+
+    public function testCompileForeignWithNoActionOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update no action', $statements[0]);
+    }
+
     public function testAddingGeometry()
     {
         $blueprint = new Blueprint('geo');
@@ -1041,6 +1118,24 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $c = $this->getGrammar()::compileReplace();
 
         $this->assertTrue($c);
+    }
+
+    public function testCompileTables(): void
+    {
+        $this->assertSame('select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname', $this->getGrammar()->compileTables());
+    }
+
+    public function testAddingFulltextIndexMultipleColumns()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->fulltext(['body', 'title']);
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create index "users_body_title_fulltext" on "users" using gin ((to_tsvector(\'english\', "body") || to_tsvector(\'english\', "title")))', $statements[0]);
     }
 
     protected function getConnection()

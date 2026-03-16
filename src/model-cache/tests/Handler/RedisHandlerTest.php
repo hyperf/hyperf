@@ -9,21 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Handler;
 
+use DateInterval;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ModelCache\Config;
+use Hyperf\ModelCache\Handler\DefaultValueInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisHandlerTest extends TestCase
 {
     protected $handler = RedisHandler::class;
@@ -52,10 +57,10 @@ class RedisHandlerTest extends TestCase
         $redis = ApplicationContext::getContainer()->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertSame(10, $redis->ttl($key));
 
-        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('PT12S'));
+        $handler->set($key, ['id' => $id = uniqid()], new DateInterval('PT12S'));
         $this->assertSame(12, $redis->ttl($key));
 
-        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('P1DT12S'));
+        $handler->set($key, ['id' => $id = uniqid()], new DateInterval('P1DT12S'));
         $this->assertSame(86400 + 12, $redis->ttl($key));
     }
 
@@ -82,7 +87,29 @@ class RedisHandlerTest extends TestCase
             $result[] = $item;
         }
 
-        $this->assertSame($result, $handler->getMultiple($keys));
+        $data = $handler->getMultiple($keys);
+        if ($handler instanceof DefaultValueInterface) {
+            foreach ($data as $i => $value) {
+                $data[$i] = $handler->clearDefaultValue($value);
+            }
+        }
+        $this->assertSame($result, $data);
+    }
+
+    public function testDefaultValue()
+    {
+        $handler = $this->mockHandler();
+        if (! $handler instanceof DefaultValueInterface) {
+            $this->markTestSkipped('Don\'t implements DefaultValueInterface');
+        }
+
+        $data = $handler->defaultValue(1);
+        $this->assertSame(['HF-DATA' => 1], $data);
+
+        $this->assertTrue($handler->isDefaultValue($data));
+        $this->assertFalse($handler->isDefaultValue(['HF-DATA' => 1, 'id' => 1]));
+        $this->assertSame(3, $handler->getPrimaryValue(['HF-DATA' => 3]));
+        $this->assertSame([], $handler->clearDefaultValue(['HF-DATA' => 3]));
     }
 
     protected function mockHandler(): HandlerInterface

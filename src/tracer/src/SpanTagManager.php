@@ -9,15 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
 class SpanTagManager
 {
-    private $tags = [
+    private array $tags = [
         'http_client' => [
             'http.url' => 'http.url',
             'http.method' => 'http.method',
             'http.status_code' => 'http.status_code',
+        ],
+        'grpc' => [
+            'request.header' => 'grpc.request.header',
+            'response.header' => 'grpc.response.header',
         ],
         'redis' => [
             'arguments' => 'redis.arguments',
@@ -27,6 +32,9 @@ class SpanTagManager
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
             'db.query_time' => 'db.query_time',
+            'db.engine' => 'db.engine',
+            'db.instance' => 'db.instance',
+            'db.user' => 'db.user',
         ],
         'rpc' => [
             'path' => 'rpc.path',
@@ -40,6 +48,7 @@ class SpanTagManager
         ],
         'request' => [
             'path' => 'request.path',
+            'uri' => 'request.uri',
             'method' => 'request.method',
             'header' => 'request.header',
         ],

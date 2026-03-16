@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Nsq;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Contract\SocketInterface;
 use Hyperf\Nsq\Subscriber;
-use Hyperf\Utils\Codec\Json;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SubscriberTest extends TestCase
 {
     protected function tearDown(): void

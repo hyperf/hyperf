@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\IDEHelper\Visitor;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\IDEHelper\Metadata;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;

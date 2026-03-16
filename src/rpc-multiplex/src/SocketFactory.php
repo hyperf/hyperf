@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\RpcMultiplex\Exception\NoAvailableNodesException;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class SocketFactory
 {
@@ -61,6 +64,8 @@ class SocketFactory
                 'recv_timeout' => $this->config['recv_timeout'] ?? 10,
                 'connect_timeout' => $this->config['connect_timeout'] ?? 0.5,
                 'heartbeat' => $this->config['heartbeat'] ?? null,
+                'max_requests' => $this->config['max_requests'] ?? 0,
+                'max_wait_close_seconds' => $this->config['max_wait_close_seconds'] ?? 0.5,
             ]);
             if ($this->container->has(StdoutLoggerInterface::class)) {
                 $client->setLogger($this->container->get(StdoutLoggerInterface::class));

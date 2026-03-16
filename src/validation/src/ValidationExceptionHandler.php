@@ -9,24 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class ValidationExceptionHandler extends ExceptionHandler
 {
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         $this->stopPropagation();
-        /** @var \Hyperf\Validation\ValidationException $throwable */
+        /** @var ValidationException $throwable */
         $body = $throwable->validator->errors()->first();
         if (! $response->hasHeader('content-type')) {
-            $response = $response->withAddedHeader('content-type', 'text/plain; charset=utf-8');
+            $response = $response->addHeader('content-type', 'text/plain; charset=utf-8');
         }
-        return $response->withStatus($throwable->status)->withBody(new SwooleStream($body));
+        return $response->setStatus($throwable->status)->setBody(new SwooleStream($body));
     }
 
     public function isValid(Throwable $throwable): bool

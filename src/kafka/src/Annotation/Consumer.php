@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka\Annotation;
 
 use Attribute;
@@ -21,7 +22,7 @@ class Consumer extends AbstractAnnotation
      * @param string|string[] $topic
      */
     public function __construct(
-        public string $pool = 'default',
+        public string $pool = '',
         public array|string $topic = '',
         public ?string $groupId = null,
         public ?string $memberId = null,

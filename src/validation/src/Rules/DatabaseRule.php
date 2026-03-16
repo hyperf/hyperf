@@ -9,9 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
 use Closure;
+use Hyperf\Database\Model\Model;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Support\make;
 
 trait DatabaseRule
 {
@@ -33,6 +38,29 @@ trait DatabaseRule
      */
     public function __construct(protected string $table, protected string $column = 'NULL')
     {
+        $this->table = $this->resolveTableName($table);
+    }
+
+    /**
+     * Resolves the name of the table from the given string.
+     */
+    public function resolveTableName(string $table): string
+    {
+        if (! str_contains($table, '\\') || ! class_exists($table)) {
+            return $table;
+        }
+
+        if (is_subclass_of($table, Model::class)) {
+            /** @var Model $model */
+            $model = make($table);
+            if ($connection = $model->getConnectionName()) {
+                return $connection . '.' . $model->getTable();
+            }
+
+            return $model->getTable();
+        }
+
+        return $table;
     }
 
     /**
@@ -138,6 +166,6 @@ trait DatabaseRule
      */
     protected function formatWheres(): string
     {
-        return collect($this->wheres)->map(fn ($where) => $where['column'] . ',' . '"' . str_replace('"', '""', (string) $where['value']) . '"')->implode(',');
+        return collect($this->wheres)->map(fn ($where) => $where['column'] . ',"' . str_replace('"', '""', (string) $where['value']) . '"')->implode(',');
     }
 }

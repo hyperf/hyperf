@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
-class MethodInjection implements DefinitionInterface
+use Stringable;
+
+class MethodInjection implements Stringable, DefinitionInterface
 {
     public function __construct(private string $methodName, private array $parameters = [])
     {

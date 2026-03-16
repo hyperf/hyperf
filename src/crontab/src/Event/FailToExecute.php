@@ -9,26 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Event;
 
 use Hyperf\Crontab\Crontab;
 use Throwable;
 
-class FailToExecute
+class FailToExecute extends Event
 {
-    /**
-     * @var Crontab
-     */
-    public $crontab;
-
-    /**
-     * @var Throwable
-     */
-    public $throwable;
-
-    public function __construct(Crontab $crontab, Throwable $throwable)
+    public function __construct(Crontab $crontab, public Throwable $throwable)
     {
-        $this->crontab = $crontab;
-        $this->throwable = $throwable;
+        parent::__construct($crontab);
+    }
+
+    public function getThrowable(): Throwable
+    {
+        return $this->throwable;
     }
 }

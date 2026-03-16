@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Devtool\Describe;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,8 +18,15 @@ use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\Devtool\Stub\ContainerStub;
 use HyperfTest\Devtool\Stub\IndexController;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -35,9 +43,8 @@ class RoutesCommandTest extends TestCase
         $container = ContainerStub::getContainer();
         $command = new RoutesCommand($container, $container->get(ConfigInterface::class));
 
-        $ref = new \ReflectionClass($command);
+        $ref = new ReflectionClass($command);
         $method = $ref->getMethod('analyzeHandler');
-        $method->setAccessible(true);
 
         $data = [];
         $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(IndexController::class . '::index', '/')]);

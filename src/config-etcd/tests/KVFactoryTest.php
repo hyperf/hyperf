@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigEtcd;
 
 use Hyperf\Config\Config;
 use Hyperf\ConfigEtcd\KVFactory;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\HandlerStackFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +27,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class KVFactoryTest extends TestCase
 {
     protected function tearDown(): void

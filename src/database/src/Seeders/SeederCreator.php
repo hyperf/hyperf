@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Seeders;
 
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 
 class SeederCreator
@@ -66,7 +67,7 @@ class SeederCreator
     /**
      * Get the filesystem instance.
      *
-     * @return \Hyperf\Utils\Filesystem\Filesystem
+     * @return Filesystem
      */
     public function getFilesystem()
     {
@@ -100,7 +101,7 @@ class SeederCreator
      *
      * @param string $name
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function ensureSeederDoesntAlreadyExist($name)
     {

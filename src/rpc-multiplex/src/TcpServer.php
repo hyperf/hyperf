@@ -9,14 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
@@ -24,17 +28,19 @@ use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Hyperf\RpcMultiplex\Exception\Handler\DefaultExceptionHandler;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
+use Hyperf\Server\Connection as HyperfConnection;
 use Hyperf\Server\Exception\InvalidArgumentException;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine;
 use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
 use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
+
+use function Hyperf\Support\make;
 
 class TcpServer extends Server
 {
@@ -56,7 +62,7 @@ class TcpServer extends Server
         ExceptionHandlerDispatcher $exceptionDispatcher,
         ProtocolManager $protocolManager,
         StdoutLoggerInterface $logger,
-        string $protocol = null
+        ?string $protocol = null
     ) {
         parent::__construct($container, $dispatcher, $exceptionDispatcher, $logger);
 
@@ -79,8 +85,7 @@ class TcpServer extends Server
         Coroutine::create(function () use ($server, $fd, $reactorId, $data) {
             $packet = $this->packetPacker->unpack($data);
             if ($packet->isHeartbeat()) {
-                $response = new Response();
-                $this->send($server, $fd, $response->withContent(Heartbeat::PONG));
+                $this->send($server, $fd, (new Response())->setBody(new SwooleStream(Heartbeat::PONG)));
                 return;
             }
 
@@ -91,17 +96,18 @@ class TcpServer extends Server
     }
 
     /**
-     * @param Connection|SwooleServer $server
+     * @param Connection|HyperfConnection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
+        /** @var int $id */
         $id = Context::get(Constant::CHANNEL_ID, 0);
 
         $packed = $this->packetPacker->pack(new Packet($id, (string) $response->getBody()));
 
         if ($server instanceof SwooleServer) {
             $server->send($fd, $packed);
-        } elseif ($server instanceof Connection) {
+        } elseif ($server instanceof Connection || $server instanceof HyperfConnection) {
             $server->send($packed);
         }
     }
@@ -111,18 +117,18 @@ class TcpServer extends Server
         return new CoreMiddleware($this->container, $this->protocol, $this->messageBuilder, $this->serverName);
     }
 
-    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface
+    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestPlusInterface
     {
         $parsed = $this->packer->unpack($data);
 
-        $request = $this->messageBuilder->buildRequest($parsed);
+        $request = $this->messageBuilder->buildRequest($parsed, $this->serverConfig);
 
         return $request->withAttribute('fd', $fd)->withAttribute('request_id', $parsed['id'] ?? null);
     }
 
-    protected function buildResponse(int $fd, $server): ResponseInterface
+    protected function buildResponse(int $fd, $server): ResponsePlusInterface
     {
-        return (new Response())->withAttribute('fd', $fd)->withAttribute('server', $server);
+        return (new Response())->setAttribute('fd', $fd)->setAttribute('server', $server);
     }
 
     protected function initProtocol()

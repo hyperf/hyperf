@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -28,22 +30,24 @@ use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Throwable;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RoomAdapterTest extends AbstractTestCase
 {
     public function testMemoryAdapter()
     {
         $sidProvider = new LocalSidProvider();
         $server = Mockery::Mock(Sender::class);
-        $server->shouldReceive('push')->twice();
+        $server->shouldReceive('pushFrame')->twice();
         $room = new MemoryAdapter($server, $sidProvider);
         $room->add('42', 'universe', '42');
         $room->add('43', 'universe', '43');
@@ -89,7 +93,7 @@ class RoomAdapterTest extends AbstractTestCase
         $nsp->shouldReceive('getNamespace')->andReturn('test');
         $redis = $this->getRedis();
         $server = Mockery::Mock(Sender::class);
-        $server->shouldReceive('push')->twice();
+        $server->shouldReceive('pushFrame')->twice();
         $sidProvider = new LocalSidProvider();
         $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
         $room->add('42', 'universe', '42');
@@ -116,7 +120,7 @@ class RoomAdapterTest extends AbstractTestCase
         // Test empty room
         try {
             $room->del('non-exist');
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->assertTrue(false);
         }
 
@@ -132,7 +136,8 @@ class RoomAdapterTest extends AbstractTestCase
         $room->cleanUpExpiredOnce();
         $this->assertContains('not_expired', $room->clients('foo'));
 
-        $room->setTtl(1);
+        // TODO: The latest swoole cannot support sleep time < 1ms
+        $room->setTtl(2);
         $room->add('renewed', 'foo');
         $room->renew('renewed');
         usleep(500);

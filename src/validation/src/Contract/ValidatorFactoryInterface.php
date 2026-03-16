@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Contract;
 
+use Closure;
 use Hyperf\Contract\ValidatorInterface;
 
 interface ValidatorFactoryInterface
@@ -23,15 +25,15 @@ interface ValidatorFactoryInterface
     /**
      * Register a custom validator extension.
      */
-    public function extend(string $rule, \Closure|string $extension, ?string $message = null);
+    public function extend(string $rule, Closure|string $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator extension.
      */
-    public function extendImplicit(string $rule, \Closure|string $extension, ?string $message = null);
+    public function extendImplicit(string $rule, Closure|string $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator message replacer.
      */
-    public function replacer(string $rule, \Closure|string $replacer);
+    public function replacer(string $rule, Closure|string $replacer);
 }

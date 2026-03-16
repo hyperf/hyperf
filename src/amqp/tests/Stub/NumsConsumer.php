@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\Message\ConsumerMessage;
@@ -25,7 +26,7 @@ class NumsConsumer extends ConsumerMessage
 
     protected ?string $queue = 'hyperf';
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }

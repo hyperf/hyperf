@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use Hyperf\Di\MetadataCollector;
@@ -17,7 +18,7 @@ class ConstantsCollector extends MetadataCollector
 {
     protected static array $container = [];
 
-    public static function getValue($className, $code, $key)
+    public static function getValue($className, $code, $key): string
     {
         return static::$container[$className][$code][$key] ?? '';
     }

@@ -9,11 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
 
+use function Hyperf\Collection\last;
+
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TParentModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @extends HasOneOrMany<TRelatedModel, TParentModel, TResult>
+ */
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**
@@ -72,7 +82,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
      * Get the relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {

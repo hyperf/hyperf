@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\ValidatorInterface;
@@ -25,17 +27,18 @@ use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Middleware\ValidationMiddleware;
+use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\ValidatorFactory;
 use HyperfTest\Validation\Cases\Stub\DemoController;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
 use HyperfTest\Validation\Cases\Stub\FooMiddleware;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -45,6 +48,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationMiddlewareTest extends TestCase
 {
     protected function tearDown(): void
@@ -88,7 +92,7 @@ class ValidationMiddlewareTest extends TestCase
         $router = $factory->getRouter('http');
         $router->addRoute('POST', '/sign-up', 'HyperfTest\Validation\Cases\Stub\DemoController@signUp');
         $router->addRoute('POST', '/sign-in', 'HyperfTest\Validation\Cases\Stub\DemoController::signIn');
-        $router->addRoute('POST', '/sign-out', [\HyperfTest\Validation\Cases\Stub\DemoController::class, 'signOut']);
+        $router->addRoute('POST', '/sign-out', [DemoController::class, 'signOut']);
         $router->addRoute('POST', '/info/{id:\d}', 'HyperfTest\Validation\Cases\Stub\DemoController::info');
 
         $dispatcher = $factory->getDispatcher('http');
@@ -166,5 +170,28 @@ class ValidationMiddlewareTest extends TestCase
         ApplicationContext::setContainer($container);
 
         return $container;
+    }
+
+    public function testValidationOfInvocableControllerRoutingRequests()
+    {
+        $this->expectException(ValidationException::class);
+
+        $container = $this->createContainer();
+        $factory = $container->get(DispatcherFactory::class);
+
+        $router = $factory->getRouter('http');
+        $router->addRoute('POST', '/invokable', 'HyperfTest\Validation\Cases\Stub\DemoController');
+
+        $dispatcher = $factory->getDispatcher('http');
+        $middleware = new ValidationMiddleware($container);
+        $coreMiddleware = new CoreMiddleware($container, 'http');
+        $handler = new HttpRequestHandler([$middleware], $coreMiddleware, $container);
+        Context::set(ResponseInterface::class, new Response());
+
+        $request = (new Request('POST', new Uri('/invokable')))
+            ->withParsedBody(['username' => 'Hyperf']);
+        $routes = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
+        $middleware->process($request, $handler);
     }
 }

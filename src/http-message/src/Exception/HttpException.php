@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Exception;
 
 use Hyperf\HttpMessage\Server\Response;
 use RuntimeException;
+use Throwable;
 
 class HttpException extends RuntimeException
 {
@@ -21,7 +23,7 @@ class HttpException extends RuntimeException
      * @param null|string $message error message
      * @param int $code error code
      */
-    public function __construct(public int $statusCode, $message = '', $code = 0, \Throwable $previous = null)
+    public function __construct(public int $statusCode, $message = '', $code = 0, ?Throwable $previous = null)
     {
         if (is_null($message)) {
             $message = Response::getReasonPhraseByCode($statusCode);

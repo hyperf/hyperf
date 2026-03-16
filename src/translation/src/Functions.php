@@ -9,28 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+namespace Hyperf\Translation;
+
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Utils\ApplicationContext;
 
-if (! function_exists('__')) {
-    function __(string $key, array $replace = [], ?string $locale = null)
-    {
-        $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
-        return $translator->trans($key, $replace, $locale);
-    }
+function __(string $key, array $replace = [], ?string $locale = null)
+{
+    $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
+    return $translator->trans($key, $replace, $locale);
 }
 
-if (! function_exists('trans')) {
-    function trans(string $key, array $replace = [], ?string $locale = null)
-    {
-        return __($key, $replace, $locale);
-    }
+function trans(string $key, array $replace = [], ?string $locale = null)
+{
+    return __($key, $replace, $locale);
 }
 
-if (! function_exists('trans_choice')) {
-    function trans_choice(string $key, $number, array $replace = [], ?string $locale = null): string
-    {
-        $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
-        return $translator->transChoice($key, $number, $replace, $locale);
-    }
+/**
+ * @param mixed $number
+ */
+function trans_choice(string $key, $number, array $replace = [], ?string $locale = null): string
+{
+    $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
+    return $translator->transChoice($key, $number, $replace, $locale);
 }

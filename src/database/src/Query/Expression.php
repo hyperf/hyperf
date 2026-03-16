@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query;
 
-class Expression
+use Stringable;
+
+class Expression implements Stringable
 {
     /**
      * Create a new raw query expression.
@@ -23,10 +26,8 @@ class Expression
 
     /**
      * Get the value of the expression.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getValue();
     }

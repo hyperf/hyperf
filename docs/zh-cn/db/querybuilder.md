@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-`Db::select()` 方法会返回一个 array，而 `get` 方法会返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
+`Db::select()` 方法会返回一个 array，而 `get` 方法会返回 `Hyperf\Collection\Collection`。其中元素是 `stdClass`，所以可以通过以下代码返回各个元素的数据
 
 ```php
 <?php

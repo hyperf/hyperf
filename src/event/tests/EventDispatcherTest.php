@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Event;
 
 use Hyperf\Config\Config;
@@ -25,6 +26,7 @@ use HyperfTest\Event\Listener\BetaListener;
 use HyperfTest\Event\Listener\PriorityListener;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -33,8 +35,9 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Event\EventDispatcher
+ * @coversNothing
  */
+#[CoversClass(EventDispatcher::class)]
 class EventDispatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -52,7 +55,6 @@ class EventDispatcherTest extends TestCase
         $this->assertInstanceOf(EventDispatcherInterface::class, $instance = new EventDispatcher($listeners, $logger));
         $reflectionClass = new ReflectionClass($instance);
         $loggerProperty = $reflectionClass->getProperty('logger');
-        $loggerProperty->setAccessible(true);
         $this->assertInstanceOf(StdoutLoggerInterface::class, $loggerProperty->getValue($instance));
     }
 
@@ -66,7 +68,6 @@ class EventDispatcherTest extends TestCase
         $this->assertInstanceOf(EventDispatcherInterface::class, $instance = (new EventDispatcherFactory())($container));
         $reflectionClass = new ReflectionClass($instance);
         $loggerProperty = $reflectionClass->getProperty('logger');
-        $loggerProperty->setAccessible(true);
         $this->assertInstanceOf(StdoutLoggerInterface::class, $loggerProperty->getValue($instance));
     }
 
@@ -84,7 +85,7 @@ class EventDispatcherTest extends TestCase
     public function testLoggerDump()
     {
         $logger = Mockery::mock(StdoutLoggerInterface::class);
-        $logger->shouldReceive('debug');
+        $logger->shouldReceive('debug')->once();
         $listenerProvider = new ListenerProvider();
         $listenerProvider->on(Alpha::class, [new AlphaListener(), 'process']);
         $dispatcher = new EventDispatcher($listenerProvider, $logger);

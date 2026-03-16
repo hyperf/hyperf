@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\CircuitBreaker\Stub;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 
 class CircuitBreakerStub
 {
-    public static function makeCircuitBreaker()
+    public static function makeCircuitBreaker(): CircuitBreaker
     {
-        return new CircuitBreaker(timeout: 1);
+        return new CircuitBreaker(options: [
+            'timeout' => 1,
+        ]);
     }
 }

@@ -33,9 +33,9 @@ composer require hyperf/service-governance-nacos
 ```php
 return [
     'enable' => [
-        // 開啟服務發現
+        // 開啓服務發現
         'discovery' => true,
-        // 開啟服務註冊
+        // 開啓服務註冊
         'register' => true,
     ],
     // 服務消費者相關配置
@@ -75,7 +75,7 @@ return [
 
 # 註冊服務
 
-註冊服務可通過 `@RpcService` 註解對一個類進行定義，即為發佈這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](zh-hk/json-rpc.md) 章節瞭解詳情。
+註冊服務可通過 `#[RpcService]` 註解對一個類進行定義，即為發佈這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](zh-hk/json-rpc.md) 章節瞭解詳情。
 
 ```php
 <?php
@@ -96,13 +96,13 @@ class CalculatorService implements CalculatorServiceInterface
 }
 ```
 
-`@RpcService` 共有 `4` 個參數：   
+`#[RpcService]` 共有 `4` 個參數：   
 `name` 屬性為定義該服務的名稱，這裏定義一個全局唯一的名字即可，Hyperf 會根據該屬性生成對應的 ID 註冊到服務中心去；   
 `protocol` 屬性為定義該服務暴露的協議，目前僅支持 `jsonrpc` 和 `jsonrpc-http`，分別對應於 TCP 協議和 HTTP 協議下的兩種協議，默認值為 `jsonrpc-http`，這裏的值對應在 `Hyperf\Rpc\ProtocolManager` 裏面註冊的協議的 `key`，這兩個本質上都是 JSON RPC 協議，區別在於數據格式化、數據打包、數據傳輸器等不同。   
 `server` 屬性為綁定該服務類發佈所要承載的 `Server`，默認值為 `jsonrpc-http`，該屬性對應 `config/autoload/server.php` 文件內 `servers` 下所對應的 `name`，這裏也就意味着我們需要定義一個對應的 `Server`；   
 `publishTo` 屬性為定義該服務所要發佈的服務中心，目前僅支持 `consul`、`nacos` 或為空，為空時代表不發佈該服務到服務中心去，但也就意味着您需要手動處理服務發現的問題，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 組件及對應的驅動依賴；
 
-> 使用 `@RpcService` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空間。
+> 使用 `#[RpcService]` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空間。
 
 ## 自定義服務治理適配器
 

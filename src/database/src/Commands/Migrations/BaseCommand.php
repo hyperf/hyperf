@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
+
+use function Hyperf\Collection\collect;
 
 abstract class BaseCommand extends Command
 {

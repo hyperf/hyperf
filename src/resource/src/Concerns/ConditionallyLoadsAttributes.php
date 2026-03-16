@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Concerns;
 
 use Countable;
+use Hyperf\Collection\Arr;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Value\MergeValue;
 use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Resource\Value\PotentiallyMissing;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Support\value;
 
 /**
  * Trait ConditionallyLoadsAttributes.
@@ -74,9 +77,9 @@ trait ConditionallyLoadsAttributes
             ));
         }
 
-        return $this->removeMissingValues(array_slice($data, 0, $index, true) +
-            $merge +
-            $this->filter(array_slice($data, $index + 1, null, true)));
+        return $this->removeMissingValues(array_slice($data, 0, $index, true)
+            + $merge
+            + $this->filter(array_slice($data, $index + 1, null, true)));
     }
 
     /**

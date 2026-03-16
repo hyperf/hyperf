@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Resolver\FactoryResolver;
 use Hyperf\Di\Resolver\ResolverDispatcher;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -23,6 +25,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ResolverDispatcherTest extends TestCase
 {
     protected function tearDown(): void

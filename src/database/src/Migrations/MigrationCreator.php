@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
 use Closure;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Exception;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 
 class MigrationCreator
@@ -33,9 +35,9 @@ class MigrationCreator
     /**
      * Create a new migration at the given path.
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function create(string $name, string $path, string $table = null, bool $create = false): string
+    public function create(string $name, string $path, ?string $table = null, bool $create = false): string
     {
         $this->ensureMigrationDoesntAlreadyExist($name, $path);
 
@@ -50,7 +52,7 @@ class MigrationCreator
 
         $this->files->put(
             $path = $this->getPath($name, $path),
-            $this->populateStub($name, $stub, $table)
+            $this->populateStub($stub, $table)
         );
 
         // Next, we will fire any hooks that are supposed to fire after a migration is
@@ -88,7 +90,7 @@ class MigrationCreator
     /**
      * Ensure that a migration with the given name doesn't already exist.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function ensureMigrationDoesntAlreadyExist(string $name, ?string $migrationPath = null)
     {
@@ -125,10 +127,8 @@ class MigrationCreator
     /**
      * Populate the place-holders in the migration stub.
      */
-    protected function populateStub(string $name, string $stub, ?string $table): string
+    protected function populateStub(string $stub, ?string $table): string
     {
-        $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
-
         // Here we will replace the table place-holders with the table specified by
         // the developer, which is useful for quickly creating a tables creation
         // or update migration from the console instead of typing it manually.

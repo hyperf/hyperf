@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Annotation;
 
 use Attribute;
@@ -25,7 +26,8 @@ class CachePut extends AbstractAnnotation
         public ?string $value = null,
         public ?int $ttl = null,
         public int $offset = 0,
-        public string $group = 'default'
+        public string $group = 'default',
+        public ?array $skipCacheResults = null
     ) {
     }
 }

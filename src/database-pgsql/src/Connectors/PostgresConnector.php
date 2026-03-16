@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Connectors;
 
 use Hyperf\Database\Connectors\Connector;
@@ -32,7 +33,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Establish a database connection.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function connect(array $config)
     {
@@ -67,7 +68,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Set the connection character set and collation.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      * @param array $config
      */
     protected function configureEncoding($connection, $config)
@@ -82,7 +83,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Set the timezone on the connection.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      */
     protected function configureTimezone($connection, array $config)
     {
@@ -96,7 +97,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Set the schema on the connection.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      * @param array $config
      */
     protected function configureSchema($connection, $config)
@@ -126,7 +127,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Set the schema on the connection.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      * @param array $config
      */
     protected function configureApplicationName($connection, $config)
@@ -184,7 +185,7 @@ class PostgresConnector extends Connector implements ConnectorInterface
     /**
      * Configure the synchronous_commit setting.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      */
     protected function configureSynchronousCommit($connection, array $config)
     {

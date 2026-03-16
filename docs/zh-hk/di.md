@@ -65,8 +65,7 @@ class IndexController
 
 > 注意使用構造函數注入時，調用方也就是 `IndexController` 必須是由 DI 創建的對象才能完成自動注入，而 Controller 默認是由 DI 創建的，所以可以直接使用構造函數注入
 
-當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。*(該功能僅在
-1.1.0 或更高版本可用)*
+當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。
 
 ```php
 <?php
@@ -107,13 +106,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
-     * 
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     public function index()
     {
@@ -130,7 +125,7 @@ class IndexController
 
 ##### Required 參數
 
-`@Inject` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI
+`#[Inject]` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI
 容器或不可創建時，將不會拋出異常而是注入一個 `null`，如下：
 
 ```php
@@ -143,13 +138,11 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
+     * 通過 `#[Inject]` 註解注入由註解聲明的屬性類型對象
      * 當 UserService 不存在於 DI 容器內或不可創建時，則注入 null
-     * 
-     * @var UserService
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
@@ -216,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {
@@ -234,7 +224,7 @@ class IndexController
 ### 工廠對象注入
 
 我們假設 `UserService` 的實現會更加複雜一些，在創建 `UserService` 對象時構造函數還需要傳遞進來一些非直接注入型的參數，假設我們需要從配置中取得一個值，然後 `UserService`
-需要根據這個值來決定是否開啟緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）
+需要根據這個值來決定是否開啓緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）
 
 我們需要創建一個工廠來生成 `UserService` 對象：
 
@@ -247,8 +237,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // 實現一個 __invoke() 方法來完成對象的生產，方法參數會自動注入一個當前的容器實例
-    public function __invoke(ContainerInterface $container)
+    // 實現一個 __invoke() 方法來完成對象的生產，方法參數會自動注入一個當前的容器實例和一個參數數組
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // 我們假設對應的配置的 key 為 cache.enable
@@ -292,15 +282,15 @@ return [
 
 這樣在注入 `UserServiceInterface` 的時候容器就會交由 `UserServiceFactory` 來創建對象了。
 
-> 當然在該場景中可以通過 `@Value` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
+> 當然在該場景中可以通過 `#[Value]` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
 
 ### 懶加載
 
-Hyperf 的長生命週期依賴注入在項目啟動時完成。這意味着長生命週期的類需要注意：
+Hyperf 的長生命週期依賴注入在項目啓動時完成。這意味着長生命週期的類需要注意：
 
-* 構造函數時還不是協程環境，如果注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
+* 構造函數時還不是協程環境，如果注入了可能會觸發協程切換的類，就會導致框架啓動失敗。
 
-* 構造函數中要避免循環依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啟動失敗。
+* 構造函數中要避免循環依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啓動失敗。
 
 目前解決方案是：只在實例中注入 `Psr\Container\ContainerInterface` ，而其他的組件在非構造函數執行時通過 `container` 獲取。但 PSR-11 中指出:
 
@@ -310,7 +300,7 @@ Hyperf 的長生命週期依賴注入在項目啟動時完成。這意味着長�
 
 另一個方案是使用 PHP 中常用的惰性代理模式，注入一個代理對象，在使用時再實例化目標對象。Hyperf DI 組件設計了懶加載注入功能。
 
-添加 `config/autoload/lazy_loader.php` 文件並綁定懶加載關係：
+添加 `config/lazy_loader.php` 文件並綁定懶加載關係：
 
 ```php
 <?php
@@ -372,6 +362,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### 綁定權重
+
+自 v3.0.17 版本開始，增加了權重功能。可以按照權重，注入權重最大的對象。例如下述兩份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+當不使用 `PriorityDefinition` 時，權重為 0。所以被綁定到 `FooInterface` 是 `Foo`。
+
 ## 短生命週期對象
 
 通過 `new` 關鍵詞創建的對象毫無疑問的短生命週期的，那麼如果希望創建一個短生命週期的對象但又希望使用 `構造函數依賴自動注入功能`
@@ -409,10 +429,10 @@ class IndexController
 ```   
 
 在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)`
-對象還可以通過 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 對象。
+對象還可以通過 `\Hyperf\Context\ApplicationContext::getContainer()` 方法來獲得 `容器(Container)` 對象。
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## 掃描適配器

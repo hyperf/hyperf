@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
@@ -22,6 +23,8 @@ use Hyperf\ViewEngine\View;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+
+use function Hyperf\Collection\collect;
 
 abstract class Component
 {

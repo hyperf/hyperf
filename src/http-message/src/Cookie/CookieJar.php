@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Cookie;
 
+use ArrayIterator;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -36,7 +39,7 @@ class CookieJar implements CookieJarInterface
     public function __construct(private $strictMode = false, $cookieArray = [])
     {
         foreach ($cookieArray as $cookie) {
-            if (! ($cookie instanceof SetCookie)) {
+            if (! $cookie instanceof SetCookie) {
                 $cookie = new SetCookie($cookie);
             }
             $this->setCookie($cookie);
@@ -163,7 +166,7 @@ class CookieJar implements CookieJarInterface
         $result = $cookie->validate();
         if ($result !== true) {
             if ($this->strictMode) {
-                throw new \RuntimeException('Invalid cookie: ' . $result);
+                throw new RuntimeException('Invalid cookie: ' . $result);
             }
             $this->removeCookieIfEmpty($cookie);
             return false;
@@ -216,7 +219,7 @@ class CookieJar implements CookieJarInterface
 
     public function getIterator(): Traversable
     {
-        return new \ArrayIterator(array_values($this->cookies));
+        return new ArrayIterator(array_values($this->cookies));
     }
 
     public function extractCookies(

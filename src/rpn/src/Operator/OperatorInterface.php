@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpn\Operator;
 
 interface OperatorInterface
@@ -17,5 +18,5 @@ interface OperatorInterface
 
     public function length(): ?int;
 
-    public function execute(array $parameters, int $scale): string;
+    public function execute(array $parameters, int $scale, array $bindings = []): string;
 }

@@ -10,7 +10,7 @@
 
   * [版本計劃](zh-hk/release-planning.md)
   * [版本説明](zh-hk/versions.md)
-  * [版本更新記錄](zh-hk/changelog.md)
+  * [版本更新記錄](zh-hk/changelog/3.1.md)
 
 * 快速入門
 
@@ -66,6 +66,12 @@
   * [API 資源構造器](zh-hk/db/resource.md)
   * [模型全文檢索](zh-hk/scout.md)
 
+* Hyperf 生態
+
+  * [Nano](https://github.com/hyperf/nano)
+  * [GoTask](https://github.com/hyperf/gotask)
+  * [Box](zh-hk/eco/box.md)
+
 * 微服務
 
   * [架構理念](zh-hk/microservice.md)
@@ -79,6 +85,7 @@
   * [配置中心](zh-hk/config-center.md)
   * [調用鏈追蹤](zh-hk/tracer.md)
   * [服務監控](zh-hk/metric.md)
+  * [分佈式事務](zh-hk/distributed-transaction.md)
   * [Snowflake](zh-hk/snowflake.md)
 
 * 網絡服務
@@ -111,7 +118,7 @@
 
   * [連接池](zh-hk/pool.md)
   * [自定義進程](zh-hk/process.md)
-  * [輔助類](zh-hk/utils.md)
+  * [輔助類](zh-hk/support.md)
   * [定時任務](zh-hk/crontab.md)
   * [Task 機制](zh-hk/task.md)
   * [枚舉類](zh-hk/constants.md)
@@ -119,10 +126,10 @@
   * [ReactiveX](zh-hk/reactive-x.md)
   * [Watcher](zh-hk/watcher.md)
   * [開發者工具](zh-hk/devtool.md)
-  * [Swoole Tracker](zh-hk/swoole-tracker.md)
   * [Phar 打包器](zh-hk/phar.md)
   * [DAG](zh-hk/dag.md)
   * [RPN - 逆波蘭表示法](zh-hk/rpn.md)
+  * [Swagger 文檔](zh-hk/swagger.md)
 
 * 應用部署
 
@@ -142,6 +149,15 @@
   * [創建新的組件](zh-hk/component-guide/create.md)
   * [ConfigProvider 機制](zh-hk/component-guide/configprovider.md)
 
+* 歷史版本更新記錄
+
+  * [3.0 更新記錄](zh-hk/changelog/3.0.md)
+  * [2.2 更新記錄](zh-hk/changelog/2.2.md)
+  * [2.1 更新記錄](zh-hk/changelog/2.1.md)
+  * [2.0 更新記錄](zh-hk/changelog/2.0.md)
+  * [1.1 更新記錄](zh-hk/changelog/1.1.md)
+  * [1.0 更新記錄](zh-hk/changelog/1.0.md)
+
 * 版本升級指南
 
   * [1.1 升級指南](zh-hk/upgrade/1.1.md)
@@ -149,3 +165,4 @@
   * [2.1 升級指南](zh-hk/upgrade/2.1.md)
   * [2.2 升級指南](zh-hk/upgrade/2.2.md)
   * [3.0 升級指南](zh-hk/upgrade/3.0.md)
+  * [3.1 升級指南](zh-hk/upgrade/3.1.md)

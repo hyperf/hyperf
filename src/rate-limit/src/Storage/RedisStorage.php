@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RateLimit\Storage;
 
 use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
@@ -16,12 +17,15 @@ use bandwidthThrottle\tokenBucket\storage\Storage;
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\util\DoublePacker;
 use Hyperf\Redis\Redis;
+use Hyperf\Redis\RedisFactory;
 use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
+use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\InvalidArgumentException;
-use function make;
 
-class RedisStorage implements Storage, GlobalScope
+use function Hyperf\Support\make;
+
+class RedisStorage implements Storage, GlobalScope, StorageInterface
 {
     public const KEY_PREFIX = 'rateLimiter:storage:';
 
@@ -32,23 +36,30 @@ class RedisStorage implements Storage, GlobalScope
      */
     private $key;
 
-    public function __construct(string $key, private Redis $redis, $timeout = 0)
+    private Redis $redis;
+
+    private array $options;
+
+    public function __construct(protected ContainerInterface $container, string $key, $timeout = 0, array $options = [])
     {
-        $key = self::KEY_PREFIX . $key;
-        $this->key = $key;
+        $this->redis = $container->get(RedisFactory::class)->get(
+            $options['pool'] ?? 'default'
+        );
+        $this->options = $options;
+        $this->key = self::KEY_PREFIX . $key;
         $this->mutex = make(PHPRedisMutex::class, [
-            'redisAPIs' => [$redis],
-            'name' => $key,
+            'redisAPIs' => [$this->redis],
+            'name' => $this->key,
             'timeout' => $timeout,
         ]);
     }
 
-    public function bootstrap($microtime)
+    public function bootstrap($microtime): void
     {
         $this->setMicrotime($microtime);
     }
 
-    public function isBootstrapped()
+    public function isBootstrapped(): bool
     {
         try {
             return (bool) $this->redis->exists($this->key);
@@ -57,7 +68,7 @@ class RedisStorage implements Storage, GlobalScope
         }
     }
 
-    public function remove()
+    public function remove(): void
     {
         try {
             if (! $this->redis->del($this->key)) {
@@ -73,13 +84,16 @@ class RedisStorage implements Storage, GlobalScope
      * @param float $microtime
      * @throws StorageException
      */
-    public function setMicrotime($microtime)
+    public function setMicrotime($microtime): void
     {
         try {
             $data = DoublePacker::pack($microtime);
 
             if (! $this->redis->set($this->key, $data)) {
                 throw new StorageException('Failed to store microtime');
+            }
+            if (! empty($this->options['expired_time']) && $this->options['expired_time'] > 0) {
+                $this->redis->expire($this->key, $this->options['expired_time']);
             }
         } catch (InvalidArgumentException $e) {
             throw new StorageException('Failed to store microtime', 0, $e);
@@ -89,9 +103,8 @@ class RedisStorage implements Storage, GlobalScope
     /**
      * @SuppressWarnings(PHPMD)
      * @throws StorageException
-     * @return float
      */
-    public function getMicrotime()
+    public function getMicrotime(): float
     {
         try {
             $data = $this->redis->get($this->key);
@@ -104,12 +117,12 @@ class RedisStorage implements Storage, GlobalScope
         }
     }
 
-    public function getMutex()
+    public function getMutex(): Mutex
     {
         return $this->mutex;
     }
 
-    public function letMicrotimeUnchanged()
+    public function letMicrotimeUnchanged(): void
     {
     }
 }

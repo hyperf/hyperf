@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Server\Entry\EventDispatcher;
@@ -89,6 +90,11 @@ class ServerFactory
     {
         $this->logger = $logger;
         return $this;
+    }
+
+    public function getConfig(): ?ServerConfig
+    {
+        return $this->config;
     }
 
     private function getDefaultEventDispatcher(): EventDispatcherInterface

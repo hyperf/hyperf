@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Stub;
 
+use Carbon\Carbon;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
@@ -19,8 +21,8 @@ use Hyperf\ModelCache\CacheableInterface;
  * @property int $id
  * @property string $name
  * @property int $gender
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class UserModel extends Model implements CacheableInterface
 {

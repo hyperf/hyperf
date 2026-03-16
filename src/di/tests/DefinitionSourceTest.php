@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     public function testAddDefinition()

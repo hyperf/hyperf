@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
 use Hyperf\Context\Context;
 use OpenTracing\Span;
+use Throwable;
 
 class SwitchManager
 {
@@ -27,6 +29,7 @@ class SwitchManager
             // beta feature, please don't enable 'method' in production environment
             'method' => false,
             'error' => false,
+            'ignore_exceptions' => [],
         ];
 
     /**
@@ -47,5 +50,16 @@ class SwitchManager
         }
 
         return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
+    }
+
+    public function isIgnoreException(string|Throwable $exception): bool
+    {
+        $ignoreExceptions = $this->config['ignore_exceptions'] ?? [];
+        foreach ($ignoreExceptions as $ignoreException) {
+            if (is_a($exception, $ignoreException, true)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

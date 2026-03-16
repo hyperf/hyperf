@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Contract\Arrayable;
@@ -17,16 +18,6 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
-    public function __construct(...$value)
-    {
-        $formattedValue = $this->formatParams($value);
-        foreach ($formattedValue as $key => $val) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $val;
-            }
-        }
-    }
-
     public function toArray(): array
     {
         $properties = ReflectionManager::reflectClass(static::class)->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -42,6 +33,11 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectClass($className, static::class, $this);
     }
 
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        AnnotationCollector::collectClassConstant($className, $target, static::class, $this);
+    }
+
     public function collectMethod(string $className, ?string $target): void
     {
         AnnotationCollector::collectMethod($className, $target, static::class, $this);
@@ -50,24 +46,5 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
     public function collectProperty(string $className, ?string $target): void
     {
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
-    }
-
-    protected function formatParams($value): array
-    {
-        if (isset($value[0])) {
-            $value = $value[0];
-        }
-        if (! is_array($value)) {
-            $value = ['value' => $value];
-        }
-        return $value;
-    }
-
-    protected function bindMainProperty(string $key, array $value)
-    {
-        $formattedValue = $this->formatParams($value);
-        if (isset($formattedValue['value'])) {
-            $this->{$key} = $formattedValue['value'];
-        }
     }
 }

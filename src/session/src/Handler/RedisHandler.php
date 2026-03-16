@@ -9,22 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Redis\Redis as RedisProxy;
+use InvalidArgumentException;
+use Predis\Client;
+use Redis;
+use RedisArray;
+use RedisCluster;
 use SessionHandlerInterface;
+
+use function get_class;
+use function gettype;
+use function is_object;
 
 class RedisHandler implements SessionHandlerInterface
 {
     /**
-     * @var \Hyperf\Redis\Redis|\Predis\Client|\Redis|\RedisArray|\RedisCluster
+     * @var Client|Redis|RedisArray|RedisCluster|RedisProxy
      */
     protected $redis;
 
     public function __construct($redis, protected int $gcMaxLifeTime = 1200)
     {
-        if (! $redis instanceof \Redis && ! $redis instanceof \RedisArray && ! $redis instanceof \RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
-            throw new \InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
+        if (! $redis instanceof Redis && ! $redis instanceof RedisArray && ! $redis instanceof RedisCluster && ! $redis instanceof Client && ! $redis instanceof RedisProxy) {
+            throw new InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, is_object($redis) ? get_class($redis) : gettype($redis)));
         }
 
         $this->redis = $redis;
@@ -57,7 +67,7 @@ class RedisHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
      */
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime): false|int
     {
         return 0;
     }
@@ -81,7 +91,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param string $id the session id to read data for
      * @return string
      */
-    public function read(string $id): string|false
+    public function read(string $id): false|string
     {
         return $this->redis->get($id) ?: '';
     }

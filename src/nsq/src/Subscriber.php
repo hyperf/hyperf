@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Contract\SocketInterface;
-use Hyperf\Utils\Codec\Json;
 
 class Subscriber
 {

@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Concerns;
 
 use Closure;
 use Exception;
 use Throwable;
 
+use function Hyperf\Tappable\tap;
+
 trait PostgreSqlSwooleExtManagesTransactions
 {
     /**
      * Execute a Closure within a transaction.
      *
-     * @throws \Exception|\Throwable
+     * @throws Exception|Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1)
     {
@@ -55,7 +58,7 @@ trait PostgreSqlSwooleExtManagesTransactions
 
     /**
      * Start a new database transaction.
-     * @throws \Exception
+     * @throws Exception
      */
     public function beginTransaction(): void
     {
@@ -85,7 +88,7 @@ trait PostgreSqlSwooleExtManagesTransactions
      *
      * @param null|int $toLevel
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function rollBack($toLevel = null): void
     {
@@ -125,11 +128,11 @@ trait PostgreSqlSwooleExtManagesTransactions
     /**
      * Handle an exception encountered when running a transacted statement.
      *
-     * @param \Exception $e
+     * @param Exception $e
      * @param int $currentAttempt
      * @param int $maxAttempts
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function handleTransactionException($e, $currentAttempt, $maxAttempts)
     {
@@ -179,7 +182,7 @@ trait PostgreSqlSwooleExtManagesTransactions
      */
     protected function createSavepoint()
     {
-        $this->getPdo()->exec(
+        $this->getPdo()->query(
             $this->queryGrammar->compileSavepoint('trans' . ($this->transactions + 1))
         );
     }
@@ -187,16 +190,16 @@ trait PostgreSqlSwooleExtManagesTransactions
     /**
      * Handle an exception from a transaction beginning.
      *
-     * @param \Throwable $e
+     * @param Throwable $e
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function handleBeginTransactionException($e)
     {
         if ($this->causedByLostConnection($e)) {
             $this->reconnect();
 
-            $this->pdo->query('BEGIN');
+            $this->getPdo()->query('BEGIN');
         } else {
             throw $e;
         }
@@ -212,7 +215,7 @@ trait PostgreSqlSwooleExtManagesTransactions
         if ($toLevel == 0) {
             $this->getPdo()->query('ROLLBACK');
         } elseif ($this->queryGrammar->supportsSavepoints()) {
-            $this->getPdo()->exec(
+            $this->getPdo()->query(
                 $this->queryGrammar->compileSavepointRollBack('trans' . ($toLevel + 1))
             );
         }
@@ -221,9 +224,9 @@ trait PostgreSqlSwooleExtManagesTransactions
     /**
      * Handle an exception from a rollback.
      *
-     * @param \Exception $e
+     * @param Exception $e
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function handleRollBackException($e)
     {

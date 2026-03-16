@@ -9,16 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigApollo;
 
+use Hyperf\ConfigApollo\ClientInterface as ApolloClientInterface;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
+
+use function Hyperf\Support\retry;
 
 class ApolloDriver extends AbstractDriver
 {
@@ -27,14 +32,14 @@ class ApolloDriver extends AbstractDriver
     protected array $notifications = [];
 
     /**
-     * @var \Hyperf\ConfigApollo\ClientInterface
+     * @var ApolloClientInterface
      */
     protected ClientInterface $client;
 
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
-        $this->client = $container->get(ClientInterface::class);
+        $this->client = $container->get(ApolloClientInterface::class);
     }
 
     public function createMessageFetcherLoop(): void
@@ -53,7 +58,7 @@ class ApolloDriver extends AbstractDriver
         $this->loop(function () use (&$prevConfig) {
             $config = $this->pull();
             if ($config !== $prevConfig) {
-                $this->syncConfig($config);
+                $this->syncConfig($config, $prevConfig);
                 $prevConfig = $config;
             }
         });
@@ -72,15 +77,22 @@ class ApolloDriver extends AbstractDriver
                         break;
                     }
                     $config = $this->client->parallelPull($namespaces);
-                    if ($config !== $prevConfig) {
-                        $this->syncConfig($config);
+                    if ($this->configChanged($config, $prevConfig)) {
+                        $this->syncConfig($config, $prevConfig);
                         $prevConfig = $config;
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                 }
             }
         });
+    }
+
+    protected function configChanged(array $config, array $prevConfig): bool
+    {
+        ksort($config);
+
+        return $config !== $prevConfig;
     }
 
     protected function loop(callable $callable, ?Channel $channel = null): int
@@ -97,7 +109,7 @@ class ApolloDriver extends AbstractDriver
                             break;
                         }
                         $callable();
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }

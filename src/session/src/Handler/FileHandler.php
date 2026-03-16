@@ -9,17 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use Carbon\Carbon;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use SessionHandlerInterface;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class FileHandler implements SessionHandlerInterface
 {
     /**
-     * @param Filesystem $files
      * @param string $path the path where sessions should be stored
      * @param int $minutes the number of minutes the session should be valid
      */
@@ -57,7 +58,7 @@ class FileHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
      */
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime): false|int
     {
         $files = Finder::create()
             ->in($this->path)
@@ -66,7 +67,7 @@ class FileHandler implements SessionHandlerInterface
             ->date('<= now - ' . $max_lifetime . ' seconds');
 
         $count = 0;
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
             ++$count;
@@ -93,7 +94,7 @@ class FileHandler implements SessionHandlerInterface
      * @param string $id the session id to read data for
      * @return string
      */
-    public function read(string $id): string|false
+    public function read(string $id): false|string
     {
         if ($this->files->isFile($path = $this->path . '/' . $id)) {
             if ($this->files->lastModified($path) >= Carbon::now()->subMinutes($this->minutes)->getTimestamp()) {

@@ -9,29 +9,51 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernance;
+
+use JetBrains\PhpStorm\ArrayShape;
 
 interface DriverInterface
 {
     /**
-     * @param $metadata = [
-     *     'protocol' => 'default',
-     * ]
      * @return array = [['host' => '127.0.0.1', 'port' => 9501]]
      */
-    public function getNodes(string $uri, string $name, array $metadata): array;
+    public function getNodes(
+        string $uri,
+        string $name,
+        #[ArrayShape([
+            'protocol' => 'string',
+            'nodes' => [
+                [
+                    'host' => 'string',
+                    'port' => 'int',
+                    'weight' => 'int',
+                ],
+            ],
+        ])]
+        array $metadata
+    ): array;
 
-    /**
-     * @param $metadata = [
-     *     'protocol' => 'default',
-     * ]
-     */
-    public function register(string $name, string $host, int $port, array $metadata): void;
+    public function isLongPolling(): bool;
 
-    /**
-     * @param $metadata = [
-     *     'protocol' => 'default',
-     * ]
-     */
-    public function isRegistered(string $name, string $host, int $port, array $metadata): bool;
+    public function register(
+        string $name,
+        string $host,
+        int $port,
+        #[ArrayShape([
+            'protocol' => 'string',
+        ])]
+        array $metadata
+    ): void;
+
+    public function isRegistered(
+        string $name,
+        string $host,
+        int $port,
+        #[ArrayShape([
+            'protocol' => 'string',
+        ])]
+        array $metadata
+    ): bool;
 }

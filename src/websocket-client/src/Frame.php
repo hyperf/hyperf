@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketClient;
 
+use Stringable;
 use Swoole\WebSocket\Frame as SwFrame;
 
-class Frame implements \Stringable
+class Frame implements Stringable
 {
     public bool $finish = true;
 

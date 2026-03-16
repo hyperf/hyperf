@@ -56,11 +56,11 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-每个 `切面(Aspect)` 必须定义 `@Aspect` 注解或在 `config/autoload/aspects.php` 内配置均可发挥作用。
+每个 `切面(Aspect)` 必须定义 `#[Aspect]` 注解或在 `config/autoload/aspects.php` 内配置均可发挥作用。
 
-> 使用 `@Aspect` 注解时需 `use Hyperf\Di\Annotation\Aspect;` 命名空间；
+> 使用 `#[Aspect]` 注解时需 `use Hyperf\Di\Annotation\Aspect;` 命名空间；
 
-您也可以通过 `@Aspect` 注解本身的属性来完成切入目标的配置，通过下面注解的形式可以达到与上面的示例一样的目的：
+您也可以通过 `#[Aspect]` 注解本身的属性来完成切入目标的配置，通过下面注解的形式可以达到与上面的示例一样的目的：
 
 ```php
 <?php
@@ -97,6 +97,62 @@ class FooAspect extends AbstractAspect
     }
 }
 ```
+
+## 改变或加强原方法
+
+另外您还可以通过获取原实例、方法反射、提交参数、获取注解等方式实现业务需求：
+
+```php
+<?php
+namespace App\Aspect;
+
+use App\Service\SomeClass;
+use App\Annotation\SomeAnnotation;
+use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\Aop\AbstractAspect;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+#[Aspect]
+class FooAspect extends AbstractAspect
+{
+    public array $classes = [
+        SomeClass::class,
+        'App\Service\SomeClass::someMethod',
+        'App\Service\SomeClass::*Method',
+    ];
+
+    public array $annotations = [
+        SomeAnnotation::class,
+    ];
+
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        // 获取当前方法反射原型
+        /** @var \ReflectionMethod **/
+        $reflect = $proceedingJoinPoint->getReflectMethod();
+
+        // 获取调用方法时提交的参数
+        $arguments = $proceedingJoinPoint->getArguments(); // array
+
+        // 获取原类的实例并调用原类的其他方法
+        $originalInstance = $proceedingJoinPoint->getInstance();
+        $originalInstance->yourFunction();
+
+        // 获取注解元数据
+        /** @var \Hyperf\Di\Aop\AnnotationMetadata **/
+        $metadata = $proceedingJoinPoint->getAnnotationMetadata();
+
+        // 调用不受代理类影响的原方法
+        $proceedingJoinPoint->processOriginalMethod();
+
+        // 不执行原方法，做其他操作
+        $result = date('YmdHis', time() - 86400);
+        return $result;
+    }
+}
+```
+
+> 注意：`getInstance`获取到的类为代理类，里面的方法仍会被其他切面影响，相互嵌套调用会死循环耗尽内存。
 
 ## 代理类缓存
 

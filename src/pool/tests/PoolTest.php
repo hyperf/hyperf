@@ -9,22 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Pool\Stub\FooPool;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PoolTest extends TestCase
 {
     protected function tearDown(): void
@@ -94,6 +100,35 @@ class PoolTest extends TestCase
         $this->assertSame(2, $pool->getCurrentConnections());
     }
 
+    public function testPoolFlushAll()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
+            $logger = Mockery::mock(StdoutLoggerInterface::class);
+            $logger->shouldReceive('error')->withAnyArgs()->times(5)->andReturn(true);
+            return $logger;
+        }));
+        $pool = new FooPool($container, []);
+
+        $conns = [];
+        for ($i = 0; $i < 5; ++$i) {
+            $conns[] = $pool->get();
+        }
+
+        foreach ($conns as $conn) {
+            $pool->release($conn);
+        }
+
+        $this->assertSame(5, $pool->getConnectionsInChannel());
+        $this->assertSame(5, $pool->getCurrentConnections());
+
+        $pool->flushAll();
+
+        $this->assertSame(0, $pool->getConnectionsInChannel());
+        $this->assertSame(0, $pool->getCurrentConnections());
+    }
+
     public function testFrequenctHitFailed()
     {
         $container = $this->getContainer();
@@ -110,7 +145,7 @@ class PoolTest extends TestCase
                 parent::__construct($container, $config);
 
                 $this->frequency = Mockery::mock(FrequencyInterface::class);
-                $this->frequency->shouldReceive('hit')->andThrow(new \RuntimeException('Hit Failed'));
+                $this->frequency->shouldReceive('hit')->andThrow(new RuntimeException('Hit Failed'));
             }
 
             protected function createConnection(): ConnectionInterface

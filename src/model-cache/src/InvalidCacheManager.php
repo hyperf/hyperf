@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache;
 
-use Hyperf\Utils\Traits\StaticInstance;
+use Hyperf\Support\Traits\StaticInstance;
 
 class InvalidCacheManager
 {

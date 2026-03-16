@@ -65,7 +65,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
         // Directly access the user property of $event to get the parameter value passed when the event fires.
@@ -111,7 +111,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
         // Directly access the user property of $event to get the parameter value passed when the event fires.
@@ -122,7 +122,7 @@ class UserRegisteredListener implements ListenerInterface
 
 When registering the listener via annotations, we can define the order of the current listener by setting the `priority` attribute, such as `#[Listener(priority: 1)]`, the underlying uses the `SplPriorityQueue` structure to store, the `priority` number is the greater, the priority the higher.
 
-> Use `#[Listener]` annotation need to `use Hyperf\Event\Annotation\Listener;` namespace；  
+> Use `#[Listener]` annotation need to `use Hyperf\Event\Annotation\Listener;` namespace;  
 
 ### Trigger Event
 
@@ -153,3 +153,23 @@ class UserService
     }
 }
 ```
+
+## Hyperf Lifecycle events
+
+![](imgs/hyperf-events.svg)
+
+## Hyperf Coroutine Style Server Lifecycle events
+
+![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)
+
+## Precautions
+
+### Do not inject `EventDispatcherInterface` in `Listener`
+
+Because `EventDispatcherInterface` depends on `ListenerProviderInterface`, and `ListenerProviderInterface` will collect all `Listener` when it is initialized.
+
+And if `Listener` depends on `EventDispatcherInterface`, it will lead to circular dependency, which will lead to memory overflow.
+
+### It's better to just inject `ContainerInterface` in `Listener`.
+
+It is best to only inject `ContainerInterface` in `Listener`, while other components are obtained through `container` in `process`. When the framework starts, `EventDispatcherInterface` will be instantiated. At this time, it is not a coroutine environment. If `Listener` is injected with a class that may trigger coroutine switching, it will cause the framework to fail to start.

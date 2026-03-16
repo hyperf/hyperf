@@ -9,17 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
 use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
-use Swoole\Coroutine;
+
+use function Hyperf\Tappable\tap;
 
 class RateLimitAnnotationAspect implements AroundInterface
 {
@@ -84,7 +87,13 @@ class RateLimitAnnotationAspect implements AroundInterface
      */
     public function getWeightingAnnotation(array $annotations): RateLimit
     {
-        $property = array_merge($this->annotationProperty, $this->config);
+        $property = $this->annotationProperty;
+        foreach ($this->annotationProperty as $key => $value) {
+            if (! empty($this->config[$key])) {
+                $property[$key] = $this->config[$key];
+            }
+        }
+
         /** @var null|RateLimit $annotation */
         foreach ($annotations as $annotation) {
             if (! $annotation) {

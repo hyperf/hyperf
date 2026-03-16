@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Rule;
 use Hyperf\Validation\Rules\Dimensions;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationDimensionsRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()

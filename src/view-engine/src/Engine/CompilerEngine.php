@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Engine;
 
 use ErrorException;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Throwable;
+
+use function Hyperf\Collection\last;
 
 class CompilerEngine extends PhpEngine
 {

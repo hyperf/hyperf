@@ -6,7 +6,7 @@
 
 ## 返回 Json 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用於快速返回 `Json` 格式，並設置 `Content-Type` 為 `application/json`，`$data` 接受一個數組或為一個實現了 `Hyperf\Utils\Contracts\Arrayable` 接口的對象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用於快速返回 `Json` 格式，並設置 `Content-Type` 為 `application/json`，`$data` 接受一個數組或為一個實現了 `Hyperf\Contract\Arrayable` 接口的對象。
 
 ```php
 <?php
@@ -29,7 +29,7 @@ class IndexController
 
 ## 返回 Xml 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用於快速返回 `XML` 格式，並設置 `Content-Type` 為 `application/xml`，`$data` 接受一個數組或為一個實現了 `Hyperf\Utils\Contracts\Xmlable` 接口的對象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用於快速返回 `XML` 格式，並設置 `Content-Type` 為 `application/xml`，`$data` 接受一個數組或為一個實現了 `Hyperf\Contract\Xmlable` 接口的對象。
 
 ```php
 <?php
@@ -132,21 +132,36 @@ class IndexController
 namespace App\Controller;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Swoole\Coroutine;
+use Hyperf\Engine\Http\EventStream;
 
 class IndexController
 {
     public function index(ResponseInterface $response)
     {
-        for ($i=0; $i<10; $i++) {
-            $response->write((string) $i);
+       $response
+            ->withStatus(200)
+            ->withHeader('X-Event-Mode', 'Enabled') // ⭐ 自定義 Header
+            ->withHeader('X-Stream-Time', '5s');
+        $streamer = new EventStream($this->response->getConnection(), $response);
+        $startTime = time();
+        $totalSteps = 5;
+        $streamer->write("data: --- 🚀 EventStream 開始 (共 {$totalSteps} 步) ---\n\n");
+        for ($i = 1; $i <= $totalSteps; ++$i) {
+            Coroutine::sleep(1);
+            $elapsed = time() - $startTime;
+            $message = "data: 【第 {$i} 秒】數據塊發送完成。已耗時: {$elapsed} 秒\n\n";
+            $streamer->write($message);
         }
+        $streamer->write("data: --- ✅ EventStream 結束 ---\n\n");
+        $streamer->end();
 
         return 'Hello Hyperf';
     }
 }
 ```
 
-!> 注意：在調用 `write` 分段發送數據後，如果再次使用 `return` 返回數據，此時的數據不會正常返回。即上文的例子中不會輸出 `Hello Hyperf`，只會輸出 `0123456789`。
+!> 注意：在調用 `write` 分段發送數據後，如果再次使用 `return` 返回數據，此時的數據不會正常返回。即上文的例子中不會輸出 `Hello Hyperf`，只會輸出 `data: 【第 {$i} 秒】數據塊發送完成。已耗時: {$elapsed} 秒\n\n`。
 
 ## 文件下載
 

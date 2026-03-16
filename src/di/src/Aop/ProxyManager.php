@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 
 class ProxyManager
 {
@@ -46,6 +47,20 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
+    }
+
+    public function getAspectClasses(): array
+    {
+        $aspectClasses = [];
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                if (isset($this->proxies[$rule])) {
+                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
+                }
+            }
+        }
+        return $aspectClasses;
     }
 
     protected function generateProxyFiles(array $proxies = []): array
@@ -81,7 +96,7 @@ class ProxyManager
         return $proxyFilePath;
     }
 
-    protected function isModified(string $className, string $proxyFilePath = null): bool
+    protected function isModified(string $className, ?string $proxyFilePath = null): bool
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);
@@ -101,7 +116,7 @@ class ProxyManager
     protected function isMatch(string $rule, string $target): bool
     {
         if (str_contains($rule, '::')) {
-            [$rule,] = explode('::', $rule);
+            [$rule] = explode('::', $rule);
         }
         if (! str_contains($rule, '*') && $rule === $target) {
             return true;

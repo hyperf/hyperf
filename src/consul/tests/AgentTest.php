@@ -9,23 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Consul;
 
 use GuzzleHttp\Client;
 use Hyperf\Consul\Agent;
 use Hyperf\Consul\AgentInterface;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\Agent
+ * @coversNothing
  */
+#[CoversClass(Agent::class)]
 class AgentTest extends TestCase
 {
     /**

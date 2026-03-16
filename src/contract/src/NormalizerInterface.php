@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
+
+use ArrayObject;
 
 interface NormalizerInterface
 {
@@ -17,7 +20,7 @@ interface NormalizerInterface
      * Normalizes an object into a set of arrays/scalars.
      *
      * @param mixed $object
-     * @return null|array|\ArrayObject|bool|float|int|string
+     * @return null|array|ArrayObject|bool|float|int|string
      */
     public function normalize($object);
 

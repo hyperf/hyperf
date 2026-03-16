@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Driver;
 
 use Psr\Container\ContainerInterface;
@@ -28,4 +29,6 @@ interface DriverInterface extends CacheInterface
      * Clean up data of the same prefix.
      */
     public function clearPrefix(string $prefix): bool;
+
+    public function getConnection(): mixed;
 }

@@ -41,12 +41,18 @@ return [
     'confirmed' => ':attribute 二次确认不匹配',
     'date' => ':attribute 必须是一个合法的日期',
     'date_format' => ':attribute 与给定的格式 :format 不符合',
+    'decimal' => ':attribute 必须有 :decimal 位小数',
     'different' => ':attribute 必须不同于 :other',
     'digits' => ':attribute 必须是 :digits 位',
     'digits_between' => ':attribute 必须在 :min 和 :max 位之间',
     'dimensions' => ':attribute 具有无效的图片尺寸',
     'distinct' => ':attribute 字段具有重复值',
     'email' => ':attribute 必须是一个合法的电子邮件地址',
+    'exclude' => ':attribute 字段是被排除的',
+    'exclude_if' => '当 :other 为 :value 时，排除 :attribute 字段',
+    'exclude_unless' => '除非 :other 是在 :values 中，否则排除 :attribute 字段',
+    'exclude_with' => '当 :values 存在时，排除 :attribute 字段',
+    'exclude_without' => '当 :values 不存在时，排除 :attribute 字段',
     'exists' => '选定的 :attribute 是无效的',
     'file' => ':attribute 必须是一个文件',
     'filled' => ':attribute 的字段是必填的',
@@ -70,6 +76,7 @@ return [
     'ipv4' => ':attribute 必须是一个合法的 IPv4 地址',
     'ipv6' => ':attribute 必须是一个合法的 IPv6 地址',
     'json' => ':attribute 必须是一个合法的 JSON 字符串',
+    'list' => ':attribute 必须是一个数组列表',
     'lt' => [
         'numeric' => ':attribute 必须小于 :value',
         'file' => ':attribute 必须小于 :value kb',
@@ -100,6 +107,7 @@ return [
     'not_regex' => ':attribute 不能匹配给定的正则',
     'numeric' => ':attribute 必须是数字',
     'present' => ':attribute 字段必须存在',
+    'prohibits' => '必须提供 :attribute 字段',
     'regex' => ':attribute 格式是无效的',
     'required' => ':attribute 字段是必须的',
     'required_if' => ':attribute 字段是必须的当 :other 是 :value',
@@ -140,6 +148,7 @@ return [
         'string' => '当 :other 为 :value 时 :attribute 必须介于 :min - :max 个字符之间',
         'array' => '当 :other 为 :value 时 :attribute 必须只有 :min - :max 个单元',
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

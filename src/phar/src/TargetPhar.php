@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
-use Phar;
+use Stringable;
 use Symfony\Component\Finder\Finder;
 use Traversable;
 
-class TargetPhar
+class TargetPhar implements Stringable
 {
-    public function __construct(private Phar $phar, private PharBuilder $pharBuilder)
+    public function __construct(private readonly CustomPhar $phar, private readonly PharBuilder $pharBuilder)
     {
         $phar->startBuffering();
     }
@@ -71,7 +72,7 @@ class TargetPhar
     /**
      * Create the default execution file.
      */
-    public function createDefaultStub(string $indexFile, string $webIndexFile = null): string
+    public function createDefaultStub(string $indexFile, ?string $webIndexFile = null): string
     {
         $params = [$indexFile];
         if ($webIndexFile != null) {
@@ -95,5 +96,13 @@ class TargetPhar
     public function addFromString(string $local, string $contents): void
     {
         $this->phar->addFromString($local, $contents);
+    }
+
+    /**
+     * 保存文件.
+     */
+    public function save(): void
+    {
+        $this->phar->save();
     }
 }

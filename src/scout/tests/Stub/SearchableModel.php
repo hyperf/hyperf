@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Scout\Stub;
 
+use Closure;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Searchable;
 
@@ -24,7 +26,7 @@ class SearchableModel extends Model
     protected array $fillable = ['id'];
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $queryCallback;
 
@@ -38,7 +40,7 @@ class SearchableModel extends Model
         return [];
     }
 
-    public function setQueryCallback(\Closure $closure)
+    public function setQueryCallback(Closure $closure)
     {
         $this->queryCallback = $closure;
     }

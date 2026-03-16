@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Redis\Stub;
+
+use Exception;
 
 class RedisConnectionFailedStub extends RedisConnectionStub
 {
     public function getConnection()
     {
-        throw new \Exception('Get connection failed.');
+        throw new Exception('Get connection failed.');
     }
 }

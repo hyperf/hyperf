@@ -251,7 +251,7 @@ For example, when you need to delete a `Topic`, you could execute the following 
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();
@@ -262,8 +262,8 @@ $client->delete('hyperf.test');
 ```
 
 - `Hyperf\Nsq\Api\Topic` class corresponds to `topic` related API;
-- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API；
-- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API；
+- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API;
+- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API;
 
 ## NSQ Protocol
 

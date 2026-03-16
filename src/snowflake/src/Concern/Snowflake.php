@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Snowflake\Concern;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
 
 trait Snowflake
 {

@@ -9,13 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Validator;
+
+use function Hyperf\Support\make;
 
 trait FormatsMessages
 {
@@ -33,8 +37,8 @@ trait FormatsMessages
 
         $message = $this->replaceInputPlaceholder($message, $attribute);
 
-        if (isset($this->replacers[Str::snake($rule)])) {
-            return $this->callReplacer($message, $attribute, Str::snake($rule), $parameters, $this);
+        if (isset($this->replacers[StrCache::snake($rule)])) {
+            return $this->callReplacer($message, $attribute, StrCache::snake($rule), $parameters, $this);
         }
         if (method_exists($this, $replacer = "replace{$rule}")) {
             return $this->{$replacer}($message, $attribute, $rule, $parameters);
@@ -76,7 +80,7 @@ trait FormatsMessages
             return $attribute;
         }
 
-        return str_replace('_', ' ', Str::snake($attribute));
+        return str_replace('_', ' ', StrCache::snake($attribute));
     }
 
     /**
@@ -90,10 +94,22 @@ trait FormatsMessages
             return $this->customValues[$attribute][$value];
         }
 
+        if (is_array($value)) {
+            return 'array';
+        }
+
         $key = "validation.values.{$attribute}.{$value}";
 
         if (($line = $this->translator->trans($key)) !== $key) {
             return $line;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_null($value)) {
+            return 'empty';
         }
 
         return (string) $value;
@@ -113,7 +129,7 @@ trait FormatsMessages
             return $inlineMessage;
         }
 
-        $lowerRule = Str::snake($rule);
+        $lowerRule = StrCache::snake($rule);
 
         $customMessage = $this->getCustomMessageFromTranslator(
             $customKey = "validation.custom.{$attribute}.{$lowerRule}"
@@ -156,7 +172,7 @@ trait FormatsMessages
      */
     protected function getInlineMessage(string $attribute, string $rule)
     {
-        $inlineEntry = $this->getFromLocalArray($attribute, Str::snake($rule));
+        $inlineEntry = $this->getFromLocalArray($attribute, StrCache::snake($rule));
 
         return is_array($inlineEntry) && in_array($rule, $this->sizeRules)
             ? $inlineEntry[$this->getAttributeType($attribute)]
@@ -229,7 +245,7 @@ trait FormatsMessages
      */
     protected function getSizeMessage(string $attribute, string $rule): string
     {
-        $lowerRule = Str::snake($rule);
+        $lowerRule = StrCache::snake($rule);
 
         // There are three different types of size validations. The attribute may be
         // either a number, file, or string so we will check a few things to know
@@ -331,7 +347,7 @@ trait FormatsMessages
     /**
      * Call a class based validator message replacer.
      *
-     * @param \Hyperf\Validation\Validator $validator
+     * @param Validator $validator
      */
     protected function callClassBasedReplacer(string $callback, string $message, string $attribute, string $rule, array $parameters, $validator): string
     {

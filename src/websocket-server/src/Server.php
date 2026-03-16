@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Context\Context;
@@ -37,20 +38,24 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
-use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Http\Server as SwCoServer;
+use Swoole\Http\Request;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection as SwowServerConnection;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\wait;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
@@ -83,7 +88,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function getServer(): SwCoServer|WebSocketServer|HttpServer
+    public function getServer(): HttpServer|SwCoServer|WebSocketServer
     {
         if ($this->server) {
             return $this->server;
@@ -107,8 +112,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     }
 
     /**
-     * @param \Swoole\Http\Request|\Swow\Http\Server\Request $request
-     * @param Connection|SwooleResponse $response
+     * @param Request|\Swow\Http\Server\Request $request
+     * @param SwooleResponse|SwowServerConnection $response
      */
     public function onHandShake($request, $response): void
     {
@@ -125,7 +130,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $key = $psr7Request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
             if ($security->isInvalidSecurityKey($key)) {
-                throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
+                throw new WebSocketHandShakeException('sec-websocket-key is invalid!');
             }
 
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
@@ -143,14 +148,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $class = $psr7Response->getAttribute(CoreMiddleware::HANDLER_NAME);
 
             if (empty($class)) {
-                $this->logger->warning('WebSocket hande shake failed, because the class does not exists.');
+                $this->logger->warning('WebSocket handshake failed, because the class does not exists.');
                 return;
             }
 
             FdCollector::set($fd, $class);
             $server = $this->getServer();
             if (Constant::isCoroutineServer($server)) {
-                $upgrade = new WebSocket($response, $request);
+                $upgrade = new WebSocket($response, $request, $this->logger);
 
                 $this->getSender()->setResponse($fd, $response);
                 $this->deferOnOpen($request, $class, $response, $fd);
@@ -197,13 +202,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance = $this->container->get($fdObj->class);
 
         if (! $instance instanceof OnMessageInterface) {
-            $this->logger->warning("{$instance} is not instanceof " . OnMessageInterface::class);
+            $this->logger->warning($instance::class . ' is not instanceof ' . OnMessageInterface::class);
             return;
         }
 
         try {
             $instance->onMessage($server, $frame);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->error((string) $exception);
         }
     }
@@ -228,7 +233,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         if ($instance instanceof OnCloseInterface) {
             try {
                 $instance->onClose($server, $fd, $reactorId);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->error((string) $exception);
             }
         }
@@ -241,8 +246,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     /**
      * @param mixed $request
+     * @param SwooleResponse|SwowServerConnection|WebSocketServer $server
      */
-    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer|Connection $server, int $fd)
+    protected function deferOnOpen($request, string $class, mixed $server, int $fd)
     {
         $instance = $this->container->get($class);
         if ($server instanceof WebSocketServer) {

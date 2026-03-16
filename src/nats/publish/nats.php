@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Nats\Driver\NatsDriver;
+use Hyperf\Nats\Encoders\JSONEncoder;
+
 return [
     'default' => [
-        'driver' => Hyperf\Nats\Driver\NatsDriver::class,
-        'encoder' => Hyperf\Nats\Encoders\JSONEncoder::class,
+        'driver' => NatsDriver::class,
+        'encoder' => JSONEncoder::class,
         'timeout' => 10.0,
         'options' => [
             'host' => '127.0.0.1',

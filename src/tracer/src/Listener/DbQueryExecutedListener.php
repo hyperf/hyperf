@@ -9,22 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Listener;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Stringable\Str;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use OpenTracing\Tracer;
+
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
 
 class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -53,9 +55,12 @@ class DbQueryExecutedListener implements ListenerInterface
         $endTime = microtime(true);
         $span = $this->startSpan($this->spanTagManager->get('db', 'db.query'), [
             'start_time' => (int) (($endTime - $event->time / 1000) * 1000 * 1000),
-        ]);
+        ], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('db', 'db.statement'), $sql);
         $span->setTag($this->spanTagManager->get('db', 'db.query_time'), $event->time . ' ms');
+        $span->setTag($this->spanTagManager->get('db', 'db.engine'), $event->connection->getDriverName());
+        $span->setTag($this->spanTagManager->get('db', 'db.instance'), $event->connection->getDatabaseName());
+        $span->setTag($this->spanTagManager->get('db', 'db.user'), $event->connection->getConfig('username'));
         $span->finish((int) ($endTime * 1000 * 1000));
     }
 }

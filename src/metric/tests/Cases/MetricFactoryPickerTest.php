@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
@@ -21,12 +22,15 @@ use Hyperf\Metric\Adapter\StatsD\MetricFactory as StatsDFactory;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Process\ProcessCollector;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Swoole\Process;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MetricFactoryPickerTest extends TestCase
 {
     protected function tearDown(): void
@@ -96,7 +100,7 @@ class MetricFactoryPickerTest extends TestCase
                 ],
             ],
         ]);
-        ProcessCollector::add('dummy', Mockery::mock(\Swoole\Process::class));
+        ProcessCollector::add('dummy', Mockery::mock(Process::class));
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(RemoteFactory::class)->andReturn(Mockery::mock(RemoteFactory::class));
@@ -123,7 +127,7 @@ class MetricFactoryPickerTest extends TestCase
                 ],
             ],
         ]);
-        ProcessCollector::add('dummy', Mockery::mock(\Swoole\Process::class));
+        ProcessCollector::add('dummy', Mockery::mock(Process::class));
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(PrometheusFactory::class)->andReturn(Mockery::mock(PrometheusFactory::class));

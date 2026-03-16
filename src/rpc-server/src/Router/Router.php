@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Router;
 
 /**
@@ -31,7 +32,7 @@ class Router
     {
         $temp = $serverName;
         static::$serverName = $serverName;
-        call($callback);
+        $callback();
         static::$serverName = $temp;
         unset($temp);
     }

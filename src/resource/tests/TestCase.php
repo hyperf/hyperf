@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Resource;
 
 use FastRoute\Dispatcher;
@@ -24,17 +25,19 @@ use Hyperf\HttpServer\CoreMiddleware as HttpServerCore;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
@@ -88,7 +91,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
         $handle = Mockery::mock(RequestHandlerInterface::class);
 
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
 
         $request->shouldReceive(...['getAttribute'])
             ->with(...[Dispatched::class])

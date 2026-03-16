@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
 use Closure;
 use Generator;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
+use Throwable;
 
 interface ConnectionInterface
 {
@@ -83,7 +85,7 @@ interface ConnectionInterface
     /**
      * Execute a Closure within a transaction.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1);
 

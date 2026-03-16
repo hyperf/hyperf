@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class FileHandlerFactory
@@ -23,7 +25,7 @@ class FileHandlerFactory
         $path = $config->get('session.options.path');
         $minutes = $config->get('session.options.gc_maxlifetime', 1200);
         if (! $path) {
-            throw new \InvalidArgumentException('Invalid session path.');
+            throw new InvalidArgumentException('Invalid session path.');
         }
         return new FileHandler($container->get(Filesystem::class), $path, $minutes);
     }

@@ -9,16 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigAliyunAcm;
 
 use GuzzleHttp;
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
-use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Throwable;
 
 class Client implements ClientInterface
 {
@@ -28,7 +30,7 @@ class Client implements ClientInterface
 
     private LoggerInterface $logger;
 
-    private array $servers;
+    private array $servers = [];
 
     /**
      * @var array[]
@@ -102,7 +104,7 @@ class Client implements ClientInterface
                 return [];
             }
             return Json::decode($content);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->logger->error(sprintf('%s[line:%d] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
             return [];
         }
@@ -116,6 +118,8 @@ class Client implements ClientInterface
     private function getSecurityCredentialsWithEcsRamRole(string $ecsRamRole): ?array
     {
         $securityCredentials = $this->cachedSecurityCredentials[$ecsRamRole] ?? null;
+
+        /* @phpstan-ignore-next-line */
         if (! empty($securityCredentials) && time() > strtotime($securityCredentials['Expiration']) - 60) {
             $securityCredentials = null;
         }

@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger;
 
 use Hyperf\Swagger\Command\GenCommand;
+use Hyperf\Swagger\Command\GenSchemaCommand;
+use Hyperf\Swagger\Listener\BootSwaggerListener;
 
 class ConfigProvider
 {
@@ -20,6 +23,18 @@ class ConfigProvider
         return [
             'commands' => [
                 GenCommand::class,
+                GenSchemaCommand::class,
+            ],
+            'listeners' => [
+                BootSwaggerListener::class,
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of swagger.',
+                    'source' => __DIR__ . '/../publish/swagger.php',
+                    'destination' => BASE_PATH . '/config/autoload/swagger.php',
+                ],
             ],
         ];
     }

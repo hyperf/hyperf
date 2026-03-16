@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Annotation\Command;
@@ -18,7 +19,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\HttpServer\Router\RouteCollector;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -84,10 +85,8 @@ class RoutesCommand extends HyperfCommand
             $action = $handler->callback[0] . '::' . $handler->callback[1];
         } elseif (is_string($handler->callback)) {
             $action = $handler->callback;
-        } elseif (is_callable($handler->callback)) {
-            $action = 'Closure';
         } else {
-            $action = (string) $handler->callback;
+            $action = 'Closure';
         }
         $unique = "{$serverName}|{$uri}|{$action}";
         if (isset($data[$unique])) {
@@ -98,12 +97,14 @@ class RoutesCommand extends HyperfCommand
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
             $middlewares = array_merge($middlewares, $registeredMiddlewares);
+            $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
+
             $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],
                 'uri' => $uri,
                 'action' => $action,
-                'middleware' => implode(PHP_EOL, array_unique($middlewares)),
+                'middleware' => implode(PHP_EOL, $middlewares),
             ];
         }
     }

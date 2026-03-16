@@ -9,18 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpMessage\Base\Response;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\MessageBag;
+use Hyperf\Support\MessageBag;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\ValidationExceptionHandler;
 use Hyperf\Validation\ValidatorFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -28,6 +30,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationExceptionTest extends TestCase
 {
     protected function tearDown(): void

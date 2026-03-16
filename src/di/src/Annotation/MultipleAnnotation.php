@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\AnnotationException;
@@ -57,6 +58,11 @@ class MultipleAnnotation implements MultipleAnnotationInterface
     public function collectClass(string $className): void
     {
         throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClass()');
+    }
+
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClassConstant()');
     }
 
     public function collectMethod(string $className, ?string $target): void

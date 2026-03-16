@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Component\ComponentAttributeBag;
 use Hyperf\ViewEngine\T;
 
@@ -58,11 +59,8 @@ trait CompilesComponents
 
     /**
      * Sanitize the given component attribute value.
-     *
-     * @param mixed $value
-     * @return mixed
      */
-    public static function sanitizeComponentAttribute($value)
+    public static function sanitizeComponentAttribute(mixed $value): mixed
     {
         return is_string($value)
         || (is_object($value) && ! $value instanceof ComponentAttributeBag && method_exists($value, '__toString'))

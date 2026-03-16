@@ -59,3 +59,29 @@ return [
 ];
 ```
 
+## 阿里雲服務鑑權
+
+當使用阿里雲的 Nacos 服務時，可能需要使用 AK 和 SK 鑑權，Nacos 元件對其進行了原生支援，我們可以方便的增加對應配置，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+    // 'uri' => 'http://127.0.0.1:8848/',
+    // The nacos host info
+    'host' => '127.0.0.1',
+    'port' => 8848,
+    // The nacos account info
+    'username' => null,
+    'password' => null,
+    'access_key' => 'xxxx',
+    'access_secret' => 'yyyy',
+    'guzzle' => [
+        'config' => null,
+    ],
+];
+```
+

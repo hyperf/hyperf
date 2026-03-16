@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -18,10 +19,11 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    protected LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -54,7 +56,7 @@ class OnPipeMessageListener implements ListenerInterface
                         $this->handleCallable($data);
                         break;
                 }
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->logger?->error($throwable->getMessage());
             }
         }

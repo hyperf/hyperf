@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Framework\Event\OnWorkerExit;
-use Hyperf\Utils\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 

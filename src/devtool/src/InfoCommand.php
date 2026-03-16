@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool;
 
 use Hyperf\Command\Annotation\Command;
@@ -30,11 +31,12 @@ class InfoCommand extends SymfonyCommand
         $this->setDescription('Dump the server info.')->addArgument('type', InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getArgument('type');
         if (! $this->info->has($type)) {
             $output->writeln(sprintf('<error>Error</error> Info type [%s] not exist.', $type));
+            return 0;
         }
         $adapter = $this->info->get($type);
         $adapter->execute($input, $output);

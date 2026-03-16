@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coordinator;
 
 use Hyperf\Engine\Channel;
@@ -32,6 +33,11 @@ class Coordinator
     public function yield($timeout = -1): bool
     {
         $this->channel->pop((float) $timeout);
+        return $this->channel->isClosing();
+    }
+
+    public function isClosing(): bool
+    {
         return $this->channel->isClosing();
     }
 

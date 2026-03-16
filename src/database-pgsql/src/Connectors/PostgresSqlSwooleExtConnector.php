@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Connectors;
 
+use Exception;
 use Hyperf\Database\Connectors\ConnectorInterface;
 use Swoole\Coroutine\PostgreSQL;
 
@@ -46,17 +48,23 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
     {
         $connection = new PostgreSQL();
 
-        $result = $connection->connect(sprintf(
+        $conn = sprintf(
             'host=%s port=%s dbname=%s user=%s password=%s',
             $config['host'],
             $config['port'],
             $config['database'],
             $config['username'],
             $config['password']
-        ));
+        );
+
+        if (isset($config['pool']['connect_timeout'])) {
+            $result = $connection->connect($conn, $config['pool']['connect_timeout']);
+        } else {
+            $result = $connection->connect($conn);
+        }
 
         if ($result === false) {
-            throw new \Exception($connection->error);
+            throw new Exception($connection->error ?? 'Create connection failed, Please check the database configuration.');
         }
 
         return $connection;
@@ -118,8 +126,8 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
     /**
      * Set the schema on the connection.
      *
-     * @param $connection
      * @param array $config
+     * @param mixed $connection
      */
     protected function configureApplicationName($connection, $config)
     {
@@ -131,8 +139,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
 
     /**
      * Configure the synchronous_commit setting.
-     *
-     * @param $connection
+     * @param mixed $connection
      */
     protected function configureSynchronousCommit($connection, array $config)
     {

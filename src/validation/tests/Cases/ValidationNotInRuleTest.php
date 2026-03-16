@@ -9,16 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Rule;
 use Hyperf\Validation\Rules\NotIn;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationNotInRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()

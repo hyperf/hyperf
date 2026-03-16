@@ -24,7 +24,7 @@ return [
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Etcd\KVInterface;
 
 $client = ApplicationContext::getContainer()->get(KVInterface::class);

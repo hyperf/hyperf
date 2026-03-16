@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\SidProvider;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Session;
 use Hyperf\SocketIOServer\SocketIO;
+use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 
 class SessionSidProvider implements SidProviderInterface
@@ -69,7 +71,7 @@ class SessionSidProvider implements SidProviderInterface
     {
         $handler = $this->config->get('session.handler');
         if (! $handler || ! class_exists($handler)) {
-            throw new \InvalidArgumentException('Invalid handler of session');
+            throw new InvalidArgumentException('Invalid handler of session');
         }
         return $this->container->get($handler);
     }

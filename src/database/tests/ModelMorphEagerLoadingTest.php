@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Events\QueryExecuted;
@@ -21,6 +22,7 @@ use HyperfTest\Database\Stubs\Model\Book;
 use HyperfTest\Database\Stubs\Model\Image;
 use HyperfTest\Database\Stubs\Model\User;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -28,6 +30,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelMorphEagerLoadingTest extends TestCase
 {
     /**

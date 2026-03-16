@@ -63,11 +63,13 @@ Router::addGroup(
 ### 通过注解定义
 
 在通过注解定义路由时，您仅可通过注解的方式来定义中间件，对中间件的定义有两个注解，分别为：   
-  - `@Middleware` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
-  - `@Middlewares` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `@Middleware` 注解实现多个中间件的定义
+  - `#[Middleware]` 注解为定义单个中间件时使用，在一个地方仅可定义一个该注解，不可重复定义
+  - `#[Middlewares]` 注解为定义多个中间件时使用，在一个地方仅可定义一个该注解，然后通过在该注解内定义多个 `#[Middleware]` 注解实现多个中间件的定义
 
-> 使用 `@Middleware` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
-> 使用 `@Middlewares` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
+> 使用 `#[Middleware]` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
+> 使用 `#[Middlewares]` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
+
+***注意：必须配合 `#[AutoController]` 或者 `#[Controller]` 使用***
 
 定义单个中间件：
 
@@ -90,7 +92,7 @@ class IndexController
 }
 ```
 
-定义多个中间件：
+通过 `#[Middlewares]` 注解定义多个中间件：
 
 ```php
 <?php
@@ -103,7 +105,31 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
-#[Middlewares(FooMiddleware::class, BarMiddleware::class)]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class])]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+通过 `#[Middleware]` 注解定义多个中间件：
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -202,6 +228,44 @@ class FooMiddleware implements MiddlewareInterface
 ## 中间件的执行顺序
 
 我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 类级别中间件 -> 方法级别中间件`。
+
+
+在`>=3.0.34`的版本中，新增了优先级的配置，可以在配置方法、路由中间件的时候改变中间件的执行顺序，优先级越高，执行顺序越靠前。
+
+```php
+// 全局中间件配置文件 middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+// 路由中间件配置
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+// 注解中间件配置
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
 
 ## 全局更改请求和响应对象
 
@@ -323,4 +387,48 @@ location / {
         return 204;
     }
 }
+```
+
+### 后置中间件
+
+通常情况下，我们都是最后执行
+
+```
+return $handler->handle($request);
+```
+
+所以，相当于是前置中间件，如果想要让中间件逻辑后置，其实只需要更换一下执行顺序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 后置操作
+        }
+        return $result;
+    }
+}
+
 ```

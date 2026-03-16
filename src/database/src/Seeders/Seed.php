@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Seeders;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Seed
@@ -42,6 +43,16 @@ class Seed
      */
     public function __construct(protected Resolver $resolver, protected Filesystem $files)
     {
+    }
+
+    public function path(string $path): void
+    {
+        $this->paths = array_unique(array_merge($this->paths, [$path]));
+    }
+
+    public function paths(): array
+    {
+        return $this->paths;
     }
 
     /**

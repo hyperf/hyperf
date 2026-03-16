@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\ConnectionInterface;
@@ -16,12 +17,14 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Processors\Processor;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ProcessorTest extends TestCase
 {
     protected function tearDown(): void
@@ -50,7 +53,7 @@ class ProcessorTestPDOStub extends PDO
     {
     }
 
-    public function lastInsertId($sequence = null): string|false
+    public function lastInsertId($sequence = null): false|string
     {
     }
 }

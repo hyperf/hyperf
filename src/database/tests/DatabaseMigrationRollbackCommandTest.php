@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
 use Hyperf\Database\Migrations\Migrator;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -22,6 +25,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseMigrationRollbackCommandTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -30,6 +34,8 @@ class DatabaseMigrationRollbackCommandTest extends TestCase
     {
         parent::setUp();
         ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
+
+        ContainerStub::unsetContainer();
     }
 
     protected function tearDown(): void
@@ -43,7 +49,7 @@ class DatabaseMigrationRollbackCommandTest extends TestCase
         $migrator->shouldReceive('paths')->once()->andReturn([]);
         $migrator->shouldReceive('setConnection')->once()->with('default');
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
-        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => false, 'step' => 0]);
+        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => false, 'step' => 0, 'batch' => 0]);
 
         $this->runCommand($command);
     }
@@ -54,9 +60,20 @@ class DatabaseMigrationRollbackCommandTest extends TestCase
         $migrator->shouldReceive('paths')->once()->andReturn([]);
         $migrator->shouldReceive('setConnection')->once()->with('default');
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
-        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => false, 'step' => 2]);
+        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => false, 'step' => 2, 'batch' => 0]);
 
         $this->runCommand($command, ['--step' => 2]);
+    }
+
+    public function testRollbackCommandCallsMigratorWithBatchOption()
+    {
+        $command = new RollbackCommand($migrator = Mockery::mock(Migrator::class));
+        $migrator->shouldReceive('paths')->once()->andReturn([]);
+        $migrator->shouldReceive('setConnection')->once()->with('default');
+        $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
+        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => false, 'step' => 0, 'batch' => 2]);
+
+        $this->runCommand($command, ['--batch' => 2]);
     }
 
     public function testRollbackCommandCanBePretended()
@@ -76,7 +93,7 @@ class DatabaseMigrationRollbackCommandTest extends TestCase
         $migrator->shouldReceive('paths')->once()->andReturn([]);
         $migrator->shouldReceive('setConnection')->once()->with('foo');
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);
-        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => true, 'step' => 2]);
+        $migrator->shouldReceive('rollback')->once()->with([BASE_PATH . DIRECTORY_SEPARATOR . 'migrations'], ['pretend' => true, 'step' => 2, 'batch' => 0]);
 
         $this->runCommand($command, ['--pretend' => true, '--database' => 'foo', '--step' => 2]);
     }

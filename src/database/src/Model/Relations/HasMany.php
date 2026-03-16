@@ -9,10 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Collection;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
+ */
 class HasMany extends HasOneOrMany
 {
     /**

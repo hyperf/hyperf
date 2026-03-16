@@ -9,23 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Session;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Session\Handler\FileHandler;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FileHandlerTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testReadAndWrite()
@@ -78,7 +82,7 @@ class FileHandlerTest extends TestCase
 
     public function testReadAfterRewritten()
     {
-        $fs = \Mockery::mock(Filesystem::class . '[lastModified]');
+        $fs = Mockery::mock(Filesystem::class . '[lastModified]');
         $chan = new Channel(1);
         $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(function (string $path) {
             return 0;

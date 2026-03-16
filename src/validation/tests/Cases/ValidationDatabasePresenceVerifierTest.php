@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Closure;
@@ -17,12 +18,14 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationDatabasePresenceVerifierTest extends TestCase
 {
     protected function tearDown(): void

@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Task\Stub;
+
+use RuntimeException;
 
 class Foo
 {
@@ -20,7 +23,7 @@ class Foo
 
     public function exception()
     {
-        throw new \RuntimeException('Foo::exception failed.');
+        throw new RuntimeException('Foo::exception failed.');
     }
 
     public function getIdAndName($id, $name)

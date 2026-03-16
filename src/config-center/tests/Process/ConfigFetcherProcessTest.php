@@ -9,23 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigCenter\Process;
 
 use Hyperf\Config\Config;
 use Hyperf\ConfigCenter\DriverFactory;
 use Hyperf\ConfigCenter\Mode;
 use Hyperf\ConfigCenter\Process\ConfigFetcherProcess;
-use Hyperf\ConfigEtcd;
 use Hyperf\ConfigEtcd\EtcdDriver;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Di\Container;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\ConfigCenter\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -34,6 +35,7 @@ use Swoole\Server;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConfigFetcherProcessTest extends TestCase
 {
     protected function tearDown(): void
@@ -99,8 +101,8 @@ class ConfigFetcherProcessTest extends TestCase
             return $logger;
         });
         $container->shouldReceive('get')->with(DriverFactory::class)->andReturn(new DriverFactory($config));
-        $container->shouldReceive('make')->with(ConfigEtcd\EtcdDriver::class, Mockery::any())->andReturnUsing(function () {
-            $driver = Mockery::mock(ConfigEtcd\EtcdDriver::class);
+        $container->shouldReceive('make')->with(EtcdDriver::class, Mockery::any())->andReturnUsing(function () {
+            $driver = Mockery::mock(EtcdDriver::class);
             $driver->shouldReceive('setServer')->once()->andReturnSelf();
             $driver->shouldReceive('createMessageFetcherLoop')->once()->andReturnNull();
             return $driver;

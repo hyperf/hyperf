@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
 use Hyperf\Contract\ConfigInterface;
@@ -62,7 +63,8 @@ trait CompilesConditionals
     protected function compileEnv(string $environments): string
     {
         $config = ConfigInterface::class;
-        return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), {$environments})): ?>";
+        $environments = trim($environments, '()[]');
+        return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), [{$environments}])): ?>";
     }
 
     /**
@@ -78,7 +80,7 @@ trait CompilesConditionals
      */
     protected function compileProduction(): string
     {
-        return $this->compileEnv("['prod', 'production']");
+        return $this->compileEnv("'prod', 'production'");
     }
 
     /**

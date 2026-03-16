@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
@@ -19,7 +20,7 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess
 {
-    protected string $queue = 'default';
+    protected string $pool = 'default';
 
     protected DriverInterface $driver;
 
@@ -29,22 +30,24 @@ class ConsumerProcess extends AbstractProcess
     {
         parent::__construct($container);
 
-        $factory = $this->container->get(DriverFactory::class);
-        $this->driver = $factory->get($this->queue);
-        $this->config = $factory->getConfig($this->queue);
+        // compatible with older versions, will be removed in v3.2, use `$pool` instead.
+        if (property_exists($this, 'queue')) {
+            if ($container->has(StdoutLoggerInterface::class)) {
+                $container->get(StdoutLoggerInterface::class)->warning(sprintf('The property "%s::$queue" is deprecated since v3.1 and will be removed in v3.2, use "%s::$pool" instead.', self::class, self::class));
+            }
+            $this->pool = $this->queue;
+        }
 
-        $this->name = "queue.{$this->queue}";
+        $factory = $this->container->get(DriverFactory::class);
+        $this->driver = $factory->get($this->pool);
+        $this->config = $factory->getConfig($this->pool);
+
+        $this->name = "queue.{$this->pool}";
         $this->nums = $this->config['processes'] ?? 1;
     }
 
     public function handle(): void
     {
-        if (! $this->driver instanceof DriverInterface) {
-            $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
-            return;
-        }
-
         $this->driver->consume();
     }
 }

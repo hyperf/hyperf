@@ -9,20 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Socket;
 
 use Hyperf\Protocol\Packer\SerializePacker;
 use Hyperf\Socket\Socket;
 use HyperfTest\Socket\Stub\DemoStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Socket as CoSocket;
 use Swoole\Process;
+
+use function Hyperf\Coroutine\run;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SocketTest extends TestCase
 {
     protected function tearDown(): void
@@ -61,9 +67,7 @@ class SocketTest extends TestCase
         $this->assertEquals($demo, $res);
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testProcessStreamSocket()
     {
         $demo = new DemoStub();
@@ -85,9 +89,7 @@ class SocketTest extends TestCase
         });
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testProcessDgramSocket()
     {
         $demo = new DemoStub();

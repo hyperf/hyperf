@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
@@ -17,8 +18,8 @@ use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Composer;
+use Hyperf\Support\Filesystem\Filesystem;
 use ReflectionClass;
 
 class Scanner
@@ -32,7 +33,7 @@ class Scanner
         $this->filesystem = new Filesystem();
     }
 
-    public function collect(AnnotationReader $reader, ReflectionClass $reflection)
+    public function collect(AnnotationReader $reader, ReflectionClass $reflection): void
     {
         $className = $reflection->getName();
         if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
@@ -42,40 +43,37 @@ class Scanner
             }
         }
         // Parse class annotations
-        $classAnnotations = $reader->getClassAnnotations($reflection);
-        if (! empty($classAnnotations)) {
-            foreach ($classAnnotations as $classAnnotation) {
-                if ($classAnnotation instanceof AnnotationInterface) {
-                    $classAnnotation->collectClass($className);
-                }
+        foreach ($reader->getAttributes($reflection) as $classAnnotation) {
+            if ($classAnnotation instanceof AnnotationInterface) {
+                $classAnnotation->collectClass($className);
             }
         }
         // Parse properties annotations
-        $properties = $reflection->getProperties();
-        foreach ($properties as $property) {
-            $propertyAnnotations = $reader->getPropertyAnnotations($property);
-            if (! empty($propertyAnnotations)) {
-                foreach ($propertyAnnotations as $propertyAnnotation) {
-                    if ($propertyAnnotation instanceof AnnotationInterface) {
-                        $propertyAnnotation->collectProperty($className, $property->getName());
-                    }
+        foreach ($reflection->getProperties() as $property) {
+            foreach ($reader->getAttributes($property) as $propertyAnnotation) {
+                if ($propertyAnnotation instanceof AnnotationInterface) {
+                    $propertyAnnotation->collectProperty($className, $property->getName());
                 }
             }
         }
         // Parse methods annotations
-        $methods = $reflection->getMethods();
-        foreach ($methods as $method) {
-            $methodAnnotations = $reader->getMethodAnnotations($method);
-            if (! empty($methodAnnotations)) {
-                foreach ($methodAnnotations as $methodAnnotation) {
-                    if ($methodAnnotation instanceof AnnotationInterface) {
-                        $methodAnnotation->collectMethod($className, $method->getName());
-                    }
+        foreach ($reflection->getMethods() as $method) {
+            foreach ($reader->getAttributes($method) as $methodAnnotation) {
+                if ($methodAnnotation instanceof AnnotationInterface) {
+                    $methodAnnotation->collectMethod($className, $method->getName());
+                }
+            }
+        }
+        // Parse class constants annotations
+        foreach ($reflection->getReflectionConstants() as $classConstant) {
+            foreach ($reader->getAttributes($classConstant) as $constantAnnotation) {
+                if ($constantAnnotation instanceof AnnotationInterface) {
+                    $constantAnnotation->collectClassConstant($className, $classConstant->getName());
                 }
             }
         }
 
-        unset($reflection, $classAnnotations, $properties, $methods);
+        unset($reflection);
     }
 
     public function scan(array $classMap = [], string $proxyDir = ''): array
@@ -131,8 +129,9 @@ class Scanner
         $classMap = array_merge($reflectionClassMap, $classMap);
         $proxyManager = new ProxyManager($classMap, $proxyDir);
         $proxies = $proxyManager->getProxies();
+        $aspectClasses = $proxyManager->getAspectClasses();
 
-        $this->putCache($this->path, serialize([$data, $proxies]));
+        $this->putCache($this->path, serialize([$data, $proxies, $aspectClasses]));
         exit;
     }
 
@@ -173,23 +172,6 @@ class Scanner
         return $proxies;
     }
 
-    protected function deserializeCachedCollectors(array $collectors): int
-    {
-        if (! file_exists($this->path)) {
-            return 0;
-        }
-
-        $data = unserialize(file_get_contents($this->path));
-        foreach ($data as $collector => $deserialized) {
-            /** @var MetadataCollector $collector */
-            if (in_array($collector, $collectors)) {
-                $collector::deserialize($deserialized);
-            }
-        }
-
-        return $this->filesystem->lastModified($this->path);
-    }
-
     /**
      * @param ReflectionClass[] $reflections
      */
@@ -201,6 +183,9 @@ class Scanner
         $data = [];
         if ($this->filesystem->exists($path)) {
             $data = unserialize($this->filesystem->get($path));
+            if (! $data) {
+                $data = [];
+            }
         }
 
         $this->putCache($path, serialize($classes));
@@ -299,6 +284,9 @@ class Scanner
         $data = [];
         if ($this->filesystem->exists($path)) {
             $data = unserialize($this->filesystem->get($path));
+            if (! $data) {
+                $data = [];
+            }
         }
 
         $this->putCache($path, serialize($classes));

@@ -10,18 +10,28 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\Metric\Adapter\Prometheus\Constants;
+use Hyperf\Metric\Adapter\Prometheus\MetricFactory;
+
+use function Hyperf\Support\env;
 
 return [
     // To disable hyperf/metric temporarily, set default driver to noop.
     'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('METRIC_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('METRIC_ENABLE_DEFAULT_METRIC', true),
+    'enable_command_metric' => env('METRIC_ENABLE_COMMAND_METRIC', true),
     'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
+    // only available when use_standalone_process is true
+    'buffer_interval' => env('METRIC_BUFFER_INTERVAL', 5),
+    'buffer_size' => env('METRIC_BUFFER_SIZE', 200),
     'metric' => [
         'prometheus' => [
-            'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
+            'driver' => MetricFactory::class,
             'mode' => Constants::SCRAPE_MODE,
             'namespace' => env('APP_NAME', 'skeleton'),
+            'redis_config' => env('PROMETHEUS_REDIS_CONFIG', 'default'),
+            'redis_prefix' => env('PROMETHEUS_REDIS_PREFIX', 'prometheus:'),
+            'redis_gather_key_suffix' => env('PROMETHEUS_REDIS_GATHER_KEY_SUFFIX', ':metric_keys'),
             'scrape_host' => env('PROMETHEUS_SCRAPE_HOST', '0.0.0.0'),
             'scrape_port' => env('PROMETHEUS_SCRAPE_PORT', '9502'),
             'scrape_path' => env('PROMETHEUS_SCRAPE_PATH', '/metrics'),
@@ -34,6 +44,8 @@ return [
             'namespace' => env('APP_NAME', 'skeleton'),
             'udp_host' => env('STATSD_UDP_HOST', '127.0.0.1'),
             'udp_port' => env('STATSD_UDP_PORT', '8125'),
+            'timeout' => env('STATSD_CONNECTION_TIMEOUT', null),
+            'persistent' => env('STATSD_CONNECTION_PERSISTENT', true),
             'enable_batch' => env('STATSD_ENABLE_BATCH', true),
             'push_interval' => env('STATSD_PUSH_INTERVAL', 5),
             'sample_rate' => env('STATSD_SAMPLE_RATE', 1.0),

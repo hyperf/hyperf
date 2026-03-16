@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use Hyperf\Command\Command as HyperfCommand;
@@ -25,7 +26,7 @@ class BuildCommand extends HyperfCommand
         parent::__construct('phar:build');
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->setDescription('Pack your project into a Phar package.')
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default')
@@ -35,7 +36,7 @@ class BuildCommand extends HyperfCommand
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->assertWritable();
         $name = $this->input->getOption('name');
@@ -67,7 +68,7 @@ class BuildCommand extends HyperfCommand
     /**
      * check readonly.
      */
-    public function assertWritable()
+    public function assertWritable(): void
     {
         if (ini_get('phar.readonly') === '1') {
             throw new UnexpectedValueException('Your configuration disabled writing phar files (phar.readonly = On), please update your configuration');
@@ -83,7 +84,6 @@ class BuildCommand extends HyperfCommand
             throw new InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
         }
         $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class));
-
         $vendorPath = $pharBuilder->getPackage()->getVendorAbsolutePath();
         if (! is_dir($vendorPath)) {
             throw new RuntimeException('The project has not been initialized, please manually execute the command `composer install` to install the dependencies');

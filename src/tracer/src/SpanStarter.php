@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Rpc;
-use Hyperf\Utils\ApplicationContext;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
+
 use const OpenTracing\Formats\TEXT_MAP;
 use const OpenTracing\Tags\SPAN_KIND;
 use const OpenTracing\Tags\SPAN_KIND_RPC_SERVER;
@@ -30,22 +33,20 @@ trait SpanStarter
         array $option = [],
         string $kind = SPAN_KIND_RPC_SERVER
     ): Span {
-        $root = Context::get('tracer.root');
+        $root = TracerContext::getRoot();
+        $tracer = TracerContext::getTracer();
         if (! $root instanceof Span) {
             $container = ApplicationContext::getContainer();
-            /** @var ServerRequestInterface $request */
-            $request = Context::get(ServerRequestInterface::class);
+            $request = RequestContext::getOrNull();
             if (! $request instanceof ServerRequestInterface) {
-                // If the request object is absent, we are probably in a commandline context.
+                // If the request object is absent, we are probably in a commandLine context.
                 // Throwing an exception is unnecessary.
-                $root = $this->tracer->startSpan($name, $option);
+                $root = $tracer->startSpan($name, $option);
                 $root->setTag(SPAN_KIND, $kind);
-                Context::set('tracer.root', $root);
+                TracerContext::setRoot($root);
                 return $root;
             }
-            $carrier = array_map(function ($header) {
-                return $header[0];
-            }, $request->getHeaders());
+            $carrier = array_map(fn ($header) => $header[0], $request->getHeaders());
             if ($container->has(Rpc\Context::class) && $rpcContext = $container->get(Rpc\Context::class)) {
                 $rpcCarrier = $rpcContext->get('tracer.carrier');
                 if (! empty($rpcCarrier)) {
@@ -53,17 +54,17 @@ trait SpanStarter
                 }
             }
             // Extracts the context from the HTTP headers.
-            $spanContext = $this->tracer->extract(TEXT_MAP, $carrier);
+            $spanContext = $tracer->extract(TEXT_MAP, $carrier);
             if ($spanContext) {
                 $option['child_of'] = $spanContext;
             }
-            $root = $this->tracer->startSpan($name, $option);
+            $root = $tracer->startSpan($name, $option);
             $root->setTag(SPAN_KIND, $kind);
-            Context::set('tracer.root', $root);
+            TracerContext::setRoot($root);
             return $root;
         }
         $option['child_of'] = $root->getContext();
-        $child = $this->tracer->startSpan($name, $option);
+        $child = $tracer->startSpan($name, $option);
         $child->setTag(SPAN_KIND, $kind);
         return $child;
     }

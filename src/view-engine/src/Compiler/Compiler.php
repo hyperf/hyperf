@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler;
 
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 
 abstract class Compiler
@@ -63,7 +64,7 @@ abstract class Compiler
             return true;
         }
 
-        return $this->files->lastModified($path) >=
-            $this->files->lastModified($compiled);
+        return $this->files->lastModified($path)
+            >= $this->files->lastModified($compiled);
     }
 }

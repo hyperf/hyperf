@@ -9,24 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigNacos;
 
 use Hyperf\ConfigNacos\Client;
 use Hyperf\ConfigNacos\Constants;
 use Hyperf\ConfigNacos\NacosClient;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
-use Hyperf\Utils\ApplicationContext;
+use Mockery;
 use Psr\Container\ContainerInterface;
 
 class ContainerStub
 {
     public static function getContainer($handler = null)
     {
-        $container = \Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('get')->with(Application::class)->andReturnUsing(function () use ($handler) {
@@ -98,7 +100,7 @@ class ContainerStub
         ]));
 
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
-            $logger = \Mockery::mock(StdoutLoggerInterface::class);
+            $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('warning')->andReturnFalse();
             $logger->shouldReceive('info')->andReturnFalse();
             $logger->shouldReceive('critical')->andReturnUsing(function ($message) {

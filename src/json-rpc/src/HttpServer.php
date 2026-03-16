@@ -9,13 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Context\Context;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
-use Hyperf\HttpMessage\Server\Request as Psr7Request;
-use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Server;
@@ -26,8 +24,10 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
+
+use function Hyperf\Support\make;
 
 class HttpServer extends Server
 {
@@ -67,9 +67,12 @@ class HttpServer extends Server
 
     protected function initRequestAndResponse($request, $response): array
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
-        // Initialize PSR-7 Request and Response objects.
-        $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+        /**
+         * @var ServerRequestPlusInterface $psr7Request
+         * @var ResponsePlusInterface $psr7Response
+         */
+        [$psr7Request, $psr7Response] = parent::initRequestAndResponse($request, $response);
+
         if (! $this->isHealthCheck($psr7Request)) {
             if (! str_contains($psr7Request->getHeaderLine('content-type'), 'application/json')) {
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
@@ -80,15 +83,14 @@ class HttpServer extends Server
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }
         }
-        $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
-            ->withParsedBody($content['params'] ?? null)
-            ->withAttribute('data', $content ?? [])
-            ->withAttribute('request_id', $content['id'] ?? null);
+
+        $psr7Request = $psr7Request->setUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
+            ->setParsedBody($content['params'] ?? null)
+            ->setAttribute('data', $content ?? [])
+            ->setAttribute('request_id', $content['id'] ?? null);
 
         $this->getContext()->setData($content['context'] ?? []);
 
-        Context::set(ServerRequestInterface::class, $psr7Request);
-        Context::set(ResponseInterface::class, $psr7Response);
         return [$psr7Request, $psr7Response];
     }
 

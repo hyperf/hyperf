@@ -87,3 +87,35 @@ return [
 
 In the default feature implementation, a `ConfigFetcherProcess` process pulls the corresponding `namespace` configuration from Configuration Center according to the configured `interval`, and passes the new configuration pulled to each worker through IPC communication, and Update to the object corresponding to `Hyperf\Contract\ConfigInterface`.
 It should be noted that the updated configuration will only update the `Config` object, so it is only applicable to the application layer or business layer configuration. It does not involve the configuration changes of the framework layer. Because the configuration changes of the framework layer need to restart the service, if you have such a Requirements can also be achieved by implementing `ConfigFetcherProcess` on its own.
+
+## Configure update event
+
+During the running of the configuration center, if the configuration changes, the `Hyperf\ConfigCenter\Event\ConfigChanged` event will be triggered correspondingly. You can monitor these events to meet your needs.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```

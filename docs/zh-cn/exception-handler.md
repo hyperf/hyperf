@@ -5,9 +5,7 @@
 
 ## 自定义一个异常处理
 
-### 注册异常处理器
-
-目前仅支持配置文件的形式注册 `异常处理器(ExceptionHandler)`，配置文件位于 `config/autoload/exceptions.php`，将您的自定义异常处理器配置在对应的 `server` 下即可：
+### 通过配置文件注册异常处理器
 
 ```php
 <?php
@@ -21,6 +19,41 @@ return [
         ],    
     ],
 ];
+```
+
+### 通过[注解](https://github.com/hyperf/hyperf/blob/master/src/exception-handler/src/Annotation/ExceptionHandler.php)注册异常处理器
+
+```php
+<?php
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\ExceptionHandler;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Psr\Http\Message\ResponseInterface;
+use Throwable;
+use Hyperf\ExceptionHandler\Annotation\ExceptionHandler as RegisterHandler;
+
+// 这里的 http 对应 config/autoload/server.php 内的 server 所对应的 name 值
+// priority 为排序
+#[RegisterHandler(server: 'http')]
+class AppExceptionHandler extends ExceptionHandler
+{
+    public function __construct(protected StdoutLoggerInterface $logger)
+    {
+    }
+
+    public function handle(Throwable $throwable, ResponseInterface $response)
+    {
+        $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
+        $this->logger->error($throwable->getTraceAsString());
+        return $response->withHeader('Server', 'Hyperf')->withStatus(500)->withBody(new SwooleStream('Internal Server Error.'));
+    }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return true;
+    }
+}
+
 ```
 
 > 每个异常处理器配置数组的顺序决定了异常在处理器间传递的顺序。

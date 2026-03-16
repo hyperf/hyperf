@@ -9,20 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+use Hyperf\ConfigCenter\Event\ConfigChanged;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Process\ProcessCollector;
-use Hyperf\Utils\Coroutine;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Swoole\Process;
 use Swoole\Server;
+use Throwable;
+
+use function Hyperf\Support\retry;
 
 abstract class AbstractDriver implements DriverInterface
 {
@@ -62,10 +70,10 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            $this->syncConfig($config);
+                            $this->syncConfig($config, $prevConfig);
                         }
                         $prevConfig = $config;
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }
@@ -98,13 +106,20 @@ abstract class AbstractDriver implements DriverInterface
         return $this;
     }
 
-    protected function syncConfig(array $config)
+    protected function event(object $event)
+    {
+        $this->container->get(EventDispatcherInterface::class)?->dispatch($event);
+    }
+
+    protected function syncConfig(array $config, ?array $prevConfig = null)
     {
         if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
             $this->shareConfigToProcesses($config);
         } else {
             $this->updateConfig($config);
         }
+
+        $prevConfig !== null && $this->event(new ConfigChanged($config, $prevConfig));
     }
 
     protected function pull(): array
@@ -132,7 +147,7 @@ abstract class AbstractDriver implements DriverInterface
         $pipeMessage = $this->pipeMessage;
         $message = new $pipeMessage($config);
         if (! $message instanceof PipeMessageInterface) {
-            throw new \InvalidArgumentException('Invalid pipe message object.');
+            throw new InvalidArgumentException('Invalid pipe message object.');
         }
         $this->shareMessageToWorkers($message);
         $this->shareMessageToUserProcesses($message);
@@ -153,7 +168,7 @@ abstract class AbstractDriver implements DriverInterface
         $processes = ProcessCollector::all();
         if ($processes) {
             $string = serialize($message);
-            /** @var \Swoole\Process $process */
+            /** @var Process $process */
             foreach ($processes as $process) {
                 $result = $process->exportSocket()->send($string, 10);
                 if ($result === false) {

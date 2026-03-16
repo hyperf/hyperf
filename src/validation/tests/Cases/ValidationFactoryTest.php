@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Contract\TranslatorInterface;
@@ -16,12 +17,14 @@ use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Validator;
 use Hyperf\Validation\ValidatorFactory;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationFactoryTest extends TestCase
 {
     protected function tearDown(): void

@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Command\Command;
 
 use Hyperf\Command\Command;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
+use RuntimeException;
 
 class FooExceptionCommand extends Command
 {
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
 
@@ -28,6 +30,6 @@ class FooExceptionCommand extends Command
 
     public function handle()
     {
-        throw new \RuntimeException('xxx', 99);
+        throw new RuntimeException('xxx', 99);
     }
 }

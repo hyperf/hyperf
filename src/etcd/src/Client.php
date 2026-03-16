@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\HandlerStackFactory;
-use Hyperf\Utils\Coroutine;
 
 abstract class Client
 {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Concern;
 
 use Hyperf\ViewEngine\Contract\ViewInterface;
@@ -78,8 +79,8 @@ trait ManagesLayouts
      * Stop injecting content into a section.
      *
      * @param bool $overwrite
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function stopSection($overwrite = false)
     {
@@ -101,8 +102,8 @@ trait ManagesLayouts
     /**
      * Stop injecting content into a section and append it.
      *
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function appendSection()
     {

@@ -78,7 +78,6 @@ declare(strict_types=1);
 
 namespace App\Kernel\Signal;
 
-use Hyperf\AsyncQueue\Driver\Driver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Server\ServerManager;

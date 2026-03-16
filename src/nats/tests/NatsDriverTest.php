@@ -9,17 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Nats;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Nats\Driver\NatsDriver;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Nats\Encoders\JSONEncoder;
+use Hyperf\Support\Reflection\ClassInvoker;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NatsDriverTest extends TestCase
 {
     public function testGetMaxIdleTime()
@@ -27,8 +31,8 @@ class NatsDriverTest extends TestCase
         $instantiator = new Instantiator();
         $driver = new ClassInvoker($instantiator->instantiate(NatsDriver::class));
         $time = $driver->getMaxIdleTime([
-            'driver' => \Hyperf\Nats\Driver\NatsDriver::class,
-            'encoder' => \Hyperf\Nats\Encoders\JSONEncoder::class,
+            'driver' => NatsDriver::class,
+            'encoder' => JSONEncoder::class,
             'timeout' => 10.0,
             'options' => [
                 'host' => '127.0.0.1',

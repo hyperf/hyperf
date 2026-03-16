@@ -9,23 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\AsyncQueue\Driver\RedisDriver;
 use Hyperf\AsyncQueue\JobMessage;
-use Hyperf\AsyncQueue\Message;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Di\Container;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use HyperfTest\AsyncQueue\Stub\DemoJob;
 use HyperfTest\AsyncQueue\Stub\DemoModel;
 use HyperfTest\AsyncQueue\Stub\DemoModelMeta;
 use HyperfTest\AsyncQueue\Stub\Redis;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -33,6 +34,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisDriverTest extends TestCase
 {
     protected function tearDown(): void
@@ -50,7 +52,7 @@ class RedisDriverTest extends TestCase
 
         $id = uniqid();
         $driver->push(new DemoJob($id));
-        /** @var Message $class */
+        /** @var JobMessage $class */
         $class = $packer->unpack((string) Context::get('test.async-queue.lpush.value'));
         $this->assertSame($id, $class->job()->id);
         $key = Context::get('test.async-queue.lpush.key');
@@ -58,7 +60,7 @@ class RedisDriverTest extends TestCase
 
         $id = uniqid();
         $driver->push(new DemoJob($id), 5);
-        /** @var Message $class */
+        /** @var JobMessage $class */
         $class = $packer->unpack((string) Context::get('test.async-queue.zadd.value'));
         $this->assertSame($id, $class->job()->id);
         $key = Context::get('test.async-queue.zadd.key');
@@ -114,9 +116,9 @@ class RedisDriverTest extends TestCase
         $driver->push(new DemoJob($id, $model));
 
         $serialized = (string) Context::get('test.async-queue.lpush.value');
-        $this->assertSame(231, strlen($serialized));
+        $this->assertSame(264, strlen($serialized));
 
-        /** @var Message $class */
+        /** @var JobMessage $class */
         $class = $packer->unpack($serialized);
 
         $this->assertSame($id, $class->job()->id);

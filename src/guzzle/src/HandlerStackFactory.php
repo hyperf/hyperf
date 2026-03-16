@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\HandlerStack;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Container;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
+
+use function Hyperf\Support\make;
 
 class HandlerStackFactory
 {

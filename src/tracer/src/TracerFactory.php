@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -39,7 +40,7 @@ class TracerFactory
 
         $factory = $container->get($driver);
 
-        if (! ($factory instanceof NamedFactoryInterface)) {
+        if (! $factory instanceof NamedFactoryInterface) {
             throw new InvalidArgumentException(
                 sprintf('The driver %s is not a valid factory.', $driver)
             );

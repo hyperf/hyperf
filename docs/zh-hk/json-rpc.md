@@ -29,7 +29,7 @@ composer require hyperf/rpc-client
 ### 定義服務提供者
 
 目前僅支持通過註解的形式來定義 `服務提供者(ServiceProvider)`，後續迭代會增加配置的形式。   
-我們可以直接通過 `@RpcService` 註解對一個類進行定義即可發佈這個服務了：
+我們可以直接通過 `#[RpcService]` 註解對一個類進行定義即可發佈這個服務了：
 
 ```php
 <?php
@@ -53,13 +53,13 @@ class CalculatorService implements CalculatorServiceInterface
 }
 ```
 
-`@RpcService` 共有 `4` 個參數：   
+`#[RpcService]` 共有 `4` 個參數：   
 `name` 屬性為定義該服務的名稱，這裏定義一個全局唯一的名字即可，Hyperf 會根據該屬性生成對應的 ID 註冊到服務中心去；   
 `protocol` 屬性為定義該服務暴露的協議，目前僅支持 `jsonrpc-http`, `jsonrpc`, `jsonrpc-tcp-length-check` ，分別對應於 HTTP 協議和 TCP 協議下的兩種協議，默認值為 `jsonrpc-http`，這裏的值對應在 `Hyperf\Rpc\ProtocolManager` 裏面註冊的協議的 `key`，它們本質上都是 JSON RPC 協議，區別在於數據格式化、數據打包、數據傳輸器等不同。   
 `server` 屬性為綁定該服務類發佈所要承載的 `Server`，默認值為 `jsonrpc-http`，該屬性對應 `config/autoload/server.php` 文件內 `servers` 下所對應的 `name`，這裏也就意味着我們需要定義一個對應的 `Server`；   
 `publishTo` 屬性為定義該服務所要發佈的服務中心，目前僅支持 `consul`、`nacos` 或為空，為空時代表不發佈該服務到服務中心去，但也就意味着您需要手動處理服務發現的問題，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 組件及對應的驅動依賴，具體可參考 [服務註冊](zh-hk/service-register.md) 章節；
 
-> 使用 `@RpcService` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空間。
+> 使用 `#[RpcService]` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空間。
 
 #### 定義 JSON RPC Server
 
@@ -192,7 +192,7 @@ return [
 ];
 ```
 
-配置完成後，在啟動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
+配置完成後，在啓動服務時，Hyperf 會自動地將 `#[RpcService]` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
 
 > 目前僅支持 `jsonrpc` 和 `jsonrpc-http` 協議發佈到服務中心去，其它協議尚未實現服務註冊
 
@@ -264,7 +264,7 @@ return [
 ];
 ```
 
-在應用啟動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
+在應用啓動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
 
 > 當服務提供者使用接口類名發佈服務名，在服務消費端只需要設置配置項 `name` 值為接口類名，不需要重複設置配置項 `id` 和 `service`。
 
@@ -394,8 +394,8 @@ return [
 當框架導入 `symfony/serializer (^5.0)` 和 `symfony/property-access (^5.0)` 後，並在 `dependencies.php` 中配置一下映射關係
 
 ```php
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\Serializer;
+use Hyperf\Serializer\SerializerFactory;
+use Hyperf\Serializer\Serializer;
 
 return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
@@ -444,7 +444,7 @@ interface CalculatorServiceInterface
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use App\JsonRpc\CalculatorServiceInterface;
 use App\JsonRpc\MathValue;
 

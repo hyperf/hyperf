@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Scheduler;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\CompositeDisposable;
 use Rx\Disposable\EmptyDisposable;
@@ -87,9 +88,6 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
         $this->insideInvoke = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function now(): int
     {
         return (int) floor(microtime(true) * 1000);

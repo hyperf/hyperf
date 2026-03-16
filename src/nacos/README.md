@@ -13,7 +13,7 @@ composer require hyperf/nacos
 
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 $application = new Application(new Config([
     'username' => 'nacos',

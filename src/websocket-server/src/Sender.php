@@ -9,21 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Contract\WebSocket\FrameInterface;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\Server\CoroutineServer;
+use Hyperf\Server\SwowServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection;
+
+use function Hyperf\Engine\swoole_get_flags_from_frame;
 
 /**
- * @method push(int $fd, $data, int $opcode = null, $finish = null)
- * @method disconnect(int $fd, int $code = null, string $reason = null)
+ * @method bool push(int $fd, $data, int $opcode = null, $finish = null)
+ * @method bool disconnect(int $fd, int $code = null, string $reason = null)
  */
 class Sender
 {
@@ -32,7 +38,7 @@ class Sender
     protected ?int $workerId = null;
 
     /**
-     * @var Connection[]|Response[]
+     * @var Response[]|ServerConnection[]
      */
     protected array $responses = [];
 
@@ -42,7 +48,10 @@ class Sender
     {
         $this->logger = $container->get(StdoutLoggerInterface::class);
         if ($config = $container->get(ConfigInterface::class)) {
-            $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;
+            $this->isCoroutineServer = in_array($config->get('server.type'), [
+                CoroutineServer::class,
+                SwowServer::class,
+            ]);
         }
     }
 
@@ -56,15 +65,41 @@ class Sender
                 if ($method === 'disconnect') {
                     $method = 'close';
                 }
-                $this->responses[$fd]->{$method}(...$arguments);
-                $this->logger->debug("[WebSocket] Worker send to #{$fd}");
+
+                $result = $this->responses[$fd]->{$method}(...$arguments);
+                $this->logger->debug(
+                    sprintf(
+                        "[WebSocket] Worker send to #{$fd}.Send %s",
+                        $result ? 'success' : 'failed'
+                    )
+                );
+                return $result;
             }
-            return;
+            return false;
         }
 
         if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
+        return true;
+    }
+
+    public function pushFrame(int $fd, FrameInterface $frame): bool
+    {
+        if ($this->isCoroutineServer) {
+            if (isset($this->responses[$fd])) {
+                return (new WsResponse($this->responses[$fd]))->init($fd)->push($frame);
+            }
+
+            return false;
+        }
+
+        if ($this->check($fd)) {
+            return (new WsResponse($this->getServer()))->init($fd)->push($frame);
+        }
+
+        $this->sendPipeMessage('push', [$fd, (string) $frame->getPayloadData(), $frame->getOpcode(), swoole_get_flags_from_frame($frame)]);
+        return false;
     }
 
     public function proxy(int $fd, string $method, array $arguments): bool
@@ -73,8 +108,13 @@ class Sender
         if ($result) {
             /** @var \Swoole\WebSocket\Server $server */
             $server = $this->getServer();
-            $server->{$method}(...$arguments);
-            $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
+            $result = $server->{$method}(...$arguments);
+            $this->logger->debug(
+                sprintf(
+                    "[WebSocket] Worker.{$this->workerId} send to #{$fd}.Send %s",
+                    $result ? 'success' : 'failed'
+                )
+            );
         }
 
         return $result;
@@ -97,7 +137,10 @@ class Sender
     }
 
     /**
-     * @param null|Connection|Response $response
+     * The responses of coroutine style swoole server.
+     * Or connections of swow server.
+     * And so on.
+     * @param null|Response|ServerConnection $response
      */
     public function setResponse(int $fd, mixed $response): void
     {
@@ -111,6 +154,11 @@ class Sender
     public function getResponse(int $fd): mixed
     {
         return $this->responses[$fd] ?? null;
+    }
+
+    public function getResponses(): array
+    {
+        return $this->responses;
     }
 
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array

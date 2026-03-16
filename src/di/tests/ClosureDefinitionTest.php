@@ -9,17 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
+use Closure;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClosureDefinitionTest extends TestCase
 {
     protected function tearDown(): void
@@ -30,7 +34,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetParameters()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getBar']);
+        $closure = Closure::fromCallable([new Foo(), 'getBar']);
         $definitions = $collector->getParameters($closure);
         $this->assertEquals(4, count($definitions));
         $this->assertEquals('int', $definitions[0]->getName());
@@ -41,7 +45,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetReturnTypes()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getBar']);
+        $closure = Closure::fromCallable([new Foo(), 'getBar']);
         $type = $collector->getReturnType($closure);
         $this->assertEquals('mixed', $type->getName());
     }
@@ -49,7 +53,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetParameterOfNoType()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getFoo']);
+        $closure = Closure::fromCallable([new Foo(), 'getFoo']);
         /** @var ReflectionType[] $definitions */
         $definitions = $collector->getParameters($closure);
         $this->assertEquals(1, count($definitions));

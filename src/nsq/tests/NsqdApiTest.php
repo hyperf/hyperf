@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Nsq;
 
 use Hyperf\Config\Config;
@@ -17,6 +18,7 @@ use Hyperf\Nsq\Nsqd\Channel;
 use Hyperf\Nsq\Nsqd\Client;
 use Hyperf\Nsq\Nsqd\Topic;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -24,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NsqdApiTest extends TestCase
 {
     protected function tearDown(): void

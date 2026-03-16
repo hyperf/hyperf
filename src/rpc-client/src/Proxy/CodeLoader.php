@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 
 class CodeLoader
 {
@@ -27,5 +28,10 @@ class CodeLoader
     public function getPathByClassName(string $className): string
     {
         return Composer::getLoader()->findFile($className);
+    }
+
+    public function getMd5ByClassName(string $className): string
+    {
+        return md5($this->getCodeByClassName($className));
     }
 }

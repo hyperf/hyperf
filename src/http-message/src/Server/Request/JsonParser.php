@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Server\Request;
 
+use Hyperf\Codec\Json;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
-use Hyperf\Utils\Codec\Json;
 use InvalidArgumentException;
 
 class JsonParser implements RequestParserInterface

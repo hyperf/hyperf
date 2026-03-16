@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\WebSocketClient;
 
 use Hyperf\WebSocketClient\Frame;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\WebSocket\Frame as SwFrame;
 
@@ -20,6 +22,7 @@ use Swoole\WebSocket\Frame as SwFrame;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FrameTest extends TestCase
 {
     public function testFrame()

@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Psr\Container\ContainerInterface;
 

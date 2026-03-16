@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 /**
  * @method ColumnDefinition after(string $column) Place the column "after" another column (MySQL)
@@ -27,6 +28,7 @@ use Hyperf\Utils\Fluent;
  * @method ColumnDefinition index(string $name = null) Add an index
  * @method ColumnDefinition nullable(bool $value = true) Allow NULL values to be inserted into the column
  * @method ColumnDefinition primary() Add a primary index
+ * @method ColumnDefinition fullText() Add a full-text index
  * @method ColumnDefinition spatialIndex() Add a spatial index
  * @method ColumnDefinition storedAs(string $expression) Create a stored generated column (MySQL)
  * @method ColumnDefinition unique(string $name = null) Add a unique index

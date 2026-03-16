@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry;
 
 use Hyperf\Retry\Policy\RetryPolicyInterface;
+
+use function Hyperf\Support\make;
 
 /**
  * @method static FluentRetry with(RetryPolicyInterface ...$policies)

@@ -364,8 +364,8 @@ return [
 When the framework imports `symfony/serializer (^5.0)` and `symfony/property-access (^5.0)`, configure the mapping relationship in `dependencies.php`
 
 ```php
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\Serializer;
+use Hyperf\Serializer\SerializerFactory;
+use Hyperf\Serializer\Serializer;
 
 return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
@@ -414,7 +414,7 @@ Call in the controller
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use App\JsonRpc\CalculatorServiceInterface;
 use App\JsonRpc\MathValue;
 

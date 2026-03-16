@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Pool;
 
+use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
 use Hyperf\Engine\Contract\SocketInterface;
@@ -20,6 +22,8 @@ use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\value;
 
 /**
  * @property int $errCode
@@ -51,24 +55,24 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name};
     }
 
-    public function send(string $data): int|false
+    public function send(string $data): false|int
     {
         return $this->connection->sendAll($data);
     }
 
-    public function recv(float $timeout = 0): string|false
+    public function recv(float $timeout = 0): false|string
     {
         return $this->recvPacket($timeout);
     }
 
-    public function recvPacket(float $timeout = 0): string|false
+    public function recvPacket(float $timeout = 0): false|string
     {
         return $this->connection->recvPacket($timeout);
     }
 
     /**
-     * @throws ConnectionException
      * @return $this
+     * @throws ConnectionException
      */
     public function getActiveConnection()
     {
@@ -83,7 +87,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        if (! $this->config['node'] instanceof \Closure) {
+        if (! $this->config['node'] instanceof Closure) {
             throw new ConnectionException('Node of Connection is invalid.');
         }
 

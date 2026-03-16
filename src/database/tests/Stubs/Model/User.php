@@ -9,16 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
+
+use Carbon\Carbon;
+use Hyperf\Database\Model\Collection;
 
 /**
  * @property int $id
  * @property string $name
  * @property int $gender
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Model\Book $book
- * @property \App\Model\Book[]|\Hyperf\Database\Model\Collection $books
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Book $book
+ * @property Book[]|Collection $books
  */
 class User extends Model
 {

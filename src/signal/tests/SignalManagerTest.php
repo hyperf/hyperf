@@ -9,17 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Signal;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Signal\SignalManager;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Signal\Stub\SignalHandler2Stub;
 use HyperfTest\Signal\Stub\SignalHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -27,6 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SignalManagerTest extends TestCase
 {
     protected function tearDown(): void

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\DriverInterface;
@@ -16,12 +17,14 @@ use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Listener\ReloadChannelListener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ListenerTest extends TestCase
 {
     protected function tearDown(): void

@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Http\Middleware;
 
+use Hyperf\Contract\MessageProvider;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Session;
-use Hyperf\Utils\Contracts\MessageProvider;
-use Hyperf\Utils\MessageBag;
+use Hyperf\Support\MessageBag;
 use Hyperf\Validation\ValidationException;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\ViewErrorBag;

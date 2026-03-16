@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\StatsD;
 
 use Domnikl\Statsd\Client;
@@ -20,6 +21,8 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+
+use function Hyperf\Support\make;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -89,11 +92,13 @@ class MetricFactory implements MetricFactoryInterface
         $name = $this->config->get('metric.default');
         $host = $this->config->get("metric.metric.{$name}.udp_host");
         $port = $this->config->get("metric.metric.{$name}.udp_port");
+        $timeout = $this->config->get("metric.metric.{$name}.timeout");
+        $persistent = $this->config->get("metric.metric.{$name}.persistent", true);
         return make(Connection::class, [
             'host' => $host,
             'port' => (int) $port,
-            'timeout' => null,
-            'persistent' => true,
+            'timeout' => $timeout,
+            'persistent' => $persistent,
         ]);
     }
 

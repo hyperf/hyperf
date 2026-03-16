@@ -9,23 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Pool\Stub\HeartbeatPoolStub;
 use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HeartbeatConnectionTest extends TestCase
 {
     protected function tearDown(): void
@@ -62,7 +65,7 @@ class HeartbeatConnectionTest extends TestCase
         $pool = $container->get(HeartbeatPoolStub::class);
         /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
-        $connection->setActiveConnection($conn = new class() {
+        $connection->setActiveConnection($conn = new class {
             public function send(string $data)
             {
                 return str_repeat($data, 2);

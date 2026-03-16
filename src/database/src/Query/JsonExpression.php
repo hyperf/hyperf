@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query;
 
 use InvalidArgumentException;
@@ -28,8 +29,8 @@ class JsonExpression extends Expression
     /**
      * Translate the given value into the appropriate JSON binding parameter.
      *
-     * @throws \InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     protected function getJsonBindingParameter(mixed $value)
     {

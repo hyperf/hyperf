@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use Symfony\Component\Finder\Finder;
@@ -77,7 +78,7 @@ class Package
     /**
      * Get resource bundle object.
      */
-    public function bundle(Finder $finder = null): Bundle
+    public function bundle(?Finder $finder = null): Bundle
     {
         $bundle = new Bundle();
         $dir = $this->getDirectory();

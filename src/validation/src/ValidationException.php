@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+
+use function Hyperf\Tappable\tap;
 
 class ValidationException extends ServerException
 {

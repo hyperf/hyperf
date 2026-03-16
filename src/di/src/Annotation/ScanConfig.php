@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
+
+use function Hyperf\Support\value;
 
 class ScanConfig
 {
@@ -133,7 +136,7 @@ class ScanConfig
     private static function allocateConfigValue(array $content, array $config): array
     {
         if (! isset($content['scan'])) {
-            return [];
+            return $config;
         }
         foreach ($content['scan'] as $key => $value) {
             if (! isset($config[$key])) {

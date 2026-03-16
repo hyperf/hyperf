@@ -4,7 +4,7 @@
 
 ## 原理
 
-*中介軟體主要用於編織從 `請求(Request)` 到 `響應(Response)` 的整個流程*，通過對多箇中間件的組織，使資料的流動按我們預定的方式進行，中介軟體的本質是一個 `洋蔥模型`，我們通過一個圖來解釋它：
+*中介軟體主要用於編織從 `請求(Request)` 到 `響應(Response)` 的整個流程*，透過對多箇中間件的組織，使資料的流動按我們預定的方式進行，中介軟體的本質是一個 `洋蔥模型`，我們透過一個圖來解釋它：
 
 ![middleware](middleware.jpg)
 
@@ -14,7 +14,7 @@
 
 ## 定義全域性中介軟體
 
-全域性中介軟體只可通過配置檔案的方式來配置，配置檔案位於 `config/autoload/middlewares.php` ，配置如下：   
+全域性中介軟體只可透過配置檔案的方式來配置，配置檔案位於 `config/autoload/middlewares.php` ，配置如下：   
 ```php
 <?php
 return [
@@ -29,12 +29,12 @@ return [
 
 ## 定義區域性中介軟體
 
-當我們有些中介軟體僅僅面向某些請求或控制器時，即可將其定義為區域性中介軟體，可通過配置檔案的方式定義或註解的方式。
+當我們有些中介軟體僅僅面向某些請求或控制器時，即可將其定義為區域性中介軟體，可透過配置檔案的方式定義或註解的方式。
 
-### 通過配置檔案定義
+### 透過配置檔案定義
 
-在使用配置檔案定義路由時，您僅可通過配置檔案來定義對應的中介軟體，區域性中介軟體的配置將在路由配置上完成。   
-`Hyperf\HttpServer\Router\Router` 類的每個定義路由的方法的最後一個引數 `$options` 都將接收一個數組，可通過傳遞鍵值 `middleware` 及一個數組值來定義該路由的中介軟體，我們通過幾個路由定義來演示一下:
+在使用配置檔案定義路由時，您僅可透過配置檔案來定義對應的中介軟體，區域性中介軟體的配置將在路由配置上完成。   
+`Hyperf\HttpServer\Router\Router` 類的每個定義路由的方法的最後一個引數 `$options` 都將接收一個數組，可透過傳遞鍵值 `middleware` 及一個數組值來定義該路由的中介軟體，我們通過幾個路由定義來演示一下:
 
 ```php
 <?php
@@ -60,14 +60,16 @@ Router::addGroup(
 
 ```
 
-### 通過註解定義
+### 透過註解定義
 
-在通過註解定義路由時，您僅可通過註解的方式來定義中介軟體，對中介軟體的定義有兩個註解，分別為：   
-  - `@Middleware` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
-  - `@Middlewares` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後通過在該註解內定義多個 `@Middleware` 註解實現多箇中間件的定義
+在透過註解定義路由時，您僅可透過註解的方式來定義中介軟體，對中介軟體的定義有兩個註解，分別為：   
+  - `#[Middleware]` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
+  - `#[Middlewares]` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後透過在該註解內定義多個 `#[Middleware]` 註解實現多箇中間件的定義
 
-> 使用 `@Middleware` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 名稱空間；   
-> 使用 `@Middlewares` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 名稱空間；
+> 使用 `#[Middleware]` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 名稱空間；   
+> 使用 `#[Middlewares]` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 名稱空間；
+
+***注意：必須配合 `#[AutoController]` 或者 `#[Controller]` 使用***
 
 定義單箇中間件：
 
@@ -90,7 +92,7 @@ class IndexController
 }
 ```
 
-定義多箇中間件：
+透過 `#[Middlewares]` 註解定義多箇中間件：
 
 ```php
 <?php
@@ -103,7 +105,31 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
-#[Middlewares(FooMiddleware::class, BarMiddleware::class)]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class])]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+透過 `#[Middleware]` 註解定義多箇中間件：
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -115,8 +141,8 @@ class IndexController
 
 #### 定義方法級別的中介軟體
 
-在通過配置檔案的方式配置中介軟體時定義到方法級別上很簡單，那麼要通過註解的形式定義到方法級別呢？您只需將註解直接定義到方法上即可。   
-類級別上的中介軟體會優先於方法級別的中介軟體，我們通過程式碼來舉例一下：   
+在透過配置檔案的方式配置中介軟體時定義到方法級別上很簡單，那麼要透過註解的形式定義到方法級別呢？您只需將註解直接定義到方法上即可。   
+類級別上的中介軟體會優先於方法級別的中介軟體，我們透過程式碼來舉例一下：   
 
 ```php
 <?php
@@ -203,6 +229,44 @@ class FooMiddleware implements MiddlewareInterface
 
 我們從上面可以瞭解到總共有 `3` 種級別的中介軟體，分別為 `全域性中介軟體`、`類級別中介軟體`、`方法級別中介軟體`，如果都定義了這些中介軟體，執行順序為：`全域性中介軟體 -> 類級別中介軟體 -> 方法級別中介軟體`。
 
+
+在`>=3.0.34`的版本中，新增了優先順序的配置，可以在配置方法、路由中介軟體的時候改變中介軟體的執行順序，優先順序越高，執行順序越靠前。
+
+```php
+// 全域性中介軟體配置檔案 middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+// 路由中介軟體配置
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+// 註解中介軟體配置
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
+
 ## 全域性更改請求和響應物件
 
 首先，在協程上下文內是有儲存最原始的 PSR-7 `請求物件` 和 `響應物件` 的，且根據 PSR-7 對相關物件所要求的 `不可變性(immutable)`，也就意味著我們在呼叫 `$response = $response->with***()` 所呼叫得到的 `$response`，並非為改寫原物件，而是一個 `Clone` 出來的新物件，也就意味著我們儲存在協程上下文內的 `請求物件` 和 `響應物件` 是不會改變的，那麼當我們在中介軟體內的某些邏輯改變了 `請求物件` 或 `響應物件`，而且我們希望對後續的 *非傳遞性的* 程式碼再獲取改變後的 `請求物件` 或 `響應物件`，那麼我們便可以在改變物件後，將新的物件設定到上下文中，如程式碼所示：
@@ -218,7 +282,7 @@ $response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 
 ## 自定義 CoreMiddleWare 的行為
 
-預設情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404`、`405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應物件的，得益於 Hyperf 依賴注入的設計，您可以通過替換物件的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
+預設情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404`、`405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應物件的，得益於 Hyperf 依賴注入的設計，您可以透過替換物件的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
 
 比如我們希望定義一個 `App\Middleware\CoreMiddleware` 類來重寫預設的行為，我們可以先定義一個 `App\Middleware\CoreMiddleware` 類如下，這裡我們僅以 HTTP Server 為例，其它 Server 也可採用同樣的做法來達到同樣的目的。
 
@@ -268,7 +332,7 @@ return [
 ];
 ```
 
-> 這裡直接重寫 CoreMiddleware 的做法需要在 1.1.0+ 版本上才有效，1.0.x 版本仍需要你再將 CoreMiddleware 的上層呼叫通過 DI 進行重寫，然後替換 CoreMiddleware 的傳值為您定義的中介軟體類。
+> 這裡直接重寫 CoreMiddleware 的做法需要在 1.1.0+ 版本上才有效，1.0.x 版本仍需要你再將 CoreMiddleware 的上層呼叫透過 DI 進行重寫，然後替換 CoreMiddleware 的傳值為您定義的中介軟體類。
 
 ## 常用中介軟體
 
@@ -323,4 +387,48 @@ location / {
         return 204;
     }
 }
+```
+
+### 後置中介軟體
+
+通常情況下，我們都是最後執行
+
+```
+return $handler->handle($request);
+```
+
+所以，相當於是前置中介軟體，如果想要讓中介軟體邏輯後置，其實只需要更換一下執行順序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 後置操作
+        }
+        return $result;
+    }
+}
+
 ```

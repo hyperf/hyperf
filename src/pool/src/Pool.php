@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -20,6 +21,8 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 abstract class Pool implements PoolInterface
 {
     protected Channel $channel;
@@ -28,7 +31,7 @@ abstract class Pool implements PoolInterface
 
     protected int $currentConnections = 0;
 
-    protected null|LowFrequencyInterface|FrequencyInterface $frequency = null;
+    protected null|FrequencyInterface|LowFrequencyInterface $frequency = null;
 
     public function __construct(protected ContainerInterface $container, array $config = [])
     {
@@ -51,7 +54,7 @@ abstract class Pool implements PoolInterface
                     $this->flush();
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->error((string) $exception);
             }
@@ -73,7 +76,7 @@ abstract class Pool implements PoolInterface
             while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop(0.001)) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }
@@ -97,7 +100,7 @@ abstract class Pool implements PoolInterface
             if ($must || ! $conn->check()) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }
@@ -107,6 +110,13 @@ abstract class Pool implements PoolInterface
             } else {
                 $this->release($conn);
             }
+        }
+    }
+
+    public function flushAll(): void
+    {
+        while ($this->getConnectionsInChannel() > 0) {
+            $this->flushOne(true);
         }
     }
 
@@ -134,6 +144,7 @@ abstract class Pool implements PoolInterface
             'waitTimeout' => $options['wait_timeout'] ?? 3.0,
             'heartbeat' => $options['heartbeat'] ?? -1,
             'maxIdleTime' => $options['max_idle_time'] ?? 60.0,
+            'events' => $options['events'] ?? [],
         ]);
     }
 

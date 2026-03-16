@@ -9,27 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Scout\Cases;
 
+use Elasticsearch\Client;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
+use HyperfTest\Scout\Stub\ContainerStub;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery;
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ElasticsearchEngineTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::mockContainer();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testUpdateAddsObjectsToIndex()
@@ -103,14 +115,14 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testBuilderCallbackCanManipulateSearchParametersToElasticsearch()
     {
-        /** @var \Elasticsearch\Client|\Mockery\MockInterface $client */
-        $client = Mockery::mock(\Elasticsearch\Client::class);
+        /** @var Client|MockInterface $client */
+        $client = Mockery::mock(Client::class);
         $client->shouldReceive('search')->with(['modified_by_callback']);
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = new Builder(
             new ElasticsearchEngineTestModel(),
             'huayra',
-            function (\Elasticsearch\Client $client, $query, $params) {
+            function (Client $client, $query, $params) {
                 $this->assertNotEmpty($params);
                 $this->assertEquals('huayra', $query);
                 $params = ['modified_by_callback'];

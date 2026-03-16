@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Resource\Stubs\Resources;
 
-class JsonSerializableResource implements \JsonSerializable
+use JsonSerializable;
+
+class JsonSerializableResource implements JsonSerializable
 {
     public $resource;
 

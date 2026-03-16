@@ -9,12 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Arr;
 
+use function Hyperf\Collection\collect;
+
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ * @template TPivotModel of \Hyperf\Database\Model\Relations\Pivot = \Hyperf\Database\Model\Relations\MorphPivot
+ * @template TAccessor of string = 'pivot'
+ *
+ * @extends BelongsToMany<TRelatedModel, TDeclaringModel, TPivotModel, TAccessor>
+ */
 class MorphToMany extends BelongsToMany
 {
     /**
@@ -94,7 +105,7 @@ class MorphToMany extends BelongsToMany
      * Add the constraints for a relationship count query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -108,7 +119,7 @@ class MorphToMany extends BelongsToMany
      * Create a new pivot model instance.
      *
      * @param bool $exists
-     * @return \Hyperf\Database\Model\Relations\Pivot
+     * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
     {

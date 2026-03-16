@@ -9,29 +9,37 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
+use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use Swoole\Http\Request as SwooleRequest;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ServerRequestTest extends TestCase
 {
     protected function tearDown(): void
@@ -47,19 +55,19 @@ class ServerRequestTest extends TestCase
         $data = ['id' => 1];
         $json = ['name' => 'Hyperf'];
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('');
 
         $this->assertSame($data, RequestStub::normalizeParsedBody($data));
         $this->assertSame($data, RequestStub::normalizeParsedBody($data, $request));
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/xml; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(Xml::toXml($json)));
 
         $this->assertSame($json, RequestStub::normalizeParsedBody($json, $request));
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(Json::encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
@@ -67,12 +75,12 @@ class ServerRequestTest extends TestCase
 
     public function testNormalizeParsedBodyException()
     {
-        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
@@ -80,12 +88,12 @@ class ServerRequestTest extends TestCase
 
     public function testXmlNormalizeParsedBodyException()
     {
-        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/xml; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
@@ -96,12 +104,12 @@ class ServerRequestTest extends TestCase
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(''));
         $this->assertSame($json, RequestStub::normalizeParsedBody($json, $request));
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(''));
         $this->assertSame([], RequestStub::normalizeParsedBody([], $request));
@@ -114,7 +122,7 @@ class ServerRequestTest extends TestCase
         $data = ['id' => 1];
         $json = ['name' => 'Hyperf'];
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
@@ -128,7 +136,7 @@ class ServerRequestTest extends TestCase
         RequestStub::setParser(new ParserStub());
         $json = ['name' => 'Hyperf'];
 
-        $request = Mockery::mock(RequestInterface::class);
+        $request = Mockery::mock(ServerRequestInterface::class);
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame(['mock' => true], RequestStub::normalizeParsedBody([], $request));
@@ -153,6 +161,69 @@ class ServerRequestTest extends TestCase
         $request = Request::loadFromSwooleRequest($swooleRequest);
         $uri = $request->getUri();
         $this->assertSame(null, $uri->getPort());
+    }
+
+    #[Group('ParseHost')]
+    public function testParseHost()
+    {
+        $hostStrIPv4 = '192.168.119.100:9501';
+        $hostStrIPv6 = '[fe80::a464:1aff:fe88:7b5a]:9502';
+        $objReflectClass = new ReflectionClass('Hyperf\HttpMessage\Server\Request');
+        $method = $objReflectClass->getMethod('parseHost');
+
+        $resIPv4 = $method->invokeArgs(null, [$hostStrIPv4]);
+        $this->assertSame('192.168.119.100', $resIPv4[0]);
+        $this->assertSame(9501, $resIPv4[1]);
+
+        $resIPv6 = $method->invokeArgs(null, [$hostStrIPv6]);
+        $this->assertSame('[fe80::a464:1aff:fe88:7b5a]', $resIPv6[0]);
+        $this->assertSame(9502, $resIPv6[1]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid host: ');
+        $method->invokeArgs(null, ['']);
+    }
+
+    /**
+     * @param mixed $originHost
+     * @param mixed $host
+     * @param mixed $port
+     */
+    #[DataProvider('getIPv6Examples')]
+    public function testGetUriFromGlobalsForIPv6Host($originHost, $host, $port)
+    {
+        $swooleRequest = Mockery::mock(SwooleRequest::class);
+        $data = ['name' => 'Hyperf'];
+        $swooleRequest->shouldReceive('rawContent')->andReturn(Json::encode($data));
+
+        $swooleRequest->server = [
+            'http_host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+
+        $swooleRequest->server = [];
+        $swooleRequest->header = [
+            'host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+    }
+
+    public static function getIPv6Examples(): array
+    {
+        return [
+            ['localhost:9501', 'localhost', 9501],
+            ['localhost:', 'localhost', null],
+            ['localhost', 'localhost', null],
+            ['[2a00:f48:1008::212:183:10]', '[2a00:f48:1008::212:183:10]', null],
+            ['[2a00:f48:1008::212:183:10]:9501', '[2a00:f48:1008::212:183:10]', 9501],
+            ['[2a00:f48:1008::212:183:10]:', '[2a00:f48:1008::212:183:10]', null],
+        ];
     }
 
     protected function getContainer()

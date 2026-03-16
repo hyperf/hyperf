@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -17,12 +18,14 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\RouteCollector;
 use HyperfTest\HttpServer\Stub\RouteCollectorStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RouteCollectorTest extends TestCase
 {
     protected function tearDown(): void

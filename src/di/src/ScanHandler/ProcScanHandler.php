@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\ScanHandler;
+
+use function Hyperf\Support\env;
 
 class ProcScanHandler implements ScanHandlerInterface
 {
@@ -51,7 +54,11 @@ class ProcScanHandler implements ScanHandlerInterface
         do {
             $output .= fread($pipes[1], 8192);
         } while (! feof($pipes[1]));
-        proc_close($proc);
+
+        if (proc_close($proc) !== 0) {
+            echo $output;
+            exit(-1);
+        }
 
         return new Scanned(true);
     }

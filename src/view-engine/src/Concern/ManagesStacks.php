@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Concern;
 
 use InvalidArgumentException;
+
+use function Hyperf\Tappable\tap;
 
 trait ManagesStacks
 {
@@ -50,8 +53,8 @@ trait ManagesStacks
     /**
      * Stop injecting content into a push section.
      *
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function stopPush()
     {
@@ -84,8 +87,8 @@ trait ManagesStacks
     /**
      * Stop prepending content into a push section.
      *
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function stopPrepend()
     {

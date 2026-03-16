@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer;
 
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MappingAnnotationTest extends TestCase
 {
     public function testRequestMapping()

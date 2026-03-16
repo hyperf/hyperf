@@ -9,10 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
 use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Socket;
 use Hyperf\Nsq\Exception\SocketSendException;
 use Hyperf\Nsq\Pool\NsqConnection;
@@ -20,6 +24,7 @@ use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Nsq
 {
@@ -31,6 +36,10 @@ class Nsq
 
     protected LoggerInterface $logger;
 
+    protected bool $subscribing = true;
+
+    protected bool $listen = false;
+
     public function __construct(protected ContainerInterface $container, string $pool = 'default')
     {
         $this->pool = $container->get(NsqPoolFactory::class)->getPool($pool);
@@ -41,31 +50,46 @@ class Nsq
     /**
      * @param string|string[] $message
      */
-    public function publish(string $topic, string|array $message, float $deferTime = 0.0): bool
+    public function publish(string $topic, array|string $message, float $deferTime = 0.0, bool $confirm = false): bool
     {
         if (is_array($message)) {
             if ($deferTime > 0) {
+                $isOk = true;
                 foreach ($message as $value) {
-                    $this->sendDPub($topic, $value, $deferTime);
+                    if (! $this->sendDPub($topic, $value, $deferTime, $confirm)) {
+                        $isOk = false;
+                    }
                 }
-                return true;
+                return $isOk;
             }
 
-            return $this->sendMPub($topic, $message);
+            return $this->sendMPub($topic, $message, $confirm);
         }
 
         if ($deferTime > 0) {
-            return $this->sendDPub($topic, $message, $deferTime);
+            return $this->sendDPub($topic, $message, $deferTime, $confirm);
         }
 
-        return $this->sendPub($topic, $message);
+        return $this->sendPub($topic, $message, $confirm);
     }
 
-    public function subscribe(string $topic, string $channel, callable $callback): void
+    public function subscribe(string $topic, string $channel, callable $callback, bool $autoStop = false): void
     {
+        if (! $this->listen && $autoStop) {
+            $this->listen = true;
+            Coroutine::create(function () {
+                while (true) {
+                    if (! $this->subscribing || CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                        $this->stopSubscribe();
+                        break;
+                    }
+                }
+            });
+        }
+
         $this->call(function (Socket $socket) use ($topic, $channel, $callback) {
             $this->sendSub($socket, $topic, $channel);
-            while ($this->sendRdy($socket)) {
+            while ($this->subscribing && $this->sendRdy($socket)) {
                 $reader = new Subscriber($socket);
                 $reader->recv();
 
@@ -77,7 +101,7 @@ class Nsq
                         $result = null;
                         try {
                             $result = $callback($message);
-                        } catch (\Throwable $throwable) {
+                        } catch (Throwable $throwable) {
                             $result = Result::DROP;
                             $this->logger->error('Subscribe failed, ' . (string) $throwable);
                         }
@@ -95,35 +119,60 @@ class Nsq
         });
     }
 
-    protected function sendMPub(string $topic, array $messages): bool
+    public function stopSubscribe(): void
+    {
+        $this->subscribing = false;
+    }
+
+    protected function sendMPub(string $topic, array $messages, bool $confirm = false): bool
     {
         $payload = $this->builder->buildMPub($topic, $messages);
-        return $this->call(function (Socket $socket) use ($payload) {
+        return $this->call(function (Socket $socket) use ($payload, $confirm) {
             if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
+            }
+
+            if ($confirm) {
+                $subscriber = new Subscriber($socket);
+                $subscriber->recv();
+                return $subscriber->isOk();
             }
             return true;
         });
     }
 
-    protected function sendPub(string $topic, string $message): bool
+    protected function sendPub(string $topic, string $message, bool $confirm = false): bool
     {
         $payload = $this->builder->buildPub($topic, $message);
-        return $this->call(function (Socket $socket) use ($payload) {
+        return $this->call(function (Socket $socket) use ($payload, $confirm) {
             if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
+
+            if ($confirm) {
+                $subscriber = new Subscriber($socket);
+                $subscriber->recv();
+                return $subscriber->isOk();
+            }
+
             return true;
         });
     }
 
-    protected function sendDPub(string $topic, string $message, float $deferTime = 0.0): bool
+    protected function sendDPub(string $topic, string $message, float $deferTime = 0.0, bool $confirm = false): bool
     {
         $payload = $this->builder->buildDPub($topic, $message, intval($deferTime * 1000));
-        return $this->call(function (Socket $socket) use ($payload) {
+        return $this->call(function (Socket $socket) use ($payload, $confirm) {
             if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
+
+            if ($confirm) {
+                $subscriber = new Subscriber($socket);
+                $subscriber->recv();
+                return $subscriber->isOk();
+            }
+
             return true;
         });
     }
@@ -134,7 +183,7 @@ class Nsq
         $connection = $this->pool->get();
         try {
             return $connection->call($closure);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $connection->close();
             throw $throwable;
         } finally {

@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Parser\Encoder;
@@ -19,8 +21,9 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
+
+use function Hyperf\Support\make;
 
 class BaseNamespace implements NamespaceInterface
 {

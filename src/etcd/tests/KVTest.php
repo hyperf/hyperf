@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Etcd;
 
 use GuzzleHttp\Client;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Etcd\KVFactory;
@@ -26,15 +28,16 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Etcd\Stub\GuzzleClientStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class KVTest extends TestCase
 {
     protected function tearDown(): void

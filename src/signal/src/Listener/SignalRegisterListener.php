@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Signal\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -18,6 +19,8 @@ use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Signal\SignalManager;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\value;
 
 class SignalRegisterListener implements ListenerInterface
 {

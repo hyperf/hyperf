@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\Annotation\Consumer;
@@ -20,12 +21,15 @@ use Hyperf\Process\ProcessManager;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\DemoConsumer;
 use HyperfTest\Amqp\Stub\NumsConsumer;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown(): void
@@ -55,7 +59,7 @@ class ConsumerManagerTest extends TestCase
                 $hasRegistered = true;
                 /** @var ConsumerMessageInterface $message */
                 $message = $item->getConsumerMessage();
-                $this->assertTrue($item->isEnable(new \stdClass()));
+                $this->assertTrue($item->isEnable(new stdClass()));
                 $this->assertSame($exchange, $message->getExchange());
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
@@ -89,7 +93,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
                 $hasRegistered = true;
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }

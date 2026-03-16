@@ -9,18 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 use Doctrine\DBAL\Schema\TableDiff;
+use Hyperf\Database\Concerns\CompilesJsonPaths;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
+use RuntimeException;
+
+use function Hyperf\Tappable\tap;
 
 abstract class Grammar extends BaseGrammar
 {
+    use CompilesJsonPaths;
+
     /**
      * If this Grammar supports schema changes wrapped in a transaction.
      */
@@ -42,11 +49,29 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         return ChangeColumn::compile($this, $blueprint, $command, $connection);
+    }
+
+    /**
+     * Compile a fulltext index key command.
+     *
+     * @throws RuntimeException
+     */
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        throw new RuntimeException('This database driver does not support fulltext index creation.');
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        throw new RuntimeException('This database driver does not support fulltext index creation.');
     }
 
     /**
@@ -115,11 +140,11 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param \Hyperf\Database\Query\Expression|string $value
+     * @param Expression|string $value
      * @param bool $prefixAlias
      * @return string
      */
-    public function wrap(Fluent|Expression|string $value, $prefixAlias = false)
+    public function wrap(Expression|Fluent|string $value, $prefixAlias = false)
     {
         return parent::wrap(
             $value instanceof Fluent ? $value->name : $value,
@@ -130,7 +155,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create an empty Doctrine DBAL TableDiff from the Blueprint.
      *
-     * @return \Doctrine\DBAL\Schema\TableDiff
+     * @return TableDiff
      */
     public function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
     {
@@ -209,7 +234,7 @@ abstract class Grammar extends BaseGrammar
      * Get the primary key command if it exists on the blueprint.
      *
      * @param string $name
-     * @return null|\Hyperf\Utils\Fluent
+     * @return null|Fluent
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {

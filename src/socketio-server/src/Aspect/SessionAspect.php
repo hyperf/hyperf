@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Aspect;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,6 +18,8 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Session\SessionManager;
 use Hyperf\WebSocketServer\Context;
 use Psr\Http\Message\ServerRequestInterface;
+
+use function Hyperf\Coroutine\defer;
 
 class SessionAspect extends AbstractAspect
 {

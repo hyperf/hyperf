@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\AMQPConnection;
-use Hyperf\Utils\Channel\ChannelManager;
+use Hyperf\Coroutine\Channel\Manager as ChannelManager;
 
 class AMQPConnectionStub extends AMQPConnection
 {

@@ -9,14 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\RpcClient\Exception\RequestException;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class ServiceClient extends AbstractServiceClient
 {
@@ -34,7 +36,7 @@ class ServiceClient extends AbstractServiceClient
 
         parent::__construct($container);
 
-        $this->normalizer = $container->get(NormalizerInterface::class);
+        $this->normalizer = $this->client->getNormalizer();
         $this->methodDefinitionCollector = $container->get(MethodDefinitionCollectorInterface::class);
     }
 
@@ -64,7 +66,7 @@ class ServiceClient extends AbstractServiceClient
             $class = Arr::get($error, 'data.class');
             $attributes = Arr::get($error, 'data.attributes', []);
             if (isset($class) && class_exists($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
-                if ($e instanceof \Throwable) {
+                if ($e instanceof Throwable) {
                     throw $e;
                 }
             }

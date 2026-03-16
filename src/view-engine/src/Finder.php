@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Contract\FinderInterface;
 use InvalidArgumentException;
 
@@ -40,7 +41,7 @@ class Finder implements FinderInterface
     /**
      * Create a new file view loader instance.
      */
-    public function __construct(protected Filesystem $files, array $paths, array $extensions = null)
+    public function __construct(protected Filesystem $files, array $paths, ?array $extensions = null)
     {
         $this->paths = array_map([$this, 'resolvePath'], $paths);
 
@@ -238,8 +239,8 @@ class Finder implements FinderInterface
      * Get the segments of a template with a named path.
      *
      * @param string $name
-     * @throws InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     protected function parseNamespaceSegments($name)
     {
@@ -261,8 +262,8 @@ class Finder implements FinderInterface
      *
      * @param string $name
      * @param array $paths
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     protected function findInPaths($name, $paths)
     {

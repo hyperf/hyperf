@@ -2,9 +2,7 @@
 
 `Kafka` is an open source stream processing platform developed by `Apache Software Foundation`, written by `Scala` and `Java`. The goal of this project is to provide a unified, high-throughput, low-latency platform for processing real-time data. Its persistence layer is essentially a "large-scale publish/subscribe message queue based on the distributed transaction log architecture"
 
-[longlang/phpkafka](https://github.com/longyan/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
-
-> This component is a Beta version, please use it with caution.
+[longlang/phpkafka](https://github.com/swoole/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
 
 ## Installation
 
@@ -25,20 +23,17 @@ The configuration file of the `kafka` component is located in `config/autoload/k
 The default configuration file is as follows:
 
 |         Configuration         |    Type    |            Default            |                                                                                                Description                                                                                                |
-| :---------------------------: | :--------: | :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|:-----------------------------:| :--------: | :---------------------------: |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |        connect_timeout        | int｜float |              -1               |                                                          Connection timeout time (unit: second, support decimal), if it is-1, there is no limit                                                           |
 |         send_timeout          | int｜float |              -1               |                                                             Send timeout time (unit: second, support decimal), if it is-1, there is no limit                                                              |
 |         recv_timeout          | int｜float |              -1               |                                                           Receiving timeout time (unit: second, support decimal), if it is-1, there is no limit                                                           |
 |           client_id           |   string   |             null              |                                                                                              Kafka Client ID                                                                                              |
 |      max_write_attempts       |    int     |               3               |                                                                                     Maximum number of write attempts                                                                                      |
-|            brokers            |   array    |              []               |                                             Manually configure the list of brokers, if you want to use manual configuration, please set updateBrokers to true                                             |
-|       bootstrap_server        |   array    |       '127.0.0.1:9092'        |                                        Bootstrap server, if this value is configured, it will automatically connect to the server and automatically update brokers                                        |
-|        update_brokers         |    bool    |             true              |                                                                                  Whether to automatically update brokers                                                                                  |
+|       bootstrap_servers       |   array    |       '127.0.0.1:9092'        |                                       Bootstrap servers, if this value is configured, it will automatically connect to the server and automatically update brokers                                        |
 |             acks              |    int     |               0               | The producer asks the leader to confirm the value that has been received before the confirmation request is completed. Allowed values: 0 means no confirmation, 1 means leader only,-1 means complete ISR |
 |          producer_id          |    int     |              -1               |                                                                                                Producer ID                                                                                                |
 |        producer_epoch         |    int     |              -1               |                                                                                              Producer Epoch                                                                                               |
 |    partition_leader_epoch     |    int     |              -1               |                                                                                          Partition Leader Epoch                                                                                           |
-|            broker             |   string   |              ''               |                                                                                     broker, format: '127.0.0.1:9092'                                                                                      |
 |           interval            | int｜float |               0               |                                        How many seconds to delay trying again when the message is not received, the default is 0, no delay (unit: second, decimal)                                        |
 |        session_timeout        | int｜float |              60               |                                If no heartbeat signal is received after the timeout, the coordinator will consider the user dead. (Unit: seconds, decimals are supported)                                 |
 |       rebalance_timeout       | int｜float |              60               |                                   The longest time the coordinator waits for each member to rejoin when rebalancing the group (unit: seconds, decimals are supported).                                    |
@@ -50,7 +45,6 @@ The default configuration file is as follows:
 |         offset_retry          |    int     |               5               |                                                           Offset operation, the number of automatic retries when matching the preset error code                                                           |
 |       auto_create_topic       |    bool    |             true              |                                                                                   Whether to automatically create topic                                                                                   |
 | partition_assignment_strategy |   string   | KafkaStrategy::RANGE_ASSIGNOR |                     Consumer partition allocation strategy, optional: range allocation (`KafkaStrategy::RANGE_ASSIGNOR`) polling allocation (`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`))                      |
-|             pool              |   object   |                               |                                                                                       Connection pool configuration                                                                                       |
 
 ```php
 <?php
@@ -66,16 +60,11 @@ return [
         'recv_timeout' => -1,
         'client_id' => '',
         'max_write_attempts' => 3,
-        'brokers' => [
-            '127.0.0.1:9092',
-        ],
-        'bootstrap_server' => '127.0.0.1:9092',
-        'update_brokers' => true,
+        'bootstrap_servers' => '127.0.0.1:9092',
         'acks' => 0,
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
-        'broker' => '',
         'interval' => 0,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,
@@ -87,14 +76,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
+        'sasl' => [],
+        'ssl' => [],
     ],
 ];
 ```
@@ -108,7 +91,6 @@ php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 ```
 
 You can also use the `Hyperf\Kafka\Annotation\Consumer` annotation to declare a subclass of the `Hyperf/Kafka/AbstractConsumer` abstract class to complete the definition of a `Consumer`, where `Hyperf\ Both Kafka\Annotation\Consumer` annotations and abstract classes contain the following attributes:
-
 
 | Configuration |        Type        |    Default    |                                           Description                                            |
 | :-----------: | :----------------: | :-----------: | :----------------------------------------------------------------------------------------------: |
@@ -165,10 +147,11 @@ class IndexController extends AbstractController
 }
 ```
 
+The `Hyperf\Kafka\Producer::send()` method will wait for ACK. If you do not need to wait for ACK, you can use the `Hyperf\Kafka\Producer::sendAsync()` method to deliver the message.
+
 ### Send multiple messages at once
 
 The `Hyperf\Kafka\Producer::sendBatch(array $messages)` method is used to deliver messages in batches to `kafka`, the following is an example of message delivery in `Controller`:
-
 
 ```php
 <?php

@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Resource\Stubs\Resources;
 
 class ResourceWithPreservedKeys extends PostResource
 {
-    public $preserveKeys = true;
+    public bool $preserveKeys = true;
 
     public function toArray(): array
     {

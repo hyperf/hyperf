@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 use Dotenv\Dotenv;
@@ -19,7 +20,8 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Di\ScanHandler\PcntlScanHandler;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
+use Hyperf\Support\DotenvManager;
 
 class ClassLoader
 {
@@ -31,7 +33,7 @@ class ClassLoader
         }
 
         if (! $configDir) {
-            // This dir is the default proxy file dir path of Hyperf
+            // This dir is the default config file dir path of Hyperf
             $configDir = BASE_PATH . '/config/';
         }
 
@@ -42,7 +44,7 @@ class ClassLoader
         $composerLoader = Composer::getLoader();
 
         if (file_exists(BASE_PATH . '/.env')) {
-            static::loadDotenv();
+            DotenvManager::load([BASE_PATH]);
         }
 
         // Scan by ScanConfig to generate the reflection class map
@@ -58,6 +60,10 @@ class ClassLoader
         LazyLoader::bootstrap($configDir);
     }
 
+    /**
+     * @see DotenvManager::load()
+     * @deprecated use DotenvManager instead
+     */
     protected static function loadDotenv(): void
     {
         $repository = RepositoryBuilder::createWithNoAdapters()

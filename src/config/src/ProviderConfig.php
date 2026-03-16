@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Config;
 
-use Hyperf\Utils\Composer;
+use Hyperf\Di\Definition\PriorityDefinition;
+use Hyperf\Support\Composer;
+
 use function class_exists;
 use function is_string;
 use function method_exists;
@@ -61,8 +64,20 @@ class ProviderConfig
         }
         $result = array_merge_recursive(...$arrays);
         if (isset($result['dependencies'])) {
-            $dependencies = array_column($arrays, 'dependencies');
-            $result['dependencies'] = array_merge(...$dependencies);
+            $result['dependencies'] = [];
+            foreach ($arrays as $item) {
+                foreach ($item['dependencies'] ?? [] as $key => $value) {
+                    $depend = $result['dependencies'][$key] ?? null;
+                    if (! $depend instanceof PriorityDefinition) {
+                        $result['dependencies'][$key] = $value;
+                        continue;
+                    }
+
+                    if ($value instanceof PriorityDefinition) {
+                        $depend->merge($value);
+                    }
+                }
+            }
         }
 
         return $result;

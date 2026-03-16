@@ -9,39 +9,37 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer\Router;
 
 use FastRoute\Dispatcher;
-use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
-use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\Handler;
-use HyperfTest\HttpServer\Stub\BarMiddleware;
 use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\DispatcherFactory;
-use HyperfTest\HttpServer\Stub\FooMiddleware;
-use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DispatcherFactoryTest extends TestCase
 {
     public function testGetPrefix()
     {
         $factory = new DispatcherFactory();
 
-        $res = $factory->getPrefix('App\\Controller\\Admin\\UserController', '');
+        $res = $factory->getPrefix('App\Controller\Admin\UserController', '');
         $this->assertSame('/admin/user', $res);
 
-        $res = $factory->getPrefix('App\\Controller\\Admin\\UserAuthController', '');
+        $res = $factory->getPrefix('App\Controller\Admin\UserAuthController', '');
         $this->assertSame('/admin/user_auth', $res);
     }
 
@@ -100,46 +98,6 @@ class DispatcherFactoryTest extends TestCase
         $this->assertSame('/demo', $routers['PUT']['/demo']->route);
         $this->assertSame('/demo2', $routers['POST']['/demo2']->route);
         $this->assertSame('/', $routers['GET']['/']->route);
-    }
-
-    public function testMiddlewareInController()
-    {
-        $factory = new DispatcherFactory();
-        // Middleware in options should not works.
-        $annotation = new Controller('test', options: ['name' => 'Hyperf', 'middleware' => [BarMiddleware::class]]);
-        $factory->handleController(
-            DemoController::class,
-            $annotation,
-            ['index' => [
-                GetMapping::class => new GetMapping('/index', ['name' => 'index.get', 'id' => 1]),
-                PostMapping::class => new PostMapping('/index', ['name' => 'index.post']),
-                Middleware::class => new MultipleAnnotation(new Middleware(FooMiddleware::class)),
-            ]],
-            [SetHeaderMiddleware::class]
-        );
-        $router = $factory->getRouter('http');
-
-        [$routers] = $router->getData();
-        foreach ($routers as $method => $items) {
-            /**
-             * @var string $key
-             * @var Handler $value
-             */
-            foreach ($items as $key => $value) {
-                $this->assertSame([DemoController::class, 'index'], $value->callback);
-                $this->assertSame('/index', $value->route);
-                $this->assertSame('index.' . strtolower($method), $value->options['name']);
-                $this->assertSame([
-                    SetHeaderMiddleware::class,
-                    FooMiddleware::class,
-                ], $value->options['middleware']);
-                if ($method === 'GET') {
-                    $this->assertSame(1, $value->options['id']);
-                } else {
-                    $this->assertArrayNotHasKey('id', $value->options);
-                }
-            }
-        }
     }
 
     public function testDispatchedHandlerIsNull()

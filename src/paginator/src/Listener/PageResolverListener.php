@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator\Listener;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\ServerRequestInterface;
 
 class PageResolverListener implements ListenerInterface

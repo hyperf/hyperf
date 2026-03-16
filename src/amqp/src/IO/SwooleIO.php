@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\IO;
 
+use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
+use PhpAmqpLib\Exception\AMQPIOException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
@@ -39,7 +42,7 @@ class SwooleIO extends AbstractIO
     private ?Socket $sock = null;
 
     /**
-     * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
+     * @throws InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
         string $host,
@@ -57,12 +60,12 @@ class SwooleIO extends AbstractIO
      *
      * @throws AMQPRuntimeException
      */
-    public function connect()
+    public function connect(): void
     {
         $this->sock = $this->makeClient();
     }
 
-    public function read($len)
+    public function read($len): string
     {
         $data = $this->sock->recvAll($len, $this->readWriteTimeout);
         if ($data === false || strlen($data) !== $len) {
@@ -72,7 +75,7 @@ class SwooleIO extends AbstractIO
         return $data;
     }
 
-    public function write($data)
+    public function write($data): void
     {
         $len = $this->sock->sendAll($data, $this->readWriteTimeout);
 
@@ -86,27 +89,27 @@ class SwooleIO extends AbstractIO
     {
     }
 
-    public function close()
+    public function close(): void
     {
         $this->sock && $this->sock->close();
     }
 
-    public function select(?int $sec, int $usec = 0)
+    public function select(?int $sec, int $usec = 0): int
     {
         return 1;
     }
 
-    public function disableHeartbeat()
+    public function disableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    public function reenableHeartbeat()
+    public function reenableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    protected function makeClient()
+    protected function makeClient(): Socket
     {
         $sock = new Socket(AF_INET, SOCK_STREAM, 0);
 
@@ -123,7 +126,10 @@ class SwooleIO extends AbstractIO
         return $sock;
     }
 
-    protected function write_heartbeat()
+    /**
+     * @throws AMQPIOException
+     */
+    protected function write_heartbeat(): void
     {
         $pkt = new AMQPWriter();
         $pkt->write_octet(8);
@@ -133,7 +139,7 @@ class SwooleIO extends AbstractIO
         $this->write($pkt->getvalue());
     }
 
-    protected function do_select($sec, $usec)
+    protected function do_select($sec, $usec): int
     {
         return 1;
     }

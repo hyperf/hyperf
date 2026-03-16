@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 trait GuardsAttributes
 {
@@ -112,10 +113,8 @@ trait GuardsAttributes
 
     /**
      * Determine if the given attribute may be mass assigned.
-     *
-     * @param string $key
      */
-    public function isFillable($key): bool
+    public function isFillable(string $key): bool
     {
         if (static::$unguarded) {
             return true;
@@ -142,10 +141,9 @@ trait GuardsAttributes
     /**
      * Determine if the given key is guarded.
      *
-     * @param string $key
      * @return bool
      */
-    public function isGuarded($key)
+    public function isGuarded(string $key)
     {
         return in_array($key, $this->getGuarded()) || $this->getGuarded() == ['*'];
     }

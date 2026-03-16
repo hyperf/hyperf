@@ -1,6 +1,6 @@
 # 模型建立指令碼
 
-Hyperf 提供了建立模型的命令，您可以很方便的根據資料表建立對應模型。命令通過 `AST` 生成模型，所以當您增加了某些方法後，也可以使用指令碼方便的重置模型。
+Hyperf 提供了建立模型的命令，您可以很方便的根據資料表建立對應模型。命令透過 `AST` 生成模型，所以當您增加了某些方法後，也可以使用指令碼方便的重置模型。
 
 ```bash
 php bin/hyperf.php gen:model table_name
@@ -78,24 +78,18 @@ class User extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user';
+    protected ?string $table = 'user';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 
@@ -142,7 +136,9 @@ return [
 
 ## 覆蓋 Visitor
 
-Hyperf 框架中，當使用 `gen:model` 時，預設會將 `decimal` 轉化成為 `float`。如下：
+Hyperf 框架中，當使用 `gen:model` 時，預設只會將 `tinyint, smallint, mediumint, int, bigint` 宣告為 `int` 型別，`bool, boolean` 宣告為 `boolean` 型別，其他資料型別預設為 `string` ，可以透過重寫覆蓋調整。
+
+如下：
 
 ```php
 <?php
@@ -154,7 +150,7 @@ namespace App\Model;
 /**
  * @property int $id
  * @property int $count
- * @property float $float_num // decimal
+ * @property string $float_num // decimal
  * @property string $str
  * @property string $json
  * @property \Carbon\Carbon $created_at
@@ -164,29 +160,23 @@ class UserExt extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user_ext';
+    protected ?string $table = 'user_ext';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'float', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'string', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
 
 ```
 
-這時候，我們就可以通過重寫 `ModelUpdateVisitor`，修改這一特性。
+這時候，我們就可以透過重寫 `ModelUpdateVisitor`，修改這一特性。
 
 ```php
 <?php
@@ -203,10 +193,13 @@ declare(strict_types=1);
 namespace App\Kernel\Visitor;
 
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor as Visitor;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class ModelUpdateVisitor extends Visitor
 {
+    /**
+     * Used by `casts` attribute.
+     */
     protected function formatDatabaseType(string $type): ?string
     {
         switch ($type) {
@@ -231,6 +224,9 @@ class ModelUpdateVisitor extends Visitor
         }
     }
 
+    /**
+     * Used by `@property` docs.
+     */
     protected function formatPropertyType(string $type, ?string $cast): ?string
     {
         if (! isset($cast)) {
@@ -290,21 +286,15 @@ class UserExt extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user_ext';
+    protected ?string $table = 'user_ext';
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
 ```

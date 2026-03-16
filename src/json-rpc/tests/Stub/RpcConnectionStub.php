@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\JsonRpc\Stub;
 
+use Closure;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 
 class RpcConnectionStub extends RpcConnection
@@ -18,7 +20,7 @@ class RpcConnectionStub extends RpcConnection
     public $lastData = '';
 
     /**
-     * @var null|\Closure
+     * @var null|Closure
      */
     public $reconnectCallback;
 
@@ -28,13 +30,13 @@ class RpcConnectionStub extends RpcConnection
         // return $this->connection->{$name};
     }
 
-    public function send(string $data): int|false
+    public function send(string $data): false|int
     {
         $this->lastData = $data;
         return strlen($data);
     }
 
-    public function recvPacket(float $timeout = 0): string|false
+    public function recvPacket(float $timeout = 0): false|string
     {
         return $this->lastData;
     }

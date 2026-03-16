@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Event;
 
+use Hyperf\Stdlib\SplPriorityQueue;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use SplPriorityQueue;
 
 class ListenerProvider implements ListenerProviderInterface
 {

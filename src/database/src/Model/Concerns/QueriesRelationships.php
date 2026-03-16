@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
@@ -17,7 +18,8 @@ use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use RuntimeException;
 
 trait QueriesRelationships
@@ -25,13 +27,16 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @param Relation|string $relation
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
+     * @return static
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)
     {
         if (is_string($relation)) {
             if (str_contains($relation, '.')) {
@@ -76,10 +81,10 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query with an "or".
      *
-     * @param string $relation
+     * @param Relation|string $relation
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return static
      */
     public function orHas($relation, $operator = '>=', $count = 1)
     {
@@ -89,11 +94,13 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @param string $relation
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
+     * @return static
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null)
+    public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->has($relation, '<', 1, $boolean, $callback);
     }
@@ -101,8 +108,8 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query with an "or".
      *
-     * @param string $relation
-     * @return \Hyperf\Database\Model\Builder|static
+     * @param Relation|string $relation
+     * @return static
      */
     public function orDoesntHave($relation)
     {
@@ -112,26 +119,44 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
-     * @param string $relation
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return static
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)
+    public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->has($relation, $operator, $count, 'and', $callback);
     }
 
     /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * Also load the relationship with same condition.
+     *
+     * @param null|(Closure(\Hyperf\Database\Model\Builder<*>|\Hyperf\Database\Model\Relations\Relation<*, *, *>): void) $callback
+     * @return static
+     */
+    public function withWhereHas(string $relation, ?Closure $callback = null, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->whereHas(Str::before($relation, ':'), $callback, $operator, $count)
+            ->with($callback ? [$relation => fn ($query) => $callback($query)] : $relation);
+    }
+
+    /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @param string $relation
-     * @param \Closure $callback
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return static
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)
+    public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->has($relation, $operator, $count, 'or', $callback);
     }
@@ -139,10 +164,12 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
-     * @param string $relation
-     * @return \Hyperf\Database\Model\Builder|static
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
+     * @return static
      */
-    public function whereDoesntHave($relation, Closure $callback = null)
+    public function whereDoesntHave($relation, ?Closure $callback = null)
     {
         return $this->doesntHave($relation, 'and', $callback);
     }
@@ -150,11 +177,12 @@ trait QueriesRelationships
     /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @param string $relation
-     * @param \Closure $callback
-     * @return \Hyperf\Database\Model\Builder|static
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     * @param \Hyperf\Database\Model\Relations\Relation<TRelatedModel, *, *>|string $relation
+     * @param null|(Closure(Builder<TRelatedModel>): void) $callback
+     * @return static
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null)
+    public function orWhereDoesntHave($relation, ?Closure $callback = null)
     {
         return $this->doesntHave($relation, 'or', $callback);
     }
@@ -285,7 +313,7 @@ trait QueriesRelationships
             // Finally, we will make the proper column alias to the query and run this sub-select on
             // the query builder. Then, we will return the builder instance back to the developer
             // for further constraint chaining that needs to take place on the query as needed.
-            $alias = $alias ?? Str::snake(
+            $alias = $alias ?? StrCache::snake(
                 preg_replace('/[^[:alnum:][:space:]_]/u', '', "{$name} {$function} {$column}")
             );
 
@@ -301,7 +329,7 @@ trait QueriesRelationships
     /**
      * Merge the where constraints from another query to the current query.
      *
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function mergeConstraintsFrom(Builder $from)
     {
@@ -321,13 +349,16 @@ trait QueriesRelationships
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
-     * @param string $relation
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
      * @param string $operator
      * @param int $count
-     * @return $this
+     * @return static
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
+    public function whereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->hasMorph($relation, $types, $operator, $count, 'and', $callback);
     }
@@ -335,11 +366,14 @@ trait QueriesRelationships
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
-     * @param \Closure $callback
-     * @return $this
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
+     * @return static
      */
-    public function orWhereHasMorph(string $relation, $types, Closure $callback = null, string $operator = '>=', int $count = 1)
+    public function orWhereHasMorph(MorphTo|string $relation, $types, ?Closure $callback = null, string $operator = '>=', int $count = 1)
     {
         return $this->hasMorph($relation, $types, $operator, $count, 'or', $callback);
     }
@@ -347,10 +381,14 @@ trait QueriesRelationships
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
-     * @return $this
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
+     * @return static
      */
-    public function whereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
+    public function whereDoesntHaveMorph(MorphTo|string $relation, $types, ?Closure $callback = null)
     {
         return $this->doesntHaveMorph($relation, $types, 'and', $callback);
     }
@@ -358,28 +396,99 @@ trait QueriesRelationships
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
-     * @param \Closure $callback
-     * @return $this
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
+     * @return static
      */
-    public function orWhereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
+    public function orWhereDoesntHaveMorph(MorphTo|string $relation, $types, ?Closure $callback = null)
     {
         return $this->doesntHaveMorph($relation, $types, 'or', $callback);
     }
 
     /**
+     * Add a basic where clause to a relationship query.
+     *
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param  Relation<TRelatedModel, *, *>|string  $relation
+     * @param array|(Closure(Builder<TRelatedModel>): mixed)|Expression|string $column
+     * @return static
+     */
+    public function whereRelation(Relation|string $relation, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->whereHas($relation, function ($query) use ($column, $operator, $value) {
+            if ($column instanceof Closure) {
+                $column($query);
+            } else {
+                $query->where($column, $operator, $value);
+            }
+        });
+    }
+
+    /**
+     * Add an "or where" clause to a relationship query.
+     *
+     * @param  Relation<*, *, *>|string  $relation
+     * @return static
+     */
+    public function orWhereRelation(Relation|string $relation, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->orWhereHas($relation, function ($query) use ($column, $operator, $value) {
+            if ($column instanceof Closure) {
+                $column($query);
+            } else {
+                $query->where($column, $operator, $value);
+            }
+        });
+    }
+
+    /**
+     * Add a polymorphic relationship condition to the query with a where clause.
+     *
+     * @param MorphTo<*, *>|string $relation
+     * @return static
+     */
+    public function whereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->whereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
+     * Add a polymorphic relationship condition to the query with an "or where" clause.
+     *
+     * @param MorphTo<*, *>|string $relation
+     * @return static
+     */
+    public function orWhereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->orWhereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
-     * @param string $relation
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @return $this
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
+     * @return static
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)
     {
-        $relation = $this->getRelationWithoutConstraints($relation);
+        if (is_string($relation)) {
+            $relation = $this->getRelationWithoutConstraints($relation);
+        }
 
         $types = (array) $types;
 
@@ -410,15 +519,41 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     *
+     * @param MorphTo<*, *>|string $relation
+     * @return static
+     */
+    public function orHasMorph(MorphTo|string $relation, array|string $types, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'or');
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
+     * @template TRelatedModel of \Hyperf\Database\Model\Model
+     *
+     * @param MorphTo<TRelatedModel, *>|string $relation
      * @param array|string $types
      * @param string $boolean
-     * @return $this
+     * @param null|(Closure(Builder<TRelatedModel>, string): void) $callback
+     * @return static
      */
-    public function doesntHaveMorph(string $relation, $types, $boolean = 'and', Closure $callback = null)
+    public function doesntHaveMorph(MorphTo|string $relation, $types, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->hasMorph($relation, $types, '<', 1, $boolean, $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     *
+     * @param MorphTo<*, *>|string $relation
+     * @return static
+     */
+    public function orDoesntHaveMorph(MorphTo|string $relation, array|string $types): Builder|static
+    {
+        return $this->doesntHaveMorph($relation, $types, 'or');
     }
 
     /**
@@ -430,8 +565,8 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param null|\Closure $callback
-     * @return \Hyperf\Database\Model\Builder|static
+     * @param null|Closure $callback
+     * @return Builder|static
      */
     protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
@@ -462,7 +597,7 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     protected function addHasWhere(Builder $hasQuery, Relation $relation, $operator, $count, $boolean)
     {
@@ -497,7 +632,7 @@ trait QueriesRelationships
      * Get the "has relation" base query instance.
      *
      * @param string $relation
-     * @return \Hyperf\Database\Model\Relations\Relation
+     * @return Relation
      */
     protected function getRelationWithoutConstraints($relation)
     {

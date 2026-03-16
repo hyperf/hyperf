@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats\Driver;
 
 use Closure;
@@ -23,6 +24,8 @@ use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class NatsDriver extends AbstractDriver
 {

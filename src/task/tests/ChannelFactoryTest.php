@@ -9,16 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Task;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Task\ChannelFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ChannelFactoryTest extends TestCase
 {
     public function testChannelPop()

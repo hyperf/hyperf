@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Annotation;
 
 use Attribute;
@@ -19,7 +20,8 @@ class Producer extends AbstractAnnotation
 {
     public function __construct(
         public string $exchange = '',
-        public string $routingKey = ''
+        public string $routingKey = '',
+        public ?string $pool = null
     ) {
     }
 }

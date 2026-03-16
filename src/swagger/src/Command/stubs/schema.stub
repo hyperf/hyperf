@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Schema;
+
+use Hyperf\Swagger\Annotation\Property;
+use Hyperf\Swagger\Annotation\Schema;
+use JsonSerializable;
+
+#[Schema(title: '%NAME')]
+class %NAME implements JsonSerializable
+{
+    #[Property(property: 'id', title: 'ID', type: 'integer')]
+    public int $id;
+
+    public function __construct(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'id' => $this->id,
+        ];
+    }
+}

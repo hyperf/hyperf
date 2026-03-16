@@ -9,18 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Database\Concerns\CompilesJsonPaths;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Database\Query\JoinLateralClause;
+use Hyperf\Stringable\Str;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\head;
+use function Hyperf\Collection\last;
 
 class Grammar extends BaseGrammar
 {
+    use CompilesJsonPaths;
+
     /**
      * The grammar specific operators.
      */
@@ -157,24 +166,33 @@ class Grammar extends BaseGrammar
      */
     public function compileInsertUsing(Builder $query, array $columns, string $sql): string
     {
-        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) {$sql}";
+        $table = $this->wrapTable($query->from);
+        if (empty($columns) || $columns === ['*']) {
+            return "insert into {$table} {$sql}";
+        }
+
+        return "insert into {$table} ({$this->columnize($columns)}) {$sql}";
+    }
+
+    /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        throw new RuntimeException('This database engine does not support inserting while ignoring errors.');
     }
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
         // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
+        $columns = $this->compileUpdateColumns($query, $values);
 
         // If the query has any "join" clauses, we will setup the joins on the builder
         // and compile them so we can attach them to this update, as update queries
@@ -191,6 +209,16 @@ class Grammar extends BaseGrammar
         $wheres = $this->compileWheres($query);
 
         return trim("update {$table}{$joins} set {$columns} {$wheres}");
+    }
+
+    /**
+     * Compile an "upsert" statement into SQL.
+     *
+     * @throws RuntimeException
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
+    {
+        throw new RuntimeException('This database engine does not support upserts.');
     }
 
     /**
@@ -297,6 +325,101 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Substitute the given bindings into the given raw SQL query.
+     *
+     * @param string $sql
+     * @param array $bindings
+     * @return string
+     */
+    public function substituteBindingsIntoRawSql($sql, $bindings)
+    {
+        $query = '';
+
+        $isStringLiteral = false;
+
+        for ($i = 0; $i < strlen($sql); ++$i) {
+            $char = $sql[$i];
+            $nextChar = $sql[$i + 1] ?? null;
+
+            // Single quotes can be escaped as '' according to the SQL standard while
+            // MySQL uses \'. Postgres has operators like ?| that must get encoded
+            // in PHP like ??|. We should skip over the escaped characters here.
+            if (in_array($char . $nextChar, ["\\'", "''", '??'])) {
+                $query .= $char . $nextChar;
+                ++$i;
+            } elseif ($char === "'") { // Starting / leaving string literal...
+                $query .= $char;
+                $isStringLiteral = ! $isStringLiteral;
+            } elseif ($char === '?' && ! $isStringLiteral) { // Substitutable binding...
+                $query .= array_shift($bindings) ?? '?';
+            } else { // Normal character...
+                $query .= $char;
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * Compile a "lateral join" clause.
+     *
+     * @throws RuntimeException
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        throw new RuntimeException('This database engine does not support lateral joins.');
+    }
+
+    /**
+     * Compile the columns for an update statement.
+     */
+    protected function compileUpdateColumns(Builder $query, array $values): string
+    {
+        return collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+    }
+
+    /**
+     * Compile a "where JSON overlaps" clause.
+     */
+    protected function whereJsonOverlaps(Builder $query, array $where): string
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonOverlaps(
+            $where['column'],
+            $this->parameter($where['value'])
+        );
+    }
+
+    /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        throw new RuntimeException('This database engine does not support JSON overlaps operations.');
+    }
+
+    /**
+     * Compile a "where JSON contains key" clause.
+     */
+    protected function whereJsonContainsKey(Builder $query, array $where): string
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonContainsKey($where['column']);
+    }
+
+    /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        throw new RuntimeException('This database engine does not support JSON contains key operations.');
+    }
+
+    /**
      * Compile the components necessary for a select clause.
      */
     protected function compileComponents(Builder $query): array
@@ -356,20 +479,26 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "value between" where clause.
+     */
+    protected function whereValueBetween(Builder $query, array $where): string
+    {
+        $between = $where['not'] ? 'not between' : 'between';
+
+        $min = $this->wrap(is_array($where['columns']) ? reset($where['columns']) : $where['columns'][0]);
+
+        $max = $this->wrap(is_array($where['columns']) ? end($where['columns']) : $where['columns'][1]);
+
+        return $this->parameter($where['value']) . ' ' . $between . ' ' . $min . ' and ' . $max;
+    }
+
+    /**
      * Compile the "from" portion of the query.
      *
      * @param string $table
      */
     protected function compileFrom(Builder $query, $table): string
     {
-        if ($query->forceIndexes) {
-            $forceIndexes = [];
-            foreach ($query->forceIndexes as $forceIndex) {
-                $forceIndexes[] = $this->wrapValue($forceIndex);
-            }
-            return 'from ' . $this->wrapTable($table) . ' force index (' . implode(',', $forceIndexes) . ')';
-        }
-
         return 'from ' . $this->wrapTable($table);
     }
 
@@ -386,6 +515,10 @@ class Grammar extends BaseGrammar
             $nestedJoins = is_null($join->joins) ? '' : ' ' . $this->compileJoins($query, $join->joins);
 
             $tableAndNestedJoins = is_null($join->joins) ? $table : '(' . $table . $nestedJoins . ')';
+
+            if ($join instanceof JoinLateralClause) {
+                return $this->compileJoinLateral($join, $tableAndNestedJoins);
+            }
 
             return trim("{$join->type} join {$tableAndNestedJoins} {$this->compileWheres($join)}");
         })->implode(' ');
@@ -416,7 +549,7 @@ class Grammar extends BaseGrammar
     /**
      * Get an array of all the where clauses for the query.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      */
     protected function compileWheresToArray($query): array
     {
@@ -428,7 +561,7 @@ class Grammar extends BaseGrammar
     /**
      * Format the where clause statements into one string.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param array $sql
      */
     protected function concatenateWhereClauses($query, $sql): string
@@ -459,6 +592,43 @@ class Grammar extends BaseGrammar
         $value = $this->parameter($where['value']);
 
         return $this->wrap($where['column']) . ' ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Compile a "where JSON boolean" clause.
+     *
+     * @param array $where
+     * @return string
+     */
+    protected function whereJsonBoolean(Builder $query, $where)
+    {
+        $column = $this->wrapJsonBooleanSelector($where['column']);
+
+        $value = $this->wrapJsonBooleanValue(
+            $this->parameter($where['value'])
+        );
+
+        return $column . ' ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        return $this->wrapJsonSelector($value);
+    }
+
+    /**
+     * Wrap the given JSON boolean value.
+     * @param mixed $value
+     */
+    protected function wrapJsonBooleanValue($value)
+    {
+        return $value;
     }
 
     /**
@@ -731,7 +901,7 @@ class Grammar extends BaseGrammar
      *
      * @param string $column
      * @param string $value
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function compileJsonContains($column, $value): string
     {
@@ -753,12 +923,20 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        throw new RuntimeException('This database engine does not support fulltext search operations.');
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column
      * @param string $operator
      * @param string $value
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function compileJsonLength($column, $operator, $value): string
     {
@@ -859,9 +1037,7 @@ class Grammar extends BaseGrammar
     protected function compileOrdersToArray(Builder $query, $orders): array
     {
         return array_map(function ($order) {
-            return ! isset($order['sql'])
-                ? $this->wrap($order['column']) . ' ' . $order['direction']
-                : $order['sql'];
+            return $order['sql'] ?? $this->wrap($order['column']) . ' ' . $order['direction'];
         }, $orders);
     }
 
@@ -951,33 +1127,6 @@ class Grammar extends BaseGrammar
     protected function wrapJsonSelector($value): string
     {
         throw new RuntimeException('This database engine does not support JSON operations.');
-    }
-
-    /**
-     * Split the given JSON selector into the field and the optional path and wrap them separately.
-     *
-     * @param string $column
-     */
-    protected function wrapJsonFieldAndPath($column): array
-    {
-        $parts = explode('->', $column, 2);
-
-        $field = $this->wrap($parts[0]);
-
-        $path = count($parts) > 1 ? ', ' . $this->wrapJsonPath($parts[1], '->') : '';
-
-        return [$field, $path];
-    }
-
-    /**
-     * Wrap the given JSON path.
-     *
-     * @param string $value
-     * @param string $delimiter
-     */
-    protected function wrapJsonPath($value, $delimiter = '->'): string
-    {
-        return '\'$."' . str_replace($delimiter, '"."', $value) . '"\'';
     }
 
     /**

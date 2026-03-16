@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Logger;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\Exception\InvalidConfigException;
-use Hyperf\Utils\Arr;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FormattableHandlerInterface;
@@ -21,6 +22,8 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+
+use function Hyperf\Support\make;
 
 class LoggerFactory
 {
@@ -37,10 +40,13 @@ class LoggerFactory
     {
         $config = $this->config->get('logger');
         if (! isset($config[$group])) {
-            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $name));
+            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $group));
         }
 
         $config = $config[$group];
+        if (is_callable($config)) {
+            $config = $config($name);
+        }
         $handlers = $this->handlers($config);
         $processors = $this->processors($config);
 
@@ -110,6 +116,15 @@ class LoggerFactory
         $defaultHandlerConfig = $this->getDefaultHandlerConfig($config);
         $defaultFormatterConfig = $this->getDefaultFormatterConfig($config);
         foreach ($handlerConfigs as $value) {
+            if (is_string($value)) {
+                if (! $this->config->has($group = 'logger.' . $value)) {
+                    continue;
+                }
+                $value = $this->config->get($group . '.handler', []);
+                if ($this->config->has($group . '.formatter')) {
+                    $value['formatter'] = $this->config->get($group . '.formatter', []);
+                }
+            }
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
             if (isset($value['formatter'])) {
@@ -125,9 +140,13 @@ class LoggerFactory
         return $handlers;
     }
 
+    /**
+     * @param class-string<HandlerInterface> $class
+     * @param array $constructor
+     * @param array $formatterConfig
+     */
     protected function handler($class, $constructor, $formatterConfig): HandlerInterface
     {
-        /** @var HandlerInterface $handler */
         $handler = make($class, $constructor);
 
         if ($handler instanceof FormattableHandlerInterface) {

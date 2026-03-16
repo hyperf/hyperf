@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar\Ast\Visitor;
 
 use PhpParser\Node;
@@ -16,7 +17,7 @@ use PhpParser\NodeVisitorAbstract;
 
 class RewriteConfigVisitor extends NodeVisitorAbstract
 {
-    public function leaveNode(Node $node)
+    public function leaveNode(Node $node): Node|Node\Stmt\Expression
     {
         if ($node instanceof Node\Stmt\Return_) {
             $result = new Node\Expr\Variable('result');

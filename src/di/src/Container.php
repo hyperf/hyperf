@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
@@ -24,19 +25,19 @@ class Container implements HyperfContainerInterface
     /**
      * Map of entries that are already resolved.
      */
-    private array $resolvedEntries;
+    protected array $resolvedEntries;
 
     /**
      * Map of definitions that are already fetched (local cache).
      */
-    private array $fetchedDefinitions = [];
+    protected array $fetchedDefinitions = [];
 
-    private Resolver\ResolverInterface $definitionResolver;
+    protected Resolver\ResolverInterface $definitionResolver;
 
     /**
      * Container constructor.
      */
-    public function __construct(private Definition\DefinitionSourceInterface $definitionSource)
+    public function __construct(protected Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionResolver = new ResolverDispatcher($this);
         // Auto-register the container.
@@ -48,17 +49,7 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Build an entry of the container by its name.
-     * This method behave like get() except resolves the entry again every time.
-     * For example if the entry is a class then a new instance will be created each time.
-     * This method makes the container behave like a factory.
-     *
-     * @param string $name entry name or a class name
-     * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
-     *                          to specific values. Parameters not defined in this array will be resolved using
-     *                          the container.
-     * @throws NotFoundException no entry found for the given name
-     * @throws InvalidArgumentException the name parameter must be of type string
+     * @internal
      */
     public function make(string $name, array $parameters = [])
     {
@@ -72,8 +63,7 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Bind an arbitrary resolved entry to an identifier.
-     * Useful for testing 'get'.
+     * @internal
      * @param mixed $entry
      */
     public function set(string $name, $entry): void
@@ -82,7 +72,7 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Unbind an arbitrary resolved entry.
+     * @internal
      */
     public function unbind(string $name): void
     {
@@ -92,10 +82,8 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Bind an arbitrary definition to an identifier.
-     * Useful for testing 'make'.
-     *
-     * @param array|callable|string $definition
+     * @internal
+     * @param mixed $definition
      */
     public function define(string $name, $definition): void
     {
@@ -103,9 +91,7 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Finds an entry of the container by its identifier and returns it.
-     *
-     * @param string $id identifier of the entry to look for
+     * @param mixed $id
      */
     public function get($id)
     {
@@ -117,12 +103,7 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * Returns true if the container can return an entry for the given identifier.
-     * Returns false otherwise.
-     * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
-     * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
-     *
-     * @param mixed|string $id identifier of the entry to look for
+     * @param mixed $id
      */
     public function has($id): bool
     {
@@ -147,17 +128,9 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * @deprecated
-     */
-    public function getDefinitionSource(): Definition\DefinitionSourceInterface
-    {
-        return $this->definitionSource;
-    }
-
-    /**
      * @param array|callable|string $definition
      */
-    private function setDefinition(string $name, $definition): void
+    protected function setDefinition(string $name, $definition): void
     {
         // Clear existing entry if it exists
         if (array_key_exists($name, $this->resolvedEntries)) {
@@ -168,7 +141,7 @@ class Container implements HyperfContainerInterface
         $this->definitionSource->addDefinition($name, $definition);
     }
 
-    private function getDefinition(string $name): ?DefinitionInterface
+    protected function getDefinition(string $name): ?DefinitionInterface
     {
         // Local cache that avoids fetching the same definition twice
         if (! array_key_exists($name, $this->fetchedDefinitions)) {
@@ -181,7 +154,7 @@ class Container implements HyperfContainerInterface
     /**
      * Resolves a definition.
      */
-    private function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
+    protected function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
     {
         return $this->definitionResolver->resolve($definition, $parameters);
     }

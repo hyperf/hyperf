@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coordinator;
+
+use RuntimeException;
 
 class CoordinatorManager
 {
@@ -31,7 +34,7 @@ class CoordinatorManager
     /**
      * Get a Coordinator from container by the identifier.
      *
-     * @throws \RuntimeException when the Coordinator with the identifier has not initialization
+     * @throws RuntimeException when the Coordinator with the identifier has not initialization
      */
     public static function until(string $identifier): Coordinator
     {

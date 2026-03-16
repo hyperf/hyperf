@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Resolver;
 
 use Hyperf\Di\Definition\DefinitionInterface;
@@ -28,8 +29,8 @@ class FactoryResolver implements ResolverInterface
      *
      * @param FactoryDefinition $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
-     * @throws InvalidDefinitionException if the definition cannot be resolved
      * @return mixed value obtained from the definition
+     * @throws InvalidDefinitionException if the definition cannot be resolved
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
@@ -41,12 +42,8 @@ class FactoryResolver implements ResolverInterface
             }
             if (is_string($callable)) {
                 $callable = $this->container->get($callable);
-                $object = $callable($this->container);
-            } else {
-                $object = call($callable, [$this->container]);
             }
-
-            return $object;
+            return $callable($this->container, $parameters);
         } catch (NotCallableException $e) {
             // Custom error message to help debugging
             if (is_string($callable) && class_exists($callable) && method_exists($callable, '__invoke')) {

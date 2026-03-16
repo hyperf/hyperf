@@ -1,27 +1,29 @@
-# 模型缓存
+# Model cache
 
-在高频场景下，我们会频繁的查询数据库，虽然有主键加持，但也会影响到数据库性能。这种kv查询方式，我们可以很方便的使用 `模型缓存` 来减缓数据库压力。本模块实现了自动缓存，删除和修改模型时，自动删除缓存。累加、减操作时，直接操作缓存进行对应累加、减。
+In high-frequency scenarios, we will frequently query the database. Although there is a primary key blessing, it will also affect the database performance. With this kv query method, we can easily use `model cache` to reduce database pressure. This module implements automatic caching. When deleting and modifying the model, the cache is automatically deleted. When accumulating and subtracting, directly operate the cache to perform the corresponding accumulation and subtraction.
 
-> 模型缓存暂支持 `Redis`存储，其他存储引擎会慢慢补充。
+> Model cache temporarily supports `Redis` storage, other storage engines will be added gradually.
 
 ## Installation
 
-```
+```bash
 composer require hyperf/model-cache
 ```
 
-## 配置
+## configure
 
-模型缓存的配置在 `databases` 中。示例如下
+Model caching is configured in `databases`. Examples are as follows
 
-|      配置       |  类型  |                        默认值                         |                备注                 |
-|:---------------:|:------:|:-----------------------------------------------------:|:-----------------------------------:|
-|     handler     | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
-|    cache_key    | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值` |
-|     prefix      | string |                  db connection name                   |              缓存前缀               |
-|       ttl       |  int   |                         3600                          |              超时时间               |
-| empty_model_ttl |  int   |                          60                           |      查询不到数据时的超时时间       |
-|   load_script   |  bool  |                         true                          | Redis引擎下 是否使用evalSha代替eval |
+|   Configuration   |  Type  |                         Default                        |                Remarks                                           |
+|:-----------------:|:------:|:------------------------------------------------------:|:----------------------------------------------------------------:|
+| handler           | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class  |                               none                               |
+| cache_key         | string |                   `mc:%s:m:%s:%s:%s`                   | `mc:cache prefix:m:table name:primary key KEY:primary key value` |
+| prefix            | string |                   db connection name                   |                           cache prefix                           |
+| pool              | string |                        default                         |                           cache pool                             |
+| ttl               |  int   |                          3600                          |                              timeout                             |
+| empty_model_ttl   |  int   |                           60                           |                  Timeout when no data is queried                 |
+| load_script       |  bool  |                          true                          |   Whether to use evalSha instead of eval under the Redis engine  |
+| use_default_value |  bool  |                          false                         |              Whether to use database default values              |
 
 ```php
 <?php
@@ -51,14 +53,15 @@ return [
             'ttl' => 3600 * 24,
             'empty_model_ttl' => 3600,
             'load_script' => true,
+            'use_default_value' => false,
         ]
     ],
 ];
 ```
 
-## 使用
+## use
 
-模型缓存的使用十分简单，只需要在对应Model中实现 `Hyperf\ModelCache\CacheableInterface` 接口，当然，框架已经提供了对应实现，只需要引入 `Hyperf\ModelCache\Cacheable` Trait 即可。
+The use of the model cache is very simple. You only need to implement the `Hyperf\ModelCache\CacheableInterface` interface in the corresponding Model. Of course, the framework has already provided the corresponding implementation, you only need to introduce the `Hyperf\ModelCache\Cacheable` Trait.
 
 ```php
 <?php
@@ -99,15 +102,15 @@ class User extends Model implements CacheableInterface
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
-// 查询单个缓存
+// Query a single cache
 $model = User::findFromCache($id);
 
-// 批量查询缓存，返回 Hyperf\Database\Model\Collection
+// Batch query cache, return Hyperf\Database\Model\Collection
 $models = User::findManyFromCache($ids);
 
 ```
 
-对应Redis数据如下，其中 `HF-DATA:DEFAULT` 作为占位符存在于 `HASH` 中，*所以用户不要使用 `HF-DATA` 作为数据库字段*。
+The corresponding Redis data is as follows, where `HF-DATA:DEFAULT` exists as a placeholder in `HASH`, *so users do not use `HF-DATA` as a database field*.
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
@@ -124,5 +127,99 @@ $models = User::findManyFromCache($ids);
 12) "DEFAULT"
 ```
 
-另外一点就是，缓存更新机制，框架内实现了对应的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 监听器，每当数据修改，会主动删除缓存。
-如果用户不想由框架来删除缓存，可以主动覆写 `deleteCache` 方法，然后由自己实现对应监听即可。
+Another point is that the cache update mechanism implements the corresponding `Hyperf\ModelCache\Listener\DeleteCacheListener` listener in the framework. Whenever the data is modified, the cache will be actively deleted.
+If the user does not want the framework to delete the cache, he can actively override the `deleteCache` method, and then implement the corresponding monitoring by yourself.
+
+### Edit or delete in bulk
+
+`Hyperf\ModelCache\Cacheable` will automatically take over the `Model::query` method. The user only needs to delete the data in the following ways to automatically clear the corresponding cached data.
+
+```php
+<?php
+// Delete user data from the database and the framework will automatically delete the corresponding cached data.
+User::query(true)->where('gender', '>', 1)->delete();
+```
+
+### Use default value
+
+When the model cache is used in the production environment, if the corresponding cache data has been established, but at this time new fields are added due to logical changes, and the default values ​​are not `0`, `null character`, `null` and other such data When the data is queried, the data retrieved from the cache will be inconsistent with the data in the database.
+
+For this situation, we can modify `use_default_value` to `true` and add `Hyperf\DbConnection\Listener\InitTableCollectorListener` to the `listener.php` configuration so that the Hyperf application can actively obtain the field information of the database when it starts. And compare it with the cached data when obtaining it and correct the cached data.
+
+### Control cache time in models
+
+In addition to the default cache time `ttl` configured in `database.php`, `Hyperf\ModelCache\Cacheable` supports configuring more detailed cache time for the model:
+
+```php
+class User extends Model implements CacheableInterface
+{
+    use Cacheable;
+    
+    /**
+     * Cache for 10 minutes. If null is returned, the timeout set in the configuration file will be used.
+     * @return int|null
+     */
+    public function getCacheTTL(): ?int
+    {
+        return 600;
+    }
+}
+```
+
+### EagerLoad
+
+When we use model relationships, we can solve the `N+1` problem through `load`, but we still need to check the database once. The model cache rewrites `ModelBuilder` to allow users to get the corresponding model from the cache as much as possible.
+
+> This feature does not support `morphTo` and relational models that do not have only `whereIn` queries.
+
+Two methods are provided below:
+
+1. Configure EagerLoadListener and use the `loadCache` method directly.
+
+Modify `listeners.php` configuration
+
+```php
+return [
+    Hyperf\ModelCache\Listener\EagerLoadListener::class,
+];
+```
+
+Load the corresponding model relationship through the `loadCache` method.
+
+```php
+$books = Book::findManyFromCache([1,2,3]);
+$books->loadCache(['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```
+
+2. Use EagerLoader
+
+```php
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\Context\ApplicationContext;
+
+$books = Book::findManyFromCache([1,2,3]);
+$loader = ApplicationContext::getContainer()->get(EagerLoader::class);
+$loader->load($books, ['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```
+
+### Cache adapter
+
+You can implement the cache adapter according to your actual situation, and you only need to implement the interface `Hyperf\ModelCache\Handler\HandlerInterface`.
+
+The framework provides two Handlers to choose from:
+
+- Hyperf\ModelCache\Handler\RedisHandler
+
+Using `HASH` to store cache can effectively handle `Model::increment()`. The disadvantage is that because the data type is only `String`, it has poor support for `null`.
+
+- Hyperf\ModelCache\Handler\RedisStringHandler
+
+Use `String` to store the cache. Because it is serialized data, it supports all data types. The disadvantage is that it cannot effectively handle `Model::increment()`. When the model calls accumulation, the consistency problem is solved by deleting the cache.

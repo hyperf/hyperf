@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\ScanHandler;
 
 use Hyperf\Di\Exception\Exception;
@@ -37,6 +38,10 @@ class PcntlScanHandler implements ScanHandlerInterface
         }
         if ($pid) {
             pcntl_wait($status);
+            if ($status !== 0) {
+                exit(-1);
+            }
+
             return new Scanned(true);
         }
 

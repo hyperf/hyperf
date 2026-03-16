@@ -9,15 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
+use Closure;
 use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @property float $timeout
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
@@ -29,7 +28,7 @@ class CircuitBreaker extends AbstractAnnotation
      */
     public function __construct(
         public string $handler = TimeoutHandler::class,
-        public ?string $fallback = null,
+        public array|Closure|string $fallback = [],
         public float $duration = 10.0,
         public int $successCounter = 10,
         public int $failCounter = 10,

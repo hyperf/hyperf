@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Dag;
 
+use Hyperf\Coroutine\Concurrent;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Dag\Exception\InvalidArgumentException;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Coroutine\Concurrent;
 use SplStack;
+
+use function Hyperf\Support\call;
 
 class Dag implements Runner
 {
@@ -125,14 +128,6 @@ class Dag implements Runner
     {
         $this->concurrency = $concurrency;
         return $this;
-    }
-
-    /**
-     * @deprecated v3.1 Use checkCircularDependencies() instead
-     */
-    public function checkCircularDependences(): array
-    {
-        return $this->checkCircularDependencies();
     }
 
     public function checkCircularDependencies(): array

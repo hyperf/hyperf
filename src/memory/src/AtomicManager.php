@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Memory;
 
+use RuntimeException;
 use Swoole\Atomic;
 
 class AtomicManager
@@ -31,12 +33,12 @@ class AtomicManager
     /**
      * Get an initialized Atomic from container by the identifier.
      *
-     * @throws \RuntimeException when the Atomic with the identifier has not initialization
+     * @throws RuntimeException when the Atomic with the identifier has not initialization
      */
     public static function get(string $identifier): Atomic
     {
         if (! isset(static::$container[$identifier])) {
-            throw new \RuntimeException('The Atomic has not initialization yet.');
+            throw new RuntimeException('The Atomic has not initialization yet.');
         }
 
         return static::$container[$identifier];

@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Helper;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\data_get;
 
 class StringHelper
 {
@@ -40,8 +43,8 @@ class StringHelper
      */
     public static function parse(string $value): array
     {
-        preg_match_all('/\#\{[\w\.]+\}/', $value, $matches);
+        preg_match_all('/#\{[\w.]+}/', $value, $matches);
 
-        return $matches[0] ?? [];
+        return $matches[0];
     }
 }

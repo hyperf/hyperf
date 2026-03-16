@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
+
+use Carbon\Carbon;
 
 /**
  * @property int $id
  * @property string $url
  * @property int $imageable_id
  * @property string $imageable_type
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Image extends Model
 {

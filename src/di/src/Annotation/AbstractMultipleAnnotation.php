@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 abstract class AbstractMultipleAnnotation extends AbstractAnnotation
@@ -18,6 +19,13 @@ abstract class AbstractMultipleAnnotation extends AbstractAnnotation
         $annotation = AnnotationCollector::getClassAnnotation($className, static::class);
 
         AnnotationCollector::collectClass($className, static::class, $this->formatAnnotation($annotation));
+    }
+
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        $annotation = AnnotationCollector::getClassConstantAnnotation($className, $target)[static::class] ?? null;
+
+        AnnotationCollector::collectClassConstant($className, $target, static::class, $this->formatAnnotation($annotation));
     }
 
     public function collectMethod(string $className, ?string $target): void

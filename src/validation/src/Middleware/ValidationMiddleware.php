@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Middleware;
 
 use Closure;
@@ -17,6 +18,7 @@ use Hyperf\Context\Context;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Validation\Annotation\Scene;
@@ -28,6 +30,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class ValidationMiddleware implements MiddlewareInterface
 {
@@ -127,7 +130,7 @@ class ValidationMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     * @see CoreMiddleware::prepareHandler()
      */
     protected function prepareHandler(array|string $handler): array
     {
@@ -136,11 +139,14 @@ class ValidationMiddleware implements MiddlewareInterface
                 return explode('@', $handler);
             }
             $array = explode('::', $handler);
+            if (! isset($array[1]) && class_exists($handler) && method_exists($handler, '__invoke')) {
+                $array[1] = '__invoke';
+            }
             return [$array[0], $array[1] ?? null];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
         }
-        throw new \RuntimeException('Handler not exist.');
+        throw new RuntimeException('Handler not exist.');
     }
 }

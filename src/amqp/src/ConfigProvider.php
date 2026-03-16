@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Listener\BeforeMainServerStartListener;
 use Hyperf\Amqp\Listener\MainWorkerStartListener;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Utils\Packer\JsonPacker;
+use Hyperf\Codec\Packer\JsonPacker;
 
 class ConfigProvider
 {

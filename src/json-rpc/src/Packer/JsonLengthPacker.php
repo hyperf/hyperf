@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Packer;
 
 use Hyperf\Contract\PackerInterface;
@@ -19,7 +20,7 @@ class JsonLengthPacker implements PackerInterface
 
     protected int $length;
 
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         'package_length_type' => 'N',
         'package_body_offset' => 4,
     ];

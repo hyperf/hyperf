@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\WebSocketServer\Stub;
 
 use Hyperf\Contract\OnOpenInterface;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 class WebSocketStub implements OnOpenInterface
 {

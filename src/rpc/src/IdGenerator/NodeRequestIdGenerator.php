@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc\IdGenerator;
 
+use DateTime;
+use Hyperf\Codec\Base62;
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Utils\Codec\Base62;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {
@@ -34,7 +36,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
         $node = str_pad(sprintf('%x', Base62::decode($macStr)), 12, '0', STR_PAD_LEFT);
         return [
             'node' => trim(preg_replace('/(..)/', '\1:', $node), ':'),
-            'time' => \DateTime::createFromFormat('U.u', (string) $microtime),
+            'time' => DateTime::createFromFormat('U.u', (string) $microtime),
         ];
     }
 

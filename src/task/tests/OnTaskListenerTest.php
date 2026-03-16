@@ -9,26 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Task;
 
 use Hyperf\Framework\Event\OnTask;
+use Hyperf\Serializer\ExceptionNormalizer;
 use Hyperf\Task\ChannelFactory;
 use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Swoole\Server;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class OnTaskListenerTest extends TestCase
 {
     protected function tearDown(): void
@@ -68,7 +72,7 @@ class OnTaskListenerTest extends TestCase
         $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($event) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
-            $this->assertSame(\RuntimeException::class, $result->data->class);
+            $this->assertSame(RuntimeException::class, $result->data->class);
             $this->assertSame('Foo::exception failed.', $result->data->attributes['message']);
             $this->assertSame(0, $result->data->attributes['code']);
             return $event;

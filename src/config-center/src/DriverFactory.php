@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\Contract\ConfigInterface;
+
+use function Hyperf\Support\make;
 
 class DriverFactory
 {

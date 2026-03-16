@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue\Stub;
 
 use Hyperf\AsyncQueue\Driver\RedisDriver;
-use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Coroutine\Concurrent;
 
 class RedisDriverStub extends RedisDriver
 {

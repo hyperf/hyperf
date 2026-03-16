@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Dag;
+
+use Closure;
 
 class Vertex
 {
@@ -30,9 +33,9 @@ class Vertex
      */
     public array $children = [];
 
-    public static function make(callable $job, string $key = null): self
+    public static function make(callable $job, ?string $key = null): self
     {
-        $closure = \Closure::fromCallable($job);
+        $closure = Closure::fromCallable($job);
         if ($key === null) {
             $key = spl_object_hash($closure);
         }
@@ -43,7 +46,7 @@ class Vertex
         return $v;
     }
 
-    public static function of(Runner $job, string $key = null): self
+    public static function of(Runner $job, ?string $key = null): self
     {
         if ($key === null) {
             $key = spl_object_hash($job);

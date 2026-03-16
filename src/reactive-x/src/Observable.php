@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX;
 
+use Exception;
 use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable\ChannelObservable;
 use Hyperf\ReactiveX\Observable\CoroutineObservable;
@@ -18,6 +20,7 @@ use Hyperf\ReactiveX\Observable\EventObservable;
 use Hyperf\ReactiveX\Observable\HttpRouteObservable;
 use Rx\Observable as RxObservable;
 use Rx\SchedulerInterface;
+use stdClass;
 
 class Observable
 {
@@ -32,7 +35,7 @@ class Observable
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function fromChannel(Channel $channel, ?SchedulerInterface $scheduler = null): ChannelObservable
     {
@@ -42,7 +45,7 @@ class Observable
     /**
      * @param array<string>|string $httpMethod
      * @param null|callable|string $callback
-     * @throws \Exception
+     * @throws Exception
      */
     public static function fromHttpRoute(array|string $httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null, string $serverName = 'http'): HttpRouteObservable
     {
@@ -51,7 +54,7 @@ class Observable
 
     /**
      * @param array<callable>|callable $callables
-     * @throws \Exception
+     * @throws Exception
      */
     public static function fromCoroutine(array|callable $callables, ?SchedulerInterface $scheduler = null): CoroutineObservable
     {
@@ -66,7 +69,7 @@ class Observable
         $chan = new Channel(1);
         $observable->subscribe(
             function ($x) use ($chan) {
-                $send = new \stdClass();
+                $send = new stdClass();
                 $send->data = $x;
                 $chan->push($send);
             },
@@ -91,7 +94,7 @@ class Observable
         $chan = new Channel(1);
         $id = $observable->subscribe(
             function ($x) use ($chan) {
-                $send = new \stdClass();
+                $send = new stdClass();
                 $send->data = $x;
                 $chan->push($send, 1);
             },
@@ -107,6 +110,6 @@ class Observable
         if ($receive !== false) {
             return $receive->data;
         }
-        throw new \Exception('Found no element from observable');
+        throw new Exception('Found no element from observable');
     }
 }

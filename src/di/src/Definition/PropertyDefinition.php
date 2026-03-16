@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
-class PropertyDefinition implements DefinitionInterface
+use Stringable;
+
+class PropertyDefinition implements Stringable, DefinitionInterface
 {
     /**
      * @param string $propertyName property name

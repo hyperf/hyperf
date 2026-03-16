@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Exception;
 
-class ClientException extends \RuntimeException
+use RuntimeException;
+
+class ClientException extends RuntimeException
 {
 }

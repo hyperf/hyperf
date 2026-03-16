@@ -9,11 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Macroable;
 
 use BadMethodCallException;
 use Closure;
+use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
 use ReflectionMethod;
 
 /**
@@ -32,8 +36,8 @@ trait Macroable
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
      * @return mixed
+     * @throws BadMethodCallException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -59,8 +63,8 @@ trait Macroable
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
      * @return mixed
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -86,9 +90,23 @@ trait Macroable
      *
      * @param string $name
      * @param callable|object $macro
+     *
+     * @param-closure-this static $macro
      */
     public static function macro($name, $macro)
     {
+        if ($macro instanceof Closure) {
+            $reflection = new ReflectionFunction($macro);
+            foreach ($reflection->getParameters() as $parameter) {
+                if ($parameter->isPassedByReference()) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Macro %s cannot accept parameters passed by reference.',
+                        $name
+                    ));
+                }
+            }
+        }
+
         static::$macros[$name] = $macro;
     }
 
@@ -98,7 +116,7 @@ trait Macroable
      * @param object $mixin
      * @param bool $replace
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function mixin($mixin, $replace = true)
     {
@@ -108,7 +126,6 @@ trait Macroable
 
         foreach ($methods as $method) {
             if ($replace || ! static::hasMacro($method->name)) {
-                $method->setAccessible(true);
                 static::macro($method->name, $method->invoke($mixin));
             }
         }

@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Json;
 
 use Countable;
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Concerns\CollectsResources;
 use Hyperf\Resource\Response\PaginatedResponse;
-use Hyperf\Utils\Collection;
 use IteratorAggregate;
 use Psr\Http\Message\ResponseInterface;
 

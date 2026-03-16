@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,6 +18,7 @@ use Jaeger\Config;
 use OpenTracing\Tracer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 class JaegerTracerFactory implements NamedFactoryInterface

@@ -9,50 +9,58 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Codec\Json;
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
+use Hyperf\Rpc\Context as RpcContext;
+use Hyperf\RpcMultiplex\Contract\HostReaderInterface;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
-use Hyperf\Utils\Codec\Json;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 class HttpMessageBuilder implements HttpMessageBuilderInterface
 {
-    public function __construct(protected PackerInterface $packer)
+    public function __construct(protected PackerInterface $packer, protected RpcContext $context, protected HostReaderInterface $hostReader)
     {
     }
 
-    public function buildRequest(array $data): ServerRequestInterface
+    public function buildRequest(array $data, array $config = []): ServerRequestPlusInterface
     {
+        $extra = $data[Constant::EXTRA] ?? [];
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
-            $data[Constant::HOST] ?? 'unknown',
-            $data[Constant::PORT] ?? 80
+            $data[Constant::HOST] ?? $this->hostReader->read(),
+            $data[Constant::PORT] ?? $config['port'] ?? 80
         );
 
         $parsedData = $data[Constant::DATA] ?? [];
 
-        $request = new Request('POST', $uri, ['Content-Type' => 'application/json'], new SwooleStream(Json::encode($parsedData)));
+        $this->context->setData($data[Constant::CONTEXT] ?? []);
 
-        return $request->withParsedBody($parsedData);
+        $request = new Request('POST', $uri, ['Content-Type' => 'application/json', ...$extra], new SwooleStream(Json::encode($parsedData)));
+
+        return $request->setParsedBody($parsedData);
     }
 
-    public function buildResponse(ServerRequestInterface $request, array $data): ResponseInterface
+    public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface
     {
         $packed = $this->packer->pack($data);
 
-        return $this->response()->withBody(new SwooleStream($packed));
+        return $this->response()->setBody(new SwooleStream($packed));
     }
 
-    public function persistToContext(ResponseInterface $response): ResponseInterface
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface
     {
-        return Context::set(ResponseInterface::class, $response);
+        return ResponseContext::set($response);
     }
 
     protected function buildUri($path, $host, $port, $scheme = 'http'): UriInterface
@@ -65,8 +73,8 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
     /**
      * Get response instance from context.
      */
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

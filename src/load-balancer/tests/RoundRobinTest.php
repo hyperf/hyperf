@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\LoadBalancer;
 
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\RoundRobin;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RoundRobinTest extends TestCase
 {
     public function testRandom()

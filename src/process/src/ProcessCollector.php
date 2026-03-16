@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process;
 
 use Swoole\Process;
@@ -18,6 +19,9 @@ use Swoole\Process;
  */
 class ProcessCollector
 {
+    /**
+     * @var array<string, array<Process>>
+     */
     protected static array $processes = [];
 
     public static function add($name, Process $process)
@@ -25,11 +29,18 @@ class ProcessCollector
         static::$processes[$name][] = $process;
     }
 
+    /**
+     * @param string $name
+     * @return Process[]
+     */
     public static function get($name): array
     {
         return static::$processes[$name] ?? [];
     }
 
+    /**
+     * @return Process[]
+     */
     public static function all(): array
     {
         $result = [];

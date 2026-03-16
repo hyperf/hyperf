@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Stub;
 
+use Carbon\Carbon;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
 use HyperfTest\Database\Stubs\Model\Model;
@@ -19,8 +21,8 @@ use HyperfTest\Database\Stubs\Model\Model;
  * @property int $id
  * @property int $user_id
  * @property string $title
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class BookModel extends Model implements CacheableInterface
 {
@@ -28,8 +30,6 @@ class BookModel extends Model implements CacheableInterface
 
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
     protected ?string $table = 'book';
 

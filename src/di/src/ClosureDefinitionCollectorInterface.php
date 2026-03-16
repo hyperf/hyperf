@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
+
+use Closure;
 
 interface ClosureDefinitionCollectorInterface
 {
     /**
      * @return ReflectionType[]
      */
-    public function getParameters(\Closure $closure): array;
+    public function getParameters(Closure $closure): array;
 
-    public function getReturnType(\Closure $closure): ReflectionType;
+    public function getReturnType(Closure $closure): ReflectionType;
 }

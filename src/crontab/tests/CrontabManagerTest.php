@@ -9,17 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Crontab;
 
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
 use Hyperf\Crontab\Parser;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Tappable\tap;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CrontabManagerTest extends TestCase
 {
     public function testCrontabRegister()

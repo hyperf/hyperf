@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
 use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
@@ -63,29 +65,31 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000): void
     {
-        $this->autoRefresh = true;
-        Coroutine::create(function () use ($callback, $tickMs) {
-            while (true) {
-                try {
-                    $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($tickMs / 1000);
-                    if ($exited) {
-                        break;
-                    }
-
-                    $beforeNodes = $this->getNodes();
-                    $nodes = call($callback);
-                    if (is_array($nodes)) {
-                        $this->setNodes($nodes);
-                        foreach ($this->afterRefreshCallbacks as $refreshCallback) {
-                            ! is_null($refreshCallback) && $refreshCallback($beforeNodes, $nodes);
+        if (! $this->autoRefresh) {
+            $this->autoRefresh = true;
+            Coroutine::create(function () use ($callback, $tickMs) {
+                while (true) {
+                    try {
+                        $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($tickMs / 1000);
+                        if ($exited) {
+                            break;
                         }
+
+                        $beforeNodes = $this->getNodes();
+                        $nodes = $callback($beforeNodes);
+                        if (is_array($nodes)) {
+                            $this->setNodes($nodes);
+                            foreach ($this->afterRefreshCallbacks as $refreshCallback) {
+                                ! is_null($refreshCallback) && $refreshCallback($beforeNodes, $nodes);
+                            }
+                        }
+                    } catch (Throwable $exception) {
+                        $this->logger?->error((string) $exception);
                     }
-                } catch (\Throwable $exception) {
-                    $this->logger?->error((string) $exception);
                 }
-            }
-            $this->autoRefresh = false;
-        });
+                $this->autoRefresh = false;
+            });
+        }
     }
 
     public function isAutoRefresh(): bool

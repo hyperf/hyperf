@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
@@ -16,6 +17,12 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ */
 class BelongsTo extends Relation
 {
     use SupportsDefaultModels;
@@ -171,8 +178,8 @@ class BelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param \Hyperf\Database\Model\Model|int|string $model
-     * @return \Hyperf\Database\Model\Model
+     * @param int|string|TRelatedModel $model
+     * @return TDeclaringModel
      */
     public function associate($model)
     {
@@ -192,7 +199,7 @@ class BelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return TDeclaringModel
      */
     public function dissociate()
     {
@@ -205,7 +212,7 @@ class BelongsTo extends Relation
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -224,7 +231,7 @@ class BelongsTo extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -244,7 +251,7 @@ class BelongsTo extends Relation
     /**
      * Get the child of the relationship.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return TDeclaringModel
      */
     public function getChild()
     {
@@ -312,6 +319,16 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Alias of "dissociate" method.
+     *
+     * @return Model
+     */
+    public function disassociate()
+    {
+        return $this->dissociate();
+    }
+
+    /**
      * Gather the keys from an array of related models.
      *
      * @return array
@@ -355,7 +372,7 @@ class BelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     protected function newRelatedInstanceFor(Model $parent)
     {

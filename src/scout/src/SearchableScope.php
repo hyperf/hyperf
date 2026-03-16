@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder as EloquentBuilder;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Scope;
 use Hyperf\Scout\Event\ModelsFlushed;
 use Hyperf\Scout\Event\ModelsImported;
-use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Config\config;
 
 class SearchableScope implements Scope
 {
@@ -46,6 +49,7 @@ class SearchableScope implements Scope
         });
         $builder->macro('unsearchable', function (EloquentBuilder $builder, $chunk = null) {
             $builder->chunk($chunk ?: config('scout.chunk.unsearchable', 500), function ($models) {
+                // @phpstan-ignore-next-line
                 $models->unsearchable();
                 $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
                 $dispatcher->dispatch(new ModelsFlushed($models));

@@ -9,27 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\RemoteProxy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Metric\Contract\HistogramInterface;
-use Hyperf\Process\ProcessCollector;
+use Hyperf\Metric\Contract\MetricCollectorInterface;
 
 class Histogram implements HistogramInterface
 {
     /**
-     * @var string
-     */
-    protected const TARGET_PROCESS_NAME = 'metric';
-
-    /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var float
-     */
-    public $sample;
+    public float $sample;
 
     public function __construct(public string $name, public array $labelNames)
     {
@@ -44,7 +38,9 @@ class Histogram implements HistogramInterface
     public function put(float $sample): void
     {
         $this->sample = $sample;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 }

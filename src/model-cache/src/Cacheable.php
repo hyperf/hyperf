@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
-use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
@@ -55,7 +56,7 @@ trait Cacheable
     {
         $manager = $this->getContainer()->get(Manager::class);
 
-        return $manager->destroy([$this->getKey()], get_called_class());
+        return $manager->destroy([$this->getKey()], static::class);
     }
 
     /**
@@ -82,7 +83,7 @@ trait Cacheable
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, $amount, get_called_class());
+                $manager->increment($this->getKey(), $column, $amount, static::class);
             } else {
                 // Update other columns, when increment a column's value.
                 $this->deleteCache();
@@ -107,7 +108,7 @@ trait Cacheable
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, -$amount, get_called_class());
+                $manager->increment($this->getKey(), $column, -$amount, static::class);
             } else {
                 // Update other columns, when decrement a column's value.
                 $this->deleteCache();

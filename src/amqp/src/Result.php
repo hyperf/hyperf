@@ -9,27 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
-class Result
+enum Result: string
 {
-    /**
+    /*
      * Acknowledge the message.
      */
-    public const ACK = 'ack';
+    case ACK = 'ack';
 
-    /**
+    /*
      * Unacknowledged the message.
      */
-    public const NACK = 'nack';
+    case NACK = 'nack';
 
-    /**
+    /*
      * Reject the message and requeue it.
      */
-    public const REQUEUE = 'requeue';
+    case REQUEUE = 'requeue';
 
-    /**
+    /*
      * Reject the message and drop it.
      */
-    public const DROP = 'drop';
+    case DROP = 'drop';
 }

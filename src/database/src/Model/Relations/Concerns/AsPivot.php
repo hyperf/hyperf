@@ -9,18 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
+
+use function Hyperf\Support\class_basename;
 
 trait AsPivot
 {
     /**
      * The parent model of the relationship.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     public $pivotParent;
 
@@ -112,7 +116,7 @@ trait AsPivot
             $this->setTable(str_replace(
                 '\\',
                 '',
-                Str::snake(Str::singular(class_basename($this)))
+                StrCache::snake(Str::singular(class_basename($this)))
             ));
         }
 
@@ -199,7 +203,7 @@ trait AsPivot
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param array<int>|string $ids
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function newQueryForRestoration($ids)
     {
@@ -221,7 +225,7 @@ trait AsPivot
     /**
      * Set the keys for a save update query.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
     {
@@ -243,7 +247,7 @@ trait AsPivot
     /**
      * Get the query builder for a delete operation on the pivot.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function getDeleteQuery()
     {
@@ -257,7 +261,7 @@ trait AsPivot
      * Get a new query to restore multiple models by their queueable IDs.
      *
      * @param array|int $ids
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function newQueryForCollectionRestoration(array $ids)
     {

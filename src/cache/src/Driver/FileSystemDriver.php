@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Collector\FileStorage;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
 class FileSystemDriver extends Driver

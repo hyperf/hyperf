@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Memory;
 
+use RuntimeException;
 use Swoole\Lock;
 
 class LockManager
@@ -31,15 +33,23 @@ class LockManager
     /**
      * Get an initialized Lock from container by the identifier.
      *
-     * @throws \RuntimeException when the Lock with the identifier has not initialization
+     * @throws RuntimeException when the Lock with the identifier has not initialization
      */
     public static function get(string $identifier): Lock
     {
         if (! isset(static::$container[$identifier])) {
-            throw new \RuntimeException('The Lock has not initialization yet.');
+            throw new RuntimeException('The Lock has not initialization yet.');
         }
 
         return static::$container[$identifier];
+    }
+
+    /**
+     * Check if a lock with the given identifier exists in the container.
+     */
+    public static function exists(string $identifier): bool
+    {
+        return isset(static::$container[$identifier]);
     }
 
     /**

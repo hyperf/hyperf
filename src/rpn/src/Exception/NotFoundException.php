@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpn\Exception;
 
-class NotFoundException extends \Exception
+use Exception;
+
+class NotFoundException extends Exception
 {
 }

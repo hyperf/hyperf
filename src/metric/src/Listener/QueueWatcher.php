@@ -9,17 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Timer;
 
 /**
  * A simple redis queue watcher served as an example.
@@ -28,8 +26,11 @@ use Swoole\Timer;
  */
 class QueueWatcher implements ListenerInterface
 {
+    private Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->timer = new Timer();
     }
 
     /**
@@ -67,16 +68,12 @@ class QueueWatcher implements ListenerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
+        $this->timer->tick($timerInterval, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
             $info = $queue->info();
             $waiting->set((float) $info['waiting']);
             $delayed->set((float) $info['delayed']);
             $failed->set((float) $info['failed']);
             $timeout->set((float) $info['timeout']);
-        });
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
         });
     }
 }

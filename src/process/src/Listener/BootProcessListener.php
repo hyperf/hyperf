@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -51,6 +52,8 @@ class BootProcessListener implements ListenerInterface
         $serverProcesses = $serverConfig['processes'] ?? [];
         $processes = $this->config->get('processes', []);
         $annotationProcesses = $this->getAnnotationProcesses();
+
+        ProcessManager::setRunning(true);
 
         // Retrieve the processes have been registered.
         $processes = array_merge($serverProcesses, $processes, ProcessManager::all(), array_keys($annotationProcesses));

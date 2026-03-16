@@ -8,7 +8,7 @@ The service number increasing with the splitting. A large number of services wit
 composer require hyperf/service-governance
 ```
 
-# Register Servive
+# Register Service
 
 Service registration can be done by defining a class through the `#[RpcService]` annotation, which can be regarded as service publishing. So far, only the JSON RPC protocol has been adapted. Referring the [JSON RPC Service](en/json-rpc.md) for more details.
 

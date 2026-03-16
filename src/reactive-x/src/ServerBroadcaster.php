@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
+use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 class ServerBroadcaster implements BroadcasterInterface

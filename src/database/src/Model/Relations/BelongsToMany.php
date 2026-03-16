@@ -9,16 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\collect;
+use function Hyperf\Support\class_basename;
+use function Hyperf\Tappable\tap;
+
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ * @template TPivotModel of \Hyperf\Database\Model\Relations\Pivot = \Hyperf\Database\Model\Relations\Pivot
+ * @template TAccessor of string = 'pivot'
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, Collection<int, object{pivot: TPivotModel}&TRelatedModel>>
+ */
 class BelongsToMany extends Relation
 {
     use Concerns\InteractsWithPivotTable;
@@ -354,9 +370,9 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key or return new instance of the related model.
      *
-     * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
+     * @param array $columns
+     * @return ($id is array ? Collection<int, object{pivot: Pivot}&TRelatedModel> : object{pivot: Pivot}&TRelatedModel)
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -370,7 +386,7 @@ class BelongsToMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return object{pivot: Pivot}&TRelatedModel
      */
     public function firstOrNew(array $attributes)
     {
@@ -382,10 +398,10 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the first related record matching the attributes or create it.
+     * Get the first related record matching the attributes. If the record is not found, create it.
      *
      * @param bool $touch
-     * @return \Hyperf\Database\Model\Model
+     * @return object{pivot: Pivot}&TRelatedModel
      */
     public function firstOrCreate(array $attributes, array $joining = [], $touch = true)
     {
@@ -397,10 +413,33 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param bool $touch
+     * @return object{pivot: Pivot}&TRelatedModel
+     */
+    public function createOrFirst(array $attributes = [], array $values = [], array $joining = [], $touch = true)
+    {
+        try {
+            return $this->create(array_merge($attributes, $values), $joining, $touch);
+        } catch (UniqueConstraintViolationException $exception) {
+            // ...
+        }
+
+        try {
+            return tap($this->related->where($attributes)->first(), function ($instance) use ($joining, $touch) {
+                $this->attach($instance, $joining, $touch);
+            });
+        } catch (UniqueConstraintViolationException $exception) {
+            return (clone $this)->where($attributes)->first();
+        }
+    }
+
+    /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
      * @param bool $touch
-     * @return \Hyperf\Database\Model\Model
+     * @return object{pivot: Pivot}&TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true)
     {
@@ -418,9 +457,9 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key.
      *
-     * @param array $columns
      * @param mixed $id
-     * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
+     * @param array $columns
+     * @return ($id is array ? Collection<int, object{pivot: Pivot}&TRelatedModel> : null|(object{pivot: Pivot}&TRelatedModel))
      */
     public function find($id, $columns = ['*'])
     {
@@ -434,9 +473,9 @@ class BelongsToMany extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param array $columns
      * @param mixed $ids
-     * @return \Hyperf\Database\Model\Collection
+     * @param array $columns
+     * @return Collection<int, object{pivot: Pivot}&TRelatedModel>
      */
     public function findMany($ids, $columns = ['*'])
     {
@@ -449,10 +488,10 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key or throw an exception.
      *
-     * @param array $columns
      * @param mixed $id
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
-     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
+     * @param array $columns
+     * @return ($id is array ? Collection<int, object{pivot: Pivot}&TRelatedModel> : object{pivot: Pivot}&TRelatedModel)
+     * @throws ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -473,6 +512,7 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result.
      *
      * @param array $columns
+     * @return null|(object{pivot: Pivot}&TRelatedModel)
      */
     public function first($columns = ['*'])
     {
@@ -485,8 +525,8 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
-     * @return \Hyperf\Database\Model\Model|static
+     * @return object{pivot: Pivot}&TRelatedModel
+     * @throws ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -509,7 +549,6 @@ class BelongsToMany extends Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Collection
      */
     public function get($columns = ['*'])
     {
@@ -539,7 +578,7 @@ class BelongsToMany extends Relation
     /**
      * Get a paginator for the "select" statement.
      */
-    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $this->query->addSelect($this->shouldSelect($columns));
 
@@ -555,7 +594,7 @@ class BelongsToMany extends Relation
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contract\PaginatorInterface
+     * @return PaginatorInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -638,7 +677,7 @@ class BelongsToMany extends Relation
     /**
      * Get all of the IDs for the related models.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function allRelatedIds()
     {
@@ -648,8 +687,9 @@ class BelongsToMany extends Relation
     /**
      * Save a new model and attach it to the parent model.
      *
+     * @param TRelatedModel $model
      * @param bool $touch
-     * @return \Hyperf\Database\Model\Model
+     * @return object{pivot: Pivot}&TRelatedModel
      */
     public function save(Model $model, array $pivotAttributes = [], $touch = true)
     {
@@ -663,8 +703,8 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param array|\Hyperf\Utils\Collection $models
-     * @return array
+     * @param iterable<TRelatedModel> $models
+     * @return ($models is array ? array<int, object{pivot: Pivot}&TRelatedModel> : Collection<int, object{pivot: Pivot}&TRelatedModel>)
      */
     public function saveMany($models, array $pivotAttributes = [])
     {
@@ -681,7 +721,7 @@ class BelongsToMany extends Relation
      * Create a new instance of the related model.
      *
      * @param bool $touch
-     * @return \Hyperf\Database\Model\Model
+     * @return object{pivot: Pivot}&TRelatedModel
      */
     public function create(array $attributes = [], array $joining = [], $touch = true)
     {
@@ -700,7 +740,7 @@ class BelongsToMany extends Relation
     /**
      * Create an array of new instances of the related models.
      *
-     * @return array
+     * @return array<int, object{pivot: Pivot}&TRelatedModel>
      */
     public function createMany(array $records, array $joinings = [])
     {
@@ -719,7 +759,7 @@ class BelongsToMany extends Relation
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -736,7 +776,7 @@ class BelongsToMany extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfJoin(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -901,7 +941,7 @@ class BelongsToMany extends Relation
     /**
      * Set the join clause for the relation query.
      *
-     * @param null|\Hyperf\Database\Model\Builder $query
+     * @param null|Builder $query
      * @return $this
      */
     protected function performJoin($query = null)
@@ -1040,6 +1080,6 @@ class BelongsToMany extends Relation
      */
     protected function guessInverseRelation()
     {
-        return Str::camel(Str::pluralStudly(class_basename($this->getParent())));
+        return StrCache::camel(Str::pluralStudly(class_basename($this->getParent())));
     }
 }

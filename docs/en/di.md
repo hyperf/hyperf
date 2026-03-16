@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Hyperf uses [hyperf/di](https://github.com/hyperf-cloud/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf-cloud/di).
+Hyperf uses [hyperf/di](https://github.com/hyperf/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf/di).
 
-[hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
+[hyperf/di](https://github.com/hyperf/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
 
 ## Installation
 
-This component exists by default in the [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
+This component exists by default in the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
 
 ```bash
 composer require hyperf/di
@@ -183,7 +183,7 @@ interface UserServiceInterface
 }
 ```
 
-`UserService` implements the interface：
+`UserService` implements the interface:
 
 ```php
 <?php
@@ -247,8 +247,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance
-    public function __invoke(ContainerInterface $container)
+    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance and the parameters array.
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // Assume that the key of corresponding config is cache.enable
@@ -316,13 +316,13 @@ In other words, although this approach works, it is not recommended from the per
 Another solution is to use the lazy proxy mode which commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
 The Hyperf DI component is designed with lazy loading injection function.
 
-Add the `config/autoload/lazy_loader.php` file and bind the lazy loading relationship:
+Add the `config/lazy_loader.php` file and bind the lazy loading relationship:
 
 ```php
 <?php
 return [
     /**
-     * Format：proxy class name => original class name
+     * Format: proxy class name => original class name
      * The proxy class does not exist at this time, and Hyperf will automatically generate this class in the runtime folder.
      * The proxy class name and namespace can be defined by yourself.
      */
@@ -413,10 +413,10 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContainer()` method to obtain the `Container` object.
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## Cautions

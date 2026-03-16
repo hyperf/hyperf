@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 interface PaginatorInterface
@@ -22,14 +23,14 @@ interface PaginatorInterface
      * Add a set of query string values to the paginator.
      *
      * @param array|string $key
-     * @return $this
+     * @return static
      */
     public function appends($key, ?string $value = null);
 
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
-     * @return $this|string
+     * @return static|string
      */
     public function fragment(?string $fragment = null);
 

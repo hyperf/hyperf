@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Contract;
 
-interface Htmlable
+use Stringable;
+
+interface Htmlable extends Stringable
 {
     /**
      * Get content as a string of HTML.

@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 use Hyperf\Framework\ApplicationFactory;
+use Symfony\Component\Console\Application;
 
 /**
  * @see ApplicationFactory
+ * @mixin Application
  */
 interface ApplicationInterface
 {

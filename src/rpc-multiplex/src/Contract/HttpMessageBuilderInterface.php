@@ -9,16 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex\Contract;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 interface HttpMessageBuilderInterface
 {
-    public function buildRequest(array $data): ServerRequestInterface;
+    public function buildRequest(array $data, array $config = []): ServerRequestPlusInterface;
 
-    public function buildResponse(ServerRequestInterface $request, array $data): ResponseInterface;
+    public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface;
 
-    public function persistToContext(ResponseInterface $response): ResponseInterface;
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface;
 }

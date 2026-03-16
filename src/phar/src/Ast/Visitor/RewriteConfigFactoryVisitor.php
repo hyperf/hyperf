@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar\Ast\Visitor;
 
 use PhpParser\Node;
@@ -17,7 +18,7 @@ use PhpParser\ParserFactory;
 
 class RewriteConfigFactoryVisitor extends NodeVisitorAbstract
 {
-    protected $replaceFunc = "<?php
+    protected string $replaceFunc = "<?php
 class ConfigFactory{
     private function readPaths(array \$paths)
     {
@@ -25,9 +26,13 @@ class ConfigFactory{
         \$finder = new Finder();
         \$finder->files()->in(\$paths)->name('*.php');
         foreach (\$finder as \$file) {
-            \$configs[] = [
-                \$file->getBasename('.php') => require \$file->getPathname(),
-            ];
+            \$config = [];
+            \$key = implode('.', array_filter([
+                str_replace('/', '.', \$file->getRelativePath()),
+                \$file->getBasename('.php'),
+            ]));
+            \\Hyperf\\Collection\\Arr::set(\$config, \$key, require \$file->getPathname());
+            \$configs[] = \$config;
         }
         return \$configs;
      }
@@ -61,6 +66,7 @@ class ConfigFactory{
             return null;
         }
         foreach ($stmts as $node) {
+            /* @phpstan-ignore-next-line */
             if (isset($node->stmts) && is_array($node->stmts) && ! empty($node->stmts)) {
                 foreach ($node->stmts as $val) {
                     return $val;

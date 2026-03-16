@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
 use Hyperf\ViewEngine\Factory as ViewFactory;
@@ -27,7 +28,7 @@ trait CompilesLayouts
     {
         $expression = $this->stripParentheses($expression);
 
-        $echo = "<?php echo \$__env->make({$expression}, \\Hyperf\\Utils\\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>";
+        $echo = "<?php echo \$__env->make({$expression}, \\Hyperf\\Collection\\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>";
 
         $this->footer[] = $echo;
 

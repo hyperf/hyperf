@@ -9,25 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Redis\Lua;
 
 use Hyperf\Redis\Lua\Hash\HGetAllMultiple;
 use Hyperf\Redis\Lua\Hash\HIncrByFloatIfExists;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use HyperfTest\Redis\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Redis;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HashTest extends TestCase
 {
     protected function tearDown(): void
     {
         $container = ContainerStub::mockContainer();
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $redis->flushDB();
 
         Mockery::close();
@@ -36,7 +40,7 @@ class HashTest extends TestCase
     public function testEvalHGetAllMultiple()
     {
         $container = ContainerStub::mockContainer();
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $redis->hMSet('{hash}:1', ['id' => 1, 'name' => $name1 = 'Hyperf']);
         $redis->hMSet('{hash}:2', ['id' => 2, 'name' => $name2 = Str::random(16)]);
         $redis->hMSet('{hash}:3', ['id' => 3, 'name' => $name3 = uniqid()]);
@@ -52,7 +56,7 @@ class HashTest extends TestCase
     public function testEvalHIncrByFloatIfExists()
     {
         $container = ContainerStub::mockContainer();
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $redis->hMSet('{hash}:1', ['id' => 1, 'name' => 'Hyperf', 'incr' => 0]);
 
         $script = new HIncrByFloatIfExists($container);

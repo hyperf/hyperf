@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use Carbon\Carbon;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Support\Traits\InteractsWithTime;
 use SessionHandlerInterface;
 
 class DatabaseHandler implements SessionHandlerInterface
@@ -36,7 +37,7 @@ class DatabaseHandler implements SessionHandlerInterface
         return true;
     }
 
-    public function read($id): string|false
+    public function read($id): false|string
     {
         $session = (object) $this->getQuery()->find($id);
 
@@ -72,7 +73,7 @@ class DatabaseHandler implements SessionHandlerInterface
         return true;
     }
 
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime): false|int
     {
         return $this->getQuery()
             ->where('last_activity', '<=', $this->currentTime() - $max_lifetime)

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue;
 
 use Hyperf\Contract\CompressInterface;
@@ -29,18 +30,31 @@ class JobMessage implements MessageInterface
             $this->job = $this->job->compress();
         }
 
-        return [$this->job, $this->attempts];
+        return [
+            $this->job,  // Compatible with old version, will be removed at v3.2
+            $this->attempts,  // Compatible with old version, will be removed at v3.2
+            'job' => $this->job,
+            'attempts' => $this->attempts,
+        ];
     }
 
     public function __unserialize(array $data): void
     {
-        [$job, $attempts] = $data;
+        if (array_is_list($data)) { // Compatible with old version, will be removed at v3.2
+            $data = [
+                'job' => $data[0],
+                'attempts' => $data[1],
+            ];
+        }
+
+        $job = $data['job'];
+
         if ($job instanceof UnCompressInterface) {
             $job = $job->uncompress();
         }
 
         $this->job = $job;
-        $this->attempts = $attempts;
+        $this->attempts = $data['attempts'];
     }
 
     public function job(): JobInterface

@@ -9,12 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Database\Query\JoinLateralClause;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
 
 class PostgresGrammar extends Grammar
 {
@@ -42,6 +47,14 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return $this->compileInsertUsing($query, $columns, $sql) . ' on conflict do nothing';
+    }
+
+    /**
      * Compile an insert and get ID statement into SQL.
      *
      * @param array $values
@@ -57,7 +70,7 @@ class PostgresGrammar extends Grammar
      *
      * @param mixed $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -75,10 +88,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an "upsert" statement into SQL.
-     *
-     * @return string
      */
-    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update)
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert($query, $values);
 
@@ -152,6 +163,36 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "lateral join" clause.
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
+    }
+
+    /**
+     * Substitute the given bindings into the given raw SQL query.
+     *
+     * @param string $sql
+     * @param array $bindings
+     * @return string
+     */
+    public function substituteBindingsIntoRawSql($sql, $bindings)
+    {
+        $query = parent::substituteBindingsIntoRawSql($sql, $bindings);
+
+        foreach ($this->operators as $operator) {
+            if (! str_contains($operator, '?')) {
+                continue;
+            }
+
+            $query = str_replace(str_replace('?', '??', $operator), $operator, $query);
+        }
+
+        return $query;
+    }
+
+    /**
      * Compile an update from statement into SQL.
      *
      * @return string
@@ -175,8 +216,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param array $where
      */
     protected function whereBasic(Builder $query, $where): string
@@ -215,6 +254,34 @@ class PostgresGrammar extends Grammar
         $value = $this->parameter($where['value']);
 
         return $this->wrap($where['column']) . '::time ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        $language = $where['options']['language'] ?? 'english';
+
+        if (! in_array($language, $this->validFullTextLanguages())) {
+            $language = 'english';
+        }
+
+        $columns = collect($where['columns'])->map(function ($column) use ($language) {
+            return "to_tsvector('{$language}', {$this->wrap($column)})";
+        })->implode(' || ');
+
+        $mode = 'plainto_tsquery';
+
+        if (($where['options']['mode'] ?? []) === 'phrase') {
+            $mode = 'phraseto_tsquery';
+        }
+
+        if (($where['options']['mode'] ?? []) === 'websearch') {
+            $mode = 'websearch_to_tsquery';
+        }
+
+        return "({$columns}) @@ {$mode}('{$language}', {$this->parameter($where['value'])})";
     }
 
     /**
@@ -269,6 +336,47 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        $column = str_replace('->>', '->', $this->wrap($column));
+
+        return 'EXISTS ( SELECT 1 FROM jsonb_array_elements((' . $column . ')::jsonb) AS elem1, jsonb_array_elements(' . $value . '::jsonb) AS elem2 WHERE elem1 = elem2)';
+    }
+
+    /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        $segments = explode('->', $column);
+
+        $lastSegment = array_pop($segments);
+
+        if (filter_var($lastSegment, FILTER_VALIDATE_INT) !== false) {
+            $i = (int) $lastSegment;
+        } elseif (preg_match('/\[(-?[0-9]+)\]$/', $lastSegment, $matches)) {
+            $segments[] = Str::beforeLast($lastSegment, $matches[0]);
+
+            $i = (int) $matches[1];
+        }
+
+        $column = str_replace('->>', '->', $this->wrap(implode('->', $segments)));
+
+        if (isset($i)) {
+            return vsprintf('case when %s then %s else false end', [
+                'jsonb_typeof((' . $column . ')::jsonb) = \'array\'',
+                'jsonb_array_length((' . $column . ')::jsonb) >= ' . ($i < 0 ? abs($i) : $i + 1),
+            ]);
+        }
+
+        $key = "'" . str_replace("'", "''", $lastSegment) . "'";
+
+        return 'coalesce((' . $column . ')::jsonb ?? ' . $key . ', false)';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column
@@ -298,10 +406,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the columns for an update statement.
-     *
-     * @return string
      */
-    protected function compileUpdateColumns(Builder $query, array $values)
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             $column = last(explode('.', $key));
@@ -327,7 +433,7 @@ class PostgresGrammar extends Grammar
 
         $field = $this->wrap(array_shift($segments));
 
-        $path = '\'{"' . implode('","', $segments) . '"}\'';
+        $path = "'{" . implode(',', $this->wrapJsonPathAttributes($segments, '"')) . "}'";
 
         return "{$field} = jsonb_set({$field}::jsonb, {$path}, {$this->parameter($value)})";
     }
@@ -465,17 +571,77 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Wrap the attributes of the give JSON path.
+     * Wrap the attributes of the given JSON path.
      *
      * @param array $path
      * @return array
      */
     protected function wrapJsonPathAttributes($path)
     {
-        return array_map(function ($attribute) {
-            return filter_var($attribute, FILTER_VALIDATE_INT) !== false
-                ? $attribute
-                : "'{$attribute}'";
-        }, $path);
+        $quote = func_num_args() === 2 ? func_get_arg(1) : "'";
+
+        return collect($path)
+            ->map(fn ($attribute) => $this->parseJsonPathArrayKeys($attribute))
+            ->collapse()
+            ->map(function ($attribute) use ($quote) {
+                return filter_var($attribute, FILTER_VALIDATE_INT) !== false
+                    ? $attribute
+                    : $quote . $attribute . $quote;
+            })
+            ->all();
+    }
+
+    /**
+     * Parse the given JSON path attribute for array keys.
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function parseJsonPathArrayKeys($attribute)
+    {
+        if (preg_match('/(\[[^\]]+\])+$/', $attribute, $parts)) {
+            $key = Str::beforeLast($attribute, $parts[0]);
+
+            preg_match_all('/\[([^\]]+)\]/', $parts[0], $keys);
+
+            return collect([$key])
+                ->merge($keys[1])
+                ->diff('')
+                ->values()
+                ->all();
+        }
+
+        return [$attribute];
+    }
+
+    /**
+     * Get an array of valid full text languages.
+     */
+    protected function validFullTextLanguages(): array
+    {
+        return [
+            'simple',
+            'arabic',
+            'danish',
+            'dutch',
+            'english',
+            'finnish',
+            'french',
+            'german',
+            'hungarian',
+            'indonesian',
+            'irish',
+            'italian',
+            'lithuanian',
+            'nepali',
+            'norwegian',
+            'portuguese',
+            'romanian',
+            'russian',
+            'spanish',
+            'swedish',
+            'tamil',
+            'turkish',
+        ];
     }
 }

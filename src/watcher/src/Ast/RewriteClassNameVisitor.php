@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher\Ast;
 
 use PhpParser\Node;
@@ -26,7 +27,7 @@ class RewriteClassNameVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Namespace_:
                 $this->metadata->namespace = $node->name->toCodeString();
                 return $node;
-            case $node instanceof Node\Stmt\Class_:
+            case ($node instanceof Node\Stmt\Class_ || $node instanceof Node\Stmt\Enum_) && $node->name:
                 $className = $node->name->name;
                 $this->metadata->className = $className;
                 return $node;

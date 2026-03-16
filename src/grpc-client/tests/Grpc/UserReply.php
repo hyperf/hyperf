@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Grpc;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\Grpc;
 
 /**
  * Generated from protobuf message <code>grpc.UserReply</code>.
  */
-class UserReply extends \Google\Protobuf\Internal\Message
+class UserReply extends Message
 {
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
@@ -36,13 +38,13 @@ class UserReply extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $message
-     *     @var \Grpc\Info $info
-     * }
+     * @var string $message
+     * @var Info $info
+     *           }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\Grpc::initOnce();
+        Grpc::initOnce();
         parent::__construct($data);
     }
 
@@ -70,7 +72,7 @@ class UserReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.grpc.Info info = 2;</code>.
-     * @return \Grpc\Info
+     * @return Info
      */
     public function getInfo()
     {
@@ -79,12 +81,12 @@ class UserReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.grpc.Info info = 2;</code>.
-     * @param \Grpc\Info $var
+     * @param Info $var
      * @return $this
      */
     public function setInfo($var)
     {
-        GPBUtil::checkMessage($var, \Grpc\Info::class);
+        GPBUtil::checkMessage($var, Info::class);
         $this->info = $var;
 
         return $this;

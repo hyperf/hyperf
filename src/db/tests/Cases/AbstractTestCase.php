@@ -9,30 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DB\DB;
 use Hyperf\DB\Frequency;
+use Hyperf\DB\PgSQL\PgSQLPool;
 use Hyperf\DB\Pool\MySQLPool;
-use Hyperf\DB\Pool\PDOPool;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class AbstractTestCase.
  */
 abstract class AbstractTestCase extends TestCase
 {
-    protected $driver = 'pdo';
+    protected $driver = 'mysql';
 
     protected function tearDown(): void
     {
@@ -67,13 +69,21 @@ abstract class AbstractTestCase extends TestCase
                     ],
                     'options' => $options,
                 ],
+                'pgsql' => [
+                    'driver' => 'pgsql',
+                    'host' => '127.0.0.1',
+                    'port' => 5432,
+                    'database' => 'postgres',
+                    'username' => 'postgres',
+                    'password' => 'postgres',
+                ],
             ],
         ]));
-        $container->shouldReceive('make')->with(PDOPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PDOPool(...array_values($args));
-        });
         $container->shouldReceive('make')->with(MySQLPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new MySQLPool(...array_values($args));
+        });
+        $container->shouldReceive('make')->with(PgSQLPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new PgSQLPool(...array_values($args));
         });
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($_, $args) {
@@ -87,7 +97,8 @@ abstract class AbstractTestCase extends TestCase
         $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(function ($_, $params) use ($factory) {
             return new DB($factory, $params['poolName']);
         });
-        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         return $container;
     }
 }

@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Example;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

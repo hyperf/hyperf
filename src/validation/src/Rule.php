@@ -9,10 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
+use Closure;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Validation\Contract\Rule as RuleContract;
+use Hyperf\Validation\Rules\ArrayRule;
+use Hyperf\Validation\Rules\Enum;
+use Hyperf\Validation\Rules\ExcludeIf;
+use Hyperf\Validation\Rules\File;
+use Hyperf\Validation\Rules\ImageFile;
+use Hyperf\Validation\Rules\ProhibitedIf;
 
 class Rule
 {
@@ -72,5 +81,70 @@ class Rule
     public static function unique(string $table, string $column = 'NULL'): Rules\Unique
     {
         return new Rules\Unique($table, $column);
+    }
+
+    public static function prohibitedIf($callback): ProhibitedIf
+    {
+        return new ProhibitedIf($callback);
+    }
+
+    public static function excludeIf($callback): ExcludeIf
+    {
+        return new ExcludeIf($callback);
+    }
+
+    /**
+     * Apply the given rules if the given condition is truthy.
+     */
+    public static function when(
+        bool|Closure $condition,
+        array|Closure|RuleContract|string $rules,
+        array|Closure|RuleContract|string $defaultRules = []
+    ): ConditionalRules {
+        return new ConditionalRules($condition, $rules, $defaultRules);
+    }
+
+    /**
+     * Apply the given rules if the given condition is falsy.
+     */
+    public static function unless(
+        bool|Closure $condition,
+        array|Closure|RuleContract|string $rules,
+        array|Closure|RuleContract|string $defaultRules = []
+    ): ConditionalRules {
+        return new ConditionalRules($condition, $defaultRules, $rules);
+    }
+
+    /**
+     * Get an array rule builder instance.
+     * @param null|mixed $keys
+     */
+    public static function array($keys = null): ArrayRule
+    {
+        return new ArrayRule(...func_get_args());
+    }
+
+    /**
+     * Get an enum rule builder instance.
+     */
+    public static function enum(string $type): Enum
+    {
+        return new Enum($type);
+    }
+
+    /**
+     * Get a file rule builder instance.
+     */
+    public static function file(): File
+    {
+        return new File();
+    }
+
+    /**
+     * Get an image file rule builder instance.
+     */
+    public static function imageFile(): File
+    {
+        return new ImageFile();
     }
 }

@@ -9,18 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Model;
 use Hyperf\Validation\Rules\Unique;
+use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationUniqueRuleTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $container = m::mock(ContainerInterface::class);
+        $container->shouldReceive('make')
+            ->with(DatabaseModelWithConnection::class)
+            ->andReturn(new DatabaseModelWithConnection());
+
+        ApplicationContext::setContainer($container);
+    }
+
+    protected function tearDown(): void
+    {
+        m::close();
+    }
+
     public function testItCorrectlyFormatsAStringVersionOfTheRule()
     {
         $rule = new Unique('table');
@@ -63,6 +84,10 @@ class ValidationUniqueRuleTest extends TestCase
         $rule = new Unique('table');
         $rule->where('foo', 1);
         $this->assertEquals('unique:table,NULL,NULL,id,foo,"1"', (string) $rule);
+
+        $rule = new Unique(DatabaseModelWithConnection::class, 'column');
+        $rule->where('foo', 'bar');
+        $this->assertSame('unique:mysql.table,column,NULL,id,foo,"bar"', (string) $rule);
     }
 }
 
@@ -71,4 +96,11 @@ class DatabaseModelStub extends Model
     protected string $primaryKey = 'id_column';
 
     protected array $guarded = [];
+}
+
+class DatabaseModelWithConnection extends DatabaseModelStub
+{
+    protected ?string $table = 'table';
+
+    protected ?string $connection = 'mysql';
 }

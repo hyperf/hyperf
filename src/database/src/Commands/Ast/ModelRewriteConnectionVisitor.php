@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionClass;
 
 class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 {
@@ -62,7 +64,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
                 foreach ($class->stmts as $property) {
                     $flags = Node\Stmt\Class_::MODIFIER_PROTECTED;
                     $prop = new Node\Stmt\PropertyProperty('connection', new Node\Scalar\String_($this->connection));
-                    $class->stmts[] = new Node\Stmt\Property($flags, [$prop]);
+                    $class->stmts[] = new Node\Stmt\Property($flags, [$prop], type: new Node\NullableType(new Identifier('string')));
                     return null;
                 }
             }
@@ -73,7 +75,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 
     protected function shouldRemovedConnection(): bool
     {
-        $ref = new \ReflectionClass($this->class);
+        $ref = new ReflectionClass($this->class);
 
         if (! $ref->getParentClass()) {
             return false;

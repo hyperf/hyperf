@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Closure;
 use Hyperf\Di\Exception\InvalidDefinitionException;
 
-class Pipeline extends \Hyperf\Utils\Pipeline
+class Pipeline extends \Hyperf\Pipeline\Pipeline
 {
     protected function carry(): Closure
     {

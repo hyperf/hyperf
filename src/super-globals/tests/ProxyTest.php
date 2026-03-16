@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\SuperGlobals;
 
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\SessionInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\SuperGlobals\Proxy\Cookie;
 use Hyperf\SuperGlobals\Proxy\File;
 use Hyperf\SuperGlobals\Proxy\Get;
@@ -20,17 +23,19 @@ use Hyperf\SuperGlobals\Proxy\Post;
 use Hyperf\SuperGlobals\Proxy\Request;
 use Hyperf\SuperGlobals\Proxy\Server;
 use Hyperf\SuperGlobals\Proxy\Session;
-use Hyperf\Utils\Waiter;
 use HyperfTest\SuperGlobals\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ProxyTest extends TestCase
 {
     protected function tearDown(): void
@@ -42,11 +47,11 @@ class ProxyTest extends TestCase
 
     public function testCookie()
     {
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
         $request->shouldReceive('getCookieParams')->andReturn([
             'id' => $id = uniqid(),
         ]);
-        Context::set(ServerRequestInterface::class, $request);
+        RequestContext::set($request);
         $proxy = new Cookie();
 
         $this->assertSame($id, $proxy['id']);
@@ -54,11 +59,10 @@ class ProxyTest extends TestCase
 
     public function testFile()
     {
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = RequestContext::set(Mockery::mock(ServerRequestPlusInterface::class));
         $request->shouldReceive('getUploadedFiles')->andReturn([
             'file' => $file = Mockery::mock(UploadedFileInterface::class),
         ]);
-        Context::set(ServerRequestInterface::class, $request);
         $proxy = new File();
 
         $this->assertSame($file, $proxy['file']);
@@ -66,11 +70,10 @@ class ProxyTest extends TestCase
 
     public function testGet()
     {
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = RequestContext::set(Mockery::mock(ServerRequestPlusInterface::class));
         $request->shouldReceive('getQueryParams')->andReturn([
             'id' => $id = uniqid(),
         ]);
-        Context::set(ServerRequestInterface::class, $request);
         $proxy = new Get();
 
         $this->assertSame($id, $proxy['id']);
@@ -78,11 +81,10 @@ class ProxyTest extends TestCase
 
     public function testPost()
     {
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = RequestContext::set(Mockery::mock(ServerRequestPlusInterface::class));
         $request->shouldReceive('getParsedBody')->andReturn([
             'id' => $id = uniqid(),
         ]);
-        Context::set(ServerRequestInterface::class, $request);
         $proxy = new Post();
 
         $this->assertSame($id, $proxy['id']);
@@ -92,14 +94,13 @@ class ProxyTest extends TestCase
     {
         ContainerStub::getContainer();
 
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = RequestContext::set(Mockery::mock(ServerRequestPlusInterface::class));
         $request->shouldReceive('getQueryParams')->andReturn([
             'id' => $id = '0' . uniqid(),
         ]);
         $request->shouldReceive('getParsedBody')->andReturn([
             'name' => $name = 'Hyperf' . uniqid(),
         ]);
-        Context::set(ServerRequestInterface::class, $request);
         $proxy = new Request();
 
         $this->assertSame($id, $proxy['id']);
@@ -108,7 +109,7 @@ class ProxyTest extends TestCase
 
     public function testServer()
     {
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = RequestContext::set(Mockery::mock(ServerRequestPlusInterface::class));
         $request->shouldReceive('getServerParams')->andReturn([
             'server_name' => $name = 'Server.' . uniqid(),
         ]);
@@ -117,8 +118,14 @@ class ProxyTest extends TestCase
             'host' => ['hyperf.io'],
             'x-forwarded-for' => ['127.0.0.1'],
         ]);
-        Context::set(ServerRequestInterface::class, $request);
         $proxy = new Server([]);
+
+        $this->assertSame($name, $proxy['SERVER_NAME']);
+        $this->assertSame($token, $proxy['HTTP_X_TOKEN']);
+        $this->assertSame('127.0.0.1', $proxy['HTTP_X_FORWARDED_FOR']);
+        $this->assertSame('hyperf.io', $proxy['HTTP_HOST']);
+
+        $proxy = new Server($proxy);
 
         $this->assertSame($name, $proxy['SERVER_NAME']);
         $this->assertSame($token, $proxy['HTTP_X_TOKEN']);

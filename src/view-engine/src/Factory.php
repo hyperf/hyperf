@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
@@ -24,6 +25,8 @@ use Hyperf\ViewEngine\Contract\ViewInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Tappable\tap;
 
 class Factory implements FactoryInterface
 {
@@ -152,6 +155,14 @@ class Factory implements FactoryInterface
     }
 
     /**
+     * Get the rendered content of the view based on the negation of a given condition.
+     */
+    public function renderUnless(bool $condition, string $view, array|Arrayable $data = [], array $mergeData = []): string
+    {
+        return $this->renderWhen(! $condition, $view, $data, $mergeData);
+    }
+
+    /**
      * Get the rendered contents of a partial from a loop.
      *
      * @return string
@@ -201,8 +212,8 @@ class Factory implements FactoryInterface
     /**
      * Get the appropriate view engine for the given path.
      *
-     * @throws InvalidArgumentException
      * @return EngineInterface
+     * @throws InvalidArgumentException
      */
     public function getEngineFromPath(string $path)
     {

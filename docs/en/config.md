@@ -86,7 +86,7 @@ This way requires you already have an instance of the `Config` object. The defau
  * @var \Hyperf\Contract\ConfigInterface
  */
 // Get the configuration corresponding to $key by get(string $key, $default): mixed method, the $key value can be positioned to the subordinate array by the . connector, and $default is the default value returned when the corresponding value does not exist.
-$config->get($key，$default);
+$config->get($key, $default);
 ```
 
 #### Get Configuration by `#[Value]` Annotation
@@ -114,7 +114,7 @@ class IndexController
 
 #### Get Configuration by config() function
 
-The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/utils](https://github.com/hyperf/utils) components are strongly dependent for your application.
+The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/support](https://github.com/hyperf/support) components are strongly dependent for your application.
 
 ### Determine if the configuration exists
 

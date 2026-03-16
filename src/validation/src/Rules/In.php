@@ -9,9 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
-class In implements \Stringable
+use Hyperf\Validation\ValidationRuleParser;
+use Stringable;
+
+class In implements Stringable
 {
     /**
      * The name of the rule.
@@ -30,7 +34,7 @@ class In implements \Stringable
     /**
      * Convert the rule to a validation string.
      *
-     * @see \Hyperf\Validation\ValidationRuleParser::parseParameters
+     * @see ValidationRuleParser::parseParameters
      */
     public function __toString(): string
     {

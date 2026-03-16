@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\Exception\InvalidRedisProxyException;
+
+use function Hyperf\Support\make;
 
 class RedisFactory
 {

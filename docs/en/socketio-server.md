@@ -41,7 +41,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 #[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
@@ -152,7 +152,7 @@ Obtain the SocketIO singleton directly from the container. This singleton can br
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in'game' room, including sender
 // Push the bigger-announcement event to all connections in the game room.

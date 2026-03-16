@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class RpcPool extends Pool
 {

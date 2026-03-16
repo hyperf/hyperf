@@ -9,15 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Macroable;
 
 use Hyperf\Macroable\Macroable;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MacroableTest extends TestCase
 {
     private $macroable;
@@ -80,6 +84,16 @@ class MacroableTest extends TestCase
 
         TestMacroable::mixin(new TestMixin());
         $this->assertSame('foo', $instance->methodThree());
+    }
+
+    public function testParametersPassedByReference()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Macro methodFour cannot accept parameters passed by reference.');
+
+        TestMacroable::macro('methodFour', function (&$value) {
+            return $value;
+        });
     }
 
     private function createObjectForTrait()

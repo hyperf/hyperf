@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
+use Stringable;
 
-class ObjectDefinition implements DefinitionInterface
+class ObjectDefinition implements Stringable, DefinitionInterface
 {
     protected ?MethodInjection $constructorInjection = null;
 
@@ -23,7 +25,7 @@ class ObjectDefinition implements DefinitionInterface
 
     private bool $instantiable = false;
 
-    public function __construct(private string $name, string $className = null)
+    public function __construct(private string $name, ?string $className = null)
     {
         $this->setClassName($className ?? $name);
     }
@@ -44,7 +46,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function setClassName(string $className = null): void
+    public function setClassName(?string $className = null): void
     {
         $this->className = $className;
 
@@ -67,7 +69,7 @@ class ObjectDefinition implements DefinitionInterface
     }
 
     /**
-     * @return null|\Hyperf\Di\Definition\MethodInjection
+     * @return null|MethodInjection
      */
     public function getConstructorInjection()
     {

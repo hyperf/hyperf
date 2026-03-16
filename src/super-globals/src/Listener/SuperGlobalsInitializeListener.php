@@ -9,13 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SuperGlobals\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\SuperGlobals\Proxy;
+use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class SuperGlobalsInitializeListener implements ListenerInterface
 {
@@ -27,6 +31,7 @@ class SuperGlobalsInitializeListener implements ListenerInterface
     {
         return [
             AfterWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 

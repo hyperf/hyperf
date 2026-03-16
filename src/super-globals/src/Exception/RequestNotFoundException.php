@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SuperGlobals\Exception;
 
-class RequestNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class RequestNotFoundException extends RuntimeException
 {
 }

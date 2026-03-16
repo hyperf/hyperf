@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
-class RequiredIf implements \Stringable
+use Stringable;
+
+class RequiredIf implements Stringable
 {
     /**
      * The condition that validates the attribute.

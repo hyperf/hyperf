@@ -9,24 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Rector\Core\Configuration\Option;
-use Rector\Php74\Rector\Property\TypedPropertyRector;
-use Rector\Set\ValueObject\LevelSetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
+use Rector\Config\RectorConfig;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    // get parameters
-    $parameters = $containerConfigurator->parameters();
-    $parameters->set(Option::PATHS, [
-        __DIR__ . '/src',
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->paths([
+        __DIR__ . '/src/*/tests',
     ]);
 
-    // Define what rule sets will be applied
-    $containerConfigurator->import(LevelSetList::UP_TO_PHP_80);
-
-    // get services (needed for register a single rule)
-    // $services = $containerConfigurator->services();
-
     // register a single rule
-    // $services->set(TypedPropertyRector::class);
+    $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
+
+    // define sets of rules
+    $rectorConfig->sets([
+        PHPUnitSetList::PHPUNIT_100,
+    ]);
 };

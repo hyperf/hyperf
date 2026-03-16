@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Watcher\Option;
 use Symfony\Component\Finder\SplFileInfo;
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\Coordinator\Constants;
@@ -18,13 +19,18 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
 use Hyperf\RpcMultiplex\Socket;
 use Hyperf\RpcMultiplex\SocketFactory;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SocketFactoryTest extends AbstractTestCase
 {
     public function testSocketConfig()
@@ -34,7 +40,7 @@ class SocketFactoryTest extends AbstractTestCase
         $factory = new SocketFactory($container, [
             'connect_timeout' => $connectTimeout = rand(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $length = rand(1000, 9999),
             ],
             'recv_timeout' => $recvTimeout = rand(5, 10),
             'retry_count' => 2,
@@ -42,7 +48,7 @@ class SocketFactoryTest extends AbstractTestCase
             'client_count' => 4,
         ]);
 
-        $balancer = \Mockery::mock(LoadBalancerInterface::class);
+        $balancer = Mockery::mock(LoadBalancerInterface::class);
         $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
         $factory->setLoadBalancer($balancer);
         $balancer->shouldReceive('getNodes')->andReturn([
@@ -61,7 +67,7 @@ class SocketFactoryTest extends AbstractTestCase
         $client = $clients[0];
         $invoker = new ClassInvoker($client);
         $this->assertSame(9501, $invoker->port);
-        $this->assertSame($lenght, $invoker->config['package_max_length']);
+        $this->assertSame($length, $invoker->config['package_max_length']);
         $this->assertSame($connectTimeout, $invoker->config['connect_timeout']);
         $this->assertSame($recvTimeout, $invoker->config['recv_timeout']);
     }
@@ -159,7 +165,7 @@ class SocketFactoryTest extends AbstractTestCase
         $factory = new SocketFactory($container, [
             'connect_timeout' => $connectTimeout = rand(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $length = rand(1000, 9999),
             ],
             'recv_timeout' => $recvTimeout = rand(5, 10),
             'retry_count' => 2,
@@ -168,7 +174,7 @@ class SocketFactoryTest extends AbstractTestCase
         ]);
 
         go(function () use ($factory) {
-            $balancer = \Mockery::mock(LoadBalancerInterface::class);
+            $balancer = Mockery::mock(LoadBalancerInterface::class);
             $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
             $factory->setLoadBalancer($balancer);
             $balancer->shouldReceive('getNodes')->andReturn([

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\DB\DB;
@@ -17,7 +18,9 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
+use Throwable;
+
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
 
 class DbAspect extends AbstractAspect
 {
@@ -27,7 +30,7 @@ class DbAspect extends AbstractAspect
         DB::class . '::__call',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -41,13 +44,15 @@ class DbAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Db' . '::' . $arguments['name']);
+        $span = $this->startSpan('Db::' . $arguments['name'], [], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('db', 'db.query'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();
-        } catch (\Throwable $e) {
-            $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+        } catch (Throwable $e) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
             throw $e;
         } finally {
             $span->finish();

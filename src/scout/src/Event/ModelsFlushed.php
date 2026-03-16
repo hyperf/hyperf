@@ -9,21 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout\Event;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Scout\Searchable;
 
 class ModelsFlushed
 {
     /**
-     * @param Collection<int, Model&Searchable>
+     * @param Collection<int, Model> $models
      */
-    public $models;
-
-    public function __construct(Collection $models)
+    public function __construct(public Collection $models)
     {
-        $this->models = $models;
     }
 }

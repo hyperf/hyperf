@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc;
 
 class Request
 {
-    public function __construct(protected string $path, protected array $params, protected ?string $id = null)
+    public function __construct(protected string $path, protected array $params, protected null|int|string $id = null, protected ?array $extra = null)
     {
     }
 
@@ -33,8 +34,18 @@ class Request
         return $this->params;
     }
 
-    public function getId(): ?string
+    public function getId(): null|int|string
     {
         return $this->id;
+    }
+
+    public function setExtra(?array $extra): void
+    {
+        $this->extra = $extra;
+    }
+
+    public function getExtra(): ?array
+    {
+        return $this->extra;
     }
 }

@@ -9,8 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Event;
+
+use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\AsyncQueue\Result;
 
 class AfterHandle extends Event
 {
+    public function __construct(MessageInterface $message, public Result $result)
+    {
+        parent::__construct($message);
+    }
 }

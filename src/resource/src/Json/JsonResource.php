@@ -9,21 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\HttpMessage\Server\ResponseProxyTrait;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
 use Hyperf\Resource\Response\Response;
-use Hyperf\Utils\Contracts\Jsonable;
+use JsonException;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Stringable;
 
-class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface, Stringable
+use function Hyperf\Tappable\tap;
+
+class JsonResource implements Stringable, ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;
@@ -115,10 +119,10 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
      */
     public function toJson(int $options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw JsonEncodingException::forResource($this, json_last_error_msg());
+        try {
+            $json = json_encode($this->jsonSerialize(), $options | JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw JsonEncodingException::forResource($this, $e->getMessage());
         }
 
         return $json;

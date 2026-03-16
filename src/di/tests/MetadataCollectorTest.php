@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Config\Config;
@@ -18,6 +19,7 @@ use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\DemoAnnotation;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +27,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MetadataCollectorTest extends TestCase
 {
     protected function tearDown(): void

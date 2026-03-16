@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc;
 
 class Response
 {
-    public function __construct(protected ?string $id, protected mixed $result)
+    public function __construct(protected null|int|string $id, protected mixed $result)
     {
     }
 
-    public function getId(): ?string
+    public function getId(): null|int|string
     {
         return $this->id;
     }

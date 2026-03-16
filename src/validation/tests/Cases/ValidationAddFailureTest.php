@@ -9,11 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Validator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -27,7 +34,7 @@ class ValidationAddFailureTest extends TestCase
      */
     public function makeValidator()
     {
-        $mainTest = new ValidationValidatorTest();
+        $mainTest = new ValidationValidatorTest('');
         $trans = $mainTest->getIlluminateArrayTranslator();
 
         return new Validator($trans, ['foo' => ['bar' => ['baz' => '']]], ['foo.bar.baz' => 'sometimes|required']);

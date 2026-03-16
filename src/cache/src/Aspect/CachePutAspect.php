@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\CachePut;
@@ -33,13 +34,16 @@ class CachePutAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
+        /** @var CachePut $annotation */
+        [$key, $ttl, $group, $annotation] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set($key, $result, $ttl);
+        if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
+            $driver->set($key, $result, $ttl);
+        }
 
         return $result;
     }

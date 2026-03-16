@@ -132,7 +132,7 @@ echo __('messages.welcome', ['name' => 'Hyperf']);
 
 ```php
 'welcome' => 'Welcome, :NAME', // Welcome, HYPERF
-'goodbye' => 'Goodbye, :Name', // Goodbye, HYPERF
+'goodbye' => 'Goodbye, :Name', // Goodbye, Hyperf
 ```
 
 # 處理複數

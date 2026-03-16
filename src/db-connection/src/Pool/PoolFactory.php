@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection\Pool;
 
 use Hyperf\Di\Container;
@@ -38,5 +39,12 @@ class PoolFactory
         }
 
         return $this->pools[$name] = $pool;
+    }
+
+    public function flushAll(): void
+    {
+        foreach ($this->pools as $pool) {
+            $pool->flushAll();
+        }
     }
 }

@@ -9,19 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc\PathGenerator;
 
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 
 class DotPathGenerator implements PathGeneratorInterface
 {
     public function generate(string $service, string $method): string
     {
         $handledNamespace = explode('\\', $service);
-        $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
-        $path = Str::studly($handledNamespace);
+        $path = StrCache::studly(end($handledNamespace));
 
-        return $path . '.' . Str::studly($method);
+        return $path . '.' . StrCache::studly($method);
     }
 }

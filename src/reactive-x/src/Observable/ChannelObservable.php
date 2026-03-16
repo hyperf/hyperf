@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Observable;
 
 use Hyperf\Engine\Channel;
@@ -17,6 +18,7 @@ use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
+use Throwable;
 
 class ChannelObservable extends Observable
 {
@@ -34,7 +36,7 @@ class ChannelObservable extends Observable
                 }
                 $observer->onNext($result);
                 $reschedule();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $observer->onError($e);
             }
         };

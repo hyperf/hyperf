@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 trait ProxyTrait
 {
@@ -33,6 +35,7 @@ trait ProxyTrait
 
     /**
      * @TODO This method will be called everytime, should optimize it later.
+     * @deprecated v3.2
      */
     protected static function __getParamsMap(string $className, string $method, array $args): array
     {
@@ -40,8 +43,7 @@ trait ProxyTrait
             'keys' => [],
             'order' => [],
         ];
-        $reflectMethod = ReflectionManager::reflectMethod($className, $method);
-        $reflectParameters = $reflectMethod->getParameters();
+        $reflectParameters = ReflectionManager::reflectMethod($className, $method)->getParameters();
         $leftArgCount = count($args);
         foreach ($reflectParameters as $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
@@ -62,7 +64,7 @@ trait ProxyTrait
         if (! AspectManager::has($className, $methodName)) {
             AspectManager::set($className, $methodName, []);
             $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
-            $queue = new \SplPriorityQueue();
+            $queue = new SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
             }
@@ -71,7 +73,7 @@ trait ProxyTrait
                 $queue->next();
             }
 
-            unset($annotationAspects, $aspects, $queue);
+            unset($aspects, $queue);
         }
 
         if (empty(AspectManager::get($className, $methodName))) {

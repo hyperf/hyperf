@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 /**
  * @method ForeignKeyDefinition references(array|string $columns) Specify the referenced column(s)
@@ -23,4 +24,67 @@ use Hyperf\Utils\Fluent;
  */
 class ForeignKeyDefinition extends Fluent
 {
+    /**
+     * Indicate that updates should cascade.
+     */
+    public function cascadeOnUpdate(): static
+    {
+        return $this->onUpdate('cascade');
+    }
+
+    /**
+     * Indicate that updates should be restricted.
+     */
+    public function restrictOnUpdate(): static
+    {
+        return $this->onUpdate('restrict');
+    }
+
+    /**
+     * Indicate that updates should set the foreign key value to null.
+     */
+    public function nullOnUpdate(): static
+    {
+        return $this->onUpdate('set null');
+    }
+
+    /**
+     * Indicate that updates should have "no action".
+     */
+    public function noActionOnUpdate(): static
+    {
+        return $this->onUpdate('no action');
+    }
+
+    /**
+     * Indicate that deletes should cascade.
+     */
+    public function cascadeOnDelete(): static
+    {
+        return $this->onDelete('cascade');
+    }
+
+    /**
+     * Indicate that deletes should be restricted.
+     */
+    public function restrictOnDelete(): static
+    {
+        return $this->onDelete('restrict');
+    }
+
+    /**
+     * Indicate that deletes should set the foreign key value to null.
+     */
+    public function nullOnDelete(): static
+    {
+        return $this->onDelete('set null');
+    }
+
+    /**
+     * Indicate that deletes should have "no action".
+     */
+    public function noActionOnDelete(): static
+    {
+        return $this->onDelete('no action');
+    }
 }

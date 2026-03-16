@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Server\Listener;
 
 use Hyperf\Config\Config;
@@ -23,6 +24,7 @@ use HyperfTest\Server\Stub\DemoProcess;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub2;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -31,6 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class InitProcessTitleListenerTest extends TestCase
 {
     protected function tearDown(): void

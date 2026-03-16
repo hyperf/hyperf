@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\RpcMultiplex\Contract\HostReaderInterface;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
+use Hyperf\RpcMultiplex\HttpMessage\HostReader\NullHostReader;
 use Hyperf\RpcMultiplex\Listener\RegisterProtocolListener;
 use Multiplex\Contract\IdGeneratorInterface;
 use Multiplex\Contract\PackerInterface;
@@ -30,6 +33,7 @@ class ConfigProvider
                 SerializerInterface::class => StringSerializer::class,
                 PackerInterface::class => Packer::class,
                 HttpMessageBuilderInterface::class => HttpMessageBuilder::class,
+                HostReaderInterface::class => NullHostReader::class,
             ],
             'listeners' => [
                 RegisterProtocolListener::class,

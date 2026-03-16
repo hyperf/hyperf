@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -24,7 +25,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 

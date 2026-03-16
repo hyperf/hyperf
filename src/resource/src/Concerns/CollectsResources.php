@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Concerns;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Traversable;
+
+use function Hyperf\Support\class_basename;
 
 trait CollectsResources
 {

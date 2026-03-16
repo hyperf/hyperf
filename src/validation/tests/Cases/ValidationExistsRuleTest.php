@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -22,11 +24,11 @@ use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Validator;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,6 +37,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationExistsRuleTest extends TestCase
 {
     /**
@@ -62,6 +65,7 @@ class ValidationExistsRuleTest extends TestCase
         ApplicationContext::setContainer($container);
         Register::setConnectionResolver($resolver);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new EventDispatcher());
+        $container->shouldReceive('make')->with(UserWithConnection::class)->andReturn(new UserWithConnection());
 
         $this->createSchema();
     }
@@ -85,6 +89,10 @@ class ValidationExistsRuleTest extends TestCase
         $rule = new Exists('table', 'column');
         $rule->where('foo', 'bar');
         $this->assertEquals('exists:table,column,foo,"bar"', (string) $rule);
+
+        $rule = new Exists(UserWithConnection::class, 'column');
+        $rule->where('foo', 'bar');
+        $this->assertSame('exists:mysql.users,column,foo,"bar"', (string) $rule);
     }
 
     public function testItChoosesValidRecordsUsingWhereInRule()
@@ -218,4 +226,9 @@ class DatabaseTestUser extends Model
     protected ?string $table = 'users';
 
     protected array $guarded = [];
+}
+
+class UserWithConnection extends DatabaseTestUser
+{
+    protected ?string $connection = 'mysql';
 }

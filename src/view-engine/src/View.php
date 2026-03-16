@@ -9,22 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
 use ArrayAccess;
 use BadMethodCallException;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\MessageBag;
+use Hyperf\Contract\MessageProvider;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\MessageBag;
-use Hyperf\Utils\Contracts\MessageProvider;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
+use Stringable;
 use Throwable;
 
-class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
+class View implements Stringable, ArrayAccess, Htmlable, ViewInterface
 {
     use Macroable {
         __call as macroCall;
@@ -40,8 +42,6 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
     /**
      * Create a new view instance.
      *
-     * @param string $view
-     * @param string $path
      * @param mixed $data
      */
     /**
@@ -100,8 +100,8 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
      *
      * @param string $method
      * @param array $parameters
-     * @throws BadMethodCallException
      * @return View
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -135,7 +135,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
      *
      * @throws Throwable
      */
-    public function render(callable $callback = null): array|string
+    public function render(?callable $callback = null): array|string
     {
         try {
             $contents = $this->renderContents();
@@ -176,8 +176,8 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
     /**
      * Get the sections of the rendered view.
      *
-     * @throws Throwable
      * @return array
+     * @throws Throwable
      */
     public function renderSections()
     {
@@ -378,10 +378,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
     /**
      * Parse the given errors into an appropriate value.
      */
-    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Utils\MessageBag|MessageBag
+    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Support\MessageBag|MessageBag
     {
         return $provider instanceof MessageProvider
             ? $provider->getMessageBag()
-            : new \Hyperf\Utils\MessageBag((array) $provider);
+            : new \Hyperf\Support\MessageBag((array) $provider);
     }
 }

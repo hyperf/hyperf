@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Metric\Contract\HistogramInterface;
 use Prometheus\CollectorRegistry;
+use Prometheus\Exception\MetricsRegistrationException;
 
 class Histogram implements HistogramInterface
 {
@@ -20,6 +22,9 @@ class Histogram implements HistogramInterface
 
     protected array $labelValues = [];
 
+    /**
+     * @throws MetricsRegistrationException
+     */
     public function __construct(protected CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
     {
         $this->histogram = $registry->getOrRegisterHistogram($namespace, $name, $help, $labelNames);

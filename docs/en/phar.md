@@ -1,101 +1,101 @@
-# Phar 打包器
+# Phar packager
 
-## 安装
+## Installation
 
 ```bash
 composer require hyperf/phar
 ```
 
-## 使用
+## Usage
 
-- 默认打包
+- Packed by default
 
 ```shell
 php bin/hyperf.php phar:build
 ```
 
-- 指定包名
+- Set the package name
 
 ```shell
 php bin/hyperf.php phar:build --name=your_project.phar
 ```
 
-- 指定包版本
+- Set the package version
 
 ```shell
 php bin/hyperf.php phar:build --phar-version=1.0.1
 ```
 
-- 指定启动文件
+- Set the startup file
 
 ```shell
 php bin/hyperf.php phar:build --bin=bin/hyperf.php
 ```
 
-- 指定打包目录
+- Set the packaging directory
 
 ```shell
 php bin/hyperf.php phar:build --path=BASE_PATH
 ```
 
-- 映射外部文件
+- Map external files
 
-> 需要 hyperf/phar 版本 >= v2.1.7
+> Requires hyperf/phar version >= v2.1.7
 
-下述命令，可以允许 `phar` 包读取同目录的 `.env` 文件，方便 `phar` 分发到各个环境当中
+The following command can allow the `phar` package to read the `.env` file in the same directory, so that `phar` can be distributed to various environments
 
 ```shell
 php bin/hyperf.php phar:build -M .env
 ```
 
-## 运行
+## run
 
 ```shell
 php your_project.phar start
 ```
 
-## 注意事项
+## Precautions
 
-打包后是以 `phar` 包的形式运行，不同与源代码模式运行，`phar` 包中的 `runtime` 目录是不可写的，
-所以我们需要重写部分可写的目录位置。
+After packaging, it runs in the form of `phar` package, which is different from running in source code mode. The `runtime` directory in the `phar` package is not writable.
+So we need to override some writable directory locations.
 
-> 根据实际情况酌情修改
+> Modify as appropriate according to the actual situation
 
 - pid_file
 
-修改 `server.php` 配置。
+Modify `server.php` configuration.
 
 ```php
 <?php
 
 return [
-    'settings' => [
-        'pid_file' => '/tmp/runtime/hyperf.pid',
-    ],
+     'settings' => [
+         'pid_file' => '/tmp/runtime/hyperf.pid',
+     ],
 ];
 ```
 
 - logger
 
-修改 `logger.php` 配置
+Modify `logger.php` configuration
 
 ```php
 <?php
 return [
-    'default' => [
-        'handler' => [
-            'class' => Monolog\Handler\StreamHandler::class,
-            'constructor' => [
-                'stream' => '/tmp/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::INFO,
-            ],
-        ],
-    ],
+     'default' => [
+         'handler' => [
+             'class' => Monolog\Handler\StreamHandler::class,
+             'constructor' => [
+                 'stream' => '/tmp/runtime/logs/hyperf.log',
+                 'level' => Monolog\Logger::INFO,
+             ],
+         ],
+     ],
 ];
 ```
 
 - scan_cacheable
 
-Phar 打包器会将 `config.php` 配置中的 `scan_cacheable` 主动设置为 `true`。
+The Phar packager will automatically set `scan_cacheable` to `true` in `config.php` configuration.
 
-当然，主动修改此配置为 `true`，也是可以的。
+Of course, it is also possible to actively modify this configuration to `true`.

@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Concern;
 
 use Countable;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use stdClass;
 
 trait ManagesLoops

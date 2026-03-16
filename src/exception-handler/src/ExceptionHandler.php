@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler;
 
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 abstract class ExceptionHandler
@@ -19,14 +20,16 @@ abstract class ExceptionHandler
     /**
      * Handle the exception, and return the specified result.
      */
-    abstract public function handle(Throwable $throwable, ResponseInterface $response);
+    abstract public function handle(Throwable $throwable, ResponsePlusInterface $response);
 
     /**
      * Determine if the current exception handler should handle the exception.
      *
-     * @return bool
-     *              If return true, then this exception handler will handle the exception,
-     *              If return false, then delegate to next handler
+     * @see ExceptionHandler::stopPropagation() if you want to stop propagation after handling
+     * an exception, as returning `true` in `isValid` does not stop the handlers call loop.
+     *
+     * @return bool If return true, then this exception handler will handle the exception and then call the next handler,
+     *              If return false, this handler will be ignored and the next will be called
      */
     abstract public function isValid(Throwable $throwable): bool;
 

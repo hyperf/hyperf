@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
+use InvalidArgumentException;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
@@ -40,7 +42,7 @@ class Aspect extends AbstractAnnotation
         $annotationPriority = $this->priority;
         $propertyPriority = $instancePriority ?: null;
         if (! is_null($annotationPriority) && ! is_null($propertyPriority) && $annotationPriority !== $propertyPriority) {
-            throw new \InvalidArgumentException('Cannot define two difference priority of Aspect.');
+            throw new InvalidArgumentException('Cannot define two difference priority of Aspect.');
         }
         $priority = $annotationPriority ?? $propertyPriority;
         // Save the metadata to AspectCollector

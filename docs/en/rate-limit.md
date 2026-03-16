@@ -92,3 +92,38 @@ class RateLimitController
     }
 }
 ```
+
+## Customized token bucket current limiting key
+
+The default key is based on the `url` of the current request. When a user triggers current limiting, other users will also be restricted to request this `url`;
+
+If current limiting at different granularities is required, such as current limiting at user latitude, current limiting can be carried out based on user `ID`, so that user A is restricted and user B can request normally:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\RateLimit\Annotation\RateLimit;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\HttpServer\Contract\RequestInterface;
+
+class TestController
+{
+    #[RateLimit(create: 1, capacity: 3, key: {TestController::class, "getUserId"})]
+    public function test()
+    {
+        return ["QPS 1, 峰值3"];
+    }
+
+    public static function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        $request = ApplicationContext::getContainer()->get(RequestInterface::class);
+        // In the same way, traffic can be limited based on different dimensions such as mobile phone number and IP address.
+        return $request->input('user_id');
+    }
+}
+```

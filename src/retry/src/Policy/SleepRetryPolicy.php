@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
+
+use function Hyperf\Support\make;
 
 class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {

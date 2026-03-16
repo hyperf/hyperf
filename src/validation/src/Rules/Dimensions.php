@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
-class Dimensions implements \Stringable
+use Stringable;
+
+class Dimensions implements Stringable
 {
     /**
      * Create a new dimensions rule instance.

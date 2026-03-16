@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SuperGlobals;
 
 use ArrayAccess;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
-use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
-use Hyperf\Utils\ApplicationContext;
 use JsonSerializable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -68,12 +69,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 
     protected function getRequest(): ServerRequestInterface
     {
-        $request = Context::get(ServerRequestInterface::class);
-        if (! $request instanceof ServerRequestInterface) {
-            throw new RequestNotFoundException(sprintf('%s is not found.', ServerRequestInterface::class));
-        }
-
-        return $request;
+        return RequestContext::get();
     }
 
     protected function hasRequest(): bool

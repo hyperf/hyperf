@@ -9,15 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Mutex;
 
+use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
 
 class RedisTaskMutex implements TaskMutex
 {
+    private Timer $timer;
+
     public function __construct(private RedisFactory $redisFactory)
     {
+        $this->timer = new Timer();
     }
 
     /**
@@ -25,11 +30,15 @@ class RedisTaskMutex implements TaskMutex
      */
     public function create(Crontab $crontab): bool
     {
-        return (bool) $this->redisFactory->get($crontab->getMutexPool())->set(
-            $this->getMutexName($crontab),
-            $crontab->getName(),
-            ['NX', 'EX' => $crontab->getMutexExpires()]
-        );
+        $redis = $this->redisFactory->get($crontab->getMutexPool());
+        $mutexName = $this->getMutexName($crontab);
+        $attempted = (bool) $redis->set($mutexName, $crontab->getName(), ['NX', 'EX' => $crontab->getMutexExpires()]);
+        $attempted && $this->timer->tick(1, function () use ($mutexName, $redis) {
+            if ($redis->expire($mutexName, $redis->ttl($mutexName) + 1) === false) {
+                return Timer::STOP;
+            }
+        });
+        return $attempted;
     }
 
     /**

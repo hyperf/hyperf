@@ -9,7 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
+
+use Closure;
+
+use function Hyperf\Support\value;
 
 trait HidesAttributes
 {
@@ -115,5 +120,21 @@ trait HidesAttributes
         $this->hidden = array_unique(array_merge($this->hidden, $attributes));
 
         return $this;
+    }
+
+    /**
+     * Make the given, typically visible, attributes hidden if the given truth test passes.
+     */
+    public function makeHiddenIf(bool|Closure $condition, null|array|string $attributes): static
+    {
+        return value($condition, $this) ? $this->makeHidden($attributes) : $this;
+    }
+
+    /**
+     * Make the given, typically hidden, attributes visible if the given truth test passes.
+     */
+    public function makeVisibleIf(bool|Closure $condition, null|array|string $attributes): static
+    {
+        return value($condition, $this) ? $this->makeVisible($attributes) : $this;
     }
 }

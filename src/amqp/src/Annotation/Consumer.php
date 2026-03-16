@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Annotation;
 
 use Attribute;
@@ -19,12 +20,13 @@ class Consumer extends AbstractAnnotation
 {
     public function __construct(
         public string $exchange = '',
-        public string $routingKey = '',
+        public array|string $routingKey = '',
         public string $queue = '',
         public string $name = 'Consumer',
         public ?int $nums = null,
         public ?bool $enable = null,
-        public int $maxConsumption = 0
+        public int $maxConsumption = 0,
+        public ?string $pool = null
     ) {
     }
 }

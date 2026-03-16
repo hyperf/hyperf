@@ -9,19 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use SplFileInfo;
+use RuntimeException;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\value;
 
 /**
  * @property string $pathInfo
@@ -46,7 +53,7 @@ class Request implements RequestInterface
 
     public function __set($name, $value)
     {
-        return $this->storeRequestProperty($name, $value);
+        $this->storeRequestProperty($name, $value);
     }
 
     /**
@@ -97,7 +104,7 @@ class Request implements RequestInterface
     /**
      * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
      */
-    public function inputs(array $keys, array $default = null): array
+    public function inputs(array $keys, ?array $default = null): array
     {
         $data = $this->getInputData();
         $result = [];
@@ -328,18 +335,18 @@ class Request implements RequestInterface
      */
     public function hasFile(string $key): bool
     {
-        if ($file = $this->file($key)) {
-            return $this->isValidFile($file);
+        if ($this->file($key)) {
+            return true;
         }
         return false;
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -349,52 +356,52 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader($name): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -404,7 +411,7 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withMethod($method)
+    public function withMethod($method): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -414,42 +421,42 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -459,12 +466,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -474,12 +481,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -489,15 +496,6 @@ class Request implements RequestInterface
         if (Context::has($this->contextkeys['parsedData'])) {
             Context::set($this->contextkeys['parsedData'], null);
         }
-    }
-
-    /**
-     * Check that the given file is a valid SplFileInfo instance.
-     * @param mixed $file
-     */
-    protected function isValidFile($file): bool
-    {
-        return $file instanceof SplFileInfo && $file->getPath() !== '';
     }
 
     /**
@@ -569,14 +567,14 @@ class Request implements RequestInterface
                 $data = [];
             }
 
-            return array_merge($data, $request->getQueryParams());
+            return $request->getQueryParams() + $data;
         });
     }
 
     protected function storeParsedData(callable $callback): mixed
     {
         if (! Context::has($this->contextkeys['parsedData'])) {
-            return Context::set($this->contextkeys['parsedData'], call($callback));
+            return Context::set($this->contextkeys['parsedData'], $callback());
         }
         return Context::get($this->contextkeys['parsedData']);
     }
@@ -596,13 +594,13 @@ class Request implements RequestInterface
     {
         $request = $this->getRequest();
         if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
+            throw new RuntimeException('Method not exist.');
         }
         return $request->{$name}(...$arguments);
     }
 
     protected function getRequest(): ServerRequestInterface
     {
-        return Context::get(ServerRequestInterface::class);
+        return RequestContext::get();
     }
 }

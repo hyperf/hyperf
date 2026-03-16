@@ -9,17 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Process;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
+use Swoole\Server;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -34,9 +44,7 @@ class ProcessTest extends TestCase
         self::$dispatched = [];
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testEventWhenThrowExceptionInProcess()
     {
         $container = $this->getContainer();
@@ -66,11 +74,10 @@ class ProcessTest extends TestCase
 
     protected function getServer()
     {
-        $server = Mockery::mock(\Swoole\Server::class);
+        $server = Mockery::mock(Server::class);
         $server->shouldReceive('addProcess')->withAnyArgs()->andReturnUsing(function ($process) {
-            $ref = new \ReflectionClass($process);
+            $ref = new ReflectionClass($process);
             $property = $ref->getProperty('callback');
-            $property->setAccessible(true);
             $callback = $property->getValue($process);
             $callback($process);
             return 1;

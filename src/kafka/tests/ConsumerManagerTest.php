@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Kafka;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\AbstractConsumer;
@@ -18,7 +20,6 @@ use Hyperf\Kafka\Annotation\Consumer;
 use Hyperf\Kafka\ConsumerManager;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Arr;
 use HyperfTest\Kafka\Stub\ContainerStub;
 use HyperfTest\Kafka\Stub\DemoConsumer;
 use longlang\phpkafka\Client\SwooleClient;
@@ -26,11 +27,14 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use stdClass;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown(): void
@@ -114,7 +118,7 @@ class ConsumerManagerTest extends TestCase
         $hasRegistered = false;
         /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
-            $this->assertFalse($item->isEnable(new \stdClass()));
+            $this->assertFalse($item->isEnable(new stdClass()));
             break;
         }
 
@@ -123,7 +127,7 @@ class ConsumerManagerTest extends TestCase
 
     public function testConsumeReturnNull()
     {
-        $class = new class() extends AbstractConsumer {
+        $class = new class extends AbstractConsumer {
             public function consume(ConsumeMessage $message)
             {
             }

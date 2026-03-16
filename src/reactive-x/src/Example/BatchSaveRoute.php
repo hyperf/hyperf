@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Example;
 
+use Exception;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -28,7 +30,7 @@ class BatchSaveRoute implements ListenerInterface
 
     /**
      * @param QueryExecuted $event
-     * @throws \Exception
+     * @throws Exception
      */
     public function process(object $event): void
     {

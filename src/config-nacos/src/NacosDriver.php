@@ -9,20 +9,64 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigNacos;
 
+use Hyperf\Collection\Arr;
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\Utils\Arr;
+use Hyperf\ConfigCenter\Contract\ClientInterface as ConfigClientInterface;
+use Hyperf\Nacos\Module;
+use Hyperf\Nacos\Protobuf\ListenHandler\ConfigChangeNotifyRequestHandler;
+use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Psr\Container\ContainerInterface;
 
 class NacosDriver extends AbstractDriver
 {
     protected string $driverName = 'nacos';
 
+    /**
+     * @var Client
+     */
+    protected ConfigClientInterface $client;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
         $this->client = $container->get(ClientInterface::class);
+    }
+
+    public function createMessageFetcherLoop(): void
+    {
+        if (! $this->config->get('config_center.drivers.nacos.client.grpc.enable', false)) {
+            parent::createMessageFetcherLoop();
+            return;
+        }
+
+        $application = $this->client->getClient();
+        $listeners = $this->config->get('config_center.drivers.nacos.listener_config', []);
+        foreach ($listeners as $key => $item) {
+            $dataId = $item['data_id'] ?? '';
+            $group = $item['group'] ?? '';
+            $tenant = $item['tenant'] ?? '';
+            $type = $item['type'] ?? null;
+
+            $client = $application->grpc->get($tenant, Module::CONFIG);
+            $client->listenConfig($group, $dataId, new ConfigChangeNotifyRequestHandler(function (ConfigQueryResponse $response) use ($key, $type) {
+                $config = $this->client->decode($response->getContent(), $type);
+                $prevConfig = $this->config->get($key, []);
+
+                if ($config !== $prevConfig) {
+                    $this->syncConfig(
+                        [$key => $config],
+                        [$key => $prevConfig],
+                    );
+                }
+            }));
+        }
+
+        foreach ($application->grpc->moduleClients(Module::CONFIG) as $client) {
+            $client->listen();
+        }
     }
 
     protected function updateConfig(array $config): void

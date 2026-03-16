@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
@@ -16,6 +17,7 @@ use Hyperf\Rpc\Context;
 use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Request;
 use Hyperf\Rpc\Response;
+use Throwable;
 
 class NormalizeDataFormatter extends DataFormatter
 {
@@ -45,7 +47,7 @@ class NormalizeDataFormatter extends DataFormatter
     public function formatErrorResponse(ErrorResponse $response): array
     {
         $exception = $response->getException();
-        if ($exception instanceof \Throwable) {
+        if ($exception instanceof Throwable) {
             $exception = [
                 'class' => get_class($exception),
                 'attributes' => $this->normalizer->normalize($exception),

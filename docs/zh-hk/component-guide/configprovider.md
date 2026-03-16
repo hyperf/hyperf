@@ -4,7 +4,7 @@ ConfigProvider 機制對於 Hyperf 組件化來説是個非常重要的機制，
 
 # 什麼是 ConfigProvider 機制 ？
 
-簡單來説，就是每個組件都會提供一個 `ConfigProvider`，通常是在組件的根目錄提供一個 `ConfigProvider` 的類，`ConfigProvider` 會提供對應組件的所有配置信息，這些信息都會被 Hyperf 框架在啟動時加載，最終`ConfigProvider` 內的配置信息會被合併到 `Hyperf\Contract\ConfigInterface` 對應的實現類去，從而實現各個組件在 Hyperf 框架下使用時要進行的配置初始化。   
+簡單來説，就是每個組件都會提供一個 `ConfigProvider`，通常是在組件的根目錄提供一個 `ConfigProvider` 的類，`ConfigProvider` 會提供對應組件的所有配置信息，這些信息都會被 Hyperf 框架在啓動時加載，最終`ConfigProvider` 內的配置信息會被合併到 `Hyperf\Contract\ConfigInterface` 對應的實現類去，從而實現各個組件在 Hyperf 框架下使用時要進行的配置初始化。   
 
 `ConfigProvider` 本身不具備任何依賴，不繼承任何的抽象類和不要求實現任何的接口，只需提供一個 `__invoke` 方法並返回一個對應配置結構的數組即可。
 
@@ -97,7 +97,7 @@ php bin/hyperf.php vendor:publish hyperf/amqp
 由於 `composer.json` 內的 `extra` 屬性在數據不被利用時無其它作用和影響，故這些組件內的定義在其它框架使用時，不會造成任何的干擾和影響，故`ConfigProvider` 是一種僅作用於 Hyperf 框架的機制，對其它沒有利用此機制的框架不會造成任何的影響，這也就為組件的複用打下了基礎，但這也要求在進行組件設計時，必須遵循以下規範：
 
 - 所有類的設計都必須允許通過標準 `OOP` 的使用方式來使用，所有 Hyperf 專有的功能必須作為增強功能並以單獨的類來提供，也就意味着在非 Hyperf 框架下仍能通過標準的手段來實現組件的使用；
-- 組件的依賴設計如果可滿足 [PSR 標準](https://www.php-fig.org/psr) 則優先滿足且依賴對應的接口而不是實現類；如 [PSR 標準](https://www.php-fig.org/psr) 沒有包含的功能，則可滿足由 Hyperf 定義的契約庫 [Hyperf/contract](https://github.com/hyperf/contract) 內的接口時優先滿足且依賴對應的接口而不是實現類；
+- 組件的依賴設計如果可滿足 [PSR 標準](https://www.php-fig.org/psr) 則優先滿足且依賴對應的接口而不是實現類；如 [PSR 標準](https://www.php-fig.org/psr) 沒有包含的功能，則可滿足由 Hyperf 定義的契約庫 [hyperf/contract](https://github.com/hyperf/contract) 內的接口時優先滿足且依賴對應的接口而不是實現類；
 - 對於實現 Hyperf 專有功能所增加的增強功能類，通常來説也會對 Hyperf 的一些組件有依賴，那麼這些組件的依賴不應該寫在 `composer.json` 的 `require` 項，而是寫在 `suggest` 項作為建議項存在；
 - 組件設計時不應該通過註解進行任何的依賴注入，注入方式應只使用 `構造函數注入` 的方式，這樣同時也能滿足在 `OOP` 下的使用；
 - 組件設計時不應該通過註解進行任何的功能定義，功能定義應只通過 `ConfigProvider` 來定義； 

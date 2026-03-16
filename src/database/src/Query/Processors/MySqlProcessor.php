@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query\Processors;
 
 use Hyperf\Database\Schema\Column;
@@ -52,6 +53,26 @@ class MySqlProcessor extends Processor
     {
         return array_map(function ($result) {
             return (array) $result;
+        }, $results);
+    }
+
+    /**
+     * Process the results of a foreign keys query.
+     */
+    public function processForeignKeys(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => $result->name,
+                'columns' => explode(',', $result->columns),
+                'foreign_schema' => $result->foreign_schema,
+                'foreign_table' => $result->foreign_table,
+                'foreign_columns' => explode(',', $result->foreign_columns),
+                'on_update' => strtolower($result->on_update),
+                'on_delete' => strtolower($result->on_delete),
+            ];
         }, $results);
     }
 }

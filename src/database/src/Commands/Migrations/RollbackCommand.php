@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Hyperf\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -44,6 +45,7 @@ class RollbackCommand extends BaseCommand
             [
                 'pretend' => $this->input->getOption('pretend'),
                 'step' => (int) $this->input->getOption('step'),
+                'batch' => (int) $this->input->getOption('batch'),
             ]
         );
     }
@@ -62,6 +64,7 @@ class RollbackCommand extends BaseCommand
             ['realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths'],
             ['pretend', null, InputOption::VALUE_NONE, 'Dump the SQL queries that would be run'],
             ['step', null, InputOption::VALUE_OPTIONAL, 'The number of migrations to be reverted'],
+            ['batch', null, InputOption::VALUE_OPTIONAL, 'The batch of migrations (identified by their batch number) to be reverted'],
         ];
     }
 }

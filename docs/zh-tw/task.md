@@ -1,6 +1,6 @@
 # Task
 
-現階段 `Swoole` 暫時沒有辦法 `hook` 所有的阻塞函式，也就意味著有些函式仍然會導致 `程序阻塞`，從而影響協程的排程，此時我們可以通過使用 `Task` 元件來模擬協程處理，從而達到不阻塞程序呼叫阻塞函式的目的，本質上是仍是是多程序執行阻塞函式，所以效能上會明顯地不如原生協程，具體取決於 `Task Worker` 的數量。
+現階段 `Swoole` 暫時沒有辦法 `hook` 所有的阻塞函式，也就意味著有些函式仍然會導致 `程序阻塞`，從而影響協程的排程，此時我們可以透過使用 `Task` 元件來模擬協程處理，從而達到不阻塞程序呼叫阻塞函式的目的，本質上是仍是是多程序執行阻塞函式，所以效能上會明顯地不如原生協程，具體取決於 `Task Worker` 的數量。
 
 ## 安裝
 
@@ -45,8 +45,8 @@ Task 元件提供了 `主動方法投遞` 和 `註解投遞` 兩種使用方法�
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
 
@@ -70,13 +70,13 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 
 ### 使用註解
 
-通過 `主動方法投遞` 時，並不是特別直觀，這裡我們實現了對應的 `@Task` 註解，並通過 `AOP` 重寫了方法呼叫。當在 `Worker` 程序時，自動投遞到 `Task` 程序，並協程等待 資料返回。
+透過 `主動方法投遞` 時，並不是特別直觀，這裡我們實現了對應的 `#[Task]` 註解，並透過 `AOP` 重寫了方法呼叫。當在 `Worker` 程序時，自動投遞到 `Task` 程序，並協程等待 資料返回。
 
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
@@ -97,7 +97,7 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> 使用 `@Task` 註解時需 `use Hyperf\Task\Annotation\Task;`
+> 使用 `#[Task]` 註解時需 `use Hyperf\Task\Annotation\Task;`
 
 註解支援以下引數
 
@@ -119,7 +119,7 @@ Swoole 暫時沒有協程化的函式列表
 
 ### MongoDB
 
-> 因為 `MongoDB` 沒有辦法被 `hook`，所以我們可以通過 `Task` 來呼叫，下面就簡單介紹一下如何通過註解方式呼叫 `MongoDB`。
+> 因為 `MongoDB` 沒有辦法被 `hook`，所以我們可以透過 `Task` 來呼叫，下面就簡單介紹一下如何透過註解方式呼叫 `MongoDB`。
 
 以下我們實現兩個方法 `insert` 和 `query`，其中需要注意的是 `manager` 方法不能使用 `Task`，
 因為 `Task` 會在對應的 `Task 程序` 中處理，然後將資料從 `Task 程序` 返回到 `Worker 程序` 。
@@ -178,7 +178,7 @@ class MongoTask
 ```php
 <?php
 use App\Task\MongoTask;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $client = ApplicationContext::getContainer()->get(MongoTask::class);
 $client->insert('hyperf.test', ['id' => rand(0, 99999999)]);
@@ -191,5 +191,5 @@ $result = $client->query('hyperf.test', [], [
 
 ## 其他方案
 
-如果 Task 機制無法滿足效能要求，可以嘗試一下 Hyperf 組織下的另一個開源專案[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+如果 Task 機制無法滿足效能要求，可以嘗試一下 Hyperf 組織下的另一個開源專案[GoTask](https://github.com/hyperf/gotask)。GoTask 透過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 

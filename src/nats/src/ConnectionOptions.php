@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats;
 
 use Stringable;
@@ -103,7 +104,7 @@ class ConnectionOptions implements Stringable
      *
      * @param array|Traversable $options the connection options
      */
-    public function __construct(null|Traversable|array $options = null)
+    public function __construct(null|array|Traversable $options = null)
     {
         if (! empty($options)) {
             $this->initialize($options);

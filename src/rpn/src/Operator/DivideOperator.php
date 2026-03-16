@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpn\Operator;
 
 class DivideOperator extends Operator
@@ -18,8 +19,9 @@ class DivideOperator extends Operator
         return '/';
     }
 
-    public function execute(array $parameters, int $scale): string
+    public function execute(array $parameters, int $scale, array $bindings = []): string
     {
+        $parameters = $this->fromBindings($parameters, $bindings);
         $parameters[] = $scale;
         return bcdiv(...$parameters);
     }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Aspect;
 
 use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
@@ -18,6 +19,8 @@ use Hyperf\AsyncQueue\Environment;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class AsyncQueueAspect extends AbstractAspect
 {

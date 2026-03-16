@@ -9,10 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Config;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
 
 class Config implements ConfigInterface
 {

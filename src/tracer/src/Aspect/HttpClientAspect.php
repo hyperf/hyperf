@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
@@ -17,19 +18,23 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
+use Hyperf\Tracer\TracerContext;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
+
 use const OpenTracing\Formats\TEXT_MAP;
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
 
 class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;
 
     public array $classes = [
+        Client::class . '::request',
         Client::class . '::requestAsync',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -45,11 +50,15 @@ class HttpClientAspect extends AbstractAspect
         if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
             return $proceedingJoinPoint->process();
         }
+        // Disable the aspect for the requestAsync method.
+        if ($proceedingJoinPoint->methodName == 'request') {
+            $options['no_aspect'] = true;
+        }
         $arguments = $proceedingJoinPoint->arguments;
         $method = $arguments['keys']['method'] ?? 'Null';
         $uri = $arguments['keys']['uri'] ?? 'Null';
         $key = "HTTP Request [{$method}] {$uri}";
-        $span = $this->startSpan($key);
+        $span = $this->startSpan($key, [], SPAN_KIND_RPC_CLIENT);
         $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         if ($this->spanTagManager->has('http_client', 'http.url')) {
             $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $uri);
@@ -59,7 +68,7 @@ class HttpClientAspect extends AbstractAspect
         }
         $appendHeaders = [];
         // Injects the context into the wire
-        $this->tracer->inject(
+        TracerContext::getTracer()->inject(
             $span->getContext(),
             TEXT_MAP,
             $appendHeaders
@@ -70,11 +79,13 @@ class HttpClientAspect extends AbstractAspect
         try {
             $result = $proceedingJoinPoint->process();
             if ($result instanceof ResponseInterface) {
-                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
+                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), (string) $result->getStatusCode());
             }
-        } catch (\Throwable $e) {
-            $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+        } catch (Throwable $e) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
             throw $e;
         } finally {
             $span->finish();

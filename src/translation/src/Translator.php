@@ -9,16 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Translation;
 
 use Countable;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class Translator implements TranslatorInterface
 {
@@ -26,31 +27,23 @@ class Translator implements TranslatorInterface
 
     /**
      * The fallback locale used by the translator.
-     *
-     * @var string
      */
-    protected $fallback;
+    protected string $fallback = '';
 
     /**
      * The array of loaded translation groups.
-     *
-     * @var array
      */
-    protected $loaded = [];
+    protected array $loaded = [];
 
     /**
      * The message selector.
-     *
-     * @var null|\Hyperf\Translation\MessageSelector
      */
-    protected $selector;
+    protected ?MessageSelector $selector = null;
 
     /**
      * A cache of the parsed items.
-     *
-     * @var array
      */
-    protected $parsed = [];
+    protected array $parsed = [];
 
     /**
      * @param TranslatorLoaderInterface $loader the loader implementation
@@ -146,7 +139,7 @@ class Translator implements TranslatorInterface
     /**
      * Get a translation according to an integer value.
      *
-     * @param array|\Countable|int $number
+     * @param array|Countable|int $number
      */
     public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string
     {

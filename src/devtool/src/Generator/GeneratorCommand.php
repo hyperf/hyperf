@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
+use Hyperf\CodeParser\Project;
+use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\CodeGen\Project;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,10 +43,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;
@@ -81,7 +80,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function qualifyClass(string $name): string
     {
-        $name = ltrim($name, '\\/');
+        $name = ltrim($name, '\/');
 
         $name = str_replace('/', '\\', $name);
 
@@ -106,7 +105,18 @@ abstract class GeneratorCommand extends Command
      */
     protected function getPath(string $name): string
     {
+        if ($path = $this->input->getOption('path')) {
+            $className = Str::afterLast($name, '\\');
+
+            if (str_starts_with($path, '/')) {
+                return rtrim($path, '/') . '/' . $className . '.php';
+            }
+
+            return BASE_PATH . '/' . trim($path, '/') . '/' . $className . '.php';
+        }
+
         $project = new Project();
+
         return BASE_PATH . '/' . $project->path($name);
     }
 
@@ -190,6 +200,7 @@ abstract class GeneratorCommand extends Command
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Whether force to rewrite.'],
             ['namespace', 'N', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
+            ['path', null, InputOption::VALUE_OPTIONAL, 'The location where the file should be created.', null],
         ];
     }
 
@@ -229,6 +240,8 @@ abstract class GeneratorCommand extends Command
                 return 'subl://open?url=file://%s';
             case 'textmate':
                 return 'txmt://open?url=file://%s';
+            case 'cursor':
+                return 'cursor://file/%s';
             case 'emacs':
                 return 'emacs://open?url=file://%s';
             case 'macvim':

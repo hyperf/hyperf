@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Jaeger;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Socket;
 use Thrift\Exception\TTransportException;
 use Thrift\Transport\TTransport;
+use Throwable;
 
 class ThriftUdpTransport extends TTransport
 {
@@ -40,7 +43,7 @@ class ThriftUdpTransport extends TTransport
     private $logger;
 
     /**
-     * @var null|resource|\Socket
+     * @var null|resource|Socket
      */
     private $socket;
 
@@ -49,7 +52,7 @@ class ThriftUdpTransport extends TTransport
      */
     private $chan;
 
-    public function __construct(string $host, int $port, LoggerInterface $logger = null)
+    public function __construct(string $host, int $port, ?LoggerInterface $logger = null)
     {
         $this->host = $host;
         $this->port = $port;
@@ -177,7 +180,7 @@ class ThriftUdpTransport extends TTransport
                             break 2;
                         }
                         $closure->call($this);
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         if (ApplicationContext::hasContainer()) {
                             if (ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
                                 ApplicationContext::getContainer()

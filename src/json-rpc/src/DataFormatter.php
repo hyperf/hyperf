@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Rpc\Context;
@@ -16,6 +17,7 @@ use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Request;
 use Hyperf\Rpc\Response;
+use Throwable;
 
 class DataFormatter implements DataFormatterInterface
 {
@@ -47,7 +49,7 @@ class DataFormatter implements DataFormatterInterface
     public function formatErrorResponse(ErrorResponse $response): array
     {
         $exception = $response->getException();
-        if ($exception instanceof \Throwable) {
+        if ($exception instanceof Throwable) {
             $exception = [
                 'class' => get_class($exception),
                 'code' => $exception->getCode(),

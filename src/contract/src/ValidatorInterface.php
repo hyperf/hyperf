@@ -9,10 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Contract;
 
-use Hyperf\Utils\Contracts\MessageBag;
-use Hyperf\Utils\Contracts\MessageProvider;
+namespace Hyperf\Contract;
 
 interface ValidatorInterface extends MessageProvider
 {

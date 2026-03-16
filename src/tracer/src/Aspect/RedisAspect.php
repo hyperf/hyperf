@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Di\Aop\AbstractAspect;
@@ -17,7 +18,9 @@ use Hyperf\Redis\Redis;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
+use Throwable;
+
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
 
 class RedisAspect extends AbstractAspect
 {
@@ -27,7 +30,7 @@ class RedisAspect extends AbstractAspect
         Redis::class . '::__call',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -41,14 +44,16 @@ class RedisAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Redis' . '::' . $arguments['name']);
+        $span = $this->startSpan('Redis::' . $arguments['name'], [], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();
             $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
-        } catch (\Throwable $e) {
-            $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+        } catch (Throwable $e) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
             throw $e;
         } finally {
             $span->finish();

@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Watcher;
 
 use Hyperf\Config\Config;
 use Hyperf\Watcher\Option;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class WatcherTest extends TestCase
 {
     public function testOption()
@@ -32,7 +35,7 @@ class WatcherTest extends TestCase
             ],
         ]);
 
-        $option = new Option($config, ['src'], []);
+        $option = new Option($config->get('watcher'), ['src'], []);
 
         $this->assertSame('xxx', $option->getDriver());
         $this->assertSame(['app', 'config', 'src'], $option->getWatchDir());

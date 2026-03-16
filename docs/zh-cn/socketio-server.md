@@ -41,7 +41,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 #[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
@@ -152,7 +152,7 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in 'game' room, including sender
 // 向 game 房间内的所有连接推送 bigger-announcement 事件。
@@ -205,7 +205,7 @@ class FooNamespace extends BaseNamespace {
 
 Socket.io 通过自定义命名空间实现多路复用。（注意：不是 PHP 的命名空间）
 
-1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为 xxx 的命名空间，
+1. 可以通过 `#[SocketIONamespace("/xxx")]` 将控制器映射为 xxx 的命名空间，
 
 2. 也可通过
 
@@ -309,7 +309,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@Event()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
+2. 可以在控制器上添加 `#[Event]` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
 
 ```php
 <?php

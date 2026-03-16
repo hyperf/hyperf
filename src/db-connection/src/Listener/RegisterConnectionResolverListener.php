@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Psr\Container\ContainerInterface;
 
 class RegisterConnectionResolverListener implements ListenerInterface
 {

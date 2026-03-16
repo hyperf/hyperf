@@ -9,25 +9,35 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Contracts\Xmlable;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use ReflectionClass;
+use Stringable;
 use Swoole\Http\Response as SwooleResponse;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -44,7 +54,7 @@ class ResponseTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getUri')->andReturn(new Uri('http://127.0.0.1:9501'));
+        RequestContext::set(new Request('GET', 'http://127.0.0.1:9501'));
         $container->shouldReceive('get')->with(RequestInterface::class)->andReturn($request);
         ApplicationContext::setContainer($container);
 
@@ -83,9 +93,8 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse);
 
         $response = new Response();
-        $reflectionClass = new \ReflectionClass(Response::class);
+        $reflectionClass = new ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
-        $reflectionMethod->setAccessible(true);
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>
 <root><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue><karray><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue></karray></root>';
@@ -109,7 +118,7 @@ class ResponseTest extends TestCase
         ]));
 
         // Arrayable
-        $arrayable = new class() implements Arrayable {
+        $arrayable = new class implements Arrayable {
             public function toArray(): array
             {
                 return [
@@ -133,7 +142,7 @@ class ResponseTest extends TestCase
         $this->assertSame($expected, $reflectionMethod->invoke($response, $arrayable));
 
         // Xmlable
-        $xmlable = new class($expected) implements Xmlable {
+        $xmlable = new class($expected) implements Stringable, Xmlable {
             private $result;
 
             public function __construct($result)
@@ -178,6 +187,23 @@ class ResponseTest extends TestCase
         $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', (string) $json->getBody());
     }
 
+    public function testHtml()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $html = $response->html('<h1>hello world</h1>');
+        $this->assertSame('<h1>hello world</h1>', (string) $html->getBody());
+
+        $html = $response->html('<h1>hello world</h1>', 'GBK');
+        $this->assertSame('<h1>hello world</h1>', (string) $html->getBody());
+        $this->assertSame('text/html; charset=GBK', $html->getHeaderLine('content-type'));
+    }
+
     public function testObjectToJson()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -216,6 +242,7 @@ class ResponseTest extends TestCase
         $id = uniqid();
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
+        $cookie3 = new Cookie('Cleared', '');
         $swooleResponse->shouldReceive('status')->with(200, 'OK')->andReturnUsing(function ($code) {
             $this->assertSame($code, 200);
             return true;
@@ -226,9 +253,9 @@ class ResponseTest extends TestCase
             }
             return true;
         });
-        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value, ...$args) use ($id) {
-            $this->assertTrue($name == 'Name' || $name == 'Request-Id');
-            $this->assertTrue($value == 'Hyperf' || $value == $id);
+        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->times(3)->andReturnUsing(function ($name, $value, ...$args) use ($id) {
+            $this->assertTrue(in_array($name, ['Name', 'Request-Id', 'Cleared']));
+            $this->assertTrue(in_array($value, ['Hyperf', $id, 'deleted']));
             return true;
         });
         $swooleResponse->shouldReceive('end')->once()->andReturn(true);
@@ -236,7 +263,7 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response());
 
         $response = new Response();
-        $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
+        $response = $response->withCookie($cookie1)->withCookie($cookie2)->withCookie($cookie3)->withHeader('X-Token', 'xxx')->withStatus(200);
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -246,7 +273,7 @@ class ResponseTest extends TestCase
         $this->assertNotInstanceOf(ResponseInterface::class, $response);
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
-        $responseEmitter = new ResponseEmitter();
+        $responseEmitter = new ResponseEmitter(null);
         $responseEmitter->emit($response, $swooleResponse, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));

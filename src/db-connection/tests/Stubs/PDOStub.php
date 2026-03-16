@@ -9,42 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DbConnection\Stubs;
 
-class PDOStub extends \PDO
+use PDO;
+use PDOStatement;
+use ReturnTypeWillChange;
+
+class PDOStub extends PDO
 {
-    public $dsn;
-
-    public $username;
-
-    public $passwd;
-
-    public $options;
-
-    public static $destruct = 0;
-
-    public function __construct(string $dsn, string $username, string $passwd, array $options)
+    public function __construct(public string $dsn, public ?string $username = null, public ?string $password = null, public ?array $options = null)
     {
-        $this->dsn = $dsn;
-        $this->username = $username;
-        $this->passwd = $passwd;
-        $this->options = $options;
     }
 
-    public function __destruct()
+    #[ReturnTypeWillChange]
+    public function prepare(string $query, array $options = []): bool|PDOStatement
     {
-        ++self::$destruct;
+        return new PDOStatementStubPHP8($query);
     }
 
-    public function prepare($statement, $driver_options = null)
+    #[ReturnTypeWillChange]
+    public function exec(string $statement): bool|int
     {
-        if (version_compare(PHP_VERSION, '8.0', '>=')) {
-            return new PDOStatementStubPHP8($statement);
-        }
-        return new PDOStatementStub($statement);
-    }
-
-    public function exec($statement)
-    {
+        return 0;
     }
 }

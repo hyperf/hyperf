@@ -9,14 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Response;
 
-use Hyperf\Context\Context;
+use Hyperf\Codec\Json;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Collection;
 use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class Response
 {
@@ -32,9 +34,9 @@ class Response
     public function toResponse(): ResponseInterface
     {
         return $this->response()
-            ->withStatus($this->calculateStatus())
-            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
-            ->withBody(new SwooleStream(Json::encode($this->wrap(
+            ->setStatus($this->calculateStatus())
+            ->addHeader('content-type', 'application/json; charset=utf-8')
+            ->setBody(new SwooleStream(Json::encode($this->wrap(
                 $this->resource->resolve(),
                 $this->resource->with(),
                 $this->resource->additional
@@ -93,8 +95,8 @@ class Response
         && $this->resource->resource->wasRecentlyCreated ? 201 : 200;
     }
 
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

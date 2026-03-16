@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\RpcClient\Stub;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\RpcClient\AbstractServiceClient;
 use Psr\Container\ContainerInterface;
 
@@ -21,6 +23,7 @@ class FooServiceClient extends AbstractServiceClient
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->config = $this->container->get(ConfigInterface::class);
     }
 
     public function createNodes(): array

@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\RpcClient;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Exception\SocketConnectException;
 use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\Engine\Socket\SocketOption;
-use Hyperf\Utils\Codec\Json;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testConnectNotExistPort()

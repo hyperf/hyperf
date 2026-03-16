@@ -10,14 +10,15 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/contract": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/stdlib": "~3.1.0",
         "psr/event-dispatcher": "^1.0"
     },
     "suggest": {
@@ -38,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Event\\ConfigProvider"

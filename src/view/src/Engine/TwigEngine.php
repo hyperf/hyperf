@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\View\Engine;
 
 use Twig\Environment;
@@ -20,6 +21,10 @@ class TwigEngine implements EngineInterface
     {
         $loader = new FilesystemLoader($config['view_path']);
         $twig = new Environment($loader, ['cache' => $config['cache_path']]);
+
+        if ($suffix = $config['template_suffix'] ?? '') {
+            $template .= $suffix;
+        }
 
         return $twig->render($template, $data);
     }

@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue;
 
 use Hyperf\AsyncQueue\Aspect\AsyncQueueAspect;
+use Hyperf\AsyncQueue\Command\DynamicReloadMessageCommand;
 use Hyperf\AsyncQueue\Command\FlushFailedMessageCommand;
 use Hyperf\AsyncQueue\Command\InfoCommand;
 use Hyperf\AsyncQueue\Command\ReloadFailedMessageCommand;
@@ -28,6 +30,7 @@ class ConfigProvider
                 FlushFailedMessageCommand::class,
                 InfoCommand::class,
                 ReloadFailedMessageCommand::class,
+                DynamicReloadMessageCommand::class,
             ],
             'publish' => [
                 [
