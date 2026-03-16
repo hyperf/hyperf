@@ -143,7 +143,7 @@ class StreamingCall
             $grpcStatus = $recv->headers['grpc-status'] ?? 0;
 
             if ($grpcStatus != 0) {
-                $grpcMessage = $response->headers['grpc-message'] ?? 'Unknown error';
+                $grpcMessage = $recv->headers['grpc-message'] ?? 'Unknown error';
             } else {
                 $grpcMessage = null;
             }
