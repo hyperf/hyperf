@@ -29,7 +29,7 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
         return $this->toString();
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         if (str_starts_with($name, 'with')) {
             return new static($this->response->{$name}(...$arguments));

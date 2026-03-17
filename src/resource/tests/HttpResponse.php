@@ -68,14 +68,10 @@ class HttpResponse
 
     /**
      * Handle dynamic calls into macros or pass missing methods to the base response.
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->baseResponse->{$method}(...$args);
+        return $this->baseResponse->{$name}(...$arguments);
     }
 
     /**

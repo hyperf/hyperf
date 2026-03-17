@@ -123,7 +123,7 @@ Swoole\\Coroutine::set([
     }
 }
 
-$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$parser = (new ParserFactory())->createForNewestSupportedVersion();
 $printer = new Standard();
 $traverser = new NodeTraverser();
 

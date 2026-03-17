@@ -32,6 +32,9 @@ class ConfigProvider
                 ReloadFailedMessageCommand::class,
                 DynamicReloadMessageCommand::class,
             ],
+            'listeners' => [
+                Listener\RegisterConsumerProcessesListener::class,
+            ],
             'publish' => [
                 [
                     'id' => 'config',

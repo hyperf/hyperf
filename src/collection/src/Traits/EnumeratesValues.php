@@ -515,20 +515,11 @@ trait EnumeratesValues
      */
     public function partition(mixed $key, mixed $operator = null, mixed $value = null): static
     {
-        $passed = [];
-        $failed = [];
-
         $callback = func_num_args() === 1
             ? $this->valueRetriever($key)
             : $this->operatorForWhere(...func_get_args());
 
-        foreach ($this as $key => $item) {
-            if ($callback($item, $key)) {
-                $passed[$key] = $item;
-            } else {
-                $failed[$key] = $item;
-            }
-        }
+        [$passed, $failed] = Arr::partition($this->getIterator(), $callback);
 
         return new static([new static($passed), new static($failed)]);
     }
@@ -961,10 +952,8 @@ trait EnumeratesValues
 
     /**
      * Get the collection of items as JSON.
-     *
-     * @return string
      */
-    public function toJson(int $options = 0)
+    public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
     }

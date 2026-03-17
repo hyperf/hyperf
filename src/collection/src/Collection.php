@@ -155,8 +155,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     {
         if (func_num_args() === 1) {
             if ($this->useAsCallable($key)) {
-                $placeholder = new stdClass();
-                return $this->first($key, $placeholder) !== $placeholder;
+                return array_any($this->items, $key);
             }
             return in_array($key, $this->items);
         }
@@ -510,6 +509,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     public function has($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
+
         foreach ($keys as $value) {
             if (! $this->offsetExists($value)) {
                 return false;
@@ -773,10 +773,26 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
     /**
      * Get and remove the last item from the collection.
+     * @return null|static<int, TValue>|TValue
      */
-    public function pop()
+    public function pop(int $count = 1)
     {
-        return array_pop($this->items);
+        if ($count === 1) {
+            return array_pop($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_pop($this->items);
+        }
+
+        return new static($results);
     }
 
     /**
@@ -913,12 +929,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
         if (! $this->useAsCallable($value)) {
             return array_search($value, $this->items, $strict);
         }
-        foreach ($this->items as $key => $item) {
-            if (call_user_func($value, $item, $key)) {
-                return $key;
-            }
-        }
-        return false;
+
+        return array_find_key($this->items, $value) ?? false;
     }
 
     /**
@@ -970,11 +982,28 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Get and remove the first item from the collection.
      *
-     * @return null|TValue
+     * @return null|static<int, TValue>|TValue
+     *
+     * @throws InvalidArgumentException
      */
-    public function shift()
+    public function shift(int $count = 1)
     {
-        return array_shift($this->items);
+        if ($count === 1) {
+            return array_shift($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of shifted items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_shift($this->items);
+        }
+
+        return new static($results);
     }
 
     /**
@@ -1642,11 +1671,6 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
                 return $result;
             }
         });
-
-        // TODO: The code will be removed in v3.2
-        if (array_is_list($this->items)) {
-            $items = array_values($items);
-        }
 
         return new static($items);
     }

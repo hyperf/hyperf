@@ -64,18 +64,14 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
 
     /**
      * Handle dynamic calls to the fluent instance to set attributes.
-     *
-     * @param TKey $method
-     * @param array $parameters
-     * @return $this
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
+        $this->attributes[$name] = count($arguments) > 0 ? $arguments[0] : true;
 
         return $this;
     }
@@ -129,29 +125,6 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
     }
 
     /**
-     * Get all of the attributes from the fluent instance.
-     *
-     * @param null|array|mixed $keys
-     * @return array
-     */
-    public function all($keys = null)
-    {
-        $data = $this->data();
-
-        if (! $keys) {
-            return $data;
-        }
-
-        $results = [];
-
-        foreach (is_array($keys) ? $keys : func_get_args() as $key) {
-            Arr::set($results, $key, Arr::get($data, $key));
-        }
-
-        return $results;
-    }
-
-    /**
      * Get an attribute from the fluent instance.
      *
      * @template TGetDefault
@@ -163,6 +136,24 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
     public function get($key, $default = null)
     {
         return data_get($this->attributes, $key, $default);
+    }
+
+    /**
+     * Get an attribute from the fluent instance.
+     *
+     * @template TGetDefault
+     *
+     * @param TKey $key
+     * @param (Closure(): TGetDefault)|TGetDefault $default
+     * @return TGetDefault|TValue
+     */
+    public function value($key, $default = null)
+    {
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
+
+        return value($default);
     }
 
     /**
@@ -195,22 +186,6 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
     }
 
     /**
-     * Get an attribute from the fluent instance.
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function value($key, $default = null)
-    {
-        if (array_key_exists($key, $this->attributes)) {
-            return $this->attributes[$key];
-        }
-
-        return value($default);
-    }
-
-    /**
      * Get the value of the given key as a new Fluent instance.
      *
      * @param string $key
@@ -222,6 +197,25 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
         return new static(
             (array) $this->get($key, $default)
         );
+    }
+
+    /**
+     * Get all of the attributes from the fluent instance.
+     *
+     * @param null|array|mixed $keys
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = $this->data();
+        if (! $keys) {
+            return $data;
+        }
+        $results = [];
+        foreach (is_array($keys) ? $keys : func_get_args() as $key) {
+            Arr::set($results, $key, Arr::get($data, $key));
+        }
+        return $results;
     }
 
     /**
@@ -276,11 +270,8 @@ class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, J
 
     /**
      * Convert the fluent instance to JSON.
-     *
-     * @param int $options
-     * @return string
      */
-    public function toJson($options = 0)
+    public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
     }
