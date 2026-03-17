@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "guzzlehttp/guzzle": "^7.0",
         "hyperf/context": "~3.2.0",
         "hyperf/coroutine": "~3.2.0",
         "hyperf/engine": "^2.0",

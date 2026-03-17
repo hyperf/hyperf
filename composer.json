@@ -47,7 +47,7 @@
         "google/common-protos": "^3.2 || ^4.4",
         "google/protobuf": "^3.6.1 || ^4.2",
         "grpc/grpc": "^1.15",
-        "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "guzzlehttp/guzzle": "^7.0",
         "hyperf/engine": "^2.14",
         "hyperf/laminas-mime": "^3.0",
         "hyperf/token-bucket": "^2.0",
