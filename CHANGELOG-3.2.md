@@ -128,6 +128,7 @@ fgetcsv($fp) must be changed to fgetcsv($fp, escape: '')
 - Upgrade the `symfony/*` components to `^6.0 || ^7.0`
 - Upgrade the `phpunit/phpunit` version to `^11.0`
 - Upgrade the version of `google/protobuf` to `^3.6.1 || ^4.2`.
+- Upgrade the version of `guzzlehttp/guzzle` to `^7.0`.
 
 ## Removed
 
