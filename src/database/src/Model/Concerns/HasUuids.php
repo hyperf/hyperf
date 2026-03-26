@@ -63,4 +63,26 @@ trait HasUuids
 
         return $this->incrementing;
     }
+
+    /**
+     * Initialize the model with unique identifiers.
+     *
+     * @param array $columns
+     * @return void
+     */
+    protected function initialize(array $columns): void
+    {
+        foreach ($columns as $column) {
+            if (in_array($column, $this->uniqueIds()) && ! $this->{$column}) {
+                $this->{$column} = $this->newUniqueId();
+            }
+        }
+    }
+
+    public function save(array $options = []): bool
+    {
+        $this->initialize($this->uniqueIds());
+
+        return parent::save($options);
+    }
 }
