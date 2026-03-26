@@ -81,7 +81,9 @@ trait HasUuids
 
     public function save(array $options = []): bool
     {
-        $this->initialize($this->uniqueIds());
+        if (! $this->exists) {
+            $this->initialize($this->uniqueIds());
+        }
 
         return parent::save($options);
     }
