@@ -63,4 +63,20 @@ trait HasUuids
 
         return $this->incrementing;
     }
+
+    /**
+     * Initialize the model with unique identifiers using the initialize{trait_name} method.
+     *
+     * @return void
+     */
+    protected function initializeHasUuids(): void
+    {
+        $columns = $this->uniqueIds();
+        foreach ($columns as $column) {
+            if (in_array($column, $this->uniqueIds()) && ($this->{$column} === null || $this->{$column} === '')) {
+                $this->{$column} = $this->newUniqueId();
+            }
+        }
+    }
 }
+
