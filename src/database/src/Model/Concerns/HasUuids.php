@@ -65,36 +65,20 @@ trait HasUuids
     }
 
     /**
-     * Boot the HasUuids trait for a model.
-     *
-     * This will ensure that UUIDs are generated only for new models that
-     * are being created, avoiding unnecessary work during model hydration.
-     *
-     * @return void
-     */
-    protected static function bootHasUuids(): void
-    {
-        static::creating(function ($model): void {
-            $columns = $model->uniqueIds();
-            foreach ($columns as $column) {
-                if (in_array($column, $columns, true) && ($model->{$column} === null || $model->{$column} === '')) {
-                    $model->{$column} = $model->newUniqueId();
-                }
-            }
-        });
-    }
-
-    /**
      * Initialize the model with unique identifiers using the initialize{trait_name} method.
      *
-     * This method is kept for compatibility but intentionally does not
-     * generate UUIDs to avoid unnecessary work during model construction.
-     *
      * @return void
      */
-    protected function initializeHasUuids(): void
+    protected function initializeHasUUID(): void
     {
-        // UUIDs are now generated in the bootHasUuids creating listener.
+        $columns = $this->uniqueIds();
+        if ($this->exists || empty($columns)) {
+            return;
+        }
+        foreach ($columns as $column) {
+            if ($this->{$column} === null || $this->{$column} === '') {
+                $this->{$column} = $this->newUniqueId();
+            }
+        }
     }
 }
-
