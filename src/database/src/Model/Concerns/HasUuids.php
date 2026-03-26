@@ -18,30 +18,24 @@ trait HasUuids
 {
     /**
      * Generate a new UUID for the model.
-     *
-     * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): string
     {
         return (string) Str::uuidv7();
     }
 
     /**
      * Get the columns that should receive a unique identifier.
-     *
-     * @return array
      */
-    public function uniqueIds()
+    public function uniqueIds(): array
     {
         return [$this->getKeyName()];
     }
 
     /**
      * Get the auto-incrementing key type.
-     *
-     * @return string
      */
-    public function getKeyType()
+    public function getKeyType(): string
     {
         if (in_array($this->getKeyName(), $this->uniqueIds())) {
             return 'string';
@@ -52,10 +46,8 @@ trait HasUuids
 
     /**
      * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         if (in_array($this->getKeyName(), $this->uniqueIds())) {
             return false;
@@ -65,20 +57,16 @@ trait HasUuids
     }
 
     /**
-     * Initialize the model with unique identifiers using the initialize{trait_name} method.
-     *
-     * @return void
+     * Generate UUIDs for unique-id columns before inserting.
      */
-    protected function initializeHasUUID(): void
+    protected function performInsert(Builder $query): bool
     {
-        $columns = $this->uniqueIds();
-        if ($this->exists || empty($columns)) {
-            return;
-        }
-        foreach ($columns as $column) {
-            if ($this->{$column} === null || $this->{$column} === '') {
-                $this->{$column} = $this->newUniqueId();
+        foreach ($this->uniqueIds() as $column) {
+            if (empty($this->getAttribute($column))) {
+                $this->setAttribute($column, $this->newUniqueId());
             }
         }
+
+        return parent::performInsert($query);
     }
 }
