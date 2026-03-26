@@ -72,8 +72,10 @@ trait HasUuids
      */
     protected function initialize(array $columns): void
     {
+        $uniqueIds = $this->uniqueIds();
+
         foreach ($columns as $column) {
-            if (in_array($column, $this->uniqueIds()) && ! $this->{$column}) {
+            if (in_array($column, $uniqueIds, true) && ($this->{$column} === null || $this->{$column} === '')) {
                 $this->{$column} = $this->newUniqueId();
             }
         }
