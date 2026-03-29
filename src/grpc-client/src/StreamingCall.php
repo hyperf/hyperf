@@ -16,6 +16,7 @@ use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use RuntimeException;
+use Swoole\Http2\Response;
 
 class StreamingCall
 {
@@ -115,7 +116,7 @@ class StreamingCall
         }
     }
 
-    public function recv(float $timeout = -1.0)
+    public function recv(float $timeout = -1.0): array
     {
         if ($this->getStreamId() <= 0) {
             $recv = false;
@@ -130,13 +131,27 @@ class StreamingCall
         if ($recv === false) {
             throw $this->newException();
         }
+
+        /** @var Response $recv */
+
         // server ended the stream
         if ($recv->pipeline === false) {
             $this->streamId = 0;
-            return [null, 0, $recv];
+
+            // TODO: Consider whether there should throw an exception if the HTTP/2 pipeline ends with a non-zero or missing gRPC status.
+            // Personally, I would prefer not to expose the gRPC status externally
+            $grpcStatus = $recv->headers['grpc-status'] ?? 0;
+
+            if ($grpcStatus != 0) {
+                $grpcMessage = $recv->headers['grpc-message'] ?? 'Unknown error';
+            } else {
+                $grpcMessage = null;
+            }
+
+            return [$grpcMessage, $grpcStatus, $recv];
         }
 
-        return Parser::parseResponse($recv, $this->deserialize);
+        return [Parser::parseStreamMessage($recv->data, $this->deserialize), 0, $recv];
     }
 
     public function end(): void

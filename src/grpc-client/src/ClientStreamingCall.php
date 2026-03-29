@@ -22,7 +22,7 @@ class ClientStreamingCall extends StreamingCall
      */
     private $received = false;
 
-    public function recv(float $timeout = GrpcClient::GRPC_DEFAULT_TIMEOUT)
+    public function recv(float $timeout = GrpcClient::GRPC_DEFAULT_TIMEOUT): array
     {
         if (! $this->received) {
             $this->received = true;
