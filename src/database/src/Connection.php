@@ -868,7 +868,11 @@ class Connection implements ConnectionInterface
         $this->events = null;
     }
 
-    public function setTransactionManager($manager)
+    /**
+     * @param DatabaseTransactionsManager $manager
+     * @return $this
+     */
+    public function setTransactionManager(DatabaseTransactionsManager $manager): static
     {
         $this->transactionsManager = $manager;
 

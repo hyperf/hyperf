@@ -149,7 +149,7 @@ trait ManagesTransactions
             && $this->transactions > 1) {
             --$this->transactions;
 
-            $this->transactionsManager?->rollback($this->getName(), $this->transactions);
+            $this->transactionsManager->rollback($this->getName(), $this->transactions);
 
             throw $e;
         }
