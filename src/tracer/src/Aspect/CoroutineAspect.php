@@ -19,10 +19,12 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
+use stdClass;
 use Throwable;
 
 class CoroutineAspect extends AbstractAspect
 {
+    /** @var string[] */
     public array $classes = [
         'Hyperf\Coroutine\Coroutine::create',
     ];
@@ -41,30 +43,61 @@ class CoroutineAspect extends AbstractAspect
         $root = TracerContext::getRoot();
 
         $proceedingJoinPoint->arguments['keys']['callable'] = function () use ($callable, $root) {
-            try {
-                if ($root instanceof Span) {
-                    $tracer = TracerContext::getTracer();
-                    $child = $tracer->startSpan('coroutine', [
-                        'child_of' => $root->getContext(),
-                    ]);
-                    if ($this->spanTagManager->has('coroutine', 'id')) {
-                        $child->setTag($this->spanTagManager->get('coroutine', 'id'), Co::id());
-                    }
-                    TracerContext::setRoot($child);
-                    Co::defer(function () use ($child, $tracer) {
-                        $child->finish();
-                        $tracer->flush();
-                    });
-                }
+            if (! $root instanceof Span) {
+                $callable();
+                return;
+            }
 
+            $tracer = TracerContext::getTracer();
+            $child = $tracer->startSpan('coroutine', [
+                'child_of' => $root->getContext(),
+            ]);
+
+            if ($this->spanTagManager->has('coroutine', 'id')) {
+                $child->setTag(
+                    $this->spanTagManager->get('coroutine', 'id'),
+                    (string) Co::id()
+                );
+            }
+
+            TracerContext::setRoot($child);
+
+            $state = new stdClass();
+            $state->finished = false;
+
+            Co::defer(function () use ($child, $tracer, $state): void {
+                /* @phpstan-ignore-next-line if.alwaysFalse */
+                if ($state->finished) {
+                    return;
+                }
+                $state->finished = true;
+                $child->finish();
+                $tracer->flush();
+            });
+
+            try {
                 $callable();
             } catch (Throwable $e) {
-                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                if (
+                    $this->switchManager->isEnable('exception')
+                    && ! $this->switchManager->isIgnoreException($e)
+                ) {
                     $child->setTag('error', true);
-                    $child->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+                    $child->log([
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                        'stacktrace' => $e->getTraceAsString(),
+                    ]);
                 }
-
                 throw $e;
+            } finally {
+                /* @phpstan-ignore-next-line if.alwaysFalse */
+                if ($state->finished) {
+                    return;
+                }
+                $state->finished = true;
+                $child->finish();
+                $tracer->flush();
             }
         };
 
