@@ -1207,7 +1207,7 @@ class Connection implements ConnectionInterface
             'bind_time' => $bindTime,
             'execute_time' => $executeTime,
             'fetch_time' => $fetchTime,
-            'result' => $result,
+            'result' => $runResult,
         ] = $result;
         
 
@@ -1218,14 +1218,14 @@ class Connection implements ConnectionInterface
             $query,
             $bindings,
             $this->getElapsedTime($start),
-            $result,
+            $runResult,
             $prepareTime,
             $bindTime,
             $executeTime,
             $fetchTime,
         );
 
-        return $result;
+        return $runResult;
     }
 
     /**
