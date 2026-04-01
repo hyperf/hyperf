@@ -21,6 +21,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\Casts\ArrayObject;
 use Hyperf\Database\Model\Casts\AsArrayObject;
+use Hyperf\Database\Model\Casts\AsCollection;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
 use HyperfTest\Database\Stubs\ContainerStub;
@@ -391,6 +392,27 @@ class DatabaseModelCustomCastingTest extends TestCase
         $this->assertEquals($data, $unserialized->config->toArray());
         $this->assertEquals(json_encode($data), $unserialized->getAttributes()['config']);
     }
+
+    public function testCastsAsCollection()
+    {
+        $m = new TestModelWithCustomCast();
+        $m->fill([
+            'as_collection' => [['id' => 1, 'name' => 'hyperf'], ['id' => 2, 'name' => 'swoole']],
+            'as_collection2' => [['id' => 3, 'name' => 'hyperf'], ['id' => 4, 'name' => 'swoole']],
+        ]);
+
+        /** @var Collection $collection */
+        $collection = $m->as_collection;
+
+        $this->assertSame(1, $collection->first()['id']);
+        $this->assertSame(2, $collection->last()['id']);
+
+        /** @var Collection $collection */
+        $collection = $m->as_collection2;
+
+        $this->assertSame(3, $collection->first()->id);
+        $this->assertSame(4, $collection->last()->id);
+    }
 }
 
 class TestModelWithCustomCast extends Model
@@ -415,7 +437,28 @@ class TestModelWithCustomCast extends Model
         'value_object_caster_with_caster_instance' => ValueObjectWithCasterInstance::class,
         'cast_using' => CastUsing::class,
         'invalid_caster' => InvalidCaster::class,
+        'as_collection' => AsCollection::class,
+        'as_collection2' => AsCollection::class,
     ];
+
+    public function getCasts(): array
+    {
+        $casts = parent::getCasts();
+        $casts['as_collection2'] = AsCollection::using(Collection::class, [TestModelValue::class, 'from']);
+        return $casts;
+    }
+}
+
+class TestModelValue
+{
+    public function __construct(public int $id, public string $name)
+    {
+    }
+
+    public static function from(array $item)
+    {
+        return new TestModelValue($item['id'], $item['name']);
+    }
 }
 
 class TestModelWithArrayObjectCast extends Model

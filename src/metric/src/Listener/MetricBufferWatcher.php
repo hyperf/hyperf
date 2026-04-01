@@ -13,10 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricCollectorInterface;
@@ -69,13 +66,8 @@ class MetricBufferWatcher implements ListenerInterface
         }
 
         $timerInterval = $this->config->get('metric.buffer_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () {
+        $this->timer->tick($timerInterval, function () {
             $this->collector->flush();
-        });
-        // Clean up timer on worker exit;
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->timer->clear($timerId);
         });
     }
 }

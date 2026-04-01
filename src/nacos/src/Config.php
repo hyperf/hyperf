@@ -32,6 +32,8 @@ class Config
 
     protected ?string $version = '1.0';
 
+    protected ?CloudName $cloudName = null;
+
     protected array $grpc = [
         'enable' => true,
         'heartbeat' => 10,
@@ -56,6 +58,7 @@ class Config
             'port' => 'int',
             'grpc' => 'array',
             'version' => 'string',
+            'cloud_name' => 'string',
         ])]
         array $config = []
     ) {
@@ -69,6 +72,7 @@ class Config
         isset($config['port']) && $this->port = (int) $config['port'];
         isset($config['version']) && $this->version = (string) $config['version'];
         isset($config['grpc']) && $this->grpc = array_replace($this->grpc, $config['grpc']);
+        isset($config['cloud_name']) && $this->cloudName = CloudName::safeFrom($config['cloud_name']);
     }
 
     public function getBaseUri(): string
@@ -119,5 +123,10 @@ class Config
     public function getVersion(): string
     {
         return $this->version;
+    }
+
+    public function getCloudName(): ?CloudName
+    {
+        return $this->cloudName;
     }
 }

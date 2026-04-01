@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
-class MethodInjection implements DefinitionInterface
+use Stringable;
+
+class MethodInjection implements Stringable, DefinitionInterface
 {
     public function __construct(private string $methodName, private array $parameters = [])
     {
