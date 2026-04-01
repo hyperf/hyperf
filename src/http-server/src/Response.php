@@ -47,7 +47,9 @@ use function Hyperf\Support\value;
 
 class Response implements PsrResponseInterface, ResponseInterface
 {
-    use Macroable;
+    use Macroable {
+        Macroable::__call as macroCall;
+    }
 
     public function __construct(protected ?ResponsePlusInterface $response = null)
     {
@@ -55,6 +57,10 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public function __call($method, $parameters)
     {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
         $response = $this->getResponse();
         if (! method_exists($response, $method)) {
             throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
