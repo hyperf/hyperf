@@ -49,6 +49,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable {
         Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
     }
 
     public function __construct(protected ?ResponsePlusInterface $response = null)
@@ -70,6 +71,10 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public static function __callStatic($method, $parameters)
     {
+        if (static::hasMacro($method)) {
+            return static::macroCallStatic($method, $parameters);
+        }
+
         $response = Context::get(PsrResponseInterface::class);
         if (! method_exists($response, $method)) {
             throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $method));
