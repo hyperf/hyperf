@@ -71,7 +71,7 @@ class Redis
                     }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
-                    if (! Context::get($this->getCallbackContextKey())) {
+                    if (! $this->isInEagerReleaseMode()) {
                         defer(function () {
                             $this->releaseContextConnection();
                         });
@@ -142,10 +142,32 @@ class Redis
     }
 
     /**
-     * The key to identify the callback way in coroutine context.
+     * Whether the connection should be released immediately after exec(),
+     * instead of deferring until the coroutine ends.
      */
-    private function getCallbackContextKey(): string
+    private function isInEagerReleaseMode(): bool
     {
-        return sprintf('redis.connection.%s.multi_using_callback', $this->poolName);
+        return (bool) Context::get($this->getEagerReleaseContextKey());
+    }
+
+    /**
+     * Mark that the connection should be released immediately after exec().
+     */
+    private function enterEagerReleaseMode(): void
+    {
+        Context::set($this->getEagerReleaseContextKey(), true);
+    }
+
+    /**
+     * Clear the eager-release mark.
+     */
+    private function exitEagerReleaseMode(): void
+    {
+        Context::destroy($this->getEagerReleaseContextKey());
+    }
+
+    private function getEagerReleaseContextKey(): string
+    {
+        return sprintf('redis.connection.%s.eager_release', $this->poolName);
     }
 }

@@ -58,7 +58,7 @@ trait MultiExec
 
         $hasExistingConnection = Context::has($this->getContextKey());
         if (! $hasExistingConnection) {
-            Context::set($this->getCallbackContextKey(), true);
+            $this->enterEagerReleaseMode();
         }
 
         $instance = $this->__call($command, []);
@@ -68,7 +68,7 @@ trait MultiExec
         } finally {
             if (! $hasExistingConnection) {
                 $this->releaseContextConnection();
-                Context::destroy($this->getCallbackContextKey());
+                $this->exitEagerReleaseMode();
             }
         }
     }
