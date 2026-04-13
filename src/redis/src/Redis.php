@@ -71,9 +71,11 @@ class Redis
                     }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
-                    defer(function () {
-                        $this->releaseContextConnection();
-                    });
+                    if (! Context::get($this->getCallbackContextKey())) {
+                        defer(function () {
+                            $this->releaseContextConnection();
+                        });
+                    }
                 } else {
                     // Release the connection after command executed.
                     $connection->release();
@@ -137,5 +139,13 @@ class Redis
     private function getContextKey(): string
     {
         return sprintf('redis.connection.%s', $this->poolName);
+    }
+
+    /**
+     * The key to identify the callback way in coroutine context.
+     */
+    private function getCallbackContextKey(): string
+    {
+        return 'redis.connection.multi_using_callback';
     }
 }

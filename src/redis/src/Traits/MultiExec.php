@@ -56,14 +56,17 @@ trait MultiExec
             return tap($this->__call($command, []), $callback)->exec();
         }
 
+        Context::set($this->getCallbackContextKey(), true);
+        $hasExistingConnection = Context::has($this->getContextKey());
         $instance = $this->__call($command, []);
 
         try {
             return tap($instance, $callback)->exec();
         } finally {
-            if (! Context::has($this->getContextKey())) {
+            if (! $hasExistingConnection) {
                 $this->releaseContextConnection();
             }
+            Context::destroy($this->getCallbackContextKey());
         }
     }
 }
