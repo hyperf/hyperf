@@ -146,6 +146,6 @@ class Redis
      */
     private function getCallbackContextKey(): string
     {
-        return 'redis.connection.multi_using_callback';
+        return sprintf('redis.connection.%s.multi_using_callback', $this->poolName);
     }
 }
