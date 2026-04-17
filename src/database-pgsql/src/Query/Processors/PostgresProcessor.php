@@ -72,7 +72,7 @@ class PostgresProcessor extends Processor
 
             return [
                 'name' => strtolower($result->name),
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', $result->columns ?: ''),
                 'type' => strtolower($result->type),
                 'unique' => (bool) $result->unique,
                 'primary' => (bool) $result->primary,
@@ -90,10 +90,10 @@ class PostgresProcessor extends Processor
 
             return [
                 'name' => $result->name,
-                'columns' => explode(',', $result->columns),
+                'columns' => explode(',', $result->columns ?: ''),
                 'foreign_schema' => $result->foreign_schema,
                 'foreign_table' => $result->foreign_table,
-                'foreign_columns' => explode(',', $result->foreign_columns),
+                'foreign_columns' => explode(',', $result->foreign_columns ?: ''),
                 'on_update' => match (strtolower($result->on_update)) {
                     'a' => 'no action',
                     'r' => 'restrict',
