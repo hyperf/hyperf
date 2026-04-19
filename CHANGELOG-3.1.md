@@ -1,5 +1,9 @@
 # v3.1.68 - TBD
 
+## Fixed
+
+- [#7738](https://github.com/hyperf/hyperf/pull/7738) Fixed bug that `Hyperf\Database\Concerns\BuildsQueries::getOriginalColumnNameForCursorPagination` cannot work.
+
 # v3.1.67 - 2026-02-24
 
 ## Added
