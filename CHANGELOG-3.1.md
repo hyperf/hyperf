@@ -4,6 +4,7 @@
 
 - [#7738](https://github.com/hyperf/hyperf/pull/7738) Fixed bug that `Hyperf\Database\Concerns\BuildsQueries::getOriginalColumnNameForCursorPagination` cannot work.
 - [#7739](https://github.com/hyperf/hyperf/pull/7739) Fixed bug that http server broken by `nacos` service not found.
+- [#7740](https://github.com/hyperf/hyperf/pull/7740) Fixed bug that `Aws\Handler\GuzzleV6\GuzzleHandler` not found.
 
 # v3.1.67 - 2026-02-24
 
