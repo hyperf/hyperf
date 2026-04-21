@@ -170,7 +170,7 @@
 
 ## DTO
 
-- [fatbit/form-request-param](https://github.com/duncanxia97/hyperf-form-request-param) - 基於 `DTO` 的優雅強型別請求參數驗證（表單驗證）與自動注入組件。
+- [fatbit/form-request-param](https://github.com/duncanxia97/hyperf-form-request-param) - 基於 `DTO` 優雅的強型別請求引數驗證(表單驗證)與自動注入元件。
 
 ## 第三方 SDK
 
