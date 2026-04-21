@@ -1,5 +1,9 @@
 # v3.1.69 - TBD
 
+## Fixed
+
+- [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
+
 # v3.1.68 - 2026-04-21
 
 ## Fixed
