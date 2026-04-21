@@ -1,4 +1,16 @@
-# v3.1.68 - TBD
+# v3.1.69 - TBD
+
+# v3.1.68 - 2026-04-21
+
+## Fixed
+
+- [#7738](https://github.com/hyperf/hyperf/pull/7738) Fixed bug that `Hyperf\Database\Concerns\BuildsQueries::getOriginalColumnNameForCursorPagination` cannot work.
+- [#7739](https://github.com/hyperf/hyperf/pull/7739) Fixed bug that http server broken by `nacos` service not found.
+- [#7740](https://github.com/hyperf/hyperf/pull/7740) Fixed bug that `Aws\Handler\GuzzleV6\GuzzleHandler` not found.
+
+## Optimized
+
+- [#7741](https://github.com/hyperf/hyperf/pull/7741) Optimized the `Hyperf\Amqp\Message\Message::getTypeString()` method to prevent conflicts between property and getter methods.
 
 ## Fixed
 

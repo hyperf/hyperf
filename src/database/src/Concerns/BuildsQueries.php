@@ -478,7 +478,8 @@ trait BuildsQueries
 
                     $alias = substr($column, $position + 4);
 
-                    if ($parameter === $alias || $builder->getGrammar()->wrap($parameter) === $alias) {
+                    $grammar = $builder instanceof Builder ? $builder->getQuery()->getGrammar() : $builder->getGrammar();
+                    if ($parameter === $alias || $grammar->wrap($parameter) === $alias) {
                         return $original;
                     }
                 }
