@@ -32,6 +32,7 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\HttpServer\Exception\InvalidMappingException;
 use Hyperf\HttpServer\PriorityMiddleware;
 use Hyperf\Stringable\Str;
 use ReflectionMethod;
@@ -183,9 +184,6 @@ class DispatcherFactory
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->methods) || ! isset($mapping->options)) {
-                        continue;
-                    }
                     $methodOptions = Arr::merge($options, $mapping->options);
                     // Rewrite by annotation @Middleware for method.
                     $methodOptions['middleware'] = $options['middleware'];
@@ -198,6 +196,10 @@ class DispatcherFactory
                         $path = rtrim($prefix, '/') . '/' . $mapping->path;
                     } else {
                         $path = $mapping->path;
+                    }
+
+                    if (empty($mapping->methods)) {
+                        throw new InvalidMappingException(sprintf('The http methods of path %s cannot be empty.', $path));
                     }
 
                     // $methodOptions['middleware'] : MiddlewareData[]
