@@ -1,5 +1,9 @@
 # v3.1.69 - TBD
 
+## Fixed
+
+- [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
+
 # v3.1.68 - 2026-04-21
 
 ## Fixed
@@ -11,10 +15,6 @@
 ## Optimized
 
 - [#7741](https://github.com/hyperf/hyperf/pull/7741) Optimized the `Hyperf\Amqp\Message\Message::getTypeString()` method to prevent conflicts between property and getter methods.
-
-## Fixed
-
-- [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
 
 # v3.1.67 - 2026-02-24
 

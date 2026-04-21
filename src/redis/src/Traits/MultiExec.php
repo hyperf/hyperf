@@ -60,7 +60,7 @@ trait MultiExec
         if (! $hasExistingConnection) {
             $this->enterEagerReleaseMode();
         }
-        
+
         try {
             $instance = $this->__call($command, []);
 
