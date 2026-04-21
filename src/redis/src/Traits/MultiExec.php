@@ -60,10 +60,10 @@ trait MultiExec
         if (! $hasExistingConnection) {
             $this->enterEagerReleaseMode();
         }
-
-        $instance = $this->__call($command, []);
-
+        
         try {
+            $instance = $this->__call($command, []);
+
             return tap($instance, $callback)->exec();
         } finally {
             if (! $hasExistingConnection) {
