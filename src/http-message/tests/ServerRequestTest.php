@@ -165,8 +165,8 @@ class ServerRequestTest extends TestCase
 
     public function testGetUriFromGlobalsHeaderHostPriorityOverServerAddr()
     {
-        // 模拟 Swoole 6.2.0 在 $request->server 中设置 server_addr 的场景
-        // header['host'] 应优先于 server_addr
+        // Simulate the Swoole 6.2.0 scenario where server_addr is set in $request->server.
+        // header['host'] should take precedence over server_addr.
         $swooleRequest = Mockery::mock(SwooleRequest::class);
         $swooleRequest->shouldReceive('rawContent')->andReturn('');
         $swooleRequest->header = ['host' => 'hyperf.example.com'];
@@ -183,7 +183,7 @@ class ServerRequestTest extends TestCase
 
     public function testGetUriFromGlobalsServerAddrFallbackWhenNoHostHeader()
     {
-        // 当没有 Host 请求头时，server_addr 仍可作为兜底
+        // When no Host header is present, server_addr should still be used as fallback.
         $swooleRequest = Mockery::mock(SwooleRequest::class);
         $swooleRequest->shouldReceive('rawContent')->andReturn('');
         $swooleRequest->header = [];
