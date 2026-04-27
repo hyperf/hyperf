@@ -290,17 +290,30 @@ class Connection implements ConnectionInterface
                 return [];
             }
 
+            $startTime = microtime(true);
             // For select statements, we'll simply execute the query and return an array
             // of the database result set. Each element in the array will be a single
             // row from the database table, and will either be an array or objects.
             $statement = $this->prepared($this->getPdoForSelect($useReadPdo)
                 ->prepare($query));
+            $prepareFinishTime = microtime(true);
 
             $this->bindValues($statement, $this->prepareBindings($bindings));
+            $bindFinishTime = microtime(true);
 
             $statement->execute();
+            $executeFinishTime = microtime(true);
 
-            return $statement->fetchAll();
+            $result = $statement->fetchAll();
+            $fetchFinishTime = microtime(true);
+
+            return [
+                'prepare_time' => $prepareFinishTime - $startTime,
+                'bind_time' => $bindFinishTime - $prepareFinishTime,
+                'execute_time' => $executeFinishTime - $bindFinishTime,
+                'fetch_time' => $fetchFinishTime - $executeFinishTime,
+                'result' => $result,
+            ];
         });
     }
 
@@ -314,23 +327,33 @@ class Connection implements ConnectionInterface
                 return [];
             }
 
+            $startTime = microtime(true);
             // First we will create a statement for the query. Then, we will set the fetch
             // mode and prepare the bindings for the query. Once that's done we will be
             // ready to execute the query against the database and return the cursor.
             $statement = $this->prepared($this->getPdoForSelect($useReadPdo)
                 ->prepare($query));
+            $prepareFinishTime = microtime(true);
 
             $this->bindValues(
                 $statement,
                 $this->prepareBindings($bindings)
             );
+            $bindFinishTime = microtime(true);
 
             // Next, we'll execute the query against the database and return the statement
             // so we can return the cursor. The cursor will use a PHP generator to give
             // back one row at a time without using a bunch of memory to render them.
             $statement->execute();
+            $executeFinishTime = microtime(true);
 
-            return $statement;
+            return [
+                'prepare_time' => $prepareFinishTime - $startTime,
+                'bind_time' => $bindFinishTime - $prepareFinishTime,
+                'execute_time' => $executeFinishTime - $bindFinishTime,
+                'fetch_time' => 0,
+                'result' => $statement,
+            ];
         });
 
         while ($record = $statement->fetch()) {
@@ -372,13 +395,25 @@ class Connection implements ConnectionInterface
                 return true;
             }
 
+            $startTime = microtime(true);
             $statement = $this->getPdo()->prepare($query);
+            $prepareFinishTime = microtime(true);
 
             $this->bindValues($statement, $this->prepareBindings($bindings));
+            $bindFinishTime = microtime(true);
 
             $this->recordsHaveBeenModified();
 
-            return $statement->execute();
+            $result = $statement->execute();
+            $executeFinishTime = microtime(true);
+
+            return [
+                'prepare_time' => $prepareFinishTime - $startTime,
+                'bind_time' => $bindFinishTime - $prepareFinishTime,
+                'execute_time' => $executeFinishTime - $bindFinishTime,
+                'fetch_time' => 0,
+                'result' => $result,
+            ];
         });
     }
 
@@ -392,20 +427,30 @@ class Connection implements ConnectionInterface
                 return 0;
             }
 
+            $startTime = microtime(true);
             // For update or delete statements, we want to get the number of rows affected
             // by the statement and return that back to the developer. We'll first need
             // to execute the statement and then we'll use PDO to fetch the affected.
             $statement = $this->getPdo()->prepare($query);
+            $prepareFinishTime = microtime(true);
 
             $this->bindValues($statement, $this->prepareBindings($bindings));
+            $bindFinishTime = microtime(true);
 
             $statement->execute();
+            $executeFinishTime = microtime(true);
 
             $this->recordsHaveBeenModified(
                 ($count = $statement->rowCount()) > 0
             );
 
-            return $count;
+            return [
+                'prepare_time' => $prepareFinishTime - $startTime,
+                'bind_time' => $bindFinishTime - $prepareFinishTime,
+                'execute_time' => $executeFinishTime - $bindFinishTime,
+                'fetch_time' => 0,
+                'result' => $count,
+            ];
         });
     }
 
@@ -419,11 +464,19 @@ class Connection implements ConnectionInterface
                 return true;
             }
 
-            $this->recordsHaveBeenModified(
-                $change = $this->getPdo()->exec($query) !== false
-            );
+            $startTime = microtime(true);
+            $change = $this->getPdo()->exec($query) !== false;
+            $executeFinishTime = microtime(true);
 
-            return $change;
+            $this->recordsHaveBeenModified($change);
+
+            return [
+                'prepare_time' => 0,
+                'bind_time' => 0,
+                'execute_time' => $executeFinishTime - $startTime,
+                'fetch_time' => 0,
+                'result' => $change,
+            ];
         });
     }
 
@@ -485,9 +538,9 @@ class Connection implements ConnectionInterface
      * Log a query in the connection's query log.
      * @param null|array|int|Throwable $result
      */
-    public function logQuery(string $query, array $bindings, ?float $time = null, $result = null)
+    public function logQuery(string $query, array $bindings, ?float $time = null, $result = null, ?float $prepareTime = null, ?float $bindTime = null, ?float $executeTime = null, ?float $fetchTime = null)
     {
-        $this->event(new QueryExecuted($query, $bindings, $time, $this, $result));
+        $this->event(new QueryExecuted($query, $bindings, $time, $this, $result, $prepareTime, $bindTime, $executeTime, $fetchTime));
 
         if ($this->loggingQueries) {
             $this->queryLog[] = compact('query', 'bindings', 'time');
@@ -1149,6 +1202,15 @@ class Connection implements ConnectionInterface
             );
         }
 
+        [
+            'prepare_time' => $prepareTime,
+            'bind_time' => $bindTime,
+            'execute_time' => $executeTime,
+            'fetch_time' => $fetchTime,
+            'result' => $runResult,
+        ] = $result;
+        
+
         // Once we have run the query we will calculate the time that it took to run and
         // then log the query, bindings, result and execution time so we will report them on
         // the event that the developer needs them. We'll log time in milliseconds.
@@ -1156,10 +1218,14 @@ class Connection implements ConnectionInterface
             $query,
             $bindings,
             $this->getElapsedTime($start),
-            $result
+            $runResult,
+            $prepareTime,
+            $bindTime,
+            $executeTime,
+            $fetchTime,
         );
 
-        return $result;
+        return $runResult;
     }
 
     /**
