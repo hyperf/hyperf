@@ -163,6 +163,39 @@ class ServerRequestTest extends TestCase
         $this->assertSame(null, $uri->getPort());
     }
 
+    public function testGetUriFromGlobalsHeaderHostPriorityOverServerAddr()
+    {
+        // 模拟 Swoole 6.2.0 在 $request->server 中设置 server_addr 的场景
+        // header['host'] 应优先于 server_addr
+        $swooleRequest = Mockery::mock(SwooleRequest::class);
+        $swooleRequest->shouldReceive('rawContent')->andReturn('');
+        $swooleRequest->header = ['host' => 'hyperf.example.com'];
+        $swooleRequest->server = [
+            'server_port' => 9501,
+            'server_addr' => '127.0.0.1',
+            'remote_addr' => '10.0.0.1',
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame('hyperf.example.com', $uri->getHost());
+        $this->assertSame(null, $uri->getPort());
+    }
+
+    public function testGetUriFromGlobalsServerAddrFallbackWhenNoHostHeader()
+    {
+        // 当没有 Host 请求头时，server_addr 仍可作为兜底
+        $swooleRequest = Mockery::mock(SwooleRequest::class);
+        $swooleRequest->shouldReceive('rawContent')->andReturn('');
+        $swooleRequest->header = [];
+        $swooleRequest->server = [
+            'server_port' => 9501,
+            'server_addr' => '192.168.1.100',
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame('192.168.1.100', $uri->getHost());
+    }
+
     #[Group('ParseHost')]
     public function testParseHost()
     {
