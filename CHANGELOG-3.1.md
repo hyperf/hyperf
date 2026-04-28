@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
+- [#7745](https://github.com/hyperf/hyperf/pull/7745) Fixed bug that `getUri()->getHost()` returns server IP instead of domain when using Swoole 6.2.0, due to `server_addr` having higher priority than `header['host']` in `getUriFromGlobals()`.
 
 # v3.1.68 - 2026-04-21
 
