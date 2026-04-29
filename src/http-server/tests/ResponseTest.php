@@ -278,4 +278,23 @@ class ResponseTest extends TestCase
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }
+
+    public function testCallMacro()
+    {
+        Response::macro('testMacro', function () {
+            return 'testMacro';
+        });
+
+        $response = new Response();
+        $this->assertSame('testMacro', $response->testMacro());
+    }
+
+    public function testCallStaticMacro()
+    {
+        Response::macro('testStaticMacro', function () {
+            return 'testStaticMacro';
+        });
+
+        $this->assertSame('testStaticMacro', Response::testStaticMacro());
+    }
 }
