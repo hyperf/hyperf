@@ -18,30 +18,24 @@ trait HasUuids
 {
     /**
      * Generate a new UUID for the model.
-     *
-     * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): string
     {
         return (string) Str::uuidv7();
     }
 
     /**
      * Get the columns that should receive a unique identifier.
-     *
-     * @return array
      */
-    public function uniqueIds()
+    public function uniqueIds(): array
     {
         return [$this->getKeyName()];
     }
 
     /**
      * Get the auto-incrementing key type.
-     *
-     * @return string
      */
-    public function getKeyType()
+    public function getKeyType(): string
     {
         if (in_array($this->getKeyName(), $this->uniqueIds())) {
             return 'string';
@@ -52,15 +46,27 @@ trait HasUuids
 
     /**
      * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         if (in_array($this->getKeyName(), $this->uniqueIds())) {
             return false;
         }
 
         return $this->incrementing;
+    }
+
+    /**
+     * Generate UUIDs for unique-id columns before inserting.
+     */
+    protected function performInsert(Builder $query): bool
+    {
+        foreach ($this->uniqueIds() as $column) {
+            if (empty($this->getAttribute($column))) {
+                $this->setAttribute($column, $this->newUniqueId());
+            }
+        }
+
+        return parent::performInsert($query);
     }
 }
