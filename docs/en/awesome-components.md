@@ -4,7 +4,7 @@ All officially provided component libraries have been coroutined processed, safe
 
 This page will include a variety of Hyperf-compatible coroutine components and commonly used libraries that have been validated and safely used in coroutine, so you could quickly select the right components to complete your needs.
 
-##  How do I submit my component ?
+## How do I submit my component ?
 
 If the component you developed is adapted to Hyperf, then you can send a `Pull Request` directly on the ` master` branch of the [hyperf/hyperf](https://github.com/hyperf/hyperf) project, which is to change the current page `(en/awesome-components.md)`.
 
@@ -18,7 +18,7 @@ All officially provided component libraries have been coroutined processed, safe
 
 This page will include a variety of Hyperf-compatible coroutine components and commonly used libraries that have been validated and safely used in coroutine, so you could quickly select the right components to complete your needs.
 
-##  How do I submit my component ?
+## How do I submit my component ?
 
 If the component you developed is adapted to Hyperf, then you can send a `Pull Request` directly on the ` master` branch of the [hyperf/hyperf](https://github.com/hyperf/hyperf) project, which is to change the current page `(en/awesome-components.md)`.
 
@@ -103,6 +103,11 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 ## Annotation Configuration
 
 - [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) Use annotations to quickly configure dependencies and support dependency priority.
+
+## DTO
+
+- [fatbit/form-request-param](https://github.com/duncanxia97/hyperf-form-request-param) - An elegant, `DTO`-based strongly-typed request parameter validation (form validation) and automatic injection component.
+
 
 ## Development and debugging
 

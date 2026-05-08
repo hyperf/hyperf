@@ -168,6 +168,10 @@
 
 - [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用注解快速的配置依赖关系，并且支持依赖优先级
 
+## DTO
+
+- [fatbit/form-request-param](https://github.com/duncanxia97/hyperf-form-request-param) - 基于 `DTO` 优雅的强类型请求参数验证(表单验证)与自动注入组件。
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
