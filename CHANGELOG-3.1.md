@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#7737](https://github.com/hyperf/hyperf/pull/7737) Fixed bug that `Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor::processIndexes/processForeignKeys` cannot not work when columns is null.
+- [#7737](https://github.com/hyperf/hyperf/pull/7737) Fixed bug that PostgresProcessor cannot process indexes and foreign keys when columns is null.
 
 # v3.1.67 - 2026-02-24
 
