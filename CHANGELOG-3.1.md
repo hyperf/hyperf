@@ -1,4 +1,14 @@
-# v3.1.69 - TBD
+# v3.1.70 - TBD
+
+# v3.1.69 - 2026-05-09
+
+## Fixed
+
+- [#7731](https://github.com/hyperf/hyperf/pull/7731) Fixed bug that the `Macroable` of `Hyperf\HttpServer\Response` cannot work. 
+- [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
+- [#7736](https://github.com/hyperf/hyperf/pull/7736) Fixed bug that `keys` method in `RedisDriver` does not return array when `sMembers` returns a non-array value.
+- [#7737](https://github.com/hyperf/hyperf/pull/7737) Fixed bug that PostgresProcessor cannot process indexes and foreign keys when columns is null.
+- [#7745](https://github.com/hyperf/hyperf/pull/7745) Fixed bug that `getUri()->getHost()` returns server IP instead of domain when using Swoole 6.2.0, due to `server_addr` having higher priority than `header['host']` in `getUriFromGlobals()`.
 
 # v3.1.68 - 2026-04-21
 
