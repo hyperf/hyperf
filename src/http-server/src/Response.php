@@ -58,8 +58,8 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
         $response = $this->getResponse();
