@@ -38,10 +38,6 @@ use Swoole\Http\Response as SwooleResponse;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ResponseTest extends TestCase
 {
     protected function tearDown(): void
@@ -231,6 +227,7 @@ class ResponseTest extends TestCase
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('xxx', (string) $response->getBody());
     }
 
     public function testCookiesAndHeaders()
