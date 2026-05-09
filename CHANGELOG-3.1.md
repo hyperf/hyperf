@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#7731](https://github.com/hyperf/hyperf/pull/7731) Fixed bug that the `Macroable` of `Hyperf\HttpServer\Response` cannot work. 
 - [#7734](https://github.com/hyperf/hyperf/pull/7734) Fixed bug that memory leak when using `Redis::pipeline()` for long-lived environment.
 - [#7736](https://github.com/hyperf/hyperf/pull/7736) Fixed bug that `keys` method in `RedisDriver` does not return array when `sMembers` returns a non-array value.
 - [#7737](https://github.com/hyperf/hyperf/pull/7737) Fixed bug that PostgresProcessor cannot process indexes and foreign keys when columns is null.
