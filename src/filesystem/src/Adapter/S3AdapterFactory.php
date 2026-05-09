@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\Filesystem\Adapter;
 
-use Aws\Handler\GuzzleV6\GuzzleHandler;
+use Aws\Handler\Guzzle\GuzzleHandler;
+use Aws\Handler\GuzzleV6\GuzzleHandler as V6GuzzleHandler;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
+use Hyperf\Filesystem\Exception\InvalidArgumentException;
 use Hyperf\Filesystem\Version;
 use Hyperf\Guzzle\CoroutineHandler;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -26,7 +28,15 @@ class S3AdapterFactory implements AdapterFactoryInterface
 {
     public function make(array $options)
     {
-        $handler = new GuzzleHandler(new Client([
+        // Compatible with both old and new versions of aws-sdk-php
+        // GuzzleV6\GuzzleHandler was removed in aws-sdk-php 3.379.0
+        $handlerClass = match (true) {
+            class_exists(GuzzleHandler::class) => GuzzleHandler::class,
+            class_exists(V6GuzzleHandler::class) => V6GuzzleHandler::class,
+            default => throw new InvalidArgumentException('The default guzzle handler not found.'),
+        };
+
+        $handler = new $handlerClass(new Client([
             'handler' => HandlerStack::create(new CoroutineHandler()),
         ]));
         $options = array_merge($options, ['http_handler' => $handler]);

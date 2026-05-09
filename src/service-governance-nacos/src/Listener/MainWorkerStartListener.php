@@ -78,7 +78,7 @@ class MainWorkerStartListener implements ListenerInterface
             ];
 
             if ($response->getStatusCode() === 404
-                || ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0)) {
+                || ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'not found') > 0)) {
                 $response = $client->service->create($serviceName, $optional);
                 if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
                     throw new RequestException(sprintf('Failed to create nacos service %s!', $serviceName));

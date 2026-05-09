@@ -592,10 +592,6 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $hasPort = true;
                 $uri = $uri->withPort($port);
             }
-        } elseif (isset($server['server_name'])) {
-            $uri = $uri->withHost($server['server_name']);
-        } elseif (isset($server['server_addr'])) {
-            $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
             $hasPort = true;
             [$host, $port] = self::parseHost($header['host']);
@@ -604,6 +600,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             }
 
             $uri = $uri->withHost($host);
+        } elseif (isset($server['server_name'])) {
+            $uri = $uri->withHost($server['server_name']);
+        } elseif (isset($server['server_addr'])) {
+            $uri = $uri->withHost($server['server_addr']);
         }
 
         if (! $hasPort && isset($server['server_port'])) {
