@@ -32,7 +32,7 @@
         "hyperf/process": "Required to use standalone process, or you have to roll your own",
         "hyperf/retry": "Required to use back-off retry implementation.",
         "influxdb/influxdb-php": "Required to use InfluxDB driver.",
-        "promphp/prometheus_client_php": "Required to use Prometheus driver.(2.2.*)",
+        "promphp/prometheus_client_php": "Required to use Prometheus driver.(2.14.*)",
         "slickdeals/statsd": "Required to use StatdD driver."
     },
     "minimum-stability": "dev",
