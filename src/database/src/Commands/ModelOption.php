@@ -36,6 +36,8 @@ class ModelOption
 
     protected ?bool $withIde = null;
 
+    protected ?bool $withScope = null;
+
     protected array $tableMapping = [];
 
     protected array $ignoreTables = [];
@@ -160,12 +162,23 @@ class ModelOption
 
     public function isWithIde(): bool
     {
-        return $this->withIde;
+        return $this->withIde ?? false;
     }
 
     public function setWithIde(bool $withIde): ModelOption
     {
         $this->withIde = $withIde;
+        return $this;
+    }
+
+    public function isWithScope(): bool
+    {
+        return $this->withScope ?? false;
+    }
+
+    public function setWithScope(bool $withScope): static
+    {
+        $this->withScope = $withScope;
         return $this;
     }
 
