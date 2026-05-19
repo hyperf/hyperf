@@ -123,6 +123,13 @@ abstract class Model implements Stringable, ArrayAccess, Arrayable, Jsonable, Js
     protected array $traitInitializers = [];
 
     /**
+     * Cache of prunable models.
+     *
+     * @var array<class-string<self>, bool>
+     */
+    protected static array $isPrunable = [];
+
+    /**
      * Create a new Model model instance.
      */
     public function __construct(array $attributes = [])
@@ -1245,6 +1252,22 @@ abstract class Model implements Stringable, ArrayAccess, Arrayable, Jsonable, Js
         $class = get_class($this);
 
         return new ModelMeta($class, $key);
+    }
+
+    /**
+     * Determine if the model is prunable.
+     */
+    public static function isPrunable(): bool
+    {
+        return self::$isPrunable[static::class] ??= in_array(Prunable::class, class_uses_recursive(static::class));
+    }
+
+    /**
+     * Determine if the model is mass prunable.
+     */
+    public static function isMassPrunable(): bool
+    {
+        return in_array(MassPrunable::class, class_uses_recursive(static::class));
     }
 
     /**
