@@ -90,6 +90,11 @@ class Event
     public const ON_FINISH = 'finish';
 
     /**
+     * Swoole onBeforeShutdown event.
+     */
+    public const ON_BEFORE_SHUTDOWN = 'beforeShutdown';
+
+    /**
      * Swoole onShutdown event.
      */
     public const ON_SHUTDOWN = 'shutdown';
