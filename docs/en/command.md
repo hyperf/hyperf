@@ -1,35 +1,35 @@
 # Command
 
-The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component, And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
+Hyperf's command-line is provided by the [hyperf/command](https://github.com/hyperf/command) component by default, and this component itself is based on the abstraction of [symfony/console](https://github.com/symfony/console).
 
 # Installation
 
-This component usually exists by default, but if you want to use it for non-Hyperf projects, you can also rely on the [hyperf/command](https://github.com/hyperf/command) component with the following command:
+Generally, this component exists by default, but if you want to use it for non-Hyperf projects, you can also depend on the [hyperf/command](https://github.com/hyperf/command) component with the following command:
 
 ```bash
 composer require hyperf/command
 ```
 
-# Command List
+# View Command List
 
-Run `php bin/hyperf.php` without any arguments directly is to display the command list.
+Run `php bin/hyperf.php` directly without any arguments to output the command list.
 
 # Custom Command
 
-## Generate a Command
+## Generate Command
 
-If you have the [hyperf/devtool](https://github.com/hyperf/devtool) component installed, you can generate a custom command with the `gen:command` command:
+If you have installed the [hyperf/devtool](https://github.com/hyperf/devtool) component, you can use the `gen:command` command to generate a custom command:
 
 ```bash
 php bin/hyperf.php gen:command FooCommand
 ```
 After executing the above command, a configured `FooCommand` class will be generated in the `app/Command` folder.
 
-### Definition of Command
+### Define Command
 
-There are three forms of commands that define the command class. The first is defined by the `$name` property, the second is defined by the constructor argument, and the last is defined by annotations. We demonstrate this through code examples, assuming we want to define the command. The class command is `foo:hello`:
+There are three forms for defining the command corresponding to this command class. The first is defined via the `$name` property, the second is defined by passing parameters to the constructor, and the last is defined by annotations. We will demonstrate with a code example. Suppose we want to define the command of this command class as `foo:hello`:
 
-#### Define the command by `$name` property:
+#### Definition via `$name` Property:
 
 ```php
 <?php
@@ -45,15 +45,13 @@ use Hyperf\Command\Annotation\Command;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Executed command
      */
     protected ?string $name = 'foo:hello';
 }
 ```
 
-#### Define the command by constructor:
+#### Definition via Constructor Argument:
 
 ```php
 <?php
@@ -70,12 +68,12 @@ class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
-        parent::__construct('foo:hello');    
+        parent::__construct('foo:hello');
     }
 }
 ```
 
-#### Define the command by annotations:
+#### Definition via Annotation:
 
 ```php
 <?php
@@ -90,13 +88,12 @@ use Hyperf\Command\Annotation\Command;
 #[Command(name: "foo:hello")]
 class FooCommand extends HyperfCommand
 {
-
 }
 ```
 
-### Define the logic of the command
+### Define Command Class Logic
 
-The logic that the command class actually runs depends on the `handle` method inside the code, which means that the `handle` method is the entry point to the command.
+The actual logic for running the command class depends on the code within the `handle` method, which means the `handle` method is the entry point for the command.
 
 ```php
 <?php
@@ -112,27 +109,25 @@ use Hyperf\Command\Annotation\Command;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Executed command
      */
     protected ?string $name = 'foo:hello';
-    
+
     public function handle()
     {
-        // Output Hello Hyperf. in the Console via the built-in method line()
+        // Output 'Hello Hyperf.' in Console using the built-in line method.
         $this->line('Hello Hyperf.', 'info');
     }
 }
 ```
 
-### Define the arguments of the command
+### Define Command Class Parameters
 
-When writing a command, the user's input is usually collected by `parameter` and `option`, and the `parameter` or `option` must be defined before collecting a user input.
+When writing commands, user input is usually collected through `arguments` and `options`. Before collecting user input, you must define the `argument` or `option`.
 
-#### Parameter
+#### Argument
 
-Suppose we want to define a `name` parameter, and then pass the arbitrary string such as `Hyperf` to the command and execute `php bin/hyperf.php foo:hello Hyperf` to output `Hello Hyperf`. Let's demonstrate it by code:
+Suppose we want to define a `name` argument, and then pass any string like `Hyperf` to the command and execute `php bin/hyperf.php foo:hello Hyperf` to output `Hello Hyperf`. Let's demonstrate this with code:
 
 ```php
 <?php
@@ -149,9 +144,7 @@ use Symfony\Component\Console\Input\InputArgument;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Executed command
      */
     protected ?string $name = 'foo:hello';
 
@@ -161,19 +154,19 @@ class FooCommand extends HyperfCommand
         $argument = $this->input->getArgument('name') ?? 'World';
         $this->line('Hello ' . $argument, 'info');
     }
-    
+
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::OPTIONAL, 'Here is an explanation of this parameter']
+            ['name', InputArgument::OPTIONAL, 'This is an explanation of this argument']
         ];
     }
 }
-``` 
+```
 
-Execute `php bin/hyperf.php foo:hello Hyperf` command and we can see `Hello Hyperf` display on Console.
+Execute `php bin/hyperf.php foo:hello Hyperf`, and we can see the output `Hello Hyperf`.
 
-## Common Configurations
+## Introduction to Common Command Configuration
 
 The following code only modifies the content in `configure` and `handle`.
 
@@ -183,17 +176,18 @@ The following code only modifies the content in `configure` and `handle`.
 public function configure()
 {
     parent::configure();
-    $this->setHelp('Hyperf's custom command demonstration');
+    $this->setHelp('Hyperf custom command demonstration');
 }
+
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Help:
-  Hyperf's custom command demonstration
-
+  Hyperf custom command demonstration
 ```
+
 
 ### Set Description
 
@@ -206,7 +200,7 @@ public function configure()
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Description:
   Hyperf Demo Command
@@ -219,35 +213,35 @@ Description:
 public function configure()
 {
     parent::configure();
-    $this->addUsage('--name Demo Code');
+    $this->addUsage('--name demonstration code');
 }
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Usage:
   demo:command
-  demo:command --name Demo Code
+  demo:command --name demonstration code
 ```
 
-### Set parameters
+### Set Arguments
 
-The parameters support the following modes.
+Arguments support the following modes.
 
-|          Mode           | Value |                Note                 |
-|:-----------------------:|:--:|:-----------------------------------:|
-| InputArgument::REQUIRED | 1  | Parameter is required, the "default" field in this mode is invalid. |
-| InputArgument::OPTIONAL | 2  |    Parameter is optional and is often used with default    |
-| InputArgument::IS_ARRAY | 4  |              Array type               |
+| Mode | Value | Note |
+|:---:|:---:|:---:|
+| InputArgument::REQUIRED | 1 | Argument is mandatory, the default field is invalid in this mode |
+| InputArgument::OPTIONAL | 2 | Argument is optional, often used in conjunction with default |
+| InputArgument::IS_ARRAY | 4 | Array type |
 
-#### Optional type
+#### Optional Type
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addArgument('name', InputArgument::OPTIONAL, 'name', 'Hyperf');
+    $this->addArgument('name', InputArgument::OPTIONAL, 'Name', 'Hyperf');
 }
 
 public function handle()
@@ -257,22 +251,23 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 ...
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
+# Output
 ...
 Swoole
 ```
 
-#### Array type
+#### Array Type
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addArgument('name', InputArgument::IS_ARRAY, 'name');
+    $this->addArgument('name', InputArgument::IS_ARRAY, 'Name');
 }
 
 public function handle()
@@ -282,7 +277,7 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
-# output
+# Output
 ...
 array(2) {
   [0]=>
@@ -292,18 +287,18 @@ array(2) {
 }
 ```
 
-### Set options
+### Set Options
 
-The options support the following modes.
+Options support the following modes.
 
-|            Mode             | Value |     Note     |
-|:---------------------------:|:--:|:------------:|
-|   InputOption::VALUE_NONE   | 1  | Parameter is required, the "default" field in this mode is invalid |
-| InputOption::VALUE_REQUIRED | 2  |   Option is required   |
-| InputOption::VALUE_OPTIONAL | 4  |   Option is optional   |
-| InputOption::VALUE_IS_ARRAY | 8  |   Option is an array   |
+| Mode | Value | Note |
+|:---:|:---:|:---:|
+| InputOption::VALUE_NONE | 1 | Whether an optional value is passed, the default field is invalid |
+| InputOption::VALUE_REQUIRED | 2 | Option is mandatory |
+| InputOption::VALUE_OPTIONAL | 4 | Option is optional |
+| InputOption::VALUE_IS_ARRAY | 8 | Option array |
 
-#### Whether to pass in options
+#### Whether an Optional Value is Passed
 
 ```php
 public function configure()
@@ -319,27 +314,27 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
-# output
+# Output
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
-# output
+# Output
 bool(true)
 ```
 
-### Options required and optional
+### Mandatory and Optional Options
 
-`VALUE_OPTIONAL` is no different from `VALUE_REQUIRED` when used alone.
+`VALUE_OPTIONAL` is identical to `VALUE_REQUIRED` when used alone.
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addOption('name', 'N', InputOption::VALUE_REQUIRED, 'name', 'Hyperf');
+    $this->addOption('name', 'N', InputOption::VALUE_REQUIRED, 'Name', 'Hyperf');
 }
 
 public function handle()
@@ -349,23 +344,23 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
-# output
+# Output
 string(6) "Swoole"
 ```
 
-### Option array
+### Option Array
 
-`VALUE_IS_ARRAY` and `VALUE_OPTIONAL`, when used together, can achieve the effect of passing multiple `Option`s.
+`VALUE_IS_ARRAY` and `VALUE_OPTIONAL` used in combination can achieve the effect of passing in multiple `Options`.
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addOption('name', 'N', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'name');
+    $this->addOption('name', 'N', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Name');
 }
 
 public function handle()
@@ -375,34 +370,33 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
-# output
+# Output
 array(2) {
   [0]=>
   string(6) "Hyperf"
   [1]=>
   string(6) "Swoole"
 }
-
 ```
 
-## Configure the command through `$signature`.
+## Configure Command Line via `$signature`
 
-In addition to the above configuration methods, the command line also supports using `$signature` configuration.
+In addition to the configuration methods mentioned above, the command line also supports configuration using `$signature`.
 
-`$signature` is a string, divided into three parts: `command`, `argument`, and `option`, as follows:
+`$signature` is a string consisting of three parts: `command`, `argument`, and `option`, as follows:
 
 ```
 command:name {argument?* : The argument description.} {--option=* : The option description.}
 ```
 
-- `?` represents `optional`.
+- `?` represents `non-mandatory`.
 - `*` represents `array`.
-- `?*` represents `optional array`.
+- `?*` represents `non-mandatory array`.
 - `=` represents `non-Bool`.
 
 ### Example
@@ -443,20 +437,19 @@ class DebugCommand extends HyperfCommand
         var_dump($this->input->getOptions());
     }
 }
-
 ```
 
-# Run command
+# Run Command
 
-!> Note: By default, running the command will trigger event dispatching. You can disable it by adding the `--disable-event-dispatcher` parameter.
+!> Note: When running a command, event distribution is triggered by default. You can close it by adding the `--disable-event-dispatcher` argument.
 
-## Run in the command line.
+## Run in Command Line
 
 ```bash
 php bin/hyperf.php foo
 ```
 
-## Run other commands in Command.
+## Run Other Commands in Command
 
 ```php
 <?php
@@ -496,14 +489,14 @@ class FooCommand extends HyperfCommand
 }
 ```
 
-## Run commands outside of Command.
+## Run Commands in Non-Command
 
 ```php
 $command = 'foo';
 
 $params = ["command" => $command, "--foo" => "foo", "--bar" => "bar"];
 
-// You can choose the input/output according to your own needs.
+// You can choose the input/output to use according to your needs
 $input = new ArrayInput($params);
 $output = new NullOutput();
 
@@ -514,14 +507,14 @@ $container = \Hyperf\Context\ApplicationContext::getContainer();
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
 $application->setAutoExit(false);
 
-// This method: will not expose exceptions during command execution and will not prevent the program from returning.
+// This way: will not expose exceptions during command execution, will not prevent the program from returning
 $exitCode = $application->run($input, $output);
 
-// Another way: it will expose exceptions and require you to catch and handle runtime exceptions yourself, otherwise it will prevent the program from returning.
+// The second way: will expose exceptions, you need to catch and handle the exceptions running yourself, otherwise it will prevent the program from returning
 $exitCode = $application->find($command)->run($input, $output);
 ```
 
-## Closure command
+## Closure Command
 
 You can quickly define commands in `config\console.php`.
 
@@ -533,7 +526,7 @@ Console::command('hello', function () {
 })->describe('This is a demo closure command.');
 ```
 
-You can also set crontab for closure command.
+Define scheduled tasks for closure commands.
 
 ```php
 use Hyperf\Command\Console;
@@ -549,7 +542,7 @@ Console::command('bar', function () {
 
 ## AsCommand
 
-You can convert a class into a command by annotating it with `AsCommand`.
+You can convert a class into a command through the `AsCommand` annotation.
 
 ```php
 <?php

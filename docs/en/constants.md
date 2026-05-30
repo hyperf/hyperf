@@ -1,6 +1,6 @@
-# Enum class
+# Enum Class
 
-When you need to define error codes and error messages, the following methods may be used,
+When you need to define error codes and error messages, you might use the following approach:
 
 ```php
 <?php
@@ -12,27 +12,26 @@ class ErrorCode
 
     public static $messages = [
         self::SERVER_ERROR => 'Server Error',
-        self::PARAMS_INVALID => 'Illegal parameter'
+        self::PARAMS_INVALID => 'Invalid Parameters'
     ];
 }
 
-$message = ErrorCode::messages[ErrorCode::SERVER_ERROR] ?? 'unknown mistake';
-
+$message = ErrorCode::messages[ErrorCode::SERVER_ERROR] ?? 'Unknown error';
 ```
 
-But this implementation method is not friendly. Whenever you want to query the error code and the corresponding error information, you have to search the current `Class` twice, so the framework provides an annotation-based enumeration class.
+However, this implementation is not very user-friendly. Whenever you need to query an error code and its corresponding error message, you have to search twice in the current `Class`. Therefore, the framework provides an enumeration class based on annotations.
 
-## Install
+## Installation
 
 ```
 composer require hyperf/constants
 ```
 
-## Use
+## Usage
 
-### Define the enum class
+### Define Enum Class
 
-An enumeration class can be generated quickly with the `gen:constant` command.
+You can quickly generate an enum class using the `gen:constant` command.
 
 ```bash
 php bin/hyperf.php gen:constant ErrorCode --type enum
@@ -53,8 +52,8 @@ use Hyperf\Constants\EnumConstantsTrait;
 enum ErrorCode: int
 {
     use EnumConstantsTrait;
-
-    #[Message("Server Error!")]
+    
+    #[Message("Server Error！")]
     case SERVER_ERROR = 500;
 
     #[Message("System parameter error")]
@@ -62,11 +61,11 @@ enum ErrorCode: int
 }
 ```
 
-User can use `ErrorCode::SERVER_ERROR->getMessage()` to get the corresponding error message.
+Users can use `ErrorCode::SERVER_ERROR->getMessage()` to get the corresponding error message.
 
-### Define exception class
+### Define Exception Class
 
-If you simply use the `enumeration class`, it is not convenient enough when handling exceptions. So we need to define our own exception class `BusinessException`. When an exception comes in, it will actively query the corresponding error information according to the error code.
+If you only use `Enum Class`, it is still not convenient enough for exception handling. So we need to define our own exception class, `BusinessException`. When an exception occurs, it will automatically query the corresponding error message based on the error code.
 
 ```php
 <?php
@@ -98,9 +97,9 @@ class BusinessException extends ServerException
 }
 ```
 
-### Throw an exception
+### Throw Exception
 
-After completing the above two steps, the corresponding exception can be thrown in the business logic.
+After completing the above two steps, you can throw the corresponding exception in your business logic.
 
 ```php
 <?php
@@ -121,9 +120,9 @@ class IndexController extends AbstractController
 }
 ```
 
-### Variable parameter
+### Variable Parameters
 
-When using `ErrorCode::SERVER_ERROR->getMessage()` to get the corresponding error message, we can also pass in variable parameters to combine error messages. For example the following
+When using `ErrorCode::SERVER_ERROR->getMessage()` to obtain the corresponding error message, we can also pass variable parameters for error message combination, as in the following case:
 
 ```php
 <?php
@@ -136,7 +135,7 @@ use Hyperf\Constants\EnumConstantsTrait;
 enum ErrorCode: int
 {
     use EnumConstantsTrait;
-
+    
     #[Message("Params %s is invalid.")]
     case PARAMS_INVALID = 1000;
 }
@@ -144,22 +143,20 @@ enum ErrorCode: int
 $message = ErrorCode::PARAMS_INVALID->getMessage(['user_id']);
 ```
 
-### Globalization
+### Internationalization
 
-> This feature is only available on v1.1.13 and later
-
-To enable the [hyperf/constants](https://github.com/hyperf/constants) component to support internationalization, the [hyperf/translation](https://github.com/hyperf/translation) component must be installed and configured Good language files, as follows:
+To enable the [hyperf/constants](https://github.com/hyperf/constants) component to support internationalization, you must install the [hyperf/translation](https://github.com/hyperf/translation) component and configure the language files, as follows:
 
 ```
 composer require hyperf/translation
 ```
 
-For related configuration, see [Internationalization](en/translation.md)
+For relevant configuration, please refer to [Internationalization](translation.md).
 
 ```php
 <?php
 
-// International configuration
+// Internationalization configuration
 
 return [
     'params.invalid' => 'Params :param is invalid.',
@@ -172,8 +169,6 @@ use Hyperf\Constants\EnumConstantsTrait;
 #[Constants]
 enum ErrorCode: int
 {
-    use EnumConstantsTrait;
-
     #[Message("params.invalid")]
     case PARAMS_INVALID = 1000;
 }

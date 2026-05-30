@@ -2,24 +2,24 @@
 
 ## Introduction
 
-Hyperf uses [hyperf/di](https://github.com/hyperf/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf/di).
-
-[hyperf/di](https://github.com/hyperf/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
+Hyperf uses [hyperf/di](https://github.com/hyperf/di) as the dependency injection management container for the framework by default. Although we allow you to replace it with other dependency injection management containers by design, we strongly recommend that you do not replace this component.
+[hyperf/di](https://github.com/hyperf/di) is a powerful component for managing class dependencies and completing automatic injection. The difference from traditional dependency injection containers is that it is more suitable for the use of long-lifecycle applications, provides support for [Annotations and Annotation Injection](annotation.md), and provides incomparably powerful [AOP Aspect-Oriented Programming](aop.md) capabilities. As a core output of Hyperf, we are confident that this component is the best.
 
 ## Installation
 
-This component exists by default in the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
+This component exists in the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project by default and exists as a main component. If you wish to use this component in other frameworks, you can install it via the following command.
 
 ```bash
 composer require hyperf/di
 ```
 
-## Binding Object Relationship
+## Binding Object Relationships
 
 ### Simple Object Injection
 
-Generally, the relationship and injection of the class do not need to be conspicuously defined. Hyperf will do all these for you. The following code demo will illustrate related usage.
-Suppose we need to call the `getInfoById(int $id)` method of the `UserService` class in the `IndexController`.
+Generally speaking, the relationship and injection of classes do not need to be explicitly defined. All of this will be silently completed for you by Hyperf. We use some code examples to illustrate the related usage.
+Suppose we need to call the `getInfoById(int $id)` method of the `UserService` class in `IndexController`.
+
 ```php
 <?php
 namespace App\Service;
@@ -28,29 +28,25 @@ class UserService
 {
     public function getInfoById(int $id)
     {
-        // Assume that there is an entity of Info.
+        // We assume an Info entity exists
         return (new Info())->fill($id);    
     }
 }
 ```
 
-#### Inject by Constructor
+#### Injection via Constructor Method
 
 ```php
 <?php
 namespace App\Controller;
 
 use App\Service\UserService;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
-    // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
+    // Complete automatic injection by declaring parameter types in the constructor parameters
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -59,15 +55,15 @@ class IndexController
     public function index()
     {
         $id = 1;
-        // Use directly
+        // Directly use
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
-> Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. And controller is created by `DI` by default, so that you can inject directly in constructor.
+> Note that when using constructor injection, the caller, `IndexController`, must be an object created by DI to complete automatic injection, and Controller is created by DI by default, so constructor injection can be used directly.
 
-When you want to define an optional dependency, you can define the parameter as `nullable` or the default value of the parameter as `null`. This means that if the parameter is not found in the DI container or the corresponding object cannot be created, `null` will be injected instead of throwing an exception. *(This function is only available in 1.1.0 or higher version)*
+When you want to define an optional dependency, you can define the parameter as `nullable` or define the default value of the parameter as `null`. This means that if the corresponding object is not found in the DI container or cannot be created, no exception will be thrown, but `null` will be used for injection.
 
 ```php
 <?php
@@ -77,12 +73,9 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
     
-    // Declare an optional parameter by setting it as nullable.
+    // Indicate that this parameter is an optional parameter by setting it to nullable
     public function __construct(?UserService $userService)
     {
         $this->userService = $userService;
@@ -92,7 +85,7 @@ class IndexController
     {
         $id = 1;
         if ($this->userService instanceof UserService) {
-            // $userService is available only in the condition that it is not null
+            // $userService is available only when the value exists
             return $this->userService->getInfoById($id);    
         }
         return null;
@@ -100,7 +93,7 @@ class IndexController
 }
 ```
 
-#### Inject by `#[Inject]`
+#### Injection via `#[Inject]` Annotation
 
 ```php
 <?php
@@ -108,34 +101,29 @@ namespace App\Controller;
 
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * Use `#[Inject]` to inject the attribute type object declared by `@var` 
-     * 
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     public function index()
     {
         $id = 1;
-        // Use directly
+        // Directly use
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
-> Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. Controller is created by `DI` by default.
-
-> The namespace `use Hyperf\Di\Annotation\Inject;` should be used when `#[Inject]` used.
+> Injection via `#[Inject]` annotation can act on objects created by DI (singletons), or objects created via the `new` keyword;
+>
+> When using the `#[Inject]` annotation, you need to `use Hyperf\Di\Annotation\Inject;` namespace;
 
 ##### Required Parameter
 
-The `#[Inject]` annotation has a `required` parameter, and the default value is `true`. When the parameter is defined as `false`, it indicates that this attribute is an optional dependency. When the object corresponding to `@var` does not exist in DI, a `null` will be injected instead of throwing an exception.
+The `#[Inject]` annotation has a `required` parameter, and the default value is `true`. When this parameter is defined as `false`, it indicates that this member property is an optional dependency. When the object corresponding to `@var` does not exist in the DI container or cannot be created, no exception will be thrown, but `null` will be injected, as follows:
 
 ```php
 <?php
@@ -147,19 +135,17 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * Inject the attribute type object declared by the `@var` annotation through the `#[Inject]` annotation
-     * Null will be injected when UserService does not exist in the DI container or cannot be created
-     *
-     * @var UserService
+     * Inject the object type of the property declared by the annotation via `#[Inject]` annotation
+     * When UserService does not exist in the DI container or cannot be created, null is injected
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
         $id = 1;
         if ($this->userService instanceof UserService) {
-            // $userService is available only in the condition that it is not null
+            // $userService is available only when the value exists
             return $this->userService->getInfoById($id);    
         }
         return null;
@@ -169,7 +155,7 @@ class IndexController
 
 ### Abstract Object Injection
 
-Based on the above example, from a reasonable point of view, the Controller should not directly work with a `UserService` class, but maybe more of an interface class of `UserServiceInterface`. So, we can use `config/autoload/dependencies. php` to bind the object relationship to achieve the goal. A code demo can explain this.
+Based on the example above, from a reasonable perspective, the Controller should not directly face a `UserService` class, but perhaps an interface class `UserServiceInterface`. At this time, we can bind object relationships through `config/autoload/dependencies.php` to achieve the goal. Let's still use code to explain it.
 
 Define an interface class:
 
@@ -183,7 +169,7 @@ interface UserServiceInterface
 }
 ```
 
-`UserService` implements the interface:
+`UserService` implements the interface class:
 
 ```php
 <?php
@@ -193,13 +179,13 @@ class UserService implements UserServiceInterface
 {
     public function getInfoById(int $id)
     {
-        // Assume that there is an entity of Info.
+        // We assume an Info entity exists
         return (new Info())->fill($id);    
     }
 }
 ```
 
-Configure relations in `config/autoload/dependencies.php`:
+Configure relationships in `config/autoload/dependencies.php`:
 
 ```php
 <?php
@@ -208,7 +194,7 @@ return [
 ];
 ```
 
-After this configuration, you can directly inject the `UserService` object through the `UserServiceInterface`. We use annotation injection as an example, and the constructor injection is also the same:
+After such configuration, you can directly inject the `UserService` object via `UserServiceInterface`. We only use annotation injection to give an example, constructor injection is the same:
 
 ```php
 <?php
@@ -216,7 +202,6 @@ namespace App\Controller;
 
 use App\Service\UserServiceInterface;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
@@ -226,17 +211,17 @@ class IndexController
     public function index()
     {
         $id = 1;
-        // Use directly
+        // Directly use
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
 ### Factory Object Injection
-  
-Now, let the implementation of `UserService` be more complex, and there are some indirect injected parameters that should be passed into the constructor when a `UserService` instance is created. Imagine that we have to get a value from config, then `UserService` needs to decide whether to enable cache mode based on this value. (By the way, Hyperf provides a better [cache mode](en/db/model-cache.md) function)
 
-We have to create a factory to generate `UserService`  objects:
+Suppose the implementation of `UserService` is more complex. When creating a `UserService` object, some non-directly injectable parameters also need to be passed into the constructor. Suppose we need to get a value from the configuration, and then `UserService` needs to decide whether to enable cache mode based on this value (by the way, Hyperf provides a better [Model Cache](db/model-cache.md) function).
+
+We need to create a factory to generate `UserService` objects:
 
 ```php
 <?php 
@@ -247,19 +232,18 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance and the parameters array.
+    // Implement an __invoke() method to complete object production. Method parameters will automatically inject a current container instance and an array of parameters
     public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
-        // Assume that the key of corresponding config is cache.enable
+        // We assume the key of the corresponding configuration is cache.enable
         $enableCache = $config->get('cache.enable', false);
-        // The method make(string $name, array $parameters = []) is equivalent to new. Using make() allows AOP to intervene, however, using new will prevent AOP to intervene into normal processing.
         return make(UserService::class, compact('enableCache'));
     }
 }
 ```
 
-`UserService` may provide an attribute in the constructor to receive the corresponding value:
+`UserService` can also provide a parameter in the constructor to receive the corresponding value:
 
 ```php
 <?php
@@ -267,15 +251,11 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
     
     public function __construct(bool $enableCache)
     {
-        // Receiving the value and store it at an attribute
+        // Receive the value and store it in the class property
         $this->enableCache = $enableCache;
     }
     
@@ -286,7 +266,7 @@ class UserService implements UserServiceInterface
 }
 ```
 
-Adjust the binding relationship in `config/autoload/dependencies.php`:
+Adjust binding relationships in `config/autoload/dependencies.php`:
 
 ```php
 <?php
@@ -295,42 +275,41 @@ return [
 ];
 ```
 
-In this way, when injecting `UserServiceInterface`, the container will hand over the object's creation to `UserServiceFactory`.
+In this way, when `UserServiceInterface` is injected, the container will hand over the creation of the object to `UserServiceFactory`.
 
-> Of course, in this scenario, you can use the `#[Value]` annotation to inject configuration more conveniently rather than building a factory class. This example is just for explaining.
+> Of course, in this scenario, you can inject configuration more conveniently via `#[Value]` annotation without building a factory class. This is just an example.
 
 ### Lazy Loading
 
-Hyperf's long-lived dependency injection is done when the project starts. This means that long-lived classes need to pay attention to:
+Hyperf's long-lifecycle dependency injection is completed when the project starts. This means that long-lifecycle classes need to pay attention to:
 
-* It is not a coroutine environment when the constructor runs. If injection happened, a coroutine switching class may be triggered. It will cause the framework to fail to start.
+* The constructor is not yet in a coroutine environment. If a class that may trigger coroutine switching is injected, it will cause the framework to fail to start.
 
-* Avoid circular dependencies in the constructor (typically, `Listener` and `EventDispatcherInterface`), otherwise the startup will fail.
+* Avoid circular dependencies in the constructor (a typical example is `Listener` and `EventDispatcherInterface`), otherwise it will also fail to start.
 
-The current solution is: only inject `Psr\Container\ContainerInterface` into the instance, and other components are obtained through `container` at a time outside the runtime of the constructor. However, as PSR-11 states:
+The current solution is: only inject `Psr\Container\ContainerInterface` in the instance, and other components are obtained via `container` when non-constructor is executed. But PSR-11 points out:
 
-> 「Users should not pass the container as a parameter to the object and then obtain the dependency of that object through the passed container. This uses the container as a service locator, and the service locator is an anti-pattern.」
+> "Users should not pass the container as an argument to an object in order to obtain the object's dependencies from the container within the object. This uses the container as a service locator, and service locator is an anti-pattern."
 
-In other words, although this approach works, it is not recommended from the perspective of design patterns.
+That is to say, although this practice is effective, it is not recommended from the perspective of design patterns.
 
-Another solution is to use the lazy proxy mode which commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
-The Hyperf DI component is designed with lazy loading injection function.
+Another solution is to use the lazy proxy pattern commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. Hyperf DI component designed the lazy loading injection function.
 
-Add the `config/lazy_loader.php` file and bind the lazy loading relationship:
+Add `config/lazy_loader.php` file and bind lazy loading relationships:
 
 ```php
 <?php
 return [
     /**
-     * Format: proxy class name => original class name
-     * The proxy class does not exist at this time, and Hyperf will automatically generate this class in the runtime folder.
-     * The proxy class name and namespace can be defined by yourself.
+     * Format: Proxy class name => Original class name
+     * The proxy class does not exist at this time, Hyperf will automatically generate the class under the runtime folder.
+     * The proxy class name and namespace can be freely defined.
      */
     'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
 ```
 
-In this way, when injecting `App\Service\LazyUserService`, the container will create a `lazy loading proxy class` and inject it into the target object.
+In this way, when `App\Service\LazyUserService` is injected, the container will create a `lazy loading proxy class` and inject it into the target object.
 
 ```php
 use App\Service\LazyUserService;
@@ -341,55 +320,86 @@ class Foo{
         $this->service = $service;
     }
 }
-````
+```
 
-You can also inject lazy loading proxy through the annotation `#[Inject(lazy: true)]`. Implementing lazy loading through annotations does not need to create configuration files.
+You can also inject a lazy loading proxy via the annotation `#[Inject(lazy: true)]`. Implementing lazy loading via annotation does not need to create a configuration file.
 
 ```php
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
+class Foo
+{
     /**
      * @var UserServiceInterface
      */
     #[Inject(lazy: true)]
     public $service;
 }
-````
+```
 
-Note: When the proxy object performs the following operations, the proxy object will be actually instantiated from the container.
+Note: When the proxy object performs the following operations, the proxied object will be truly instantiated from the container.
 
 ```php
-// Call methods
+// Method call
 $proxy->someMethod();
 
-// Get attributes
+// Read property
 echo $proxy->someProperty;
 
-// Set attributes
+// Write property
 $proxy->someProperty = 'foo';
 
-// Check if a attribute exists
+// Check if property exists
 isset($proxy->someProperty);
 
-// Delete attributes
+// Delete property
 unset($proxy->someProperty);
 ```
 
-## Short-lived Objects
+### Binding Weight
 
-Objects created by the `new` are undoubtedly short-lived. If you want to create a short-lived object and want to inject related dependencies through the dependency injection container, you can create `$name` through the `make(string $name, array $parameters = [])` function. The code example is as follows:
+Since version v3.0.17, the weight function has been added. You can inject the object with the highest weight according to the weight. For example, the following two `ConfigProvider` configurations
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+When `PriorityDefinition` is not used, the weight is 0. So the one bound to `FooInterface` is `Foo`.
+
+## Short Lifecycle Objects
+
+Objects created via the `new` keyword are undoubtedly short-lived. So what if you want to create a short-lived object but want to use the `constructor dependency automatic injection function`? At this time, we can create an instance corresponding to `$name` via the `make(string $name, array $parameters = [])` function. The code example is as follows:
 
 ```php
 $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
-> Note that only the object corresponding to `$name` is a short-lived object, and all dependencies of this object are obtained through the `get()` method, which means this object is a long-lived object.
+> Note that only the object corresponding to `$name` is a short-lived object. All dependencies of this object are obtained via the `get()` method, that is, they are long-lived objects. It can be understood that this object is a shallow copy object.
 
-## Get the Container Object
+## Obtaining Container Objects
 
-Sometimes we wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `#[Inject]` annotation. Here is an example:
+Sometimes when we want to implement some more dynamic requirements, we want to be able to directly obtain the `Container` object. In most cases, the framework's entry classes (such as command classes, controllers, RPC service providers, etc.) are created and maintained by the `Container`, which means that most of the business code you write is under the management of the `Container`, which means that in most cases, you can obtain the `Hyperf\Di\Container` container object by declaring it in the `Constructor` or injecting the `Psr\Container\ContainerInterface` interface class via `#[Inject]` annotation. We demonstrate this with code:
 
 ```php
 <?php
@@ -400,27 +410,98 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
-    // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
+    // Complete automatic injection by declaring parameter types in the constructor parameters
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 }
-```   
+```
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContainer()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of the `Container`, to obtain the `Container` object, you can also obtain the `Container` object via the `\Hyperf\Context\ApplicationContext::getContainer()` method.
 
 ```php
 $container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
-## Cautions
+## Scan Adapter
 
-### The container only manages long-lived objects
+By default, `Hyperf\Di\ScanHandler\PcntlScanHandler` is used.
 
-In other words, the objects managed by container are **all singletons**. This design is more efficient for long-life applications, reducing the meaningless creation and destruction of objects. This also means that all objects that need to be managed by the DI container **can not** contain the `state` value. Which `state` represents some values that will change with the request. In fact, in [coroutine](en/coroutine.md) programming, these state values should also be stored in the `coroutine context`, that is, ` Hyperf\Context\Context`.
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+Use Pcntl to fork child processes to scan annotations, only supported in Linux environments
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+Do not perform annotation scanning operations
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+Use proc_open to create child processes to scan annotations, supported in Linux and Windows (Swow)
+
+### Replacing Scan Adapter
+
+We only need to actively modify the `Hyperf\Di\ClassLoader::init()` code snippet in the `bin/hyperf.php` file to replace the adapter.
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
+```
+
+## Precautions
+
+### The Container Only Manages Long-lifecycle Objects
+
+In another way, it means that the objects managed in the container **are all singletons**. This design is more efficient for long-lifecycle applications, reducing a large number of meaningless object creations and destructions. This design also means that all objects that need to be managed by the DI container **cannot contain** `state` values.
+`State` can be directly understood as a value that changes with the request. In fact, in [Coroutine](coroutine.md) programming, these state values should also be stored in the `Coroutine Context`, namely `Hyperf\Context\Context`.
+
+### #[Inject] Injection Override Order
+
+The `#[Inject]` override order is: subclass overrides `Trait` overrides parent class. That is, the `foo` variable of `Origin` below is the `Foo1` injected by itself.
+
+Similarly, if the variable `$foo` does not exist in `Origin`, `$foo` will be injected by the first `Trait`, injecting class `Foo2`.
+
+```php
+use Hyperf\Di\Annotation\Inject;
+
+class ParentClass
+{
+    /**
+     * @var Foo4 
+     */
+    #[Inject]
+    protected $foo;
+}
+
+trait Foo1
+{
+    /**
+     * @var Foo2 
+     */
+    #[Inject]
+    protected $foo;
+}
+
+trait Foo2
+{
+    /**
+     * @var Foo3
+     */
+    #[Inject]
+    protected $foo;
+}
+
+class Origin extends ParentClass
+{
+    use Foo1;
+    use Foo2;
+
+    /**
+     * @var Foo1
+     */
+    #[Inject]
+    protected $foo;
+}
+```

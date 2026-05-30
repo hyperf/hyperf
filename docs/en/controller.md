@@ -1,10 +1,9 @@
 # Controller
 
-To process HTTP requests by using Controller, you need to bind routing and controller methods in `Config` or `Annotation` way. Check the chapter [Router](en/route.md) for more details.
+To handle HTTP requests via a controller, you need to bind routes to controller methods using `configuration files` or `annotations`. Please refer to the [Router](router.md) section for details.
+For `Request` and `Response`, Hyperf provides `Hyperf\HttpServer\Contract\RequestInterface` and `Hyperf\HttpServer\Contract\ResponseInterface` to facilitate obtaining input parameters and returning data. For detailed content on [Request](request.md) and [Response](response.md), please refer to the corresponding sections.
 
-For the `Request` and `Response`, Hyperf provids `Hyperf\HttpServer\Contract\RequestInterface` and `Hyperf\HttpServer\Contract\ResponseInterface` for you to get parameters and return values. Check the chapters [Request](en/request.md) and [Response](en/response.md) for more details.
-
-## Create a Controller
+## Writing a Controller
 
 ```php
 <?php
@@ -18,7 +17,8 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class IndexController
 {
-    // Related objects will be automatically injected by the dependency injection container if you obtain such objects by defining RequestInterface and ResponseInterface on the parameters.
+    // Define RequestInterface and ResponseInterface on parameters to obtain relevant objects, 
+    // which will be automatically injected by the dependency injection container
     public function index(RequestInterface $request, ResponseInterface $response)
     {
         $target = $request->input('target', 'World');
@@ -27,17 +27,17 @@ class IndexController
 }
 ```
 
-> Assume this `Controller` has been defined as `/` route through `Config`. (Of course, you can also define it through `Annotation`)
+> We assume that this `Controller` has already defined the route as `/` via the configuration file, but you can also use annotation routing.
 
-Call this address through `cURL`, and you can see the returned content.
+Call this address via `cURL` to see the returned content.
 
 ```bash
-$ curl http://127.0.0.1:9501/\?target\=Hyperf
+$ curl 'http://127.0.0.1:9501/?target=Hyperf'
 Hello Hyperf.
 ```
 
-## Avoid data confusion between coroutines
+## Avoiding Data Confusion Between Coroutines
 
-In the traditional PHP-FPM framework, an `AbstractController` (or an abstract parent class in other names) would be provided. Then, other defined `Controller` will perform some requests or responses based on the `AbstractController`. However, in Hyperf, **DON'T DO LIKE THAT**. Since most objects, including `Controller`, exist as `Singleton`, which is also for better reuse of objects, and request data are stored at `Context` in coroutine, so **DO NOT** store any request data as a class attribute (non-static properties included).
+In traditional PHP-FPM frameworks, there is a habit of providing an `AbstractController` or other similarly named `Controller abstract parent class`, and the defined `Controller` needs to inherit from it to obtain some request data or perform some return operations. In Hyperf, you **cannot do this** because most objects in Hyperf, including `Controller`, exist in the form of `Singleton`, which is also for better object reuse. For data related to the request, it needs to be stored in the `Coroutine Context` under the coroutine. Therefore, when writing code, please be sure **not** to store data related to a single request in class attributes, including non-static attributes.
 
-Of course, it's not impossible if you really want to store request data as class attributes. We have noticed that `Request` and `Response` objects are obtained through injecting `Hyperf\HttpServer\Contract\RequestInterface` and `Hyperf\HttpServer\Contract\ResponseInterface` when we trying to get `Request` and `Response`, so the corresponding object is also a singleton. How is the coroutine safe here? Take the `RequestInterface` as an example, when the corresponding `Hyperf\HttpServer\Request` object gets `PSR-7 request object` from its internal, it is obtained from the `Context`. So the actual class used is only a proxy class, and the actual call is obtained from the `Context`.
+Of course, if you really want to store request data via class attributes, it is not impossible. We can notice that when we obtain `Request` and `Response` objects, we do so by injecting `Hyperf\HttpServer\Contract\RequestInterface` and `Hyperf\HttpServer\Contract\ResponseInterface`. Isn't the corresponding object also a singleton? How is coroutine safety achieved here? Take `RequestInterface` as an example, the corresponding `Hyperf\HttpServer\Request` object internally obtains the `PSR-7 Request object` from the `Coroutine Context`. So the actual class used is just a proxy class, and what is actually called is obtained from the `Coroutine Context`.
