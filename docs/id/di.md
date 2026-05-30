@@ -47,7 +47,7 @@ class UserService
     public function getInfoById(int $id)
     {
         // Assume that there is an entity of Info.
-        return (new Info())->fill($id);    
+        return (new Info())->fill($id);
     }
 }
 ```
@@ -67,18 +67,18 @@ class IndexController
      * @var UserService
      */
     private $userService;
-    
+
     // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
-    
+
     public function index()
     {
         $id = 1;
         // Use directly
-        return $this->userService->getInfoById($id);    
+        return $this->userService->getInfoById($id);
     }
 }
 ```
@@ -106,19 +106,19 @@ class IndexController
      * @var null|UserService
      */
     private $userService;
-    
+
     // Declare an optional parameter by setting it as nullable.
     public function __construct(?UserService $userService)
     {
         $this->userService = $userService;
     }
-    
+
     public function index()
     {
         $id = 1;
         if ($this->userService instanceof UserService) {
             // $userService is available only in the condition that it is not null
-            return $this->userService->getInfoById($id);    
+            return $this->userService->getInfoById($id);
         }
         return null;
     }
@@ -138,18 +138,18 @@ use Hyperf\HttpServer\Annotation\AutoController;
 class IndexController
 {
     /**
-     * Use `#[Inject]` to inject the attribute type object declared by `@var` 
-     * 
+     * Use `#[Inject]` to inject the attribute type object declared by `@var`
+     *
      * @var UserService
      */
     #[Inject]
     private $userService;
-    
+
     public function index()
     {
         $id = 1;
         // Use directly
-        return $this->userService->getInfoById($id);    
+        return $this->userService->getInfoById($id);
     }
 }
 ```
@@ -185,7 +185,7 @@ class IndexController
      */
     #[Inject(required: false)]
     private $userService;
-    
+
     public function index()
     {
         $id = 1;
@@ -259,7 +259,7 @@ class IndexController
 {
     #[Inject]
     private UserServiceInterface $userService;
-    
+
     public function index()
     {
         $id = 1;
@@ -281,7 +281,7 @@ menyediakan fungsi [mode cache](id/db/model-cache.md) yang lebih baik)
 Kita harus membuat factory untuk menghasilkan objek `UserService`:
 
 ```php
-<?php 
+<?php
 namespace App\Service;
 
 use Hyperf\Contract\ConfigInterface;
@@ -310,21 +310,21 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
+
     /**
      * @var bool
      */
     private $enableCache;
-    
+
     public function __construct(bool $enableCache)
     {
         // Receiving the value and store it at an attribute
         $this->enableCache = $enableCache;
     }
-    
+
     public function getInfoById(int $id)
     {
-        return (new Info())->fill($id);    
+        return (new Info())->fill($id);
     }
 }
 ```
@@ -440,6 +440,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### Bobot Binding (Binding Weight)
+
+Sejak versi v3.0.17, fitur bobot (weight) telah ditambahkan. Objek dengan bobot terbesar dapat diinjeksikan berdasarkan urutan bobotnya. Sebagai contoh, perhatikan dua konfigurasi `ConfigProvider` berikut:
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+Jika tidak menggunakan `PriorityDefinition`, maka nilai default bobotnya adalah 0. Sehingga objek yang di-bind ke `FooInterface` adalah `Foo`.
+
 ## Objek Berumur Pendek
 
 Objek yang dibuat dengan perintah `new` tidak diragukan lagi adalah objek berumur
@@ -498,6 +528,30 @@ bawah manajemen `Container`, Anda juga dapat menggunakan method
 $container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
+## Adaptor Pemindaian
+
+Secara default menggunakan `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+Menggunakan Pcntl fork pada proses child untuk memindai annotation, hanya mendukung lingkungan Linux.
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+Tidak melakukan operasi pemindaian annotation.
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+Menggunakan `proc_open` untuk membuat proses child memindai annotation, mendukung Linux dan Windows (Swow).
+
+### Mengganti Adaptor Pemindaian
+
+Kita hanya perlu mengubah potongan kode `Hyperf\Di\ClassLoader::init()` di dalam file `bin/hyperf.php` untuk mengganti adaptor.
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
+```
+
 ## Perhatian
 
 ### Container hanya mengelola objek berumur panjang
@@ -509,3 +563,52 @@ yang perlu dikelola oleh container DI **tidak boleh** mengandung nilai status (`
 Nilai status tersebut mewakili beberapa nilai yang akan berubah seiring dengan
 request. Faktanya, dalam pemrograman [coroutine](id/coroutine.md), nilai status ini
 juga harus disimpan dalam `coroutine context`, yaitu `Hyperf\Context\Context`.
+
+### Urutan Overriding Injeksi `#[Inject]`
+
+Urutan overriding untuk `#[Inject]` adalah: Sub-kelas menimpa (override) `Trait`, dan `Trait` menimpa (override) Parent class. Sebagai contoh, variabel `foo` pada kelas `Origin` di bawah ini akan diinjeksi dengan `Foo1` miliknya sendiri.
+
+Demikian pula, jika `Origin` tidak mendefinisikan variabel `$foo`, maka `$foo` akan diinjeksi oleh `Trait` pertama yang dipanggil, yaitu kelas `Foo2`.
+
+```php
+use Hyperf\Di\Annotation\Inject;
+
+class ParentClass
+{
+    /**
+     * @var Foo4
+     */
+    #[Inject]
+    protected $foo;
+}
+
+trait Foo1
+{
+    /**
+     * @var Foo2
+     */
+    #[Inject]
+    protected $foo;
+}
+
+trait Foo2
+{
+    /**
+     * @var Foo3
+     */
+    #[Inject]
+    protected $foo;
+}
+
+class Origin extends ParentClass
+{
+    use Foo1;
+    use Foo2;
+
+    /**
+     * @var Foo1
+     */
+    #[Inject]
+    protected $foo;
+}
+```

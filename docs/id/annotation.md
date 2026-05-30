@@ -8,29 +8,29 @@ mengimplementasikan berbagai fitur yang sangat memudahkan.
 
 ### What is annotation?
 
-Attribute menawarkan kemampuan untuk menambahkan informasi metadata terstruktur yang
+Annotation menawarkan kemampuan untuk menambahkan informasi metadata terstruktur yang
 dapat dibaca mesin pada deklarasi di dalam kode: class, method, function,
 parameter, property, dan class constant dapat menjadi target dari sebuah
-attribute. Metadata yang didefinisikan oleh attribute kemudian dapat diperiksa
-saat runtime menggunakan Reflection API. Oleh karena itu, attribute dapat
+annotation. Metadata yang didefinisikan oleh annotation kemudian dapat diperiksa
+saat runtime menggunakan Reflection API. Oleh karena itu, annotation dapat
 dianggap sebagai bahasa konfigurasi yang disematkan langsung ke dalam kode.
 
-Dengan attribute, implementasi generik dari suatu fitur dan penggunaan
+Dengan annotation, implementasi generik dari suatu fitur dan penggunaan
 konkretnya dalam aplikasi dapat dipisahkan (decoupled). Dalam beberapa hal, ini
 dapat dibandingkan dengan interface dan implementasinya. Namun, jika interface
-dan implementasi berkaitan dengan kode, attribute berkaitan dengan memberikan
+dan implementasi berkaitan dengan kode, annotation berkaitan dengan memberikan
 informasi tambahan (annotating) dan konfigurasi. Interface dapat diimplementasi
-oleh class, sedangkan attribute juga dapat dideklarasikan pada method, function,
-parameter, property, dan class constant. Dengan demikian, attribute lebih
+oleh class, sedangkan annotation juga dapat dideklarasikan pada method, function,
+parameter, property, dan class constant. Dengan demikian, annotation lebih
 fleksibel daripada interface.
 
-Contoh sederhana dari penggunaan attribute adalah mengubah interface yang memiliki
-method opsional untuk menggunakan attribute. Mari kita asumsikan sebuah interface
+Contoh sederhana dari penggunaan annotation adalah mengubah interface yang memiliki
+method opsional untuk menggunakan annotation. Mari kita asumsikan sebuah interface
 ActionHandler yang merepresentasikan suatu operasi dalam aplikasi, di mana
 beberapa implementasi dari action handler memerlukan setup dan yang lainnya
 tidak. Alih-alih mengharuskan semua class yang mengimplementasikan ActionHandler
-untuk mengimplementasikan method setUp(), sebuah attribute dapat digunakan. Salah
-satu keuntungan dari pendekatan ini adalah kita dapat menggunakan attribute
+untuk mengimplementasikan method setUp(), sebuah annotation dapat digunakan. Salah
+satu keuntungan dari pendekatan ini adalah kita dapat menggunakan annotation
 tersebut beberapa kali.
 
 ### How it works?
@@ -185,6 +185,205 @@ Ketika tidak ada method pengumpulan annotation kustom, metadata annotation akan
 dikumpulkan di class `Hyperf\Di\Annotation\AnnotationCollector` secara default.
 Static method dari class tersebut dapat dengan mudah memperoleh metadata yang
 sesuai untuk penilaian logika atau implementasi.
+
+### Fitur ClassMap
+
+Framework ini menyediakan konfigurasi `class_map`, yang memungkinkan pengguna untuk dengan mudah mengganti class yang perlu dimuat.
+
+Misalnya, kita mengimplementasikan fitur yang secara otomatis dapat menyalin *coroutine context*:
+
+Pertama, kita mengimplementasikan class `Coroutine` yang digunakan untuk menyalin context. Method `create()` di dalamnya, dapat menyalin context dari parent ke child.
+
+Untuk menghindari konflik penamaan, disepakati untuk menggunakan `class_map` sebagai nama folder, diikuti dengan folder namespace dan file yang akan diganti.
+
+Contoh: `class_map/Hyperf/Coroutine/Coroutine.php`
+
+[Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/Context/Coroutine.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace App\Kernel\Context;
+
+use App\Kernel\Log\AppendRequestIdProcessor;
+use Hyperf\Context\Context;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine as Co;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
+
+class Coroutine
+{
+    protected LoggerInterface $logger;
+
+    public function __construct(protected ContainerInterface $container)
+    {
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+    }
+
+    /**
+     * @return int Returns the coroutine ID of the coroutine just created.
+     *             Returns -1 when coroutine create failed.
+     */
+    public function create(callable $callable): int
+    {
+        $id = Co::id();
+        $coroutine = Co::create(function () use ($callable, $id) {
+            try {
+                // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
+                Context::copy($id, [
+                    AppendRequestIdProcessor::REQUEST_ID,
+                    ServerRequestInterface::class,
+                ]);
+                $callable();
+            } catch (Throwable $throwable) {
+                $this->logger->warning((string) $throwable);
+            }
+        });
+
+        try {
+            return $coroutine->getId();
+        } catch (Throwable $throwable) {
+            $this->logger->warning((string) $throwable);
+            return -1;
+        }
+    }
+}
+
+```
+
+Kemudian, kita mengimplementasikan objek yang persis sama dengan `Hyperf\Coroutine\Coroutine`. Di mana method `create()` diganti dengan method yang telah kita implementasikan di atas.
+
+[Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/ClassMap/Coroutine.php)
+
+`class_map/Hyperf/Coroutine/Coroutine.php`
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace Hyperf\Coroutine;
+
+use App\Kernel\Context\Coroutine as Go;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Engine\Exception\CoroutineDestroyedException;
+use Hyperf\Engine\Exception\RunningInNonCoroutineException;
+use Throwable;
+
+class Coroutine
+{
+    /**
+     * Returns the current coroutine ID.
+     * Returns -1 when running in non-coroutine context.
+     */
+    public static function id(): int
+    {
+        return Co::id();
+    }
+
+    public static function defer(callable $callable): void
+    {
+        Co::defer(static function () use ($callable) {
+            try {
+                $callable();
+            } catch (Throwable $exception) {
+                di()->get(StdoutLoggerInterface::class)->error((string) $exception);
+            }
+        });
+    }
+
+    public static function sleep(float $seconds): void
+    {
+        usleep(intval($seconds * 1000 * 1000));
+    }
+
+    /**
+     * Returns the parent coroutine ID.
+     * Returns 0 when running in the top level coroutine.
+     * @throws RunningInNonCoroutineException when running in non-coroutine context
+     * @throws CoroutineDestroyedException when the coroutine has been destroyed
+     */
+    public static function parentId(?int $coroutineId = null): int
+    {
+        return Co::pid($coroutineId);
+    }
+
+    /**
+     * @return int Returns the coroutine ID of the coroutine just created.
+     *             Returns -1 when coroutine create failed.
+     */
+    public static function create(callable $callable): int
+    {
+        return di()->get(Go::class)->create($callable);
+    }
+
+    public static function inCoroutine(): bool
+    {
+        return Co::id() > 0;
+    }
+
+    public static function stats(): array
+    {
+        return Co::stats();
+    }
+
+    public static function exists(int $id): bool
+    {
+        return Co::exists($id);
+    }
+}
+
+```
+
+Lalu konfigurasikan `class_map` sebagai berikut:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Coroutine\Coroutine;
+
+return [
+    'scan' => [
+        'paths' => [
+            BASE_PATH . '/app',
+        ],
+        'ignore_annotations' => [
+            'mixin',
+        ],
+        'class_map' => [
+            // Nama class yang akan dipetakan => path file tempat class berada
+            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Coroutine/Coroutine.php',
+        ],
+    ],
+];
+
+```
+
+Dengan demikian, method seperti `co()` dan `parallel()` secara otomatis bisa mendapatkan data di context dari parent coroutine, misalnya `Request`.
 
 ## IDE Plugin of Annotation
 

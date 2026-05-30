@@ -2,7 +2,7 @@
 
 ## Concept
 
-Hyperf dibangun di atas coroutine dari `Swoole 5`, yang merupakan salah
+Hyperf dibangun di atas coroutine dari `Swoole 5` dan `Swow`, yang merupakan salah
 satu faktor besar mengapa Hyperf dapat memberikan performa tinggi.
 
 ### Mode Menjalankan PHP-FPM

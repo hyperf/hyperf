@@ -28,79 +28,232 @@ menggunakan configuration center.
 
 ## Instalasi
 
-### Apollo
+### Unified Access Layer (Lapisan Akses Terpadu) Configuration Center
+
+```bash
+composer require hyperf/config-center
+```
+
+### Menggunakan Apollo
 
 ```bash
 composer require hyperf/config-apollo
 ```
 
-### Aliyun ACM
+### Menggunakan Aliyun ACM
 
 ```bash
 composer require hyperf/config-aliyun-acm
 ```
 
-## Menggunakan Apollo
+### Menggunakan Etcd
 
-Jika Anda belum mengganti komponen konfigurasi default dan masih menggunakan
-komponen [hyperf/config](https://github.com/hyperf/config), mengintegrasikan
-Apollo Configuration Center akan sangat mudah.
-- Pasang komponen [hyperf/config-apollo](https://github.com/hyperf/config-apollo)
-  melalui Composer dengan menjalankan perintah `composer require hyperf/config-apollo`.
-- Tambahkan file konfigurasi `apollo.php` ke direktori `config/autoload`.
-  Konfigurasinya adalah sebagai berikut:
+```bash
+composer require hyperf/config-etcd
+```
+
+### Menggunakan Nacos
+
+```bash
+composer require hyperf/config-nacos
+```
+
+#### gRPC Bidirectional Streaming (Aliran Dua Arah)
+
+Nacos v2.0 mendukung gRPC. Anda dapat mengikuti langkah-langkah di bawah ini untuk menggunakannya.
+
+- Pertama, kita menginstal komponen yang diperlukan:
+
+```shell
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
+```
+
+- Modifikasi konfigurasi
+
+Ubah `config_center.drivers.nacos.client.grpc.enable` menjadi `true`, spesifikasinya adalah sebagai berikut:
 
 ```php
 <?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigApollo\PullMode;
+use Hyperf\ConfigCenter\Mode;
+
 return [
-    // Whether to enable the process of the configuration center. When true, a ConfigFetcherProcess process is automatically started to update the configuration
-    'enable' => true,
-    // Apollo Server
-    'server' => 'http://127.0.0.1:8080',
-    // Your AppId
-    'appid' => 'test',
-    // The cluster where the current application is located
-    'cluster' => 'default',
-    // Namespace that the current application needs to access, can be configured multiple namespcaes
-    'namespaces' => [
-        'application',
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'nacos'),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                'nacos_config' => [
+                    'tenant' => 'tenant', // sesuai dengan service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+            ],
+            'client' => [
+                // url server nacos seperti https://nacos.hyperf.io, Prioritasnya lebih tinggi daripada host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+                // Hanya mendukung untuk nacos v2.
+                'grpc' => [
+                    'enable' => true,
+                    'heartbeat' => 10,
+                ],
+            ],
+        ],
     ],
-    // Strict mode. When the value is false, the configuration value that pulled from Apollo will always is string type, when the value is true, the configuration value will transfer to the suitable type according to the original value type on config container.
-    'strict_mode' => false,
-    // The interval of update configuration (seconds)
-    'interval' => 5,
 ];
 ```
 
-## Menggunakan Aliyun ACM
+- Selanjutnya, cukup jalankan layanannya.
 
-Mengakses Aliyun ACM Configuration Center semudah Apollo, cukup dua langkah.
-- Jalankan perintah `composer require hyperf/config-aliyun-acm` menggunakan
-  Composer untuk menginstal [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm).
-- Tambahkan file konfigurasi `aliyun_acm.php` ke direktori `config/autoload`.
-  Konfigurasinya adalah sebagai berikut:
+### Menggunakan Zookeeper
+
+```bash
+composer require hyperf/config-zookeeper
+```
+
+## Mengakses Configuration Center
+
+### File Konfigurasi
 
 ```php
 <?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigCenter\Mode;
+
 return [
-    // Whether to enable the process of the configuration center. When true, a ConfigFetcherProcess process is automatically started to update the configuration
-    'enable' => true,
-    // The interval of update configuration (seconds)
-    'interval' => 5,
-    // ACM endpoint address, depending on your Availability Zone
-    'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
-    // Namespace that the current application needs to access
-    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
-    // The Data ID of your configuration
-    'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
-    // The Group of your configuration
-    'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
-    // Your Access Key of aliyun account
-    'access_key' => env('ALIYUN_ACM_AK', ''),
-    // Your Secret Key of aliyun account
-    'secret_key' => env('ALIYUN_ACM_SK', ''),
+    // Apakah akan mengaktifkan configuration center
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    // Jenis driver yang digunakan, sesuai dengan key di bawah drivers pada level konfigurasi yang sama
+    'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
+    // Mode berjalan configuration center, PROCESS direkomendasikan untuk model multi-proses, COROUTINE direkomendasikan untuk model proses tunggal
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'apollo' => [
+            'driver' => Hyperf\ConfigApollo\ApolloDriver::class,
+            // Apollo Server
+            'server' => 'http://127.0.0.1:9080',
+            // AppId Anda
+            'appid' => 'test',
+            // Cluster di mana aplikasi saat ini berada
+            'cluster' => 'default',
+            // Namespace yang perlu diakses oleh aplikasi saat ini, bisa dikonfigurasi beberapa sekaligus
+            'namespaces' => [
+                'application',
+            ],
+            // Interval pembaruan konfigurasi (detik)
+            'interval' => 5,
+            // Strict mode. Ketika false, nilai konfigurasi yang ditarik selalu bertipe string, ketika true, nilai konfigurasi akan dikonversi ke tipe data dari nilai konfigurasi asli
+            'strict_mode' => false,
+            // IP Klien
+            'client_ip' => \Hyperf\Support\Network::ip(),
+            // Timeout untuk pull (menarik) konfigurasi
+            'pullTimeout' => 10,
+            // Interval timeout untuk pull konfigurasi
+            'interval_timeout' => 1,
+        ],
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            // Mode penggabungan konfigurasi, mendukung penimpaan (overwrite) dan penggabungan (merge)
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            // Jika key pemetaan terkait tidak diatur, key default ini akan digunakan
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                // dataId, group, tenant, type, content
+                // KEY konfigurasi yang dipetakan => Konfigurasi aktual di dalam Nacos
+                'nacos_config' => [
+                    'tenant' => 'tenant', // sesuai dengan service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+                'nacos_config.data' => [
+                    'data_id' => 'hyperf-service-config-yml',
+                    'group' => 'DEFAULT_GROUP',
+                    'type' => 'yml',
+                ],
+            ],
+            'client' => [
+                // url server nacos seperti https://nacos.hyperf.io, Prioritasnya lebih tinggi daripada host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+            ],
+        ],
+        'aliyun_acm' => [
+            'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
+            // Interval pembaruan konfigurasi (detik)
+            'interval' => 5,
+            // Alamat endpoint ACM Aliyun, tergantung pada availability zone Anda
+            'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+            // Namespace yang perlu diakses oleh aplikasi saat ini
+            'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+            // Data ID konfigurasi Anda
+            'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+            // Group konfigurasi Anda
+            'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+            // Access Key akun Aliyun Anda
+            'access_key' => env('ALIYUN_ACM_AK', ''),
+            // Secret Key akun Aliyun Anda
+            'secret_key' => env('ALIYUN_ACM_SK', ''),
+            'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
+        ],
+        'etcd' => [
+            'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
+            // Awalan (prefix) data yang perlu disinkronkan
+            'namespaces' => [
+                '/application',
+            ],
+            // Hubungan pemetaan antara `Etcd` dan `Config`. Jika `key` tidak ada dalam pemetaan, maka tidak akan disinkronkan ke dalam `Config`
+            'mapping' => [
+                // etcd key => config key
+                '/application/test' => 'test',
+            ],
+            // Interval pembaruan konfigurasi (detik)
+            'interval' => 5,
+            'client' => [
+                # Etcd Client
+                'uri' => 'http://127.0.0.1:2379',
+                'version' => 'v3beta',
+                'options' => [
+                    'timeout' => 10,
+                ],
+            ],
+        ],
+        'zookeeper' => [
+            'driver' => Hyperf\ConfigZookeeper\ZookeeperDriver::class,
+            'server' => env('ZOOKEEPER_SERVER', '127.0.0.1:2181'),
+            'path' => env('ZOOKEEPER_CONFIG_PATH', '/conf'),
+            'interval' => 5,
+        ],
+    ],
 ];
 ```
+
+Jika file konfigurasi tidak ada, Anda dapat menjalankan perintah `php bin/hyperf.php vendor:publish hyperf/config-center` untuk membuatnya.
 
 ## Ruang Lingkup Pembaruan Konfigurasi
 

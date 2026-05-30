@@ -14,6 +14,59 @@ Consul API, dan didukung oleh coroutine HTTP client yang disediakan oleh
 composer require hyperf/consul
 ```
 
+## Penggunaan
+
+- Mendapatkan Consul client yang sesuai, berikut adalah contoh untuk KV client:
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Context\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+    ]);
+});
+```
+
+### Consul ACL Token
+
+#### Menambahkan Token melalui Header
+
+Anda dapat mengatur parameter Header dengan Key `X-Consul-Token` ke Client saat memanggil method, seperti yang ditunjukkan di bawah ini:
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Context\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+        'headers' => [
+            'X-Consul-Token' => 'your-token'
+        ],
+    ]);
+});
+```
+
+#### Menambahkan Token melalui Query
+
+Anda juga dapat mengatur parameter `token` pada argument `$options` saat memanggil method, sehingga Token akan diteruskan ke Server bersama dengan Query, seperti yang ditunjukkan di bawah ini:
+
+```php
+$response = $kv->get($namespace, ['token' => 'your-token'])->json();
+```
+
 ## KV
 
 Interface `Hyperf\Consul\KVInterface` diimplementasikan oleh `Hyperf\Consul\KV`.
