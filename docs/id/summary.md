@@ -4,7 +4,8 @@
   * [Komunikasi](id/communication.md)
   * [Donasi](id/donate.md)
   * [Kontribusi](id/contribute.md)
-  
+  * [Layanan Enterprise](id/enterprise-service.md)
+
 * Versi
 
   * [Perencanaan Rilis](id/release-planning.md)
@@ -17,7 +18,7 @@
   * [Mulai Cepat](id/quick-start/overview.md)
   * [FAQ](id/quick-start/questions.md)
   * [Pemberitahuan Penggunaan](id/quick-start/important.md)
-  
+
 * Arsitektur Inti
 
   * [Siklus Hidup](id/lifecycle.md)
@@ -27,7 +28,7 @@
   * [Dependency Injection](id/di.md)
   * [Event Dispatcher](id/event.md)
   * [AOP](id/aop.md)
-  
+
 * Fondasi
 
   * [Router](id/router.md)
@@ -47,7 +48,7 @@
   * [Validation](id/validation.md)
   * [Session](id/session.md)
   * [File System](id/filesystem.md)
-  
+
 * Database
 
   * [Mulai Cepat](id/db/quick-start.md)
@@ -66,10 +67,10 @@
 
 * Ekosistem Hyperf
 
-  * [Nano](https://github.com/hyperf/nano)
+  * [Nano](id/nano.md)
   * [GoTask](https://github.com/hyperf/gotask)
   * [Box](id/eco/box.md)
-  
+
 * Microservice
 
   * [Konsep](id/microservice.md)
@@ -85,14 +86,14 @@
   * [Metric](id/metric.md)
   * [Distributed Transaction](id/distributed-transaction.md)
   * [Snowflake](id/snowflake.md)
-  
+
 * Server
 
   * [Tcp Server](id/tcp-server.md)
   * [WebSocket Server](id/websocket-server.md)
   * [Socket.io](id/socketio-server.md)
   * [Coroutine Style Server](id/coroutine-server.md)
-  
+
 * Message Queue
 
   * [Redis Queue](id/async-queue.md)
@@ -100,7 +101,7 @@
   * [Nats](id/nats.md)
   * [NSQ](id/nsq.md)
   * [Kafka](id/kafka.md)
-  
+
 * Clients
 
   * [Redis Client](id/redis.md)
@@ -111,7 +112,7 @@
   * [WebSocket Client](id/websocket-client.md)
   * [Nacos](id/nacos.md)
   * [Jet](id/jet.md)
-  
+
 * Komponen Lainnya
 
   * [Connection Pool](id/pool.md)
@@ -128,6 +129,7 @@
   * [DAG](id/dag.md)
   * [RPN](id/rpn.md)
   * [Swagger](id/swagger.md)
+  * [GraphQL](id/graphql.md)
 
 * Deployment
 
@@ -136,11 +138,11 @@
   * [Deploy Menggunakan Supervisor](id/tutorial/supervisor.md)
   * [Nginx Reverse Proxy](id/tutorial/nginx.md)
   * [Aliyun Logger Service](id/tutorial/aliyun-logger.md)
-  
+
 * Awesome Hyperf
 
   * [Awesome Components](id/awesome-components.md)
-  
+
 * Panduan Pengembangan Komponen
 
   * [Pendahuluan](id/component-guide/intro.md)
@@ -157,7 +159,7 @@
   * [v1.0](id/changelog/1.0.md)
 
 * Panduan Upgrade
-  
+
   * [Panduan Upgrade 1.1](id/upgrade/1.1.md)
   * [Panduan Upgrade 2.0](id/upgrade/2.0.md)
   * [Panduan Upgrade 2.1](id/upgrade/2.1.md)
