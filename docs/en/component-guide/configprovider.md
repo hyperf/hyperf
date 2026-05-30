@@ -1,16 +1,16 @@
-# ConfigProvider mechanism
+# ConfigProvider Mechanism
 
-The ConfigProvider mechanism is a very important mechanism for Hyperf componentization. `Decoupling between components`, `Independence of components` and `Reusability of components` are all realized based on this mechanism.
+The `ConfigProvider` mechanism is a crucial mechanism for Hyperf componentization. The decoupling between components, the independence of components, and the reusability of components are all achieved based on this mechanism.
 
-# What is the ConfigProvider mechanism?
+# What is the ConfigProvider Mechanism?
 
-To put it simply, each component will provide a `ConfigProvider`, usually a `ConfigProvider` class is provided in the root directory of the component, and `ConfigProvider` will provide all the configuration information of the corresponding component, which will be started by the Hyperf framework When loaded, the final configuration information in `ConfigProvider` will be merged into the corresponding implementation class of `Hyperf\Contract\ConfigInterface`, so as to realize the configuration initialization of each component when used under the Hyperf framework.
+Simply put, each component provides a `ConfigProvider`, usually as a class in the root directory of the component. The `ConfigProvider` provides all configuration information for the corresponding component. This information is loaded by the Hyperf framework during startup, and finally, the configuration information in the `ConfigProvider` is merged into the implementation class corresponding to `Hyperf\Contract\ConfigInterface`, thereby achieving the configuration initialization required when various components are used in the Hyperf framework.
 
-`ConfigProvider` itself does not have any dependencies, does not inherit any abstract classes, and does not require the implementation of any interfaces. It only needs to provide an `__invoke` method and return an array of corresponding configuration structures.
+The `ConfigProvider` itself has no dependencies, does not inherit any abstract classes, and does not require the implementation of any interfaces. It only needs to provide an `__invoke` method and return an array corresponding to the configuration structure.
 
-# How to define a ConfigProvider?
+# How to Define a ConfigProvider?
 
-Generally speaking, `ConfigProvider` will be defined in the root directory of the component, and a `ConfigProvider` class is usually as follows:
+Typically, `ConfigProvider` is defined in the root directory of the component. A `ConfigProvider` class usually looks like this:
 
 ```php
 <?php
@@ -19,86 +19,87 @@ namespace Hyperf\Foo;
 
 class ConfigProvider
 {
-     public function __invoke(): array
-     {
-         return [
-             // merged into config/autoload/dependencies.php file
-             'dependencies' => [],
-             // merged into config/autoload/annotations.php file
-             'annotations' => [
-                 'scan' => [
-                     'paths' => [
-                         __DIR__,
-                     ],
-                 ],
-             ],
-             // The definition of the default Command is merged into Hyperf\Contract\ConfigInterface, another way to understand it is corresponding to config/autoload/commands.php
-             'commands' => [],
-             // similar to commands
-             'listeners' => [],
-             // Component default configuration file, that is, after executing the command, the file corresponding to source will be copied to the file corresponding to destination
-             'publish' => [
-                 [
-                     'id' => 'config',
-                     'description' => 'description of this config file.', // description
-                     // It is recommended that the default configuration be placed in the publish folder, and the file name is the same as the component name
-                     'source' => __DIR__ . '/../publish/file.php', // corresponding configuration file path
-                     'destination' => BASE_PATH . '/config/autoload/file.php', // copy as the file under this path
-                 ],
-             ],
-             // You can also continue to define other configurations, which will eventually be merged into the configuration storage corresponding to ConfigInterface
-         ];
-     }
+    public function __invoke(): array
+    {
+        return [
+            // Merged into the config/autoload/dependencies.php file
+            'dependencies' => [],
+            // Merged into the config/autoload/annotations.php file
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
+            ],
+            // Default Command definition, merged into Hyperf\Contract\ConfigInterface; in other words, it corresponds to config/autoload/commands.php
+            'commands' => [],
+            // Similar to commands
+            'listeners' => [],
+            // Component default configuration file; executing the command will copy the source file to the destination file
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'description of this config file.', // Description
+                    // It is recommended to put default configuration in the publish folder, naming the file the same as the component name
+                    'source' => __DIR__ . '/../publish/file.php',  // Corresponding configuration file path
+                    'destination' => BASE_PATH . '/config/autoload/file.php', // Copy to this path as this file
+                ],
+            ],
+            // You can continue to define other configurations, which will eventually be merged into the configuration container corresponding to ConfigInterface
+        ];
+    }
 }
 ```
 
-## Default configuration file description
+## Description of Default Configuration Files
 
-After defining `publish` in `ConfigProvider`, you can use the following command to quickly generate configuration files
+After defining `publish` in `ConfigProvider`, you can use the following command to quickly generate the configuration file:
 
 ```bash
-php bin/hyperf.php vendor:publish package name
+php bin/hyperf.php vendor:publish package_name
 ```
 
-If the package name is `hyperf/amqp`, you can execute the command to generate the default configuration file of `amqp`
+For example, if the package name is `hyperf/amqp`, you can execute the command to generate the default `amqp` configuration file:
+
 ```bash
 php bin/hyperf.php vendor:publish hyperf/amqp
 ```
 
-Just creating a class will not be automatically loaded by Hyperf, you still need to add some definitions in the `composer.json` of the component to tell Hyperf that this is a ConfigProvider class that needs to be loaded, you need to add `composer.json` in the component Add `extra.hyperf.config` configuration in the file, and specify the namespace of the corresponding `ConfigProvider` class, as shown below:
+Just creating a class will not be automatically loaded by Hyperf. You still need to add some definitions to the `composer.json` of the component to tell Hyperf that this is a `ConfigProvider` class that needs to be loaded. You need to add the `extra.hyperf.config` configuration to the `composer.json` file within the component and specify the namespace of the corresponding `ConfigProvider` class, as shown below:
 
 ```json
 {
-     "name": "hyperf/foo",
-     "require": {
-         "php": ">=7.3"
-     },
-     "autoload": {
-         "psr-4": {
-             "Hyperf\\Foo\\": "src/"
-         }
-     },
-     "extra": {
-         "hyperf": {
-             "config": "Hyperf\\Foo\\ConfigProvider"
-         }
-     }
+    "name": "hyperf/foo",
+    "require": {
+        "php": ">=7.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Foo\\": "src/"
+        }
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\Foo\\ConfigProvider"
+        }
+    }
 }
 ```
 
-After definition, you need to execute commands such as `composer install` or `composer update` or `composer dump-autoload` to allow Composer to regenerate the `composer.lock` file before it can be read normally.
+After defining it, you need to execute commands that will cause Composer to regenerate the `composer.lock` file, such as `composer install`, `composer update`, or `composer dump-autoload`, for it to be read normally.
 
-# Execution process of ConfigProvider mechanism
+# Execution Flow of the ConfigProvider Mechanism
 
-The configuration of `ConfigProvider` is not necessarily divided in this way. This is some agreed format. In fact, the final decision on how to parse these configurations is also up to the user. The user can modify `config/container.php of the Skeleton project ` The code in the file to adjust the relevant loading, that is, the `config/container.php` file determines the scanning and loading of `ConfigProvider`.
+The configuration of `ConfigProvider` is not necessarily divided this way; this is a convention. In fact, the final decision on how to parse these configurations also rests with the user. The user can adjust the relevant loading by modifying the code in the `config/container.php` file of the Skeleton project, which means that the `config/container.php` file determines the scanning and loading of `ConfigProvider`.
 
-# Component design specification
+# Component Design Specifications
 
-Since the `extra` attribute in `composer.json` has no other effect and influence when the data is not used, the definitions in these components will not cause any interference and influence when used by other frameworks, so `ConfigProvider` is A mechanism that only works on the Hyperf framework, and will not have any impact on other frameworks that do not use this mechanism, which lays the foundation for component reuse, but it also requires that the following must be followed when designing components specification:
+Since the `extra` attribute in `composer.json` has no other function or impact when data is not utilized, the definitions in these components will not cause any interference or impact when used in other frameworks. Therefore, `ConfigProvider` is a mechanism that only acts on the Hyperf framework and will not have any impact on other frameworks that do not utilize this mechanism. This lays the foundation for component reuse, but this also requires that the following specifications must be followed when designing components:
 
-- All classes must be designed to allow standard `OOP` usage, and all Hyperf-specific features must be provided as enhancements and in separate classes, which means they can still be used in non-Hyperf frameworks through standard means to realize the use of components;
-- If the dependency design of the component can meet the [PSR standard](https://www.php-fig.org/psr), it will be satisfied first and depend on the corresponding interface instead of the implementation class; such as [PSR standard](https:// www.php-fig.org/psr) does not contain functions, then it can satisfy the interface in the contract library [hyperf/contract](https://github.com/hyperf/contract) defined by Hyperf, which is satisfied first and depends on The corresponding interface rather than the implementation class;
-- For the enhanced function classes added to implement Hyperf's proprietary functions, generally speaking, they also have dependencies on some components of Hyperf, so the dependencies of these components should not be written in the `require` item of `composer.json`, but write exists as a suggestion in the `suggest` item;
-- Component design should not perform any dependency injection through annotations, and the injection method should only use `constructor injection`, which can also meet the use under `OOP`;
-- Component design should not define any functions through annotations, and function definitions should only be defined through `ConfigProvider`;
-- The design of the class should not store state data as much as possible, because this will cause the class not to be provided as an object with a long life cycle, and the dependency injection function cannot be easily used, which will reduce performance and state to a certain extent Data should all be stored through `Hyperf\Context\Context` coroutine context;
+- All class designs must allow usage through standard `OOP` usage methods. All proprietary Hyperf features must be provided as enhancement features in separate classes, which means that the component can still be used through standard means in non-Hyperf frameworks.
+- If component dependency design can satisfy the [PSR Standards](https://www.php-fig.org/psr), prioritize satisfying them and depend on the corresponding interfaces rather than implementation classes. For functionalities not covered by [PSR Standards](https://www.php-fig.org/psr), prioritize satisfying the interfaces defined in the contract library [hyperf/contract](https://github.com/hyperf/contract) defined by Hyperf and depend on the corresponding interfaces rather than implementation classes.
+- For enhancement feature classes added to implement Hyperf-proprietary functionalities, there is usually a dependency on some Hyperf components. The dependencies for these components should not be written in the `require` item of `composer.json`, but rather in the `suggest` item as suggested items.
+- Component design should not perform any dependency injection through annotations; injection methods should only use `constructor injection`, which can also satisfy usage under `OOP`.
+- Component design should not perform any functional definition through annotations; functional definition should only be defined through `ConfigProvider`.
+- Class design should avoid storing state data as much as possible because this will cause the class to be unable to be provided as a long-lived object, and it will also be inconvenient to use dependency injection, which will reduce performance to a certain extent. State data should be stored through `Hyperf\Context\Context` coroutine context.

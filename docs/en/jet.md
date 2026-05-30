@@ -1,8 +1,8 @@
-# Jet, by Hyperf
+# Jet
 
-Jet is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
+Jet is a unified-model RPC client with built-in JSONRPC protocol adaptation. This component is applicable to all PHP environments, including PHP-FPM, Swoole, or Hyperf. (In the Hyperf environment, it is currently still recommended to directly use the `hyperf/json-rpc` component as the client).
 
-> Also will built-in gRPC and Tars protocols in future.
+> In the future, gRPC and Tars protocols will also be built-in.
 
 # Installation
 
@@ -10,13 +10,13 @@ Jet is a unification model RPC Client, built-in JSONRPC protocol, available to r
 composer require hyperf/jet
 ```
 
-# Quickstart
+# Quick Start
 
-## Register protocol
+## Registering Protocols
 
-> Register the protocol is not necessary, but you could manage the protocols more easily by using ProtocolManager.
+> Registering a protocol is not a mandatory step, but you can manage all protocols through the ProtocolManager.
 
-You cloud register any protocol by `Hyperf\Jet\ProtocolManager`, per protocol basically including Transporter, Packer, DataFormatter and PathGenerator, you could register a JSONRPC protocol like below: 
+You can use the `Hyperf\Jet\ProtocolManager` class to register and manage any protocol. Each protocol will contain several basic components such as Transporter, Packer, DataFormatter, and PathGenerator. You can register a JSONRPC protocol as follows:
 
 ```php
 <?php
@@ -35,17 +35,17 @@ ProtocolManager::register($protocol = 'jsonrpc', [
 ]);
 ```
 
-## Register service
+## Registering Services
 
-> Register the service is not necessary, but you could manage the services more easily by using ServiceManager.
+> Registering a service is not a mandatory step, but you can manage all services through the ServiceManager.
 
-After you registered a protocol to `Hyperf\Jet\ProtocolManager`, you could bind the protocol with any services by `Hyperf\Jet\ServiceManager`, like below:
+After you have registered a protocol to `Hyperf\Jet\ProtocolManager`, you can bind the protocol to any service through `Hyperf\Jet\ServiceManager`, as follows:
 
 ```php
 <?php
 use Hyperf\Jet\ServiceManager;
 
-// Bind CalculatorService with jsonrpc protocol, and set the static nodes info.
+// Bind CalculatorService with jsonrpc protocol and set static node information
 ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', [
     ServiceManager::NODES => [
         [$host = '127.0.0.1', $port = 9503],
@@ -53,11 +53,11 @@ ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', 
 ]);
 ```
 
-## Call RPC method
+## Calling RPC Methods
 
-### Call by ClientFactory
+### Calling via ClientFactory
 
-After you registered the protocol and service, you could get your service client via `Hyperf/Jet/ClientFactory`, like below:
+After you have registered the protocols and services, you can obtain a client for your service through `Hyperf/Jet/ClientFactory`, as shown below:
 
 ```php
 <?php
@@ -67,20 +67,19 @@ $clientFactory = new ClientFactory();
 $client = $clientFactory->create($service = 'CalculatorService', $protocol = 'jsonrpc');
 ```
 
-When you have the client object, you could call any remote methods via the object, like below: 
+Once you have a client object, you can use it to call any remote method, as follows:
 
 ```php
-// Call the remote method `add` with arguments `1` and `2`.
-// The $result is the result of the remote method.
+// Call the remote method `add` with arguments `1` and `2`
+// $result will be the return value of the remote method
 $result = $client->add(1, 2);
 ```
 
-If you call a not exist remote method, the client will throw an `Hyperf\Jet\Exception\ServerException` exception.
+When you call a remote method that does not exist, the client will throw a `Hyperf\Jet\Exception\ServerException` exception.
 
-### Call by custom client
+### Calling via Custom Client
 
-You could also create a custom client class which extends `Hyperf\Jet\AbstractClient`, to call the remote methods via the client object.   
-For example, you want to define a RPC client for `CalculatorService` with `jsonrpc` protocol, you could create a `CalculatorService` class firstly, like below:
+You can create a subclass of `Hyperf\Jet\AbstractClient` as a custom client class to complete remote method calls. For example, if you want to define a client class for the `jsonrpc` protocol of the `CalculatorService` service, you can first define a `CalculatorService` class, as shown below:
 
 ```php
 <?php
@@ -98,7 +97,7 @@ use Hyperf\Rpc\Contract\TransporterInterface;
  */
 class CalculatorService extends AbstractClient
 {
-    // Define `CalculatorService` as the default value of $service.
+    // Define `CalculatorService` as the default value for the $service parameter
     public function __construct(
         string $service = 'CalculatorService',
         TransporterInterface $transporter = null,
@@ -106,20 +105,20 @@ class CalculatorService extends AbstractClient
         ?DataFormatterInterface $dataFormatter = null,
         ?PathGeneratorInterface $pathGenerator = null
     ) {
-        // Specific the transporter here, you could also retrieve the transporter from ProtocolManager or passing by constructor.
+        // Specify transporter here; you can still get the transporter through ProtocolManager or pass it from the constructor
         $transporter = new StreamSocketTransporter('127.0.0.1', 9503);
-        // Specific the packer here, you could also retrieve the packer from ProtocolManager or passing by constructor.
+        // Specify packer here; you can still get the packer through ProtocolManager or pass it from the constructor
         $packer = new JsonEofPacker();
         parent::__construct($service, $transporter, $packer, $dataFormatter, $pathGenerator);
     }
 }
 ```
 
-Now, you could use this class to call the remote method directly, like below:
+Now, you can use this class to directly call remote methods, as shown below:
 
 ```php
-// Call the remote method `add` with arguments `1` and `2`.
-// The $result is the result of the remote method.
+// Call the remote method `add` with arguments `1` and `2`
+// $result will be the return value of the remote method
 $client = new CalculatorService();
 $result = $client->add(1, 2);
 ```

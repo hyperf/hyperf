@@ -1,6 +1,6 @@
-# AMQP
+# AMQP Component
 
-[hyperf/amqp](https://github.com/hyperf/amqp)
+[hyperf/amqp](https://github.com/hyperf/amqp) is a component that implements the AMQP standard, primarily used for RabbitMQ integration.
 
 ## Installation
 
@@ -8,19 +8,19 @@
 composer require hyperf/amqp
 ```
 
-## Default Config
+## Default Configuration
 
-|   Configuration  |  Type  |  Default value   |                        Remark                       |
-|:----------------:|:------:|:----------------:|:---------------------------------------------------:|
-|       host       | string |     localhost    |                         Host                        |
-|       port       |  int   |       5672       |                     Port number                     |
-|       user       | string |       guest      |                       Username                      |
-|     password     | string |       guest      |                       Password                      |
-|      vhost       | string |         /        |                         vhost                       |
-| concurrent.limit |  int   |         0        |      Maximum quantity consumed simultaneously       |
-|       pool       | object |                  |   Connection pool configuration                     |
-| pool.connections |  int   |         1        | Number of connections maintained within the process |
-|      params      | object |                  |                   Basic configurations              |
+| Configuration | Type | Default Value | Remark |
+| :--- | :--- | :--- | :--- |
+| host | string | localhost | Host |
+| port | int | 5672 | Port |
+| user | string | guest | Username |
+| password | string | guest | Password |
+| vhost | string | / | vhost |
+| concurrent.limit | int | 0 | Max number of concurrent consumers |
+| pool | object | | Connection pool configuration |
+| pool.connections | int | 1 | Number of connections kept within a process |
+| params | object | | Basic configuration |
 
 ```php
 <?php
@@ -45,12 +45,12 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
-            // Try to maintain twice value heartbeat as much as possible
-            'read_write_timeout' => 3.0,
+            // Try to keep it twice the heartbeat value
+            'read_write_timeout' => 6.0,
             'context' => null,
             'keepalive' => false,
-            // Try to ensure that the consumption time of each message is less than the heartbeat time as much as possible
-            'heartbeat' => 0,
+            // Try to ensure that the consumption time of each message is less than the heartbeat time
+            'heartbeat' => 3,
             'close_on_destruct' => false,
         ],
     ],
@@ -60,15 +60,21 @@ return [
 ];
 ```
 
-## Deliver Message
+You can set different `pool`s in the `__construct` function of `producer` or `consumer`, such as the `default` and `pool2` mentioned above.
 
-Use generator command to create a producer.
+## Producing Messages
+
+Use the `gen:producer` command to create a `producer`.
+
 ```bash
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-We can modify the Producer annotation to replace exchange and routingKey.
-Payload is the data that is finally delivered to the message queue, so we can rewrite the _construct method easily,just make sure payload is assigned.
+In the DemoProducer file, we can modify the fields corresponding to the `#[Producer]` annotation to replace the corresponding `exchange` and `routingKey`.
+The `payload` is the data that will be finally delivered to the message queue, so we can rewrite the `__construct` method at will, as long as we finally assign the `payload`.
+An example is as follows.
+
+> When using the `#[Producer]` annotation, you need to `use Hyperf\Amqp\Annotation\Producer;` namespace;
 
 ```php
 <?php
@@ -81,11 +87,14 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-#[Producer(exchange: 'hyperf', routingKey: 'hyperf')]
+#[Producer(exchange: "hyperf", routingKey: "hyperf")]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
     {
+        // Set different pool
+        $this->poolName = 'pool2';
+
         $user = User::where('id', $id)->first();
         $this->payload = [
             'id' => $id,
@@ -93,10 +102,9 @@ class DemoProducer extends ProducerMessage
         ];
     }
 }
-
 ```
 
-Get the Producer instance through container, and you can deliver the message. It is not reasonable for the following examples to use Application Context directly to get the Producer. For the specific use of container, see the di module.
+Get the `Hyperf\Amqp\Producer` instance through the DI Container to produce messages. The following example directly using `ApplicationContext` to obtain `Hyperf\Amqp\Producer` is actually not reasonable. For the specific use of DI Container, please check the [Dependency Injection](en/di.md) chapter.
 
 ```php
 <?php
@@ -107,18 +115,21 @@ use Hyperf\Context\ApplicationContext;
 $message = new DemoProducer(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);
 $result = $producer->produce($message);
-
 ```
 
-## Consume Message
+## Consuming Messages
 
-Use generator command to create a consumer.
+Use the `gen:amqp-consumer` command to create a `consumer`.
+
 ```bash
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-we can modify the Consumer annotation to replace exchange, routingKey and queue.
-And $data is parsed metadata.
+In the DemoConsumer file, we can modify the fields corresponding to the `#[Consumer]` annotation to replace the corresponding `exchange`, `routingKey`, and `queue`.
+The `$data` is the parsed message data.
+An example is as follows.
+
+> When using the `#[Consumer]` annotation, you need to `use Hyperf\Amqp\Annotation\Consumer;` namespace;
 
 ```php
 <?php
@@ -132,7 +143,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-#[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): Result
@@ -143,30 +154,101 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
-The framework automatically creates the process according to Consumer annotations, and the process will be pulled up again after unexpected exit.
+### Prohibit Consumer Process from Automatically Starting
 
-### Set concurrency consumption
+By default, after using the `#[Consumer]` annotation, the framework will automatically create sub-processes to start consumers, and will restart them after the sub-processes exit abnormally.
+If you are in the development stage and debugging consumers, it may be inconvenient to debug due to consuming other messages.
 
-There are three parameters that affect the rate of consumption
+In this case, you only need to configure `enable=false` (default is `true` to start with the service) in the `#[Consumer]` annotation, or override the class method `isEnable()` in the corresponding consumer to return `false`.
 
-- you can modify the `#[Consumer]` annotation `nums` to open multiple consumers
-- The `ConsumerMessage` base class has an attribute `$qos` that controls the number of messages pulled from the server at a time by overriding `prefetch_size` or `prefetch_count` in `$qos`
-- `concurrent.limit` in the configuration file, which controls the maximum number of consumer coroutines
+```php
+<?php
 
-### Consumption results
+declare(strict_types=1);
 
-The framework will determine the response behavior of the message based on the result returned by the `consume` method in `Consumer`. There are 4 response results, namely `\Hyperf\Amqp\Result::ACK`, `\Hyperf\Amqp\ Result::NACK`, `\Hyperf\Amqp\Result::REQUEUE`, `\Hyperf\Amqp\Result::DROP`, each return value represents the following behavior:
+namespace App\Amqp\Consumers;
 
-| Return                       | Behavior                                                                 |
-|------------------------------|----------------------------------------------------------------------|
-| \Hyperf\Amqp\Result::ACK     | Confirm that the message has been consumed correctly                                               |
-| \Hyperf\Amqp\Result::NACK    | The message was not consumed correctly, respond with the `basic_nack` method                     |
-| \Hyperf\Amqp\Result::REQUEUE | The message was not consumed correctly, respond with the `basic_reject` method and requeue the message |
-| \Hyperf\Amqp\Result::DROP    | The message was not consumed correctly, respond with the `basic_reject` method                   |
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
-### Customize the number of consumer processes according to the environment
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
+class DemoConsumer extends ConsumerMessage
+{
+    public function consumeMessage($data, AMQPMessage $message): Result
+    {
+        print_r($data);
+        return Result::ACK;
+    }
 
-In the `#[Consumer]` annotation, you can set the number of consumer processes through the `nums` attribute. If you need to set different numbers of consumer processes according to different environments, you can override the `getNums` method. The example is as follows:
+    public function isEnable(): bool
+    {
+        return parent::isEnable();
+    }
+}
+```
+
+### Set Maximum Consumption Count
+
+You can modify the `maxConsumption` property in the `#[Consumer]` annotation to set the maximum number of messages processed by this consumer. After reaching the specified consumption count, the consumer process will restart.
+
+### Setting Concurrent Consumption
+
+There are three places that affect the consumption rate:
+
+- You can modify the `nums` attribute of the `#[Consumer]` annotation to start multiple consumers
+- There is an attribute `$qos` under the `ConsumerMessage` base class. You can control the number of messages pulled from the server each time by overriding the values of `prefetch_size` or `prefetch_count` in `$qos`
+- The `concurrent.limit` parameter in the configuration file controls the maximum number of consumption coroutines
+
+### Consumption Result
+
+The framework decides the response behavior of the message based on the result returned by the `consume` method in `Consumer`. There are 4 types of response results: `\Hyperf\Amqp\Result::ACK`, `\Hyperf\Amqp\Result::NACK`, `\Hyperf\Amqp\Result::REQUEUE`, `\Hyperf\Amqp\Result::DROP`. Each return value represents the following behavior:
+
+| Return Value | Behavior |
+| :--- | :--- |
+| \Hyperf\Amqp\Result::ACK | Confirm that the message was consumed correctly |
+| \Hyperf\Amqp\Result::NACK | The message was not consumed correctly, respond using `basic_nack` method |
+| \Hyperf\Amqp\Result::REQUEUE | The message was not consumed correctly, respond using `basic_reject` method, and requeue the message |
+| \Hyperf\Amqp\Result::DROP | The message was not consumed correctly, respond using `basic_reject` method |
+
+### QOS Configuration
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP does not implement this configuration by default.
+        'prefetch_size' => 0,
+        // The maximum number of messages that the same consumer can process at the same time.
+        'prefetch_count' => 30,
+        // Because Hyperf consumes one queue per Channel by default, the effect of setting global to true/false is the same.
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): Result
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
+
+### Customize the Number of Consumer Processes Based on Environment
+
+In the `#[Consumer]` annotation, you can set the number of consumer processes through the `nums` attribute. If you need to set different numbers of consumer processes according to different environments, you can override the `getNums` method to achieve this, as shown below:
 
 ```php
 #[Consumer(
@@ -188,14 +270,12 @@ final class DemoConsumer extends ConsumerMessage
 }
 ```
 
+## Delayed Queue
 
+The delayed queue of AMQP does not sort based on the delay time. Therefore, once you deliver a task with a 10s delay, and then deliver a task with a 5s delay to this queue, the second 5s task will certainly be consumed only after the first 10s task is completed.
+Therefore, you need to set different queues according to time. If you want a more flexible delayed queue, you can try using `async-queue` in combination with AMQP.
 
-## Delay queue
-
-AMQP's delay queue is not sorted according to the delay time. Therefore, once you deliver a task with a delay of 10 seconds and then deliver a task with a delay of 5 seconds to this queue, it will definitely be in the first place. After the first 10s task is completed, the second 5s task will be consumed.
-Therefore, you need to set up different queues according to time. If you want a more flexible delay queue, you can try using asynchronous queue (async-queue) in conjunction with AMQP.
-
-In addition, AMQP needs to download [delay plug-in](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases) and activate it for normal use
+In addition, AMQP needs to download the [delayed plugin](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases) and activate it to use it normally.
 
 ```shell
 wget https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.9.0/rabbitmq_delayed_message_exchange-3.9.0.ez
@@ -205,13 +285,13 @@ rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 
 ### Producer
 
-Create a `producer` using the `gen:amqp-producer` command. Here is an example of the `direct` type. For other types such as `fanout` and `topic`, just change the `type` in the producer and consumer.
+Use the `gen:amqp-producer` command to create a `producer`. Here is an example of `direct` type. For other types like `fanout`, `topic`, just change the `type` in the producer and consumer.
 
 ```bash
 php bin/hyperf.php gen:amqp-producer DelayDirectProducer
 ```
 
-In the DelayDirectProducer file, add `use ProducerDelayedMessageTrait;`, the example is as follows:
+In the DelayDirectProducer file, add `use ProducerDelayedMessageTrait;`, as shown below:
 
 ```php
 <?php
@@ -228,11 +308,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -240,15 +320,16 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### Consumer
 
-Create a `consumer` using the `gen:amqp-consumer` command.
+Use the `gen:amqp-consumer` command to create a `consumer`.
 
 ```bash
 php bin/hyperf.php gen:amqp-consumer DelayDirectConsumer
 ```
 
-In the `DelayDirectConsumer` file, add and introduce `use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`, the example is as follows:
+In the `DelayDirectConsumer` file, add the introduction of `use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`, as shown below:
 
 ```php
 <?php
@@ -271,13 +352,13 @@ class DelayDirectConsumer extends ConsumerMessage
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function consumeMessage($data, AMQPMessage $message): Result
     {
@@ -285,14 +366,13 @@ class DelayDirectConsumer extends ConsumerMessage
         return Result::ACK;
     }
 }
-
 ```
 
-### Production delay message
+### Producing Delayed Messages
 
-> The following is a demonstration of how to use it in Command. Please refer to the actual usage for specific usage.
+> The following is a demonstration of how to use it in Command, please refer to the actual usage for specific usage.
 
-Create a `DelayCommand` using the `gen:command DelayCommand` command. as follows:
+Use the `gen:command DelayCommand` command to create a `DelayCommand`. As follows:
 
 ```php
 <?php
@@ -341,21 +421,21 @@ class DelayCommand extends HyperfCommand
         $producer->produce($message);
     }
 }
-
 ```
-Execute command line to produce messages
+
+Execute the command line to produce messages:
+
 ```
 php bin/hyperf.php demo:command
 ```
 
-
-## RPC remote procedure call
+## RPC Remote Procedure Call
 
 In addition to typical message queue scenarios, we can also implement RPC remote procedure calls through AMQP. This component also provides corresponding support for this implementation.
 
-### Create consumer
+### Create Consumer
 
-The consumer used by RPC is basically the same as the consumer implementation in a typical message queue scenario. The only difference is that the data needs to be returned to the producer by calling the `reply` method.
+The consumer used by RPC is basically the same as the consumer implementation in typical message queue scenarios. The only difference is that you need to return data to the producer by calling the `reply` method.
 
 ```php
 <?php
@@ -383,9 +463,9 @@ class ReplyConsumer extends ConsumerMessage
 }
 ```
 
-### Make an RPC call
+### Initiate RPC Call
 
-It is also very simple to initiate an RPC remote procedure call as a generator. You only need to obtain the `Hyperf\Amqp\RpcClient` object through the dependency injection container and call the `call` method in it. The returned result is the consumer reply data. As follows:
+As a producer initiating an RPC remote procedure call, it is also very simple. Just obtain the `Hyperf\Amqp\RpcClient` object through the dependency injection container and call the `call` method. The returned result is the data replied by the consumer, as shown below:
 
 ```php
 <?php
@@ -394,7 +474,7 @@ use Hyperf\Amqp\RpcClient;
 use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
-//Set Exchange and RoutingKey consistent with Consumer on DynamicRpcMessage
+// Set the Exchange and RoutingKey consistent with Consumer on DynamicRpcMessage
 $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
 
 // $result:
@@ -406,7 +486,7 @@ $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' 
 
 ### Abstract RpcMessage
 
-The above RPC calling process directly completes the definition of Exchange and RoutingKey through the `Hyperf\Amqp\Message\DynamicRpcMessage` class, and transfers message data. In the design of production projects, we can perform a layer of abstraction on RpcMessage to unify Exchange. and the definition of RoutingKey.
+The RPC calling process above directly completes the definition of Exchange and RoutingKey through the `Hyperf\Amqp\Message\DynamicRpcMessage` class and passes message data. In the design of production projects, we can abstract RpcMessage to unify the definition of Exchange and RoutingKey.
 
 We can create the corresponding RpcMessage class such as `App\Amqp\FooRpcMessage` as follows:
 
@@ -417,17 +497,17 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {
-        //To pass data
+        // Data to be passed
         $this->payload = $data;
     }
 
 }
 ```
 
-In this way, when we make an RPC call, we only need to directly pass the `FooRpcMessage` instance to the `call` method without having to define Exchange and RoutingKey every time it is called.
+In this way, when we perform an RPC call, we only need to pass the `FooRpcMessage` instance directly to the `call` method, without defining Exchange and RoutingKey every time we call it.

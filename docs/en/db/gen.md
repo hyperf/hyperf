@@ -1,33 +1,34 @@
-# Model creation script
+# Model Creation Script
 
-Hyperf provides commands to create models, and you can easily create corresponding models based on data tables. The command generates the model via `AST`, so when you add certain methods, you can also easily reset the model with the script.
+Hyperf provides a command to create models, which allows you to easily create corresponding models based on database tables. The command generates models via `AST`, so when you add some methods, you can also use the script to conveniently reset the model.
 
 ```bash
 php bin/hyperf.php gen:model table_name
 ```
 
-## Create a model
+## Creating Models
 
 The optional parameters are as follows:
 
-|     Parameter      |  Type  |             Defaults              |                                             Remark                                             |
-|:------------------:|:------:|:---------------------------------:|:----------------------------------------------------------------------------------------------:|
-|       --pool       | string |             `default`             | Connection pool, the script will be created based on the current connection pool configuration |
-|       --path       | string |            `app/Model`            |                                           model path                                           |
-|   --force-casts    |  bool  |              `false`              |                          Whether to force reset the `casts` parameter                          |
-|      --prefix      | string |           empty string            |                                          table prefix                                          |
-|   --inheritance    | string |              `Model`              |                                        The parent class                                        |
-|       --uses       | string | `Hyperf\DbConnection\Model\Model` |                                     Use with `inheritance`                                     |
-| --refresh-fillable |  bool  |              `false`              |                          Whether to refresh the `fillable` parameter                           |
-|  --table-mapping   | array  |               `[]`                |          Add a mapping relationship for table name -> model such as ['users:Account']          |
-|  --ignore-tables   | array  |               `[]`                |            There is no need to generate the table name of the model e.g. ['users']             |
-|  --with-comments   |  bool  |              `false`              |                                 Whether to add field comments                                  |
-|  --property-case   |  int   |                `0`                |                              Field Type: 0 Snakecase, 1 CamelCase                              |
+| Parameter | Type | Default Value | Remark |
+| :---: | :---: | :---: | :---: |
+| --pool | string | `default` | Connection pool, the script will create based on the current connection pool configuration |
+| --path | string | `app/Model` | Model path |
+| --force-casts | bool | `false` | Whether to force reset the `casts` parameter |
+| --prefix | string | Empty String | Table prefix |
+| --inheritance | string | `Model` | Parent class |
+| --uses | string | `Hyperf\DbConnection\Model\Model` | Used in conjunction with `inheritance` |
+| --refresh-fillable | bool | `false` | Whether to refresh the `fillable` parameter |
+| --table-mapping | array | `[]` | Increase mapping relationship for table name -> model, e.g., ['users:Account'] |
+| --ignore-tables | array | `[]` | Table names that do not need to generate models, e.g., ['users'] |
+| --with-comments | bool | `false` | Whether to add field comments |
+| --property-case | int | `0` | Field type: 0 snake_case, 1 camelCase |
 
-When using `--property-case` to convert the field type to camel case, you also need to manually add `Hyperf\Database\Model\Concerns\CamelCase` to the model.
-The corresponding configuration can also be configured in `databases.{pool}.commands.gen:model`, as follows
+When converting field types to camelCase using `--property-case`, you also need to manually add `Hyperf\Database\Model\Concerns\CamelCase` to the model.
 
-> All struck-through need to be converted to underscores
+Corresponding configurations can also be configured in `databases.{pool}.commands.gen:model`, as follows:
+
+> All hyphens need to be converted to underscores.
 
 ```php
 <?php
@@ -55,7 +56,7 @@ return [
 ];
 ```
 
-The created model is as follows
+The created model is as follows:
 
 ```php
 <?php
@@ -94,7 +95,7 @@ class User extends Model
 
 ## Visitors
 
-The framework provides several `Visitors` for users to extend the scripting capabilities. The usage is very simple, just add the corresponding `Visitor` in the `visitors` configuration.
+The framework provides several `Visitors` to facilitate users in extending script capabilities. The usage is very simple; just add the corresponding `Visitor` in the `visitors` configuration.
 
 ```php
 <?php
@@ -119,25 +120,25 @@ return [
 
 - Hyperf\Database\Commands\Ast\ModelRewriteKeyInfoVisitor
 
-This `Visitor` can generate the corresponding `$incrementing` `$primaryKey` and `$keyType` according to the primary key in the database.
+This `Visitor` can generate corresponding `$incrementing`, `$primaryKey`, and `$keyType` based on the primary key in the database.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor
 
-This `Visitor` can judge whether the model contains soft delete fields according to the `DELETED_AT` constant, and if so, add the corresponding Trait `SoftDeletes`.
+This `Visitor` can determine whether the model contains soft delete fields based on the `DELETED_AT` constant. If it exists, it adds the corresponding Trait `SoftDeletes`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
 
-This `Visitor` can automatically determine, based on `created_at` and `updated_at`, whether to enable the default recording of `created and modified times`.
+This `Visitor` can automatically determine whether to enable the default functionality of recording `created and modified time` based on `created_at` and `updated_at`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
 
-This `Visitor` can generate corresponding `getters` and `setters` based on database fields.
+This `Visitor` can generate corresponding `getter` and `setter` based on database fields.
 
-## Override Visitor
+## Overriding Visitor
 
-In the Hyperf framework, when `gen:model` is used. By default, only `tinyint, smallint, mediumint, int, bigint` is declared as type int, `bool, boolean` is declared as type boolean, and other data types are defaulted to `string`. You can override adjustments. 
+In the Hyperf framework, when using `gen:model`, by default, only `tinyint`, `smallint`, `mediumint`, `int`, and `bigint` are declared as `int` type, `bool`, and `boolean` are declared as `boolean` type, and other data types default to `string`. This can be adjusted by overriding.
 
-as follows:
+As follows:
 
 ```php
 <?php
@@ -172,10 +173,9 @@ class UserExt extends Model
      */
     protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'string', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
-
 ```
 
-At this point, we can modify this feature by overriding `ModelUpdateVisitor`.
+At this time, we can modify this feature by overriding `ModelUpdateVisitor`.
 
 ```php
 <?php
@@ -196,6 +196,9 @@ use Hyperf\Stringable\Str;
 
 class ModelUpdateVisitor extends Visitor
 {
+    /**
+     * Used by `casts` attribute.
+     */
     protected function formatDatabaseType(string $type): ?string
     {
         switch ($type) {
@@ -206,7 +209,7 @@ class ModelUpdateVisitor extends Visitor
             case 'bigint':
                 return 'integer';
             case 'decimal':
-                // Set to decimal, and set the corresponding precision
+                // Set to decimal and set corresponding precision
                 return 'decimal:2';
             case 'float':
             case 'double':
@@ -220,6 +223,9 @@ class ModelUpdateVisitor extends Visitor
         }
     }
 
+    /**
+     * Used by `@property` docs.
+     */
     protected function formatPropertyType(string $type, ?string $cast): ?string
     {
         if (! isset($cast)) {
@@ -237,7 +243,7 @@ class ModelUpdateVisitor extends Visitor
         }
 
         if (Str::startsWith($cast, 'decimal')) {
-            // If cast is decimal, @property is changed to string
+            // If cast is decimal, @property changes to string
             return 'string';
         }
 
@@ -246,7 +252,7 @@ class ModelUpdateVisitor extends Visitor
 }
 ```
 
-Configure the mapping relationship `dependencies.php`
+Configure the mapping relationship in `dependencies.php`:
 
 ```php
 <?php
@@ -254,7 +260,6 @@ Configure the mapping relationship `dependencies.php`
 return [
     Hyperf\Database\Commands\Ast\ModelUpdateVisitor::class => App\Kernel\Visitor\ModelUpdateVisitor::class,
 ];
-
 ```
 
 After re-executing `gen:model`, the corresponding model is as follows:

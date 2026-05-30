@@ -1,4 +1,4 @@
-# Pool
+# Connection Pool
 
 ## Installation
 
@@ -6,17 +6,18 @@
 composer require hyperf/pool
 ```
 
-## Why the pool needed?
+## Why do we need a connection pool?
 
-When the amount of concurrency is very low, the connection can be temporarily established. However, when the service throughput reaches hundreds or thousands of magnitude, frequent `Connect` and `Close` may become a bottleneck of the service. Practically, when the service is started, several connections can be established and stored in a queue. When needed, one is taken from the queue and used, and then returned to the queue after use. The data structure of this queue is maintained by the connection pool.
+When concurrency is low, connections can be established on demand. However, when service throughput reaches hundreds or thousands of requests, frequent `Connect` and `Close` operations can become a bottleneck. By establishing a set of connections when the service starts and keeping them in a queue, you can retrieve a connection when needed, use it, and return it to the queue afterward. Maintaining this queue is the responsibility of the connection pool.
 
-## Usage
+## Using a connection pool
 
-For the components provided by Hyperf, the connection pool has been adapted. No perception in use. Hyperf automatically completes the acquisition and return of the connection.
+For official Hyperf components, connection pools are already integrated. You do not need to manage them explicitly; the underlying framework automatically handles the acquisition and release of connections.
 
 ## Custom connection pool
 
-To define a connection pool, you first need to implement a subclass that inherits `Hyperf\Pool\Pool` and implements the abstract method `createConnection`, and an object that implements the `Hyperf\Contract\ConnectionInterface` interface should be returned. A demo shown as follow:
+To define a connection pool, you first need to implement a subclass that extends `Hyperf\Pool\Pool` and implement the abstract method `createConnection`. This method must return an object that implements the `Hyperf\Contract\ConnectionInterface` interface. Your custom connection pool is then ready to use. See the example below:
+
 ```php
 <?php
 namespace App\Pool;
@@ -31,12 +32,13 @@ class MyConnectionPool extends Pool
         return new MyConnection();
     }
 }
-``` 
-In this way, the connection can be taken and returned by calling the methods of `get(): ConnectionInterface` and `release(ConnectionInterface $connection): void` on the instantiated `MyConnectionPool` object.
+```
+
+After instantiation, you can use the `get(): ConnectionInterface` and `release(ConnectionInterface $connection): void` methods of the `MyConnectionPool` object to acquire and release connections.
 
 ## SimplePool
 
-A simple pool implementation is provided by hyperf.
+The framework provides a very simple connection pool implementation.
 
 ```php
 <?php
@@ -54,7 +56,7 @@ $pool = $factory->get('your pool name', function () use ($host, $port, $ssl) {
 
 $connection = $pool->get();
 
-$client = $connection->getConnection(); // The Client which mentioned above.
+$client = $connection->getConnection(); // The Client instance mentioned above.
 
 // Do something.
 
@@ -62,11 +64,11 @@ $connection->release();
 
 ```
 
-## Low-frequency Interface
+## Low-frequency component
 
-The pool has a built-in `LowFrequencyInterface` interface. The low-frequency component used by default, and determine whether to release excess connections in the pool based on the frequency of acquiring connections from the pool.
+The connection pool comes with a built-in `LowFrequencyInterface` for handling low-frequency connections. By default, it uses this component to determine whether to release excess connections from the pool based on the frequency of connection acquisition.
 
-If we need to replace the corresponding low-frequency component, you can directly replace it in the `dependencies` configuration. Take the database component as an example.
+If you need to replace the low-frequency component, you can directly replace it in the `dependencies` configuration. Below is an example using the database component:
 
 ```php
 <?php
@@ -78,27 +80,24 @@ namespace App\Pool;
 class Frequency extends \Hyperf\Pool\Frequency
 {
     /**
-     * The time interval of the calculated frequency
-     * @var int
+     * Time interval for frequency calculation
      */
-    protected $time = 10;
+    protected int $time = 10;
 
     /**
-     * Threshold
-     * @var int
+     * Frequency to trigger the low-frequency handler
      */
-    protected $lowFrequency = 5;
+    protected int $lowFrequency = 5;
 
     /**
-     * Minimum time interval for continuous low frequency triggering
-     * @var int
+     * Minimum time interval between consecutive low-frequency triggers
      */
-    protected $lowFrequencyInterval = 60;
+    protected int $lowFrequencyInterval = 60;
 }
 
 ```
 
-Modify the mapping as follows
+Modify the mapping relationship as follows:
 
 ```php
 <?php
@@ -107,11 +106,11 @@ return [
 ];
 ```
 
-### Constant frequency
+### Constant Frequency
 
-Hyperf also provides another low-frequency component `ConstantFrequency`.
+The framework also provides another low-frequency component called `ConstantFrequency`.
 
-When this component is instantiated, a timer will be started and the method `Pool::flushOne(false)` will be called at a regular interval. This method will take a connection from the pool and a connection will be destroyed when the method judged it has been idle for more than a period of time.
+Once this component is instantiated, it starts a timer that calls the `Pool::flushOne(false)` method at fixed intervals. This method retrieves one connection from the pool and destroys it if it has exceeded the idle time limit.
 
 ```php
 <?php

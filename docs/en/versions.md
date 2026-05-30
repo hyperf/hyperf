@@ -1,12 +1,13 @@
-# Versions
+# Version Description
 
 ## Version Rules
 
-Hyperf uses the version number rule of `x.y.z` to name each version, such as version 1.2.3, 1 is `x`, 2 is `y`, and 3 is `z`. You can make your update plan for the Hyperf framework according to the version rules.
-- `x` indicates a major version. When the core of Hyperf undergoes a large number of refactoring changes, or when there are a large number of destructive API changes, it will be released as a version `x`. Generally speaking, version x changes cannot be compared with the previous version x Compatible, but it does not necessarily mean that it is completely incompatible. The specific identification is carried out according to the upgrade guide of the corresponding version.
-- `y` represents an iterative version of a major function. When some public APIs undergo destructive changes, including changes or deletions of public APIs, which may cause the previous version to be incompatible, it will be released as version `y`.
-- `z` means a fully compatible repair version. When bug fixes or security fixes are performed on the existing functions of each component, a version `z` will be selected for release. When a BUG causes a function to be completely unusable, it is also possible When fixing this BUG in version `z`, destructive changes were made to the API, but since the functions were completely unavailable before, such changes will not be released in version y. In addition to bug fixes, version `z` may also include some new features or Components, these functions and components will not affect the previous code usage.
+Hyperf uses the x.y.z version numbering rule for all versions, e.g., version 1.2.3, where 1 is x, 2 is y, and 3 is z. You can formulate your update plan for the Hyperf framework based on this version rule.
 
-## Upgrade
+- x represents a major version. When Hyperf's core undergoes significant refactoring, or when there are a large number of breaking API changes, it will be released as an x version. Changes in x versions are generally incompatible with previous x versions, but not necessarily completely incompatible. Specifics should be verified according to the upgrade guide for the corresponding version.
+- y represents a major feature iteration version. When some public APIs have breaking changes, including changes or deletions of public APIs, resulting in possible incompatibility with previous versions, it will be released as a y version.
+- z represents a fully compatible fix version. When bug fixes or security fixes are made to existing features of various components, they will be released as a z version. When a bug causes a feature to be completely unusable, it is also possible to make breaking changes to the API while fixing the bug in a z version. However, since the feature was already completely unusable, such changes will not be released as a y version. In addition to bug fixes, z versions may also include some new features or components. These features and components will not affect previous code usage.
 
-When you want to upgrade the Hyperf version, if it is an upgrade to the `x` or `y` versions, please follow the upgrade guide for the corresponding version in the document. If you want to upgrade the `z` version, you can directly execute the `composer update hyperf` command in the root directory of your project to update the dependent packages. We do not recommend that you upgrade the version of a certain component separately, but upgrade all components together to get a more consistent development experience.
+## Upgrading Versions
+
+When you wish to upgrade the Hyperf version, for upgrades to x and y versions, please follow the upgrade guide for the corresponding version in the documentation. If you wish to upgrade to a z version, you can directly execute the `composer update hyperf` command in the root directory of your project to update the dependency packages. We do not recommend that you upgrade a single component version individually, but rather upgrade all components uniformly to obtain a more consistent experience.
