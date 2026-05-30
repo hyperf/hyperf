@@ -1,6 +1,6 @@
 # Logger
 
-The `hyperf/logger` component is implemented based on [psr/logger](https://github.com/php-fig/log), and [monolog/monolog](https://github.com/Seldaek/monolog) is used by default as a driver. Some log configurations are provided by default in the `hyperf-skeleton` project, and `Monolog\Handler\StreamHandler` is used by default. Since `Swoole` has already coroutineized functions such as `fopen`, `fwrite`, so long as the `useLocking` parameter is not set to `true`, the coroutine is safe.
+The `hyperf/logger` component is implemented based on [psr/logger](https://github.com/php-fig/log) and uses [monolog/monolog](https://github.com/Seldaek/monolog) as the default driver. In a `hyperf-skeleton` project, some logger configurations are provided by default, using `Monolog\Handler\StreamHandler`. Since `Swoole` has already coroutine-enabled functions like `fopen` and `fwrite`, it is coroutine-safe as long as the `useLocking` parameter is not set to `true`.
 
 ## Installation
 
@@ -10,7 +10,7 @@ composer require hyperf/logger
 
 ## Configuration
 
-Some log configurations are provided by default in the `hyperf-skeleton` project. By default, the log configuration file is `config/autoload/logger.php`. An example is as follows:
+In a `hyperf-skeleton` project, some logger configurations are provided by default. By default, the configuration file for the logger is `config/autoload/logger.php`, as shown in the following example:
 
 ```php
 <?php
@@ -36,7 +36,7 @@ return [
 ];
 ```
 
-## Instruction for use
+## Usage
 
 ```php
 <?php
@@ -50,11 +50,12 @@ use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
+
     protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        // The first parameter corresponds to the name of the log, and the second parameter corresponds to the key in config/autoload/logger.php
+        // The first argument is the name of the log, the second is the key in config/autoload/logger.php
         $this->logger = $loggerFactory->get('log', 'default');
     }
 
@@ -66,9 +67,9 @@ class DemoService
 }
 ```
 
-## Basic knowledge about monolog
+## Basic Monolog Knowledge
 
-Let's take a look at some of the basic concepts involved in monolog with the following code:
+Let's combine the code to look at some basic concepts involved in `monolog`:
 
 ```php
 use Monolog\Formatter\LineFormatter;
@@ -76,21 +77,21 @@ use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-// Create a Channel. The parameter log is the name of the Channel
+// Create a Channel, the argument 'log' is the name of the Channel
 $log = new Logger('log');
 
 // Create two Handlers, corresponding to variables $stream and $fire
 $stream = new StreamHandler('test.log', Logger::WARNING);
 $fire = new FirePHPHandler();
 
-// Define the time format as "Y-m-d H:i:s"
+// Define date format as "Y-m-d H:i:s"
 $dateFormat = "Y n j, g:i a";
-// Define the log format as "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+// Define log format as "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
 $output = "%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n";
-// Create a Formatter based on the time format and log format
+// Create a Formatter based on the date format and log format
 $formatter = new LineFormatter($output, $dateFormat);
 
-// Set Formatter to Handler
+// Set the Formatter to the Handler
 $stream->setFormatter($formatter);
 
 // Push the Handler into the Handler queue of the Channel
@@ -115,47 +116,45 @@ $log->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor());
 $log->alert('czl');
 ```
 
-- Firstly, instantiate a `Logger` and take a name which corresponds to `channel`
-- You can bind multiple `Handler` to `Logger`. `Logger` performs log, and hand it over to `Handler` for processing
-- `Handler` can specify which **log level** logs need to be processed, such as `Logger::WARNING` or only process logs with log level `>=Logger::WARNING`
-- Who will format the log? The `Formatter` will. Just set the Formatter and bind it to the corresponding `Handler`
-- What parts of the log included: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
-- Distinguish the extra information added in the log `context` and `extra`: The `context` is additionally specified by the user when logging, which is more flexible; And the `extra` is fixedly added by the `Processor` bound to the `Logger`, which is more suitable for collecting some **common information**
+- First, instantiate a `Logger` and give it a name; the name corresponds to the `channel`.
+- You can bind multiple `Handlers` to a `Logger`. When the `Logger` records a log, it delegates the processing to the `Handlers`.
+- `Handlers` can specify which **log levels** to handle, for example, `Logger::WARNING` will only handle logs with a level `>=Logger::WARNING`.
+- Who formats the log? The `Formatter`. Set up the `Formatter` and bind it to the corresponding `Handler`.
+- A log consists of: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
+- Distinguish between `context` and `extra` added in the log: `context` is specified extra by the user when logging, which is more flexible; `extra` is fixedly added by the `Processor` bound to the `Logger`, which is more suitable for collecting **common information**.
 
-## More usage
+## Advanced Usage
 
-### Encapsulate the `Log` class
+### Encapsulating the `Log` Class
 
-Sometimes, you may wish to keep the habit of logging in most frameworks. Then you can create a `Log` class under `App`, and call the magic static method `__callStatic` to access to `Logger` and each Level of logging. Let’s demonstrate through code:
+Sometimes you may want to maintain the habits of logging used in most frameworks. In such cases, you can create a `Log` class under `App` and use the `__callStatic` magic method to implement static calls for accessing the `Logger` and recording logs at various levels. Let's demonstrate this with code:
 
-> Remember not to make a relation with name and request, such as linking $request_id as a logger name, it can cause request level log objects to be stored in the factory, leading to serious memory leak.
+> Remember, when using it, do not let $name be tied to the request. For example, using $request_id as the logger name would cause the Factory to store request-level logger objects, leading to severe memory leaks.
 
 ```php
 namespace App;
 
-use Hyperf\Logger\Logger;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Context\ApplicationContext;
-
 
 class Log
 {
     public static function get(string $name = 'app')
     {
-        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
+        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name);
     }
 }
-
 ```
 
-By default, a `Channel` named `app` is used to record logs. You can also use the `Log::get($name)` method to obtain the `Logger` of different `Channels`. The powerful `Container` can help you to solve it all
+By default, it uses the `Channel` named `app` to record logs. You can also get a `Logger` for a different `Channel` using the `Log::get($name)` method. The powerful `Container` handles all of this for you.
 
-### stdout log
+### stdout Logging
 
-By default, the log output by the framework components is supported by the implementation class of the interface `Hyperf\Contract\StdoutLoggerInterface`, the `Hyperf\Framework\Logger\StdoutLogger`. This implementation class is just to output the relevant information on the `stdout` through `print_r()`, which is the `terminal` that starts `Hyperf`. In this case, `monolog` is not actually used. What if you want to use `monolog` to be consistent?
+The logs output by framework components are supported by the `Hyperf\Framework\Logger\StdoutLogger` implementation class of the `Hyperf\Contract\StdoutLoggerInterface` interface by default. This implementation class only outputs relevant information via `print_r()` to `standard output (stdout)`, i.e., the `Terminal` that starts `Hyperf`, which means `monolog` is not actually used. So how can we handle this if we want to use `monolog` to maintain consistency?
 
-Absolutely, it is through the powerful `Container`.
+Yes, still via the powerful `Container`.
 
-- First, implement a `StdoutLoggerFactory` class. The usage of `Factory` can be explained in more detail in the [Dependency Injection](zh-cn/di.md) chapter.
+- First, implement a `StdoutLoggerFactory` class. For more details on the usage of `Factory`, please refer to the [Dependency Injection](di.md) chapter.
 
 ```php
 <?php
@@ -174,7 +173,7 @@ class StdoutLoggerFactory
 }
 ```
 
-- Declare the dependency, the work of `StdoutLoggerInterface` is done by the class instantiated by the actual dependent `StdoutLoggerFactory`
+- Declare the dependency. In places where `StdoutLoggerInterface` is used, it will be completed by the class instantiated by the actually dependent `StdoutLoggerFactory`.
 
 ```php
 // config/autoload/dependencies.php
@@ -183,9 +182,9 @@ return [
 ];
 ```
 
-### Output different format logs in different environments
+### Different Log Formats in Different Environments
 
-So many uses of the above are only for the `Logger` in the monolog. Let's take a look at `Handler` and `Formatter`.
+The usage mentioned above only revolves around the `Logger` in monolog. Let's take a look at `Handler` and `Formatter`.
 
 ```php
 // config/autoload/logger.php
@@ -217,19 +216,19 @@ return [
         ],
         'formatter' => $formatter,
     ],
-]
+];
 ```
 
-- A `Handler` named `default` is configured by default, and contains the information of this `Handler` and its `Formatter`
-- When obtaining the `Logger`, if the `Handler` is not specified, the bottom layer will automatically bind the `default(Handler)` to the `Logger`
-- dev (development) environment: Use `php://stdout` to output logs to `stdout`, and set `allowInlineLineBreaks` in `Formatter`, which is convenient for viewing multi-line logs
-- Non-dev environment: The log uses `JsonFormatter`, which will be formatted as `json` and is convenient for delivery to third-party log services
+- A `Handler` named `default` is configured by default, which includes information about this `Handler` and its `Formatter`.
+- When getting a `Logger`, if no `Handler` is specified, the underlying layer will automatically bind the `default` `Handler` to the `Logger`.
+- `dev` (development) environment: Logs are output to `standard output (stdout)` using `php://stdout`, and `allowInlineLineBreaks` is set in the `Formatter` for easy viewing of multi-line logs.
+- Non-`dev` environment: Logs are formatted as `json` using `JsonFormatter`, which is convenient for submitting to third-party log services.
 
-### Rotate log files by date
+### Log File Rotation by Date
 
-If you want the log file to be rotated according to the date, you can use the `Monolog\Handler\RotatingFileHandler` provided by `Mongolog`. And the configuration is as follows:
+If you want log files to be rotated by date, you can use the `Monolog\Handler\RotatingFileHandler` already provided by `Monolog`. Configure it as follows:
 
-Modify the `config/autoload/logger.php` configuration file, change `Handler` to `Monolog\Handler\RotatingFileHandler::class` and change the `stream` field to `filename`.
+Modify the `config/autoload/logger.php` configuration file, change the `Handler` to `Monolog\Handler\RotatingFileHandler::class`, and change the `stream` field to `filename`.
 
 ```php
 <?php
@@ -255,13 +254,12 @@ return [
 ];
 ```
 
-If you want to perform more fine-grained log cutting, you can also extend the `Monolog\Handler\RotatingFileHandler` class and reimplement the `rotate()` method.
+If you wish to perform finer-grained log splitting, you can also extend the `Monolog\Handler\RotatingFileHandler` class and re-implement the `rotate()` method.
 
-### Configure multiple `Handler`
+### Configuring Multiple `Handlers`
 
-Users can modify `handlers` so that the corresponding log group can supports multiple `handlers`. 
-For example, in the following configuration, when a user posts a log higher the level of `INFO`, it will be written in `hyperf.log` and `hyperf-debug.log`.
-When a user posts a `DEBUG` log, the log will be written only in `hyperf-debug.log`.
+Users can modify `handlers` to allow the corresponding log group to support multiple `handlers`. For example, in the following configuration, when a user submits a log with a level of `INFO` or higher, the log will be written to both `hyperf.log` and `hyperf-debug.log`.
+When a user submits a `DEBUG` level log, it will only be written to `hyperf-debug.log`.
 
 ```php
 <?php
@@ -307,7 +305,6 @@ return [
         ],
     ],
 ];
-
 ```
 
 Or
@@ -363,7 +360,7 @@ return [
 
 ```
 
-The result is as follows
+The result is as follows:
 
 ```shell
 ==> runtime/logs/hyperf.log <==
@@ -372,4 +369,56 @@ The result is as follows
 ==> runtime/logs/hyperf-debug.log <==
 {"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
 {"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```
+
+
+### Unified Request-Level Logging
+
+Sometimes, we need to associate logs for the same request. Therefore, we can implement a `Processor`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel\Log;
+
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
+
+class AppendRequestIdProcessor implements ProcessorInterface
+{
+    public const REQUEST_ID = 'log.request.id';
+
+    public function __invoke(array|LogRecord $record)
+    {
+        $record['extra']['request_id'] = Context::getOrSet(self::REQUEST_ID, uniqid());
+        $record['extra']['coroutine_id'] = Coroutine::id();
+        return $record;
+    }
+}
+
+```
+
+Then configure it into our `logger.php` configuration:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Kernel\Log;
+
+return [
+    'default' => [
+        // Remove other configurations
+        'processors' => [
+            [
+                'class' => Log\AppendRequestIdProcessor::class,
+            ],
+        ],
+    ],
+];
 ```

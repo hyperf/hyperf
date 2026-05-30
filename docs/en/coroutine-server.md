@@ -1,16 +1,16 @@
-# Coroutine Style Server
+# Coroutine-style Service
 
-Hyperf uses [Swoole asynchronous style](https://wiki.swoole.com/#/server/init) by default, which is a multi-process model and custom processes are running in separate processes.
+Hyperf uses [Swoole asynchronous style](https://wiki.swoole.com/#/server/init) by default. This type is a multi-process model, and custom processes run as separate processes.
 
-> This type will run in single-process mode when using SWOOLE_BASE and not using custom processes. You can check the Swoole official documentation for details.
+> This type will run as a single-process model when using SWOOLE_BASE and not using custom processes. For details, please refer to the official Swoole documentation.
 
-Hyperf also provides a coroutine style service, which is a single-process model, and all custom processes will run in coroutine mode, without creating separate processes.
+Hyperf also provides a coroutine-style service. This type is a single-process model. All custom processes will run in coroutine mode, and no separate processes will be created.
 
-Both styles can be selected as needed, **but it is not recommended to switch to an existing service without any consideration**.
+These two styles can be chosen as needed, **but it is not recommended to blindly switch services that are already in normal use**.
 
 ## Configuration
 
-Modify the `autoload/server.php` configuration file and set `type` to `Hyperf\Server\CoroutineServer::class` to start the coroutine style.
+Modify the `autoload/server.php` configuration file and set `type` to `Hyperf\Server\CoroutineServer::class` to start in coroutine style.
 
 ```php
 <?php
@@ -35,14 +35,13 @@ return [
         ],
     ],
 ];
-
 ```
 
 ## WebSocket
 
-1. Because of the coroutine style and asynchronous style, there are differences in the corresponding callbacks, so it needs to be used as needed
+1. Because there are differences in the corresponding callbacks between the coroutine style and the asynchronous style, you need to use them as needed.
 
-For example, `onReceive` callback, the asynchronous style is `Swoole\Server`, and the coroutine style is `Swoole\Coroutine\Server\Connection`.
+For example, for the `onReceive` callback, the asynchronous style uses `Swoole\Server`, while the coroutine style uses `Swoole\Coroutine\Server\Connection`.
 
 ```php
 <?php
@@ -56,13 +55,13 @@ use Swoole\Server as SwooleServer;
 
 interface OnReceiveInterface
 {
-     /**
-      * @param Connection|SwooleServer $server
-      */
-     public function onReceive($server, int $fd, int $reactorId, string $data): void;
+    /**
+     * @param Connection|SwooleServer $server
+     */
+    public function onReceive($server, int $fd, int $reactorId, string $data): void;
 }
 ```
 
-2. The coroutine where the middleware is located will only end when `onClose`
+2. The coroutine where the middleware resides only ends upon `onClose`.
 
-Because the database instance of `Hyperf` is returned to the connection pool when the coroutine is destroyed, if `Database` is used in the middleware of `WebSocket`, the connection in the connection pool will not be returned normally.
+Because the `Hyperf` database instance is returned to the connection pool when the coroutine is destroyed, using `Database` in `WebSocket` middleware will result in connections in the connection pool not being returned normally.

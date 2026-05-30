@@ -1,56 +1,55 @@
-# Microservice
+# Microservices
 
-Microservices are small and autonomous services that work together.
+Microservices are small, autonomous services that work together.
 
-## Small, focus on doing one thing well
+## Small, Focused on Doing One Thing Well
 
-With the iteration of requirements and the increase of new features, the code repository tends to become larger and larger. Although we strongly hope to achieve clear modularity in the huge code repository, in fact, the boundaries between modules are difficult to distinguish clearly. Gradually, similar functional codes can be seen everywhere in the code repository. As a result, it is very difficult to know where to make changes when edition updates, and it is increasingly difficult to fix `Bug` and add new features.
-In a mono-system, some abstraction layers or modularization are usually created to ensure the `cohesion` of the code, thereby avoiding the problems mentioned above.
+As requirements iterate and new features are added, codebases often grow increasingly large. Even with our best efforts to achieve clear modularity within a massive codebase, in reality, boundaries between modules are hard to define. Over time, similar functional code becomes pervasive, making it difficult to know where to make modifications during iteration, and progressively harder to fix bugs or add new features.
+In a monolithic system, we usually create abstraction layers or implement modularity to ensure code `cohesion`, thus avoiding the problems mentioned above.
 
-> According to Robert C. Martin [Single Responsibility Principle](https://baike.baidu.com/item/单一职责原则/9456515): "* Put things that change for the same reason together and separate things that change for different reasons. *" This argument emphasizes the concept of `cohesion` very well.
+> According to Robert C. Martin's argument on the [Single Responsibility Principle](https://baike.baidu.com/item/单一职责原则/9456515): "*Gather together the things that change for the same reasons. Separate things that change for different reasons.*" This argument well emphasizes the concept of cohesion.
 
-Microservices apply this concept to independent services, and determine the boundaries of services based on the boundaries of the business. Each service focuses on things within the boundaries of the service. By doing so, can we avoid many problems arising from excessively large code repository.
-How tiny should a microservice be? Small enough, but not too small. 
-How to evaluate whether a system is disassembled small enough? When you don't have the desire to make it smaller in the entire system, then it should be small enough. The smaller the services, the more obvious the advantages and disadvantages of `Microservice`. The smaller the service used, the greater the benefits of independence, but the management of a large number of services will also be more complicated.
+Microservices apply this philosophy to independent services, determining service boundaries based on business boundaries. Each service focuses on what lies within its boundary, thus avoiding many issues stemming from excessively large codebases.
+So, how small should a microservice be? Small enough is fine, but not too small. How do you measure if a system is split small enough? When you face the system and no longer have the desire to "break it down" because it's too large, it should be small enough. The smaller the service, the more obvious the advantages and disadvantages of `Microservice architecture` become. Smaller services bring more benefits from independence, but managing a large number of services also becomes more complex.
 
 ## Autonomy
 
-A microservice is an independent entity, it can be deployed independently, and it can also exist as an operating system process. There is isolation between services, and services are communicated through network, thereby strengthening the isolation between services and avoiding tight coupling. Services should be able to be modified independently, and the deployment of a certain service should not cause changes in the `Service Consumer`. This requires us to consider how much of these `Service Providers` should be exposed and what should be hidden. If they are exposed too much, the `Service Consumer` will be coupled with the internal implementation of the providers. This will make the service directly generate additional coordination work, thereby reducing the autonomy of the service.
+A microservice is an independent entity that can be deployed independently and exist as an operating system process. There is isolation between services, and communication between services occurs via network calls, thereby strengthening isolation and avoiding tight coupling. Services should be able to be modified independently of each other, and the deployment of one service should not cause changes in its `Service Consumer`. This requires us to consider what the `Service Provider` should expose and what it should hide. If too much is exposed, the `Service Consumer` will couple with the internal implementation of the service, which will cause additional coordination work for the service, thereby reducing its autonomy.
 
-## Main benefits
+## Main Benefits
 
-### Heterogeneity of technology
+### Technical Heterogeneity
 
-In a system where multiple services cooperate with each other, the technology which is most suitable for the service can be selected from different services. Because the services are called through the network, the realization of the service will not be limited by the implementation language or system framework. This means that when a part of the system needs performance improvement, the implementation of that part can be rebuilt using a better-performing technology stack.
+In a system consisting of multiple collaborating services, you can select the most suitable technology for each service. Since communication between services is via network calls, the implementation of a service is not limited to the system's implementation language or framework. This means that when a part of the system needs performance improvement, that part can be rebuilt using a technology stack with better performance.
 
-### Elasticity
+### Resilience
 
-A key concept to realize a elastic system is `Bulkhead`. If a component or a service in the system is unavailable, but does not cause a cascading failure, then other parts of the system can still operate normally. The `service boundary` of microservice is obviously a `Bulkhead`. In the `Monolithic architecture` system, that is, the system under the traditional `PHP-FPM` architecture, if a certain part is unavailable, then all functions are unavailable in most cases. Although the system can be deployed on multiple nodes through technologies such as load balancing to reduce the probability that the system is completely unavailable, for the `Microservice` system, the architecture itself can handle service unavailability and issues such as functional degradation.
+A key concept for achieving a resilient system is the `Bulkhead`. If a component or service in the system becomes unavailable, it should not lead to a cascading failure, allowing the rest of the system to function normally. The `service boundary` of a microservice is clearly a `Bulkhead`. In a `Monolithic architecture` system, specifically under the traditional `PHP-FPM` architecture, if a part is unavailable, in most cases, all functionality is unavailable. Although you can use load balancing and other technologies to deploy the system on multiple nodes to reduce the probability of the system being completely unavailable, for a `Microservice architecture` system, its architecture itself can well handle service unavailability and functional degradation.
 
-### Expansibility
+### Scalability
 
-A `monolithic architecture` system can only be expanded as a whole, even if only a small part of the system has performance problems. If you use multiple smaller services, you can only extend the services which need to be extended, so that those services which do not need to be extended can be run on cheaper servers and saving costs.
+A `Monolithic architecture` system can only be scaled as a whole, even if only a small part of the system has performance issues. By using multiple smaller services, you can scale only the services that need scaling, allowing services that do not need scaling to run on cheaper servers, thus saving costs.
 
-### Simply deployment
+### Simplified Deployment
 
-In a `monolithic architecture` system with a huge amount of code, even if only one line of code is modified, the entire system needs to be redeployed to publish the change. This kind of deployment has a great impact and high risk, so related persons rarely do such deployment. Therefore, the frequency of deployment in actual operations become very low. A lot of features or `Bugfix` will be made to the system between versions, and a large number of changes will be released to the production environment at one time. But the greater the difference between the two releases, the greater the likelihood of errors.
-Of course, in the development under the traditional `PHP-FPM` architecture, we may not have such a problem, because hot updates are a natural existence. However, the pros and cons exist at the same time.
+In a `Monolithic architecture` system with a massive amount of code, even if you only change one line of code, you need to redeploy the entire system to release the change. Such deployment has a significant impact and high risk; therefore, stakeholders involved are afraid to deploy easily. As a result, in practical operations, the frequency of deployment becomes very low. Many features or `Bugfixes` are accumulated between versions, and a large number of changes are released to the production environment at once. However, the greater the difference between two releases, the greater the possibility of errors.
+Of course, in development under the traditional `PHP-FPM` architecture, we might not have such a problem, because hot updates exist naturally, but pros and cons exist simultaneously.
 
-### Match with the organizational structure
+### Alignment with Organizational Structure
 
-In the case of `Monolithic architecture` and the structure of the team is also 'distributed' (remote), code conflicts caused by a large number of engineers' code submissions and iterative communication in different places will make the maintenance system more complex. As we all know that a team with appropriate size can get higher productivity by working on a small repository, so the division of services can well divide the related responsibilities.
+In a `Monolithic architecture`, especially when the team structure is "distributed" (geographically dispersed), code conflicts caused by a large number of engineers' code submissions and remote iteration communication make maintaining the system more complex. We all know that a suitably sized team working on a small codebase can achieve higher productivity. Therefore, the splitting and ownership of services can well divide related responsibilities.
 
 ### Composability
 
-The main benefit claimed by `Distributed System` and `Service Oriented Architecture (SOA)` is that it is easy to reuse existing functions. Under the `Microservice`, more fine-grained service splitting will reflect this advantage more vividly.
+A major claimed benefit of `Distributed systems` and `Service-Oriented Architecture (SOA)` is the ease of reusing existing functionality. Under `Microservice architecture`, finer-grained service splitting will make this advantage even more prominent.
 
-### Highly reconfigurable
+### High Refactorability
 
-If you are facing a large `monolithic architecture` system, the code inside is messy, and everyone is afraid to refactor. But when you are dealing with a small-scale fine-grained service, refactoring a service or even rewriting a corresponding service is relatively operable.
-In a large `monolithic architecture` system, can you be sure that it will not cause any problems with hundreds of lines of code are deleted in one single day? But with a good `Microservice`, I believe that you can delete a service directly without any problem.
+If you are facing a large `Monolithic architecture` system with chaotic and ugly code, everyone is afraid to refactor it easily. But when you face a small-scale, fine-grained service, refactoring a service or even rewriting a corresponding service is relatively actionable. Can you be sure that deleting hundreds of lines of code in a large `Monolithic architecture` system in one day won't cause any problems? But in a well-designed `Microservice architecture`, I believe you can also handle deleting a service with ease.
 
 ## No Silver Bullet
 
-Although the benefits of `Microservices` are numerous, however, **Microservice is not a silver bullet! ! !**. You need to consider the complexity that all distributed systems need to consider. You may need to do a lot of work on deployment, testing, monitoring, calls between services, and service reliability, and even you need to deal with issues similar to distributed transactions or CAP-related issues. Although `Hyperf` has solved many problems for you, your team must have enough knowledge related to distributed systems before implementing `Microservice`, in order to deal with problems that you may never face or considered.
+Although `Microservice architecture` has many benefits, **Microservices are not a silver bullet!!!** You need to face the complexity that all distributed systems must face. You may need to do a lot of work in deployment, testing, and monitoring, and a lot of work in inter-service calls and service reliability. You may even need to handle issues similar to distributed transactions or those related to CAP. Although `Hyperf` has solved many problems for you, before implementing `Microservice architecture`, your team must possess sufficient knowledge of distributed systems to face many problems you may not have faced or considered under `Monolithic architecture`.
 
-*| Part of the content in this chapter is referred from《Building Microservices》 by Sam Newman*
+
+*| Some content of this chapter is translated from Sam Newman's "Building Microservices"*
