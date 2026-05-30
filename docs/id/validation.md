@@ -535,6 +535,21 @@ Berikut adalah daftar aturan validasi beserta fungsinya:
 Nilai dari field yang divalidasi harus berupa `yes`, `on`, `1`, atau `true`,
 yang berguna saat "menyetujui perjanjian layanan".
 
+##### accepted_if:anotherfield,value,...
+
+Jika field lain yang sedang divalidasi sama dengan nilai yang ditentukan, field
+yang divalidasi harus bernilai `yes`, `on`, `1`, atau `true`. Ini berguna untuk
+memvalidasi penerimaan "terms of service" atau field serupa.
+
+##### declined
+
+Field yang divalidasi harus bernilai `no`, `off`, `0`, atau `false`.
+
+##### declined_if:anotherfield,value,...
+
+Jika nilai field validasi lain sama dengan nilai yang ditentukan, field yang
+divalidasi harus bernilai `no`, `off`, `0`, atau `false`.
+
 ##### active_url
 
 Field yang divalidasi harus merupakan URL yang valid berdasarkan function PHP
@@ -564,20 +579,47 @@ yang ditentukan. Untuk informasi lebih lanjut, silakan merujuk pada aturan
 
 ##### alpha
 
-Field yang divalidasi harus berupa huruf (termasuk karakter Mandarin).
+Field yang divalidasi harus berupa huruf (termasuk karakter Mandarin). Untuk
+membatasi aturan validasi ini ke karakter ASCII (`a-z` dan `A-Z`), Anda dapat
+memberikan opsi `ascii` pada aturan validasi:
+
+```php
+'username' => 'alpha:ascii',
+```
 
 ##### alpha_dash
 
 Field yang divalidasi dapat berisi huruf (termasuk karakter Mandarin) dan
-angka, serta tanda hubung (dash) dan garis bawah (underscore).
+angka, serta tanda hubung (dash) dan garis bawah (underscore). Untuk membatasi
+aturan validasi ini ke karakter ASCII (`a-z` dan `A-Z`), Anda dapat memberikan
+opsi `ascii` pada aturan validasi:
+
+```php
+'username' => 'alpha_dash:ascii',
+```
 
 ##### alpha_num
 
-Field yang divalidasi harus berupa huruf (termasuk karakter Mandarin) atau angka.
+Field yang divalidasi harus berupa huruf (termasuk karakter Mandarin) atau
+angka. Untuk membatasi aturan validasi ini ke karakter ASCII (`a-z` dan `A-Z`),
+Anda dapat memberikan opsi `ascii` pada aturan validasi:
+
+```php
+'username' => 'alpha_num:ascii',
+```
+
+#### ascii
+
+Field yang divalidasi harus sepenuhnya berupa karakter ASCII 7-bit.
 
 ##### array
 
 Field yang divalidasi harus berupa array PHP.
+
+##### required_array_keys:foo,bar,...
+
+Field yang divalidasi harus berupa array dan setidaknya harus berisi key yang
+ditentukan.
 
 ##### bail
 
@@ -601,14 +643,17 @@ Memverifikasi bahwa ukuran field berada di antara nilai minimum dan maksimum
 yang ditentukan. String, angka, array, dan file semuanya dapat menggunakan
 aturan ini seperti aturan `size`:
 
-```php
 'name' => 'required|between:1,20'
-```
 
 ##### boolean
 
 Field yang divalidasi harus dapat dikonversi menjadi nilai boolean dan
 menerima input seperti true, false, 1, 0, "1", dan "0".
+
+##### boolean:strict
+
+Field yang divalidasi harus dapat dikonversi menjadi nilai boolean, dan hanya
+menerima true serta false.
 
 ##### confirmed
 
@@ -631,6 +676,140 @@ tersebut akan diteruskan ke function PHP `strtotime`.
 Field yang divalidasi harus cocok dengan format yang ditentukan. Anda dapat
 menggunakan function PHP `date` atau `date_format` untuk memvalidasi field
 tersebut.
+
+##### decimal:min,max
+
+Field yang divalidasi harus berupa numeric dan harus memiliki jumlah angka
+desimal yang ditentukan:
+
+```php
+// Harus memiliki tepat dua angka desimal (misalnya 9.99)...
+'price' => 'decimal:2'
+
+// Harus memiliki 2 sampai 4 angka desimal...
+'price' => 'decimal:2,4'
+```
+
+##### lowercase
+
+Field yang divalidasi harus berupa lowercase.
+
+##### uppercase
+
+Field yang divalidasi harus berupa uppercase.
+
+##### mac_address
+
+Field yang divalidasi harus berupa MAC address.
+
+##### max_digits:value
+
+Integer yang divalidasi harus memiliki panjang maksimum `value`.
+
+##### min_digits:value
+
+Integer yang divalidasi harus memiliki setidaknya `value` digit.
+
+##### exclude
+
+Field yang sedang divalidasi akan dikecualikan dari method `validate` dan
+`validated`.
+
+##### exclude_if:anotherfield,value
+
+Jika `anotherfield` sama dengan `value`, field yang sedang divalidasi akan
+dikecualikan dari method `validate` dan `validated`.
+
+Pada beberapa scenario kompleks, Anda juga dapat menggunakan method
+`Rule::excludeIf`. Method ini perlu mengembalikan nilai boolean atau anonymous
+function. Jika yang dikembalikan adalah anonymous function, function tersebut
+harus mengembalikan `true` atau `false` untuk menentukan apakah field yang
+divalidasi perlu dikecualikan:
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf(fn () => $request->user()->is_admin),
+]);
+```
+
+##### prohibited
+
+Field yang perlu divalidasi harus tidak ada atau kosong. Field dianggap
+"kosong" jika memenuhi salah satu kondisi berikut:
+
+1. Nilainya `null`.
+2. Nilainya string kosong.
+3. Nilainya array kosong atau objek countable kosong.
+4. Nilainya file upload, tetapi path file kosong.
+
+##### prohibited_if:anotherfield,value,...
+
+Jika field `anotherfield` sama dengan salah satu `value`, field yang perlu
+divalidasi harus tidak ada atau kosong. Field dianggap "kosong" jika memenuhi
+salah satu kondisi berikut:
+
+1. Nilainya `null`.
+2. Nilainya string kosong.
+3. Nilainya array kosong atau objek countable kosong.
+4. Nilainya file upload, tetapi path file kosong.
+
+Jika memerlukan logika kondisi prohibit yang kompleks, Anda dapat menggunakan
+method `Rule::prohibitedIf`. Method ini menerima nilai boolean atau closure.
+Ketika closure diberikan, closure tersebut harus mengembalikan `true` atau
+`false` untuk menunjukkan apakah field validasi harus dilarang:
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf(fn () => $request->user()->is_admin),
+]);
+```
+
+##### missing
+
+Field yang divalidasi harus tidak ada di data input.
+
+##### missing_if:anotherfield,value,...
+
+Jika field `anotherfield` sama dengan salah satu `value`, field yang divalidasi
+harus tidak ada.
+
+##### missing_unless:anotherfield,value
+
+Field yang divalidasi harus tidak ada, kecuali field `anotherfield` sama dengan
+salah satu `value`.
+
+##### missing_with:foo,bar,...
+
+Jika salah satu field lain yang ditentukan ada, field yang divalidasi harus
+tidak ada.
+
+##### missing_with_all:foo,bar,...
+
+Jika semua field lain yang ditentukan ada, field yang divalidasi harus tidak ada.
+
+##### multiple_of:value
+
+Field yang divalidasi harus berupa kelipatan dari `value`.
+
+##### doesnt_start_with:foo,bar,...
+
+Field yang divalidasi tidak boleh diawali oleh salah satu nilai yang diberikan.
+
+##### doesnt_end_with:foo,bar,...
+
+Field yang divalidasi tidak boleh diakhiri oleh salah satu nilai yang diberikan.
 
 ##### different:field
 
@@ -792,6 +971,10 @@ Field yang divalidasi harus ada di dalam nilai field lain.
 ##### integer
 
 Field yang divalidasi harus berupa integer.
+
+##### integer:strict
+
+Field yang divalidasi harus benar-benar bertipe integer.
 
 ##### ip
 

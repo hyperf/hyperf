@@ -57,13 +57,13 @@ akan secara otomatis menginjeksikan parameter tersebut ke dalam parameter
 method. Sebagai contoh, jika route Anda didefinisikan sebagai berikut:
 
 ```php
-// Route definition using annotation method
+// Metode annotation
 #[GetMapping(path: "/user/{id:\d+}")]
 
-// Route definition using configuration method
+// Metode konfigurasi
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET','HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
+Router::addRoute(['GET', 'HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
 Maka Anda dapat mendapatkan parameter `query` `id` dengan mendeklarasikan
@@ -104,10 +104,10 @@ class IndexController
 {
     public function info(RequestInterface $request)
     {
-        // Returns the route parameter id if defined or null if the value is missing
+        // Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default null
         $id = $request->route('id');
 
-        // Returns the route parameter id if defined or 0 if the value is missing
+        // Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default 0
         $id = $request->route('id', 0);
         // ...
     }
@@ -150,10 +150,10 @@ lengkap dari request yang masuk. Method `url()` mengembalikan `URL` tanpa
 parameters`:
 
 ```php
-// No query parameters
+// Tanpa query parameter
 $url = $request->url();
 
-// With query parameters
+// Dengan query parameter
 $url = $request->fullUrl();
 ```
 
@@ -189,9 +189,9 @@ yang mengimplementasikan `Hyperf\HttpServer\Contract\RequestInterface`.
 
 ## Preprocessing & Normalisasi Input
 
-## Mendapatkan Input
+### Mendapatkan Input
 
-### Mendapatkan Semua Input
+#### Mendapatkan Semua Input
 
 Anda dapat menggunakan method `all()` untuk mendapatkan semua data input dalam
 bentuk `array`:
@@ -200,18 +200,18 @@ bentuk `array`:
 $all = $request->all();
 ```
 
-### Mendapatkan Nilai Input yang Ditentukan
+#### Mendapatkan Nilai Input yang Ditentukan
 
 Gunakan `input(string $key, $default = null)` dan `inputs(array $keys, $default
 = null): array` untuk mendapatkan `satu` atau `beberapa` nilai input dari
 bentuk apa pun:
 
 ```php
-// Returns the input value if it exists or null if it doesn't exist
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
 $name = $request->input('name');
 
-// Return the input value if it exists or the default value of 'Hyperf' if it doesn't exist
-$name = $request->input('name','Hyperf');
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+$name = $request->input('name', 'Hyperf');
 ```
 
 Jika data form yang dikirimkan berisi data dalam bentuk array, Anda dapat
@@ -224,24 +224,24 @@ $name = $request->input('products.0.name');
 $names = $request->input('products.*.name');
 ```
 
-### Mendapatkan Input dari Query String
+#### Mendapatkan Input dari Query String
 
 Gunakan method `input` atau `inputs` untuk mendapatkan data input dari seluruh
 request (termasuk `query parameters`), dan method `query(?string $key = null,
 $default = null)` untuk mendapatkan input hanya dari query string:
 
 ```php
-// Return the query parameter if it exists, return null if it doesn't exist
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
 $name = $request->query('name');
 
-// Return the query parameter if it exists, return default value of 'Hyperf' if it doesn't exist
-$name = $request->query('name','Hyperf');
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+$name = $request->query('name', 'Hyperf');
 
-// If no parameters are passed, all query parameters are returned as an associative array
+// Jika tidak mengirimkan parameter, semua Query parameter dikembalikan sebagai array asosiatif
 $name = $request->query();
 ```
 
-### Mendapatkan Informasi Input `JSON`
+#### Mendapatkan Informasi Input `JSON`
 
 Jika format data `body` request adalah `JSON`, selama nilai header `Content-Type`
 dari `objek Request (Request)` diatur dengan benar ke `application/json`, Anda
@@ -250,17 +250,17 @@ data `JSON` dan Anda bahkan dapat menggunakan dot syntax untuk membaca array
 `JSON`:
 
 ```php
-// Return value or null if it does not exist
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
 $name = $request->input('user.name');
 
-// Return value or default value of 'Hyperf' if it does not exist
-$name = $request->input('user.name','Hyperf');
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+$name = $request->input('user.name', 'Hyperf');
 
-// Return all Json data as an array
+// Mengembalikan semua data Json dalam bentuk array
 $name = $request->all();
 ```
 
-### Menentukan Apakah Nilai Input Ada
+#### Menentukan Apakah Nilai Input Ada
 
 Untuk menentukan apakah suatu nilai ada dalam request, Anda dapat menggunakan
 method `has($keys)`. Jika nilai tersebut ada dalam request, method akan
@@ -270,20 +270,20 @@ terakhir, method akan mengembalikan `true` hanya jika semua key yang ditentukan
 ada:
 
 ```php
-// Only judge a single value
+// Hanya memeriksa satu nilai
 if ($request->has('name')) {
     // ...
 }
 
-// Judge multiple values at the same time
-if ($request->has(['name','email'])) {
+// Memeriksa beberapa nilai sekaligus
+if ($request->has(['name', 'email'])) {
     // ...
 }
 ```
 
-## Cookies
+### Cookies
 
-### Mendapatkan Cookies dari Request
+#### Mendapatkan Cookies dari Request
 
 Gunakan method `getCookieParams()` untuk mendapatkan semua `Cookies` dari
 request sebagai array asosiatif.
@@ -296,16 +296,16 @@ Anda dapat menggunakan method `cookie(string $key, $default = null)` untuk
 mendapatkan nilai dari cookie yang sesuai:
 
  ```php
-// Return value if the cookie exists or return null if it doesn't exist
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
 $name = $request->cookie('name');
 
-// Return value if the cookie exists or return a default value of 'Hyperf' if it doesn't exist
-$name = $request->cookie('name','Hyperf');
+// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+$name = $request->cookie('name', 'Hyperf');
  ```
 
-## File
+### File
 
-### Mendapatkan File yang Diunggah
+#### Mendapatkan File yang Diunggah
 
 Anda dapat menggunakan method `file(string $key, $default):
 ?Hyperf\HttpMessage\Upload\UploadedFile` untuk mendapatkan objek file yang
@@ -315,11 +315,11 @@ kelas `SplFileInfo` dari `PHP` dan juga menyediakan berbagai method untuk
 berinteraksi dengan file tersebut:
 
 ```php
-// Returns a Hyperf\HttpMessage\Upload\UploadedFile object if the file exists, or null if it does not exist
+// Jika ada, kembalikan objek Hyperf\HttpMessage\Upload\UploadedFile; jika tidak ada, kembalikan null
 $file = $request->file('photo');
 ```
 
-### Memeriksa Apakah File Ada
+#### Memeriksa Apakah File Ada
 
 Anda dapat menggunakan method `hasFile(string $key): bool` untuk mengonfirmasi
 apakah ada file dalam request:
@@ -330,7 +330,7 @@ if ($request->hasFile('photo')) {
 }
 ```
 
-### Memverifikasi Keberhasilan Unggahan
+#### Memverifikasi Keberhasilan Unggahan
 
 Selain memeriksa apakah file yang diunggah ada, Anda juga dapat memverifikasi
 apakah file yang diunggah valid melalui method `isValid(): bool`:
@@ -341,7 +341,7 @@ if ($request->file('photo')->isValid()) {
 }
 ```
 
-### Path & Ekstensi File
+#### Path & Ekstensi File
 
 Kelas `UploadedFile` juga berisi method untuk mengakses path lengkap file dan
 ekstensinya. Method `getExtension()` akan menentukan ekstensi file berdasarkan
@@ -349,14 +349,14 @@ konten file tersebut. Ekstensi ini mungkin berbeda dari ekstensi yang diberikan
 oleh client:
 
 ```php
-// The path is the temporary path of the uploaded file
+// Path ini adalah path sementara file yang diunggah
 $path = $request->file('photo')->getPath();
 
-// Since the tmp_name of the uploaded file by Swoole does not retain the original file name, this method has been rewritten to obtain the suffix of the original file name
+// Karena tmp_name file upload Swoole tidak mempertahankan nama file asli, method ini telah ditulis ulang untuk mendapatkan suffix nama file asli
 $extension = $request->file('photo')->getExtension();
 ```
 
-### Menyimpan File yang Diunggah
+#### Menyimpan File yang Diunggah
 
 File yang diunggah disimpan di lokasi sementara sebelum disimpan secara manual.
 Jika Anda tidak menyimpan file tersebut, file akan dihapus dari lokasi sementara
@@ -368,8 +368,61 @@ Contoh kodenya adalah sebagai berikut:
 $file = $request->file('photo');
 $file->moveTo('/foo/bar.jpg');
 
-// Determine whether the method has moved through the isMoved(): bool method
+// Menentukan apakah file sudah dipindahkan melalui method isMoved(): bool
 if ($file->isMoved()) {
     // ...
 }
 ```
+
+## Event Terkait
+
+Ketika `enable_request_lifecycle` diaktifkan pada konfigurasi service, setiap
+request yang masuk dapat memicu tiga event berikut.
+
+### Contoh Konfigurasi
+
+> Kode lain yang tidak terkait dihapus dari contoh berikut.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+use Hyperf\Server\ServerInterface;
+
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => ServerInterface::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'options' => [
+                // Whether to enable request lifecycle event
+                'enable_request_lifecycle' => false,
+            ],
+        ],
+    ],
+];
+
+```
+
+### Daftar Event
+
+- Hyperf\HttpServer\Event\RequestReceived
+
+Event ini dipicu saat request diterima.
+
+- Hyperf\HttpServer\Event\RequestHandled
+
+Event ini dipicu saat request selesai diproses.
+
+- Hyperf\HttpServer\Event\RequestTerminated
+
+Event ini dipicu saat coroutine yang membawa request saat ini dihancurkan.

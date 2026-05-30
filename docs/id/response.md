@@ -10,7 +10,7 @@ langsung melalui objek ini.
 > dari semua method yang diawali dengan `with` adalah objek baru dan tidak akan
 > mengubah nilai dari objek aslinya.
 
-## Return JSON
+## Mengembalikan Format JSON
 
 Anda dapat mengembalikan konten berformat `Json` secara cepat menggunakan
 method `json($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
@@ -37,7 +37,7 @@ class IndexController
 }
 ```
 
-## Return XML
+## Mengembalikan Format XML
 
 Anda dapat mengembalikan konten berformat `XML` secara cepat menggunakan
 method `xml($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
@@ -64,7 +64,7 @@ class IndexController
 }
 ```
 
-## Return the raw content
+## Mengembalikan Konten Raw
 
 Anda dapat mengembalikan konten mentah (raw) secara cepat menggunakan method
 `raw($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
@@ -88,11 +88,11 @@ class IndexController
 }
 ```
 
-## Return view
+## Mengembalikan View
 
 Silakan merujuk ke [View](id/view.md).
 
-## Redirection
+## Redirect
 
 `Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
 `redirect(string $toUrl, int $status = 302, string $schema = 'http')` untuk
@@ -124,7 +124,7 @@ class IndexController
 }
 ```
 
-## Cookie
+## Pengaturan Cookie
 
 ```php
 <?php
@@ -144,11 +144,54 @@ class IndexController
 }
 ```
 
-## Kompresi Gzip
+## Chunk Transfer Encoding
 
-## Chunk
+`Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
+`write(string $data)` untuk mengirim konten response ke browser secara bertahap
+dan mengatur `Transfer-Encoding` menjadi `chunked`. `$data` menerima string atau
+objek yang mengimplementasikan method `__toString()`.
 
-## File Download
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Swoole\Coroutine;
+use Hyperf\Engine\Http\EventStream;
+
+class IndexController
+{
+    public function index(ResponseInterface $response)
+    {
+       $response
+            ->withStatus(200)
+            ->withHeader('X-Event-Mode', 'Enabled') // Custom Header
+            ->withHeader('X-Stream-Time', '5s');
+        $streamer = new EventStream($this->response->getConnection(), $response);
+        $startTime = time();
+        $totalSteps = 5;
+        $streamer->write("data: --- EventStream dimulai (total {$totalSteps} langkah) ---\n\n");
+        for ($i = 1; $i <= $totalSteps; ++$i) {
+            Coroutine::sleep(1);
+            $elapsed = time() - $startTime;
+            $message = "data: [detik ke-{$i}] data chunk selesai dikirim. Waktu berlalu: {$elapsed} detik\n\n";
+            $streamer->write($message);
+        }
+        $streamer->write("data: --- EventStream selesai ---\n\n");
+        $streamer->end();
+
+        return 'Hello Hyperf';
+    }
+}
+```
+
+!> Perhatikan: setelah memanggil `write` untuk mengirim data secara bertahap,
+jika Anda kembali menggunakan `return` untuk mengembalikan data, data tersebut
+tidak akan dikembalikan secara normal. Pada contoh di atas, `Hello Hyperf` tidak
+akan di-output, hanya `data: [detik ke-{$i}] data chunk selesai dikirim. Waktu
+berlalu: {$elapsed} detik\n\n` yang akan di-output.
+
+## Download File
 
 `Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
 `download(string $file, string $name = '')` untuk mengembalikan objek

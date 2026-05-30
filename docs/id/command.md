@@ -282,6 +282,7 @@ $ php bin/hyperf.php demo:command
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
+# output
 ...
 Swoole
 ```

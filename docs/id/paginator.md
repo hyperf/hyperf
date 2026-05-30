@@ -122,6 +122,13 @@ $url = $paginator->url($page);
 $onFirstPage = $paginator->onFirstPage();
 ```
 
+## Apakah masih ada halaman lain
+
+```php
+<?php
+$hasMorePages = $paginator->hasMorePages();
+```
+
 ## Mendapatkan jumlah item per halaman
 
 ```php

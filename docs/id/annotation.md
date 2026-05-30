@@ -4,9 +4,9 @@ Annotation adalah fitur yang sangat kuat di Hyperf yang dapat digunakan untuk
 mengurangi banyak konfigurasi dalam bentuk annotation dan untuk
 mengimplementasikan berbagai fitur yang sangat memudahkan.
 
-## Concept
+## Konsep
 
-### What is annotation?
+### Apa itu annotation?
 
 Annotation menawarkan kemampuan untuk menambahkan informasi metadata terstruktur yang
 dapat dibaca mesin pada deklarasi di dalam kode: class, method, function,
@@ -33,7 +33,7 @@ untuk mengimplementasikan method setUp(), sebuah annotation dapat digunakan. Sal
 satu keuntungan dari pendekatan ini adalah kita dapat menggunakan annotation
 tersebut beberapa kali.
 
-### How it works?
+### Bagaimana annotation bekerja?
 
 Seperti yang telah dikatakan bahwa annotation hanyalah definisi metadata yang
 harus bekerja dengan aplikasi agar dapat berfungsi. Di Hyperf, data dalam
@@ -44,7 +44,7 @@ class kustom Anda sendiri, kemudian membaca dan memanfaatkan metadata annotation
 yang terkumpul di tempat di mana annotation itu sendiri diharapkan bekerja untuk
 mencapai implementasi fungsional yang diinginkan.
 
-### Ignore some annotations
+### Mengabaikan annotation tertentu
 
 Dalam beberapa kasus, kita mungkin ingin mengabaikan annotation tertentu.
 Sebagai contoh, ketika kita mengakses beberapa tool yang menghasilkan dokumen
@@ -58,7 +58,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 return [
     'scan' => [
-        // Annotations in the ignore_annotations array will be ignored by the annotation scanner
+        // Annotation di array ignore_annotations akan diabaikan oleh annotation scanner
         'ignore_annotations' => [
             ArrayShape::class,
         ],
@@ -66,12 +66,12 @@ return [
 ];
 ```
 
-## Usage of Annotation
+## Menggunakan Annotation
 
 Ada tiga tipe penerapan dari annotation, yaitu pada `class`, `method of class`,
 dan `property of class`.
 
-### Use class level annotation
+### Menggunakan class annotation
 
 Definisi annotation tingkat class berada di blok komentar di atas keyword
 `class`. Sebagai contoh, `Controller` dan `AutoController` yang umum digunakan
@@ -85,7 +85,7 @@ annotation `ClassAnnotation` diterapkan pada class `Foo`.
 class Foo {}
 ```
 
-### Use method level annotation
+### Menggunakan method annotation
 
 Definisi annotation tingkat method berada di blok komentar di atas method class.
 Sebagai contoh, `RequestMapping` yang umum digunakan adalah contoh penggunaan dari
@@ -105,7 +105,7 @@ class Foo
 }
 ```
 
-### Use property level of annotation
+### Menggunakan property annotation
 
 Definisi annotation tingkat property berada di blok komentar di atas property.
 Sebagai contoh, `Value` dan `Inject` yang sering digunakan adalah contoh
@@ -123,7 +123,7 @@ class Foo
 }
 ```
 
-### The passing of annotation parameter
+### Pengiriman parameter annotation
 
 - Melewatkan parameter tunggal utama: `#[DemoAnnotation('value')]`
 - Melewatkan parameter string: `#[DemoAnnotation(key1: 'value1', key2: 'value2')]`
@@ -131,9 +131,7 @@ class Foo
 
 ## Custom Annotation
 
-### Create an Annotation class
-
-Buat class annotation di mana saja, seperti pada contoh kode berikut:
+### Membuat class Annotation
 
 ```php
 <?php
@@ -143,15 +141,24 @@ use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
-class Bar extends AbstractAnnotation
-{
-    // some code
-}
-
-#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
-    // some code
+    public function __construct(public array $bar, public int $baz = 0)
+    {
+    }
+}
+```
+
+Menggunakan class annotation:
+
+```php
+<?php
+use App\Annotation\Foo;
+
+#[Foo(bar: [1, 2], baz: 3)]
+class IndexController extends AbstractController
+{
+    // Memanfaatkan data annotation
 }
 ```
 
@@ -162,7 +169,8 @@ interface `Hyperf\Di\Annotation\AnnotationInterface`, sehingga peran dari abstra
 class di sini adalah untuk menyediakan definisi minimal. Abstract class tersebut
 telah diimplementasikan untuk Anda agar dapat `secara otomatis menetapkan
 parameter annotation ke property class`, dan `secara otomatis mengumpulkan data
-annotation ke AnnotationCollector`.
+annotation ke AnnotationCollector sesuai aturan berdasarkan lokasi penggunaan
+annotation`.
 
 ### Custom Annotation Collector
 
@@ -179,7 +187,30 @@ yang sesuai berdasarkan kebutuhan Anda sendiri:
 - `public function collectProperty(string $className, ?string $target): void`
   Method ini akan dijalankan ketika annotation didefinisikan pada property.
 
-### Usage of annotation data
+Karena framework menyediakan fitur cache untuk annotation collector, Anda perlu
+mengonfigurasi custom collector ke `annotations.scan.collectors`. Dengan begitu,
+framework dapat otomatis melakukan cache terhadap annotation yang sudah
+dikumpulkan dan menggunakannya kembali pada startup berikutnya. Jika collector
+terkait tidak dikonfigurasi, custom annotation hanya akan aktif saat `server`
+pertama kali dijalankan, dan tidak akan aktif pada startup berikutnya.
+
+```php
+<?php
+
+return [
+    // Perhatikan bahwa pada file konfigurasi di config/autoload tidak ada layer annotations ini
+    'annotations' => [
+        'scan' => [
+            'collectors' => [
+                CustomCollector::class,
+            ],
+        ],
+    ],
+];
+
+```
+
+### Memanfaatkan data annotation
 
 Ketika tidak ada method pengumpulan annotation kustom, metadata annotation akan
 dikumpulkan di class `Hyperf\Di\Annotation\AnnotationCollector` secara default.
@@ -384,19 +415,3 @@ return [
 ```
 
 Dengan demikian, method seperti `co()` dan `parallel()` secara otomatis bisa mendapatkan data di context dari parent coroutine, misalnya `Request`.
-
-## IDE Plugin of Annotation
-
-Karena `PHP` tidak mendukung `annotation` secara native (secara bawaan), `IDE`
-tidak menambahkan dukungan fitur annotation secara default. Namun kita dapat
-menambahkan plugin pihak ketiga agar `IDE` mendukung fitur `annotation`.
-
-### PhpStorm
-
-Kita dapat mencari `PHP Annotations` di bagian `Plugins` dan menemukan komponen
-yang sesuai [PHP Annotations](https://github.com/Haehnchen/idea-php-annotation-plugin).
-Kemudian instal plugin tersebut, restart `PhpStorm`, dan Anda dapat menggunakan
-fitur annotation dengan nyaman. Plugin ini terutama menyediakan fitur untuk
-menambahkan dukungan lompatan otomatis (jump) dan pengingat kode (code reminder)
-untuk class annotation, serta secara otomatis merujuk ke namespace yang sesuai
-saat annotation digunakan.

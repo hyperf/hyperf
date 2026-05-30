@@ -34,9 +34,9 @@ adalah sebagai berikut:
 ```php
 <?php
 return [
-    // `http` corresponds to the value corresponding to the name attribute of each server in config/autoload/server.php. This configuration is only applied to the server you configured.
+    // http sesuai dengan nilai property name dari setiap server di config/autoload/server.php, konfigurasi ini hanya diterapkan pada Server tersebut
     'http' => [
-        // Configure your global middleware in an array, in order according to the order of the array
+        // Konfigurasikan middleware global Anda di dalam array ini, urutannya mengikuti urutan array
         YourMiddleware::class
     ],
 ];
@@ -67,21 +67,21 @@ beberapa definisi route:
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
-// Each route definition method can accept a $options parameter
-Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
+// Setiap method definisi route dapat menerima parameter $options
+Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 
-// All routings under the group will apply the configured middleware
+// Semua route di bawah Group ini akan menerapkan middleware yang dikonfigurasi
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
     },
-    ['middleware' => [ForMiddleware::class]]
+    ['middleware' => [FooMiddleware::class]]
 );
 
 ```
@@ -108,13 +108,14 @@ Mendefinisikan satu middleware tunggal:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
- #[AutoController]
- #[Middleware(FooMiddleware::class)]
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -128,6 +129,7 @@ Mendefinisikan beberapa middleware:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -137,6 +139,30 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
 #[Middlewares([FooMiddleware::class, BarMiddleware::class])]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+Mendefinisikan beberapa middleware melalui annotation `#[Middleware]`:
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -156,6 +182,7 @@ tingkat class. Mari kita lihat kodenya:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -164,10 +191,9 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
-#[Middleware(FooMiddleware::class)]
+#[Middlewares([FooMiddleware::class])]
 class IndexController
 {
-    
     #[Middleware(BarMiddleware::class)]
     public function index()
     {
@@ -200,20 +226,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FooMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var HttpResponse
-     */
-    protected $response;
+    protected HttpResponse $response;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {
@@ -224,7 +241,7 @@ class FooMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // According to the specific business judgment logic, it is assumed that the token carried by the user is valid here.
+        // Berdasarkan logika bisnis tertentu, di sini diasumsikan token yang dibawa user valid
         $isValidToken = true;
         if ($isValidToken) {
             return $handler->handle($request);
@@ -234,7 +251,7 @@ class FooMiddleware implements MiddlewareInterface
             [
                 'code' => -1,
                 'data' => [
-                    'error' => 'The token is invalid, preventing further execution.',
+                    'error' => 'Validasi token middleware tidak valid, mencegah eksekusi berlanjut',
                 ],
             ]
         );
@@ -248,14 +265,14 @@ Urutan eksekusi middleware adalah `FooMiddleware -> BarMiddleware`.
 Kita dapat melihat dari penjelasan di atas bahwa total ada 3 tingkat middleware,
 yaitu `global middleware`, `class level middleware`, dan `method level middleware`.
 Jika semua middleware ini didefinisikan, urutan eksekusinya adalah:
-`Global Middleware -> Method Level Middleware -> Class Level Middleware`.
+`global middleware -> class level middleware -> method level middleware`.
 
 Pada versi `>=3.0.34`, konfigurasi prioritas baru telah ditambahkan, yang
 memungkinkan Anda mengubah urutan eksekusi middleware saat mengonfigurasi metode
 dan routing middleware. Semakin tinggi prioritasnya, semakin tinggi urutan eksekusinya.
 
 ```php
-// middleware.php
+// File konfigurasi middleware global middleware.php
 return [
     'http' => [
         YourMiddleware::class,
@@ -264,6 +281,7 @@ return [
 ];
 ```
 ```php
+// Konfigurasi route middleware
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
@@ -277,6 +295,7 @@ Router::addGroup(
 );
 ```
 ```php
+// Konfigurasi annotation middleware
 #[AutoController]
 #[Middleware(FooMiddleware::class)]
 #[Middleware(FooMiddlewareB::class, 3)]

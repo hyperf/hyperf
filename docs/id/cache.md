@@ -2,7 +2,7 @@
 
 [hyperf/cache](https://github.com/hyperf/cache) menyediakan aspect cache berdasarkan implementasi `Aspect`, dan juga menyediakan class cache yang mengimplementasikan `Psr\SimpleCache\CacheInterface`.
 
-## Install
+## Instalasi
 
 ```
 composer require hyperf/cache

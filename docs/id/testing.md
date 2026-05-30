@@ -1,23 +1,25 @@
 # Pengujian Otomatis
 
-Pengujian di Hyperf diimplementasikan menggunakan `phpunit` secara default,
-tetapi karena Hyperf adalah sebuah coroutine framework, skrip `phpunit` default
-tidak berjalan dengan baik, sehingga kami menyediakan skrip `co-phpunit`. Anda
-dapat memanggil skrip tersebut secara langsung atau menggunakan perintah
-composer yang sesuai. Tidak ada komponen khusus untuk pengujian otomatis, tetapi
-akan ada implementasi yang sesuai dalam [paket
-skeleton](https://github.com/hyperf/hyperf-skeleton) yang disediakan oleh
-Hyperf.
+Di Hyperf, testing diimplementasikan menggunakan `phpunit` secara default, dan
+pada 3.1 sudah mendukung framework `pest` berbasis phpunit. Lihat
+[dokumentasi Pest](https://pestphp.com/docs/installation).
 
-```
-composer require hyperf/testing
+```shell
+composer require hyperf/testing --dev
+composer require pestphp/pest --dev
 ```
 
 ```json
 "scripts": {
+    "pest": "pest --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
+
+| package         | version |
+| --------------- | ------- |
+| phpunit/phpunit | ^10.1   |
+| pestphp/pest    | ^2.8  |
 
 ## Bootstrap
 
@@ -36,13 +38,14 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
+// Diaktifkan secara default. Saat menggunakan fitur pest --parallel atau operasi parallel native lain, baris ini perlu dikomentari
 Swoole\Runtime::enableCoroutine(true);
 
-require BASE_PATH.'/vendor/autoload.php';
+require BASE_PATH . '/vendor/autoload.php';
 
 Hyperf\Di\ClassLoader::init();
 
-$container = require BASE_PATH.'/config/container.php';
+$container = require BASE_PATH . '/config/container.php';
 
 $container->get(Hyperf\Contract\ApplicationInterface::class);
 
@@ -54,7 +57,12 @@ Menjalankan unit test
 composer test
 ```
 
-## HTTP Testing
+## Catatan Penting
+
+- `hyperf/testing` menyediakan Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php). Cukup gunakan Trait ini pada `Test` tertentu untuk mengaktifkan lingkungan coroutine.
+- Saat menggunakan parameter `--parallel` dari pest, komentari `Swoole\Runtime::enableCoroutine(true)` di `test/bootstrap.php`.
+
+## Simulasi HTTP Request
 
 Saat mengembangkan antarmuka (interface/API), kita biasanya memerlukan skrip
 pengujian otomatis untuk memastikan bahwa interface yang kita sediakan berjalan
@@ -117,6 +125,23 @@ $result = $client->json('/user/0', [
 ]);
 ```
 
+### Menggunakan Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
+```
+
 ## Contoh
 
 Mari kita tulis sebuah DEMO kecil untuk mengujinya.
@@ -137,10 +162,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -289,10 +311,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -337,7 +356,7 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }
@@ -423,7 +442,10 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownAfterMethod()
     {
         Mockery::close();
     }
@@ -453,7 +475,7 @@ class DemoLogicTest extends HttpTestCase
         $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
-
+        
         return $container;
     }
 }
@@ -476,21 +498,37 @@ Modifikasi konten dari file `phpunit.xml` sebagai berikut:
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // Direktori test case yang perlu dijalankan
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // Perlu menghasilkan file untuk cakupan unit test
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // File yang perlu dihitung cakupan unit test-nya
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // File yang perlu diabaikan saat menghasilkan cakupan unit test
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
+
 </phpunit>
 ```
 

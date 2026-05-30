@@ -10,14 +10,13 @@ untuk mengisolasi berbagai bagian dari business logic, yang mengurangi tingkat
 coupling di antara bagian-bagian tersebut, meningkatkan reusabilitas program,
 serta meningkatkan efisiensi pengembangan.
 
-Secara populer, dalam Hyperf Anda dapat mengintervensi eksekusi metode apa pun
-dari kelas mana pun yang dikelola oleh [hyperf/di](https://github.com/hyperf/di)
-melalui `Aspect`. Mengintervensi proses untuk mengubah atau meningkatkan fungsi
-dari metode asli, inilah yang disebut AOP.
+Secara sederhana, di Hyperf Anda dapat menggunakan `Aspect` untuk masuk ke alur
+eksekusi method mana pun dari class mana pun, lalu mengubah atau memperkuat
+fungsi method asli. Inilah yang disebut AOP.
 
-> Untuk menggunakan AOP, Anda harus menggunakan
-> [hyperf/di](https://github.com/hyperf/di) sebagai dependency injection
-> container.
+> Perlu diperhatikan bahwa "class mana pun" di sini bukan berarti semua class
+> secara mutlak. Class yang digunakan untuk mengimplementasikan fitur AOP pada
+> tahap awal startup Hyperf tidak dapat di-aspect.
 
 ## Pendahuluan
 
@@ -82,6 +81,46 @@ di dalam `config/autoload/aspects.php` agar aktif.
 > Untuk menggunakan annotation `#[Aspect]`, Anda harus mengimpor namespace
 > `use Hyperf\Di\Annotation\Aspect;`.
 
+Anda juga dapat mengonfigurasi target melalui property annotation `#[Aspect]`
+itu sendiri. Bentuk annotation berikut memiliki tujuan yang sama dengan contoh
+di atas:
+
+```php
+<?php
+namespace App\Aspect;
+
+use App\Service\SomeClass;
+use App\Annotation\SomeAnnotation;
+use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\Aop\AbstractAspect;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+#[
+    Aspect(
+        classes: [
+            SomeClass::class,
+            "App\Service\SomeClass::someMethod",
+            "App\Service\SomeClass::*Method"
+        ],
+        annotations: [
+            SomeAnnotation::class
+        ]
+    )
+]
+class FooAspect extends AbstractAspect
+{
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        // Setelah aspect masuk, method ini bertanggung jawab menjalankan method terkait.
+        // $proceedingJoinPoint adalah join point, method process() akan memanggil method asli dan mendapatkan hasilnya.
+        // Lakukan beberapa pemrosesan sebelum pemanggilan
+        $result = $proceedingJoinPoint->process();
+        // Lakukan beberapa pemrosesan setelah pemanggilan
+        return $result;
+    }
+}
+```
+
 ## Mengubah atau Memperkuat Method Asli
 
 Selain itu, Anda juga dapat merealisasikan kebutuhan bisnis (business requirement) Anda dengan cara mendapatkan instance asli, melakukan refleksi pada method, mengirimkan argumen, mendapatkan annotation, dll.:
@@ -140,21 +179,25 @@ class FooAspect extends AbstractAspect
 
 ## Cache dari Proxy Class
 
-Semua kelas yang dipengaruhi oleh AOP akan menghasilkan `proxy class cache`
-yang sesuai di dalam folder `./runtime/container/proxy/`. Saat server berjalan,
-jika proxy class cache yang sesuai dengan kelas tersebut sudah ada, cache
-tersebut tidak akan dibuat ulang dan langsung digunakan, bahkan jika `Aspect`
-atau `Business Class` telah berubah. Ketika cache tidak ada, proxy class cache
-yang baru akan dibuat ulang secara otomatis.
+Semua class yang dipengaruhi oleh AOP akan menghasilkan `proxy class cache`
+yang sesuai di folder `./runtime/container/proxy/`. Apakah cache ini dibuat
+otomatis saat startup bergantung pada nilai konfigurasi `scan_cacheable` di file
+`config/config.php`. Nilai default-nya adalah `false`. Jika bernilai `true`,
+Hyperf tidak akan melakukan scan dan membuat proxy class cache, melainkan
+langsung menggunakan file cache yang sudah ada sebagai proxy class final. Jika
+bernilai `false`, Hyperf akan melakukan scan pada annotation scan domain setiap
+kali aplikasi dimulai dan otomatis membuat proxy class cache yang sesuai. Saat
+kode berubah, proxy class cache juga akan otomatis dibuat ulang.
 
-Saat melakukan deployment ke lingkungan produksi (production environment), kita
-mungkin ingin Hyperf membuat semua proxy class terlebih dahulu, daripada
-membuatnya secara dinamis saat runtime. Semua proxy class dapat dibuat
-menggunakan perintah `php bin/hyperf.php di:init-proxy`. Perintah ini mengabaikan
-proxy class cache yang sudah ada dan membuat ulang semuanya.
+Biasanya nilai ini adalah `false` di lingkungan development agar debugging lebih
+mudah. Saat deployment ke production, kita mungkin ingin Hyperf membuat semua
+proxy class lebih awal, bukan membuatnya secara dinamis saat digunakan. Anda
+dapat menggunakan perintah `php bin/hyperf.php` untuk membuat semua proxy class,
+lalu mengubah nilai konfigurasi melalui environment variable `SCAN_CACHEABLE`
+menjadi `true`, sehingga startup lebih cepat dan penggunaan memori aplikasi
+lebih rendah.
 
-Berdasarkan hal di atas, kita dapat menggabungkan perintah untuk membuat proxy
-class dengan perintah untuk menjalankan server, yaitu
-`php bin/hyperf.php di:init-proxy && php bin/hyperf.php start`. Perintah ini
-akan secara otomatis membuat ulang semua proxy class cache lalu menjalankan
-server.
+Berdasarkan hal di atas, jika Anda menggunakan Docker, Kubernetes, atau teknologi
+virtualisasi lain untuk deployment, Anda dapat membuat proxy class cache pada
+tahap build image dan memasukkannya ke dalam image. Saat instance image berjalan,
+waktu startup dan penggunaan memori aplikasi dapat berkurang secara signifikan.

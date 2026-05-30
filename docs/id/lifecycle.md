@@ -7,9 +7,9 @@ memahami siklus hidup dari Hyperf, memahami siklus hidup
 [Swoole](http://github.com/swoole/swoole-src) juga sangat krusial.
 
 Manajemen command Hyperf didukung oleh
-[symfony/console](https://github.com/symfony/console) secara default * (jika
+[symfony/console](https://github.com/symfony/console) secara default *(jika
 Anda ingin mengganti komponen ini, Anda juga dapat mengubah entry file dari
-skeleton ke komponen yang ingin Anda gunakan) *. Setelah menjalankan
+skeleton ke komponen yang ingin Anda gunakan)*. Setelah menjalankan
 `php bin/hyperf.php start`, proses akan diambil alih oleh class command
 `Hyperf\Server\Command\StartServer` dan dijalankan satu per satu sesuai dengan
 `Server` yang didefinisikan dalam file konfigurasi
@@ -32,4 +32,4 @@ Coroutine dalam process yang sama berbagi memori (memory shared), namun urutan
 penjadwalannya tidak berurutan, dan coroutine pada dasarnya independen satu
 sama lain tanpa adanya hubungan parent-child. Oleh karena itu, pemrosesan state
 untuk setiap coroutine perlu dikelola oleh
-[Coroutine Context](id/coroutine.md#coroutine context).
+[Coroutine Context](id/coroutine.md#coroutine-context).

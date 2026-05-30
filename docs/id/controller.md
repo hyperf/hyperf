@@ -40,7 +40,7 @@ Panggil alamat ini melalui `cURL`, dan Anda dapat melihat konten yang
 dikembalikan.
 
 ```bash
-$ curl http://127.0.0.1:9501/\?target\=Hyperf
+$ curl 'http://127.0.0.1:9501/?target=Hyperf'
 Hello Hyperf.
 ```
 

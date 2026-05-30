@@ -78,7 +78,7 @@ menggunakan method `addRoute`:
 ```php
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET','POST','PUT','DELETE'], $uri, $callback);
+Router::addRoute(['GET', 'POST','PUT','DELETE'], $uri, $callback);
 ```
 
 #### Cara mendefinisikan route groups
@@ -88,11 +88,11 @@ Route group menambahkan prefix group ke setiap URI. Route sebenarnya adalah
 `/user/delete`
 
 ```php
-Router::addGroup('/user/', function (){
-    Router::get('index', 'App\Controller\UserController@index');
-    Router::post('store', 'App\Controller\UserController@store');
-    Router::get('update', 'App\Controller\UserController@update');
-    Router::post('delete', 'App\Controller\UserController@delete');
+Router::addGroup('/user/',function (){
+    Router::get('index','App\Controller\UserController@index');
+    Router::post('store','App\Controller\UserController@store');
+    Router::get('update','App\Controller\UserController@update');
+    Router::post('delete','App\Controller\UserController@delete');
 });
 ```
 

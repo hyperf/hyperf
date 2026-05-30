@@ -158,15 +158,14 @@ level logging. Mari kita demonstrasikan melalui kode:
 ```php
 namespace App;
 
-use Hyperf\Logger\Logger;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Context\ApplicationContext;
-
 
 class Log
 {
     public static function get(string $name = 'app')
     {
-        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
+        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name);
     }
 }
 ```
@@ -418,4 +417,57 @@ Hasilnya adalah sebagai berikut
 ==> runtime/logs/hyperf-debug.log <==
 {"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
 {"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```
+
+### Log Terpadu Tingkat Request
+
+Terkadang kita perlu menghubungkan log yang berasal dari request yang sama. Untuk
+itu, kita dapat mengimplementasikan sebuah Processor.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel\Log;
+
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
+
+class AppendRequestIdProcessor implements ProcessorInterface
+{
+    public const REQUEST_ID = 'log.request.id';
+
+    public function __invoke(array|LogRecord $record)
+    {
+        $record['extra']['request_id'] = Context::getOrSet(self::REQUEST_ID, uniqid());
+        $record['extra']['coroutine_id'] = Coroutine::id();
+        return $record;
+    }
+}
+
+```
+
+Kemudian konfigurasikan processor tersebut ke konfigurasi `logger.php`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Kernel\Log;
+
+return [
+    'default' => [
+        // Konfigurasi lain dihapus
+        'processors' => [
+            [
+                'class' => Log\AppendRequestIdProcessor::class,
+            ],
+        ],
+    ],
+];
+
 ```

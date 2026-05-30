@@ -1,6 +1,6 @@
 # Coroutine
 
-## Concept
+## Konsep
 
 Hyperf dibangun di atas coroutine dari `Swoole 5` dan `Swow`, yang merupakan salah
 satu faktor besar mengapa Hyperf dapat memberikan performa tinggi.
@@ -9,7 +9,7 @@ satu faktor besar mengapa Hyperf dapat memberikan performa tinggi.
 
 Sebelum kita membahas apa yang terjadi di balik layar, mari kita bahas
 terlebih dahulu mode operasi dari arsitektur tradisional `PHP-FPM`. `PHP-FPM`
-adalah hypervisor `FastCGI` multi-process yang digunakan oleh sebagian besar
+adalah manager `FastCGI` multi-process yang digunakan oleh sebagian besar
 aplikasi PHP. Misalkan kita menggunakan `Nginx` untuk menyediakan layanan
 `HTTP` (sama halnya jika menggunakan `Apache`). Semua request yang diinisiasi
 oleh klien akan tiba di `Nginx` terlebih dahulu, kemudian `Nginx` meneruskan
@@ -56,16 +56,16 @@ $config = array(
 );
 
 $db->connect($config, function ($db, $r) {
-    // Query a row of data from users table
+    // Query satu baris data dari table users
     $sql = 'select * from users where id = 1';
     $db->query($sql, function(swoole_mysql $db, $r) {
-        if ($r === true) {
-            $rows = $db->affected_rows;
-            // Modify a row of data after the query is successful
-            $updateSql = 'update users set name='new name' where id = 1';
+        if ($r !== false) {
+            // Ubah satu baris data setelah query berhasil
+            $updateSql = 'update users set name="new name" where id = 1';
             $db->query($updateSql, function (swoole_mysql $db, $r) {
+                $rows = $db->affected_rows;
                 if ($r === true) {
-                    return $this->response->end('Update Successfully');
+                    return $this->response->end('Berhasil diperbarui');
                 }
             });
         }
@@ -73,6 +73,10 @@ $db->connect($config, function ($db, $r) {
     });
 });
 ```
+
+> Perhatikan bahwa module async seperti `MySQL` telah dihapus pada
+> [4.3.0](https://wiki.swoole.com/#/version/bc?id=430) dan dipindahkan ke
+> [swoole_async](https://github.com/swoole/ext-async).
 
 Seperti yang dapat Anda lihat pada cuplikan kode di atas, hampir setiap
 operasi membutuhkan fungsi callback. Struktur kode dan tingkatan callback
@@ -227,8 +231,9 @@ mengonfigurasi jumlah maksimum coroutine yang dapat ada di dalam satu proses
 akan meningkatkan penggunaan memori yang sesuai, untuk menghindari terlampauinya
 batas `memory_limit` pada `PHP`, atur nilai ini berdasarkan hasil pengujian
 tekanan (stress test) bisnis yang sebenarnya. Nilai default untuk `Swoole`
-adalah `3000`, yang diatur menjadi `100000` secara default di proyek
-`hyperf-skeleton`.
+adalah `100000` (nilai default adalah `3000` pada versi `Swoole` sebelum
+`v4.4.0-beta`), dan di proyek `hyperf-skeleton` nilai default-nya diatur menjadi
+`100000`.
 
 ## Penggunaan Coroutine
 
@@ -342,18 +347,30 @@ dengan `WaitGroup`. Mari kita demonstrasikan dengan sepotong kode:
 
 ```php
 <?php
-$parallel = new \Hyperf\Coroutine\Parallel();
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
+
+$parallel = new Parallel();
 $parallel->add(function () {
-    \Hyperf\Coroutine\Coroutine::sleep(1);
-    return \Hyperf\Coroutine\Coroutine::id();
+    sleep(1);
+    return Coroutine::id();
 });
 $parallel->add(function () {
-    \Hyperf\Coroutine\Coroutine::sleep(1);
-    return \Hyperf\Coroutine\Coroutine::id();
+    sleep(1);
+    return Coroutine::id();
 });
-// $result is [1, 2]
-$result = $parallel->wait();
+
+try{
+    // Hasil $results adalah [1, 2]
+   $results = $parallel->wait(); 
+} catch(ParallelExecutionException $e){
+    // $e->getResults() mendapatkan nilai return dari coroutine.
+    // $e->getThrowables() mendapatkan exception yang muncul di coroutine.
+}
 ```
+> Perhatikan bahwa exception `Hyperf\Coroutine\Exception\ParallelExecutionException`
+> hanya akan dilempar pada versi 1.1.6 dan yang lebih baru.
 
 Dari kode di atas, kita dapat melihat bahwa hanya membutuhkan waktu 1 detik
 untuk mendapatkan ID dari dua coroutine yang berbeda. Saat memanggil
@@ -367,20 +384,80 @@ sama. Berikut adalah kode yang disederhanakan.
 <?php
 use Hyperf\Coroutine\Coroutine;
 
-// The passed array parameters can also use `key of array` to facilitate distinguish the result of coroutine, and the returned result will also return the corresponding result according to key.
+// Parameter array yang dikirim juga dapat menggunakan key agar mudah membedakan child coroutine,
+// dan hasil yang dikembalikan juga akan mengikuti key terkait.
 $result = parallel([
     function () {
-        Coroutine::sleep(1);
+        sleep(1);
         return Coroutine::id();
     },
     function () {
-        Coroutine::sleep(1);
+        sleep(1);
         return Coroutine::id();
     }
 ]);
 ```
 
 > Perhatikan bahwa `Parallel` sendiri juga perlu digunakan di dalam coroutine.
+
+#### Membatasi Jumlah Maksimum Coroutine yang Berjalan Bersamaan pada Parallel
+
+Saat ada banyak task yang ditambahkan ke `Parallel`, misalnya semuanya adalah
+request task, mengirim semua request dalam sekejap dapat membuat service di sisi
+lain menerima terlalu banyak request sekaligus dan berisiko tidak mampu
+memprosesnya. Karena itu, service di sisi lain perlu dilindungi secara wajar.
+Namun kita tetap ingin menggunakan mekanisme `Parallel` untuk mempercepat waktu
+request. Untuk itu, Anda dapat mengirimkan parameter pertama saat membuat objek
+`Parallel` untuk mengatur jumlah maksimum coroutine yang berjalan. Misalnya,
+jika jumlah maksimum coroutine diatur menjadi `5`, maka di dalam `Parallel`
+hanya akan ada paling banyak `5` coroutine yang berjalan. Setelah salah satu dari
+`5` coroutine tersebut selesai, coroutine berikutnya baru akan dijalankan sampai
+semua coroutine menyelesaikan task-nya. Contoh kode:
+
+```php
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
+
+$parallel = new Parallel(5);
+for ($i = 0; $i < 20; $i++) {
+    $parallel->add(function () {
+        sleep(1);
+        return Coroutine::id();
+    });
+} 
+
+try{
+   $results = $parallel->wait(); 
+} catch(ParallelExecutionException $e){
+    // $e->getResults() mendapatkan nilai return dari coroutine.
+    // $e->getThrowables() mendapatkan exception yang muncul di coroutine.
+}
+```
+
+### Kontrol Eksekusi Coroutine dengan Concurrent
+
+`Hyperf\Coroutine\Concurrent` diimplementasikan berdasarkan
+`Swoole\Coroutine\Channel`, dan digunakan untuk mengontrol jumlah maksimum
+coroutine yang berjalan bersamaan dalam satu blok kode.
+
+Pada contoh berikut, ketika `10` child coroutine sedang berjalan bersamaan,
+loop akan terblokir. Namun yang terblokir hanya coroutine saat ini. Setelah ada
+satu slot dilepas, loop akan melanjutkan eksekusi child coroutine berikutnya.
+
+```php
+<?php
+
+use Hyperf\Coroutine\Concurrent;
+
+$concurrent = new Concurrent(10);
+
+for ($i = 0; $i < 15; ++$i) {
+    $concurrent->create(function () {
+        // Do something...
+    });
+}
+```
 
 ### Coroutine Context
 
@@ -392,10 +469,87 @@ itu, kita perlu dapat beralih ke context yang sesuai pada saat yang sama ketika
 peralihan coroutine terjadi.
 
 Mengimplementasikan manajemen context untuk coroutine di Hyperf sangatlah
-mudah. Berdasarkan metode statis `set(string $id, $value)`,
-`get(string $id, $default = null)`, dan `has(string $id)` dari
-`Hyperf\Context\Context`, manajemen data context dapat diselesaikan. Nilai yang
-diatur (set) dan didapatkan (get) oleh metode-metode ini dibatasi hanya untuk
-coroutine saat ini. Ketika coroutine berakhir, context yang sesuai akan dirilis
-secara otomatis. Tidak perlu mengelolanya secara manual, dan tidak perlu
-khawatir tentang risiko kebocoran memori.
+mudah. Berdasarkan method static `set(string $id, $value)`,
+`get(string $id, $default = null)`, `has(string $id)`, dan
+`override(string $id, \Closure $closure)` dari `Hyperf\Context\Context`,
+manajemen data context dapat diselesaikan. Nilai yang diatur dan didapatkan
+oleh method-method ini dibatasi hanya untuk coroutine saat ini. Ketika coroutine
+berakhir, context yang sesuai akan dirilis secara otomatis. Tidak perlu
+mengelolanya secara manual, dan tidak perlu khawatir tentang risiko kebocoran
+memori.
+
+#### Hyperf\Context\Context::set()
+
+Gunakan method `set(string $id, $value)` untuk menyimpan sebuah nilai ke context
+coroutine saat ini, seperti berikut:
+
+```php
+<?php
+use Hyperf\Context\Context;
+
+// Menyimpan string bar ke context coroutine saat ini dengan key foo
+$foo = Context::set('foo', 'bar');
+// Method set akan mengembalikan value sebagai return value, sehingga nilai $foo adalah bar
+```
+
+#### Hyperf\Context\Context::get()
+
+Gunakan method `get(string $id, $default = null)` untuk mengambil nilai yang
+disimpan dengan `key` `$id` dari context coroutine saat ini. Jika tidak ada,
+method ini mengembalikan `$default`, seperti berikut:
+
+```php
+<?php
+use Hyperf\Context\Context;
+
+// Mengambil nilai dengan key foo dari context coroutine saat ini; jika tidak ada, mengembalikan string bar
+$foo = Context::get('foo', 'bar');
+```
+
+#### Hyperf\Context\Context::has()
+
+Gunakan method `has(string $id)` untuk menentukan apakah nilai dengan `key`
+`$id` ada di context coroutine saat ini. Jika ada, method ini mengembalikan
+`true`; jika tidak ada, mengembalikan `false`, seperti berikut:
+
+```php
+<?php
+use Hyperf\Context\Context;
+
+// Menentukan apakah nilai dengan key foo ada di context coroutine saat ini
+$foo = Context::has('foo');
+```
+
+#### Hyperf\Context\Context::override()
+
+Ketika perlu melakukan pemrosesan context yang lebih kompleks, misalnya
+memeriksa apakah sebuah `key` ada, mengambil `value` jika ada, mengubah `value`,
+lalu menyimpannya kembali ke context container, logika kondisionalnya dapat
+menjadi cukup rumit. Anda dapat langsung menggunakan method `override` untuk
+mengimplementasikan logika tersebut, seperti berikut:
+
+```php
+<?php
+use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\Context\Context;
+
+// Mengambil objek $request dari coroutine context, menambahkan Header dengan key foo,
+// lalu menyimpannya kembali ke coroutine context
+$request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {
+    return $request->withAddedHeader('foo', 'bar');
+});
+```
+
+### Swoole Runtime Hook Level
+
+Framework menyediakan constant `SWOOLE_HOOK_FLAGS` pada entry function. Jika
+Anda perlu mengubah level `Runtime Hook` untuk seluruh project, misalnya ingin
+mendukung `CURL coroutine` dan versi `Swoole` lebih lama dari `v4.5.4`, ubah
+kode tersebut seperti berikut:
+
+```php
+<?php
+! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
+``` 
+
+!> Jika versi Swoole >= `v4.5.4`, tidak perlu melakukan perubahan apa pun.

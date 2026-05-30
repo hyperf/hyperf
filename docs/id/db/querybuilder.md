@@ -75,6 +75,31 @@ class FetchModeListener implements ListenerInterface
 }
 ```
 
+### Mendapatkan nilai dari satu baris
+
+Jika ingin mendapatkan nilai dari satu baris, Anda dapat menggunakan method
+`first`.
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$row = Db::table('user')->first(); // sql akan otomatis menambahkan limit 1
+var_dump($row);
+```
+
+### Mendapatkan satu nilai
+
+Jika ingin mendapatkan satu nilai, Anda dapat menggunakan method `value`.
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$id = Db::table('user')->value('id');
+var_dump($id);
+```
+
 ### Mendapatkan nilai dari satu kolom
 
 Jika Anda ingin mendapatkan collection yang berisi nilai dari satu kolom saja,
@@ -88,7 +113,7 @@ use Hyperf\DbConnection\Db;
 $names = Db::table('user')->pluck('name');
 
 foreach ($names as $name) {
-    echo $names;
+    echo $name;
 }
 
 ```
@@ -218,6 +243,16 @@ mengimplementasikan `COUNT(0) AS count`, yang membutuhkan penggunaan metode `raw
 use Hyperf\DbConnection\Db;
 
 $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->groupBy('gender')->get();
+```
+
+### Force Index
+
+Masalah slow query database lebih dari 90% disebabkan oleh index yang tidak
+tepat. Sebagian query lambat terjadi karena `query optimizer` database server
+tidak menggunakan index terbaik. Pada kondisi ini, force index perlu digunakan:
+
+```php
+Db::table(Db::raw("{$table} FORCE INDEX({$index})"));
 ```
 
 ### Metode native

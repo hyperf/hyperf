@@ -59,14 +59,10 @@ class UserService
 namespace App\Controller;
 
 use App\Service\UserService;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
 
     // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
     public function __construct(UserService $userService)
@@ -102,10 +98,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
 
     // Declare an optional parameter by setting it as nullable.
     public function __construct(?UserService $userService)
@@ -133,17 +126,11 @@ namespace App\Controller;
 
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * Use `#[Inject]` to inject the attribute type object declared by `@var`
-     *
-     * @var UserService
-     */
     #[Inject]
-    private $userService;
+    private UserService $userService;
 
     public function index()
     {
@@ -154,9 +141,8 @@ class IndexController
 }
 ```
 
-> Perhatikan bahwa pemanggil, yaitu `IndexController`, harus berupa objek yang
-> dibuat oleh `DI` untuk melakukan injeksi otomatis. Controller dibuat oleh
-> `DI` secara default.
+> Injeksi melalui annotation `#[Inject]` dapat bekerja pada objek singleton yang
+> dibuat oleh DI, dan juga pada objek yang dibuat dengan keyword `new`.
 
 > Namespace `use Hyperf\Di\Annotation\Inject;` harus digunakan ketika
 > `#[Inject]` digunakan.
@@ -178,13 +164,11 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * Inject the attribute type object declared by the `@var` annotation through the `#[Inject]` annotation
-     * Null will be injected when UserService does not exist in the DI container or cannot be created
-     *
-     * @var UserService
+     * Menginjeksikan objek tipe property yang dideklarasikan oleh annotation `#[Inject]`
+     * Jika UserService tidak ada di DI container atau tidak dapat dibuat, null akan diinjeksikan
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
 
     public function index()
     {
@@ -253,7 +237,6 @@ namespace App\Controller;
 
 use App\Service\UserServiceInterface;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
@@ -310,11 +293,7 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
 
     public function __construct(bool $enableCache)
     {
@@ -411,7 +390,8 @@ tidak memerlukan pembuatan file konfigurasi.
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
+class Foo
+{
     /**
      * @var UserServiceInterface
      */
@@ -506,10 +486,7 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
     // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
     public function __construct(ContainerInterface $container)

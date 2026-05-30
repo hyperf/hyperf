@@ -1,6 +1,7 @@
 # Konfigurasi
 
-Ketika Anda menggunakan proyek yang dibuat oleh proyek hyperf/hyperf-skeleton,
+Ketika Anda menggunakan proyek yang dibuat oleh
+[hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton),
 semua file konfigurasi Hyperf berada di folder `config` di bawah direktori
 root, dan setiap opsi memiliki petunjuk penjelasan, Anda selalu dapat
 memeriksa dan membiasakan diri dengan opsi yang tersedia.
@@ -41,6 +42,74 @@ config
 ├── config.php // Konfigurasi untuk mengelola pengguna atau framework, seperti konfigurasi yang relatif independen juga dapat ditempatkan di folder autoload
 ├── container.php // Bertanggung jawab atas inisialisasi container, berjalan sebagai file konfigurasi dan pada akhirnya mengembalikan objek Psr\Container\ContainerInterface
 └── routes.php // Digunakan untuk mengelola Routing
+```
+
+## Penjelasan Konfigurasi server.php
+
+Berikut adalah `settings` default yang disediakan oleh
+`config/autoload/server.php` di Hyperf-Skeleton.
+
+```php
+<?php
+declare(strict_types=1);
+
+use Hyperf\Server\Server;
+use Hyperf\Server\Event;
+
+return [
+    // Konfigurasi lain dalam file ini dihilangkan
+    'settings' => [
+        'enable_coroutine' => true, // Mengaktifkan coroutine bawaan
+        'worker_num' => swoole_cpu_num(), // Mengatur jumlah Worker process yang dijalankan
+        'pid_file' => BASE_PATH . '/runtime/hyperf.pid', // PID dari master process
+        'open_tcp_nodelay' => true, // Menonaktifkan algoritma Nagle saat koneksi TCP mengirim data, sehingga langsung dikirim ke client
+        'max_coroutine' => 100000, // Mengatur jumlah maksimum coroutine pada worker process saat ini
+        'open_http2_protocol' => true, // Mengaktifkan parsing protokol HTTP2
+        'max_request' => 100000, // Mengatur jumlah maksimum task pada worker process
+        'socket_buffer_size' => 2 * 1024 * 1024, // Mengonfigurasi panjang buffer koneksi client
+    ],
+];
+```
+
+File konfigurasi ini digunakan untuk mengelola layanan Server. Opsi `settings`
+di dalamnya dapat langsung menggunakan opsi yang disediakan oleh `Swoole Server`.
+Opsi lainnya dapat merujuk ke
+[dokumentasi resmi Swoole](https://wiki.swoole.com/#/server/setting).
+
+Jika perlu menjalankan aplikasi sebagai daemon, tambahkan `'daemonize' => true`
+ke dalam `settings`. Setelah menjalankan `php bin/hyperf.php start`, program
+akan berpindah ke background dan berjalan sebagai daemon.
+
+Konfigurasi Server terpisah perlu ditambahkan pada `settings` dari `servers`
+yang sesuai. Misalnya, konfigurasi TCP Server untuk protokol `jsonrpc` yang
+mengaktifkan EOF auto split dan mengatur string EOF:
+
+```php
+<?php
+
+use Hyperf\Server\Server;
+use Hyperf\Server\Event;
+
+return [
+    // Konfigurasi lain dalam file ini dihilangkan
+    'servers' => [
+        [
+            'name' => 'jsonrpc',
+            'type' => Server::SERVER_BASE,
+            'host' => '0.0.0.0',
+            'port' => 9503,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+            ],
+            'settings' => [
+                'open_eof_split' => true, // Mengaktifkan EOF auto split
+                'package_eof' => "\r\n", // Mengatur string EOF
+            ],
+        ],
+    ],
+];
+
 ```
 
 ## Hubungan antara `config.php` dan file konfigurasi di folder `autoload`
@@ -111,7 +180,9 @@ injection, silakan merujuk pada bab [Dependency Injection](id/di.md).
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// Get the configuration corresponding to $key by get(string $key, $default): mixed method, the $key value can be positioned to the subordinate array by the . connector, and $default is the default value returned when the corresponding value does not exist.
+// Mendapatkan konfigurasi yang sesuai dengan $key melalui method get(string $key, $default): mixed.
+// Nilai $key dapat menggunakan connector . untuk mengakses array turunan,
+// sedangkan $default adalah nilai default yang dikembalikan saat nilai terkait tidak ada.
 $config->get($key, $default);
 ```
 
@@ -128,20 +199,17 @@ String di dalam `#[Value()]` sesuai dengan parameter `$key` di
 akan secara otomatis dimasukkan ke dalam properti kelas yang ditentukan.
 
 ```php
-<?php
 use Hyperf\Config\Annotation\Value;
 
 class IndexController
 {
-    
-    #[Value(key: "config.key")]
+    #[Value("config.key")]
     private $configValue;
-    
+
     public function index()
     {
         return $this->configValue;
     }
-    
 }
 ```
 
@@ -159,7 +227,8 @@ berarti aplikasi Anda sangat bergantung pada komponen
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// The has(): bool method is used to determine whether the corresponding $key value exists in the configuration, and the $key value can be mapped to the subordinate array by the . connector.
+// Method has(): bool digunakan untuk menentukan apakah nilai $key terkait ada di konfigurasi.
+// Nilai $key dapat menggunakan connector . untuk mengakses array turunan.
 $config->has($key);
 ```
 
@@ -236,12 +305,26 @@ return [
 ];
 ```
 
-## Configuration Center
+## Mempublikasikan Konfigurasi Komponen
+
+Hyperf menggunakan desain berbasis komponen. Setelah menambahkan beberapa
+komponen ke skeleton project, biasanya kita perlu membuat file konfigurasi yang
+sesuai untuk komponen baru tersebut agar dapat digunakan. Hyperf menyediakan
+`mekanisme publikasi konfigurasi komponen`. Dengan mekanisme ini, Anda cukup
+menjalankan satu perintah `vendor:publish` untuk mempublikasikan template file
+konfigurasi bawaan komponen ke skeleton project.
+
+Misalnya kita ingin menambahkan komponen `hyperf/foo` (komponen ini sebenarnya
+tidak ada, hanya contoh) beserta file konfigurasi terkait. Setelah menjalankan
+`composer require hyperf/foo`, Anda dapat menjalankan
+`php bin/hyperf.php vendor:publish hyperf/foo` untuk mempublikasikan file
+konfigurasi bawaan komponen ke folder `config/autoload` di skeleton project.
+Konten spesifik yang dipublikasikan ditentukan dan disediakan oleh komponen.
+
+## Pusat Konfigurasi
 
 Hyperf menyediakan dukungan konfigurasi eksternal untuk sistem terdistribusi.
-Secara default, kami menawarkan proyek open source dari Ctrip yaitu
-[ctripcorp/apollo](https://github.com/ctripcorp/apollo), yang didukung oleh
-komponen [hyperf/config-apollo](https://github.com/hyperf/config-apollo).
-
-Detail tentang penggunaan configuration center dijelaskan dalam bab
-[Configuration Center](id/config-center.md).
+Saat ini Hyperf mendukung `Apollo` open source dari Ctrip, Alibaba Cloud ACM
+Application Configuration Management, ETCD, Nacos, dan Zookeeper sebagai
+configuration center. Detail penggunaan configuration center dijelaskan di bab
+[Pusat Konfigurasi](id/config-center.md).
