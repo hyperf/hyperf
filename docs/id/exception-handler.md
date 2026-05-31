@@ -1,37 +1,27 @@
 # Exception Handler
 
-Dalam `Hyperf`, semua kode bisnis dieksekusi pada `Worker Process`. Dalam hal
-ini, ketika terjadi exception yang tidak ditangkap pada suatu request, `Worker
-Process` yang bersangkutan akan terinterupsi dan keluar (exit), yang mana hal
-ini tidak dapat diterima oleh suatu layanan. Menangkap exception dan
-menampilkan konten error yang wajar juga lebih ramah bagi klien. Kita dapat
-mendefinisikan `ExceptionHandler` yang berbeda untuk setiap `server`, dan
-begitu ada exception yang tidak ditangkap di dalam proses, exception tersebut
-akan diteruskan ke `ExceptionHandler` yang terdaftar untuk diproses.
+Di `Hyperf`, kode bisnis jalan di `Worker processes`. Artinya, kalo ada exception yang gak tertangkap di request mana pun, `Worker process` yang bersangkutan bakal mati. Ini gak bisa ditolerir, lebih baik exception ditangkap dan pesan error yang jelas dikasih ke client.
+Kita bisa define `ExceptionHandlers` yang beda buat tiap `server`. Kalo ada exception yang gak tertangkap di alur bisnis, exception bakal diterusin ke `ExceptionHandler` yang udah terdaftar buat diproses.
 
-## Kustomisasi Penanganan Exception
+## Menyesuaikan Exception Handler
 
-### Mendaftarkan Exception Handler
-
-Saat ini, pendaftaran `ExceptionHandler` hanya didukung melalui file
-konfigurasi. File konfigurasi terletak di `config/autoload/exceptions.php`.
-Konfigurasikan exception handler kustom Anda di bawah `server` yang sesuai:
+### Mendaftarkan Exception Handler melalui File Konfigurasi
 
 ```php
 <?php
 // config/autoload/exceptions.php
 return [
     'handler' => [
-        // http di sini sesuai dengan nilai name untuk server di config/autoload/server.php
+        // 'http' di sini sesuai dengan nilai atribut name dari server di config/autoload/server.php
         'http' => [
-            // Pendaftaran exception handler dilakukan dengan mengonfigurasi namespace class lengkap di sini
+            // Konfigurasikan alamat namespace class yang lengkap di sini untuk menyelesaikan pendaftaran exception handler ini
             \App\Exception\Handler\FooExceptionHandler::class,
         ],    
     ],
 ];
 ```
 
-### Mendaftarkan exception handler melalui [annotation](https://github.com/hyperf/hyperf/blob/master/src/exception-handler/src/Annotation/ExceptionHandler.php)
+### Mendaftarkan Exception Handler melalui [Annotation](https://github.com/hyperf/hyperf/blob/master/src/exception-handler/src/Annotation/ExceptionHandler.php)
 
 ```php
 <?php
@@ -42,7 +32,7 @@ use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler as RegisterHandler;
 
-// http di sini sesuai dengan nilai name untuk server di config/autoload/server.php
+// 'http' di sini sesuai dengan nilai atribut name dari server di config/autoload/server.php
 // priority digunakan untuk pengurutan
 #[RegisterHandler(server: 'http')]
 class AppExceptionHandler extends ExceptionHandler
@@ -63,17 +53,13 @@ class AppExceptionHandler extends ExceptionHandler
         return true;
     }
 }
-
 ```
 
-> Urutan setiap array konfigurasi exception handler menentukan urutan
-penyampaian exception antar handler.
+> Urutan di array konfigurasi exception handler nentuin urutan penyebaran exception antar handler.
 
 ### Mendefinisikan Exception Handler
 
-Kita dapat mendefinisikan sebuah `class` di mana saja dan mewarisi abstract
-class `Hyperf\ExceptionHandler\ExceptionHandler` serta mengimplementasikan
-method abstract di dalamnya. Seperti contoh di bawah ini:
+Kita bisa define `Class` di mana aja, warisi abstract class `Hyperf\ExceptionHandler\ExceptionHandler`, lalu implementasiin abstract method-nya:
 
 ```php
 <?php
@@ -89,27 +75,27 @@ class FooExceptionHandler extends  ExceptionHandler
 {
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        // Menentukan apakah exception yang ditangkap adalah exception yang diinginkan
+        // Menentukan apakah exception yang ditangkap adalah exception yang ingin Anda tangkap
         if ($throwable instanceof FooException) {
-            // Output terformat
+            // Output yang diformat
             $data = json_encode([
                 'code' => $throwable->getCode(),
                 'message' => $throwable->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
 
-            // Mencegah penggelembungan (bubbling)
+            // Menghentikan propagasi exception
             $this->stopPropagation();
             return $response->withStatus(500)->withBody(new SwooleStream($data));
         }
 
-        // Serahkan ke exception handler berikutnya
+        // Menyerahkan ke exception handler berikutnya
         return $response;
 
-        // Atau langsung menyembunyikan exception tanpa pemrosesan
+        // Atau tidak menanganinya dan langsung menutup exception
     }
 
     /**
-     * Tentukan apakah exception handler perlu menangani exception atau tidak
+     * Menentukan apakah exception handler ini harus menangani exception ini
      */
     public function isValid(Throwable $throwable): bool
     {
@@ -136,6 +122,7 @@ class FooException extends ServerException
 ### Memicu Exception
 
 ```php
+
 namespace App\Controller;
 
 use App\Exception\FooException;
@@ -147,27 +134,19 @@ class IndexController extends AbstractController
         throw new FooException('Foo Exception...', 800);
     }
 }
-
 ```
-Pada contoh di atas, kita mengasumsikan bahwa `FooException` adalah exception
-yang dilemparkan, dan exception handler telah dikonfigurasi. Ketika exception
-yang tidak ditangkap dilemparkan, exception tersebut akan diteruskan sesuai
-dengan urutan pendaftaran handler. Bayangkan proses ini seperti sebuah pipa
-(pipe), exception tidak akan diteruskan lagi setelah ada handler yang memanggil
-`$this->stopPropagation()`. Handler default Hyperf akan menjadi yang terakhir
-menangkap exception jika tidak ada handler lain yang menangkap exception
-tersebut.
+Di contoh di atas, anggap `FooException` udah ada dan handler-nya udah dikonfigurasi. Nah, pas business logic lempar exception yang gak tertangkap, exception bakal diterusin secara berurutan sesuai konfigurasi. Prosesnya mirip pipeline. Kalo exception handler sebelumnya manggil `$this->stopPropagation()`, exception gak bakal diterusin. Kalo handler terakhir yang dikonfigurasi juga gak nangkep dan nanganin exception, maka exception bakal diserahin ke default exception handler Hyperf.
 
-## Integrasi Whoops
+## Mengintegrasikan Whoops
 
-Framework menyediakan integrasi Whoops.
+Framework punya integrasi Whoops.
 
-Instal Whoops terlebih dahulu:
+Pertama, install Whoops
 ```php
 composer require --dev filp/whoops
 ```
 
-Kemudian konfigurasikan exception handler khusus untuk Whoops.
+Kemudian konfigurasikan exception handler Whoops khusus.
 
 ```php
 // config/autoload/exceptions.php
@@ -180,19 +159,17 @@ return [
 ];
 ```
 
-Seperti yang ditunjukkan pada gambar:
+Efeknya seperti yang ditunjukkan pada gambar:
 
 ![whoops](/imgs/whoops.png)
 
+## Error Listener
 
-## Listener Error
-
-Framework menyediakan listener level error `error_reporting()` yaitu
-`Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
+Framework nyediain listener buat level error `error_reporting()` yaitu `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
 
 ### Konfigurasi
 
-Tambahkan listener di `config/autoload/listeners.php`
+Tambahkan listener ke `config/autoload/listeners.php`
 
 ```php
 <?php
@@ -201,8 +178,7 @@ return [
 ];
 ```
 
-Ketika kode yang mirip seperti berikut muncul, `\ErrorException` akan
-dilemparkan:
+Kalo ada kode kayak gini, exception `\ErrorException` bakal dilempar:
 
 ```php
 <?php
@@ -217,7 +193,7 @@ try {
 // string(19) "Undefined offset: 1"
 ```
 
-Jika tidak ada listener yang dikonfigurasi, exception tidak akan dilemparkan.
+Kalo listener gak dikonfigurasi, hasilnya bakal kayak gini, gak ada exception yang dilempar:
 
 ```
 PHP Notice:  Undefined offset: 1 in IndexController.php on line 24

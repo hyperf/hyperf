@@ -1,32 +1,58 @@
 # Elasticsearch
 
-[hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) adalah sebuah
-factory untuk pembuatan objek client untuk
-[elasticsearch-php](https://github.com/elastic/elasticsearch-php). Secara
-default, handler yang digunakan adalah client `Guzzle Ring`. Pada
-[hyperf/guzzle](https://github.com/hyperf/guzzle), kami mengimplementasikan
-`Handler` versi coroutine, sehingga kita dapat membuat `Builder` baru secara
-langsung melalui `Hyperf\Elasticsearch\ClientBuilderFactory`.
+[hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) menyediakan factory class untuk membuat objek client bagi [elasticsearch-php](https://github.com/elastic/elasticsearch-php). [elasticsearch-php](https://github.com/elastic/elasticsearch-php) memakai `Guzzle Ring` client secara default. Dalam [hyperf/guzzle](https://github.com/hyperf/guzzle), kami mengimplementasikan versi coroutine dari `Handler`, sehingga Anda bisa langsung menggunakan `Hyperf\Elasticsearch\ClientBuilderFactory` untuk membuat `Builder` baru.
 
-## Installation
+## Instalasi
 
 ```bash
 composer require hyperf/elasticsearch
 ```
 
-## Usage
+## Penggunaan
 
-### Create a Client
+### Menggunakan `ClientBuilderFactory` untuk membuat client
 
 ```php
 <?php
 
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 
-// If created in coroutine environment will use coroutine handler, if created in non-coroutine environment will not change.
+// Jika dibuat di lingkungan coroutine, versi coroutine dari Handler akan otomatis digunakan. Tidak ada perubahan di lingkungan non-coroutine.
 $builder = $this->container->get(ClientBuilderFactory::class)->create();
 
 $client = $builder->setHosts(['http://127.0.0.1:9200'])->build();
 
 $info = $client->info();
+```
+
+### Membuat client sendiri
+
+```php
+<?php
+
+use Elasticsearch\ClientBuilder;
+use Hyperf\Guzzle\RingPHP\PoolHandler;
+use Swoole\Coroutine;
+
+$builder = ClientBuilder::create();
+if (Coroutine::getCid() > 0) {
+    $handler = make(PoolHandler::class, [
+        'option' => [
+            'max_connections' => 50,
+        ],
+    ]);
+    $builder->setHandler($handler);
+}
+
+$client = $builder->setHosts(['http://127.0.0.1:9200'])->build();
+
+$info = $client->info();
+```
+
+### Cara mengatur username dan password
+
+Ketika search engine memerlukan username dan password, misalnya jika Anda membeli `Elasticsearch` Enterprise Edition, kita dapat menggunakan `host` berikut untuk mengakses search engine.
+
+```
+http://username:password@xxxx.aliyuncs.com:9200
 ```

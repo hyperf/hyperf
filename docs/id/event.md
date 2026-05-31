@@ -1,13 +1,9 @@
-# Event
+# Mekanisme Event
 
-## Pendahuluan
+## Kata Pengantar
 
-Model event harus diimplementasikan berdasarkan
-[PSR-14](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-14-event-dispatcher.md).
-Secara default, event manager Hyperf diimplementasikan oleh
-[hyperf/event](https://github.com/hyperf/event). Komponen ini juga dapat
-digunakan di framework atau aplikasi lain, cukup dengan memasukkannya via
-Composer.
+Event pattern wajib diimplementasikan berdasarkan [PSR-14](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-14-event-dispatcher.md).
+Event manager Hyperf diimplementasikan oleh [hyperf/event](https://github.com/hyperf/event) secara default. Komponen ini juga bisa dipake di framework atau aplikasi lain, tinggal install lewat Composer.
 
 ```bash
 composer require hyperf/event
@@ -15,31 +11,21 @@ composer require hyperf/event
 
 ## Konsep
 
-Pola event adalah mekanisme yang teruji dengan baik dan andal. Mekanisme ini
-sangat cocok untuk decoupling (pemisahan ketergantungan). Terdapat tiga peran:
+Event pattern adalah mekanisme yang udah teruji dan cocok banget buat decoupling. Ada 3 peran:
 
-- `Event` adalah objek komunikasi yang dilewatkan antara kode aplikasi dan
-  `Listener`.
-- `Listener` adalah pendengar untuk memantau terjadinya `Event`.
-- `Event Dispatcher` adalah objek pengelola yang digunakan untuk memicu `Event`
-  dan mengatur hubungan antara `Listener` dan `Event`.
+- `Event` adalah objek komunikasi yang dilewatkan antara kode aplikasi dan `Listener`
+- `Listener` adalah objek pendengar yang digunakan untuk mendengarkan terjadinya `Event`
+- `EventDispatcher` adalah objek manajer yang digunakan untuk memicu `Event` dan mengelola hubungan antara `Listener` dan `Event`
 
-Mari kita jelaskan dengan contoh yang mudah dipahami. Misalkan kita memiliki
-metode `UserService::register()` untuk mendaftarkan akun. Setelah akun berhasil
-didaftarkan, kita dapat memicu event `UserRegistered` melalui event dispatcher,
-yang dipantau oleh listener. Ketika event ini terjadi, kita mungkin ingin
-melakukan beberapa operasi, seperti mengirim pesan sukses registrasi pengguna,
-atau mungkin mengirim email konfirmasi. Kita dapat memantau event
-`UserRegistered` dengan menambahkan listener lain, tanpa menambahkan kode yang
-tidak berkaitan ke dalam metode `UserService::register()`.
+Biar gampang dipahami, misalnya kita punya method `UserService::register()` buat daftarin akun. Abis akun berhasil didaftarin, kita bisa picu event `UserRegistered` lewat event dispatcher. Listener bakal dengerin event ini dan jalanin operasi tertentu, misalnya kirim SMS sukses pendaftaran. Seiring berkembangnya bisnis, kita mungkin mau ngelakuin lebih banyak hal pas user berhasil daftar, kayak kirim email sukses juga. Nah, tinggal nambahin listener lain buat dengerin event `UserRegistered`, tanpa perlu ubah kode di method `UserService::register()`.
 
-## Penggunaan Event Manager
+## Menggunakan Event Manager
+
+> Kita akan bahas dua cara mendaftarkan listener: lewat konfigurasi dan lewat annotation. Pake salah satu aja. Kalau keduanya dipake bareng, listener bakal kepicu berkali-kali.
 
 ### Mendefinisikan Event
 
-Event sebenarnya adalah class biasa untuk mengelola data status. Saat dipicu,
-data aplikasi akan dilewatkan ke event tersebut. Listener kemudian beroperasi
-pada class event. Sebuah event dapat dipantau oleh beberapa listener.
+Event pada dasarnya adalah class biasa yang ngelola data state. Pas dipicu, data aplikasi dilempar ke event, lalu listener ngelakuin operasi di class event tersebut. Satu event bisa didengerin sama banyak listener.
 
 ```php
 <?php
@@ -47,7 +33,7 @@ namespace App\Event;
 
 class UserRegistered
 {
-    // It is recommended to define this as a public property so that the listener can use it directly, or you can provide Getter for that property.
+    // Disarankan untuk mendefinisikan public property di sini sehingga listener dapat langsung menggunakan properti ini, atau Anda dapat menyediakan Getter untuk properti ini
     public $user;
     
     public function __construct($user)
@@ -59,8 +45,7 @@ class UserRegistered
 
 ### Mendefinisikan Listener
 
-Listener harus mengimplementasikan metode kontrak dari interface
-`Hyperf\Event\Contract\ListenerInterface`. Contohnya adalah sebagai berikut.
+Listener perlu mengimplementasikan method constraint dari interface `Hyperf\Event\Contract\ListenerInterface`. Contohnya adalah sebagai berikut.
 
 ```php
 <?php
@@ -73,7 +58,7 @@ class UserRegisteredListener implements ListenerInterface
 {
     public function listen(): array
     {
-        // Returns an array of events to be listened to by this listener, can listen to multiple events at the same time
+        // Mengembalikan array event yang ingin didengarkan oleh listener ini, dapat mendengarkan beberapa event sekaligus
         return [
             UserRegistered::class,
         ];
@@ -84,19 +69,17 @@ class UserRegisteredListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
-        // Directly access the user property of $event to get the parameter value passed when the event fires.
+        // Kode yang ingin dijalankan listener setelah event dipicu ditulis di sini, seperti mengirim SMS sukses untuk pendaftaran pengguna dalam contoh ini
+        // Akses langsung properti user dari $event untuk mendapatkan nilai parameter yang dilewatkan saat event dipicu
         // $event->user;
+        
     }
 }
 ```
 
-#### Mendaftarkan Listener Melalui File Konfigurasi
+#### Mendaftarkan Listener melalui File Konfigurasi
 
-Setelah mendefinisikan listener, kita perlu membuatnya dapat ditemukan oleh
-`Dispatcher`, yang dapat ditambahkan pada file konfigurasi
-`config/autoload/listeners.php` *(jika belum ada, silakan dibuat)*. Urutan
-pemicuan listener didasarkan pada urutan konfigurasi di file konfigurasi:
+Setelah mendefinisikan listener, kita harus daftarin ke `EventDispatcher` biar dikenali. Tinggal tambahin listener di file konfigurasi `config/autoload/listeners.php` *(buat kalo belum ada)*. Urutan pemicuan listener tergantung urutan di file konfigurasi ini:
 
 ```php
 <?php
@@ -105,13 +88,9 @@ return [
 ];
 ```
 
-### Mendaftarkan Listener Menggunakan Annotation
+### Mendaftarkan Listener melalui Annotation
 
-Hyperf juga menyediakan cara yang lebih mudah untuk mendaftarkan listener
-dengan menggunakan annotation `#[Listener]`, selama annotation didefinisikan
-pada class listener dan class listener tersebut secara otomatis diselesaikan
-dalam registrasi domain pemindaian annotation Hyperf (Hyperf annotation scan
-domain). Contoh kodenya adalah sebagai berikut:
+Hyperf juga nyediain cara yang lebih praktis, lewat annotation `#[Listener]`. Selama annotation ini dipasang di kelas listener dan kelas listener ada di dalam `Hyperf annotation scan domain`, pendaftaran bakal otomatis. Contohnya:
 
 ```php
 <?php
@@ -126,7 +105,7 @@ class UserRegisteredListener implements ListenerInterface
 {
     public function listen(): array
     {
-        // Returns an array of events to be listened to by this listener, can listen to multiple events at the same time
+        // Mengembalikan array event yang ingin didengarkan oleh listener ini, dapat mendengarkan beberapa event sekaligus
         return [
             UserRegistered::class,
         ];
@@ -137,27 +116,20 @@ class UserRegisteredListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
-        // Directly access the user property of $event to get the parameter value passed when the event fires.
+        // Kode yang ingin dijalankan listener setelah event dipicu ditulis di sini, seperti mengirim SMS sukses untuk pendaftaran pengguna dalam contoh ini
+        // Akses langsung properti user dari $event untuk mendapatkan nilai parameter yang dilewatkan saat event dipicu
         // $event->user;
     }
 }
 ```
 
-Saat mendaftarkan listener via annotation, kita dapat menentukan urutan
-listener saat ini dengan mengatur atribut `priority`, seperti
-`#[Listener(priority: 1)]`. Di balik layar, Hyperf menggunakan struktur
-`SplPriorityQueue` untuk menyimpannya, di mana semakin besar angka `priority`,
-semakin tinggi prioritasnya.
+Pas daftarin listener lewat annotation, kita bisa ngatur urutan pake properti `priority`, misal `#[Listener(priority=1)]`. Di dalemnya, prioritas diatur pake struktur `SplPriorityQueue`, makin gede angka `priority`, makin tinggi prioritasnya.
 
-> Penggunaan annotation `#[Listener]` membutuhkan namespace
-> `use Hyperf\Event\Annotation\Listener;`.
+> Saat menggunakan annotation `#[Listener]`, Anda perlu `use Hyperf\Event\Annotation\Listener;` namespace;
 
-### Memicu Event (Trigger Event)
+### Memicu Event
 
-Event harus di-dispatch oleh `EventDispatcher` agar `Listener` dapat
-memantaunya. Kita akan menggunakan sepotong kode untuk mendemonstrasikan cara
-memicu event:
+Event cuma bisa didengerin sama `Listener` kalo udah dikirim lewat `EventDispatcher`. Langsung aja liat kode berikut buat demo cara picu event:
 
 ```php
 <?php
@@ -174,43 +146,33 @@ class UserService
     
     public function register()
     {
-        // We assume that there is a User entity
+        // Kita asumsikan sebuah entitas User ada
         $user = new User();
         $result = $user->save();
-        // Complete the logic of account registration
-        // This dispatch(object $event) will run the listener one by one
+        // Menyelesaikan logika pendaftaran akun
+        // Di sini dispatch(object $event) akan menjalankan listener yang mendengarkan event ini satu per satu
         $this->eventDispatcher->dispatch(new UserRegistered($user));
         return $result;
     }
 }
 ```
 
-## Lifecycle Events Hyperf
+## Hyperf Lifecycle Events
 
 ![](imgs/hyperf-events.svg)
 
-## Coroutine Style Server Lifecycle Events Hyperf
+## Hyperf Coroutine-style Lifecycle Events
 
 ![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)
 
-## Hal-hal yang Perlu Diperhatikan
+## Hal yang Perlu Diperhatikan
 
-### Jangan menginjeksi `EventDispatcherInterface` di dalam `Listener`
+### Jangan Menginjeksikan `EventDispatcherInterface` di `Listener`
 
-Karena `EventDispatcherInterface` bergantung pada `ListenerProviderInterface`,
-dan `ListenerProviderInterface` akan mengumpulkan semua `Listener` saat
-diinisialisasi.
+Soalnya `EventDispatcherInterface` butuh `ListenerProviderInterface`, dan `ListenerProviderInterface` ngumpulin semua `Listeners` pas diinisialisasi.
 
-Jika `Listener` bergantung pada `EventDispatcherInterface`, hal ini akan
-menyebabkan circular dependency (ketergantungan melingkar) yang dapat
-mengakibatkan memory overflow.
+Kalau `Listener` juga butuh `EventDispatcherInterface`, jadinya circular dependency, bisa bikin memory overflow.
 
-### Sebaiknya hanya injeksikan `ContainerInterface` di dalam `Listener`
+### Sebaiknya Hanya Menginjeksikan `ContainerInterface` di `Listener`
 
-Paling baik hanya menginjeksi `ContainerInterface` di dalam `Listener`,
-sementara komponen lain diperoleh melalui `container` di dalam metode
-`process`. Ketika framework dijalankan, `EventDispatcherInterface` akan
-diinstansiasi. Pada saat ini, lingkungan tersebut bukanlah lingkungan
-coroutine. Jika `Listener` diinjeksi dengan class yang dapat memicu peralihan
-coroutine (coroutine switching), hal itu akan menyebabkan framework gagal
-berjalan.
+Sebaiknya cuma `ContainerInterface` yang di-inject ke `Listener`, komponen lain ambil aja dari `container` di method `process`. Pas framework mulai, `EventDispatcherInterface` bakal dibuat, saat itu belum ada lingkungan coroutine. Kalau kelas yang bisa memicu coroutine switching di-inject ke `Listener`, framework bakal gagal start.
