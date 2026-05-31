@@ -1,8 +1,6 @@
 # WebSocket Server
 
-Hyperf menyediakan enkapsulasi untuk WebSocket Server. Aplikasi WebSocket dapat
-dibangun dengan cepat berbasis
-[hyperf/websocket-server](https://github.com/hyperf/websocket-server).
+Hyperf menyediakan wrapper untuk WebSocket Server, sehingga Anda dapat dengan cepat membangun aplikasi WebSocket berbasis komponen [hyperf/websocket-server](https://github.com/hyperf/websocket-server).
 
 ## Instalasi
 
@@ -12,7 +10,7 @@ composer require hyperf/websocket-server
 
 ## Konfigurasi Server
 
-Ubah `config/autoload/server.php` dan tambahkan konfigurasi berikut.
+Ubah `config/autoload/server.php` dan tambahkan konfigurasi berikut:
 
 ```php
 <?php
@@ -35,14 +33,11 @@ return [
 ];
 ```
 
-## Konfigurasi Router
+## Konfigurasi Routes
 
-> Sejauh ini, hanya metode file konfigurasi yang didukung. Metode anotasi akan
-> segera hadir.
+> Saat ini, hanya mode file konfigurasi yang didukung untuk routing. Mode annotation akan tersedia di masa mendatang.
 
-Dalam file `config/routes.php`, tambahkan konfigurasi router untuk Server `ws`
-yang sesuai, di mana `ws` adalah `name` dari WebSocket Server di
-`config/autoload/server.php`.
+Di file `config/routes.php`, tambahkan konfigurasi routing untuk Server `ws` yang sesuai. Nilai `ws` di sini tergantung pada nilai `name` dari WebSocket Server yang Anda konfigurasi di `config/autoload/server.php`.
 
 ```php
 <?php
@@ -54,9 +49,7 @@ Router::addServer('ws', function () {
 
 ## Konfigurasi Middleware
 
-Dalam file `config/autoload/middlewares.php`, tambahkan konfigurasi middleware
-untuk Server `ws` yang sesuai, di mana `ws` adalah `name` dari WebSocket Server
-di `config/autoload/server.php`.
+Di file `config/autoload/middlewares.php`, tambahkan konfigurasi global middleware untuk Server `ws` yang sesuai. Nilai `ws` di sini tergantung pada nilai `name` dari WebSocket Server yang Anda konfigurasi di `config/autoload/server.php`.
 
 ```php
 <?php
@@ -68,7 +61,7 @@ return [
 ];
 ```
 
-## Membuat Controller yang Sesuai
+## Membuat Controller
 
 ```php
 <?php
@@ -79,16 +72,24 @@ namespace App\Controller;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
-use Swoole\Http\Request;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
+use Hyperf\WebSocketServer\Constant\Opcode;
 use Swoole\Server;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
-        $server->push($frame->fd, 'Recv: ' . $frame->data);
+        $response = (new Response($server))->init($frame);
+        if($frame->opcode == Opcode::PING) {
+            // Jika menggunakan Coroutine Server, Anda perlu menanganinya secara manual dan mengembalikan frame PONG setelah mengidentifikasi frame PING.
+            // Untuk asynchronous style Server, bisa ditangani langsung melalui konfigurasi Swoole. Detailnya lihat https://wiki.swoole.com/#/websocket_server?id=open_websocket_ping_frame
+            $response->push(new Frame(opcode: Opcode::PONG));
+            return;
+        }
+        $response->push(new Frame(payloadData: 'Recv: ' . $frame->data));
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -96,16 +97,15 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
         var_dump('closed');
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
-        $server->push($request->fd, 'Opened');
+        $response = (new Response($server))->init($request);
+        $response->push(new Frame(payloadData: 'Opened'));
     }
 }
 ```
 
-Jalankan Server, kemudian Anda dapat melihat WebSocket Server telah aktif dan
-mendengarkan port 9502. Anda dapat menggunakan WebSocket Client apa pun untuk
-berkomunikasi dengan WebSocket Server ini.
+Selanjutnya, jalankan Server, dan Anda akan melihat bahwa WebSocket Server telah berjalan dan mendengarkan di port 9502. Anda kemudian dapat menggunakan berbagai WebSocket Client untuk terhubung dan mentransmisikan data.
 
 ```
 $ php bin/hyperf.php start
@@ -115,24 +115,16 @@ $ php bin/hyperf.php start
 [INFO] HTTP Server listening at 0.0.0.0:9501
 ```
 
-!> Ketika kita mendengarkan port 9501 untuk HTTP Server dan port 9502 untuk
-WebSocket Server pada saat yang sama, WebSocket Client dapat terhubung ke
-WebSocket Server melalui kedua port tersebut (9501 dan 9502). Dengan kata lain,
-menghubungkan ke `ws://0.0.0.0:9501` dan `ws:/ /0.0.0.0:9502` keduanya akan
-berhasil.
+!> Saat kita mendengarkan port 9501 dari HTTP Server dan port 9502 dari WebSocket Server secara bersamaan, WebSocket Client dapat terhubung ke WebSocket Server melalui kedua port tersebut, yaitu koneksi ke `ws://0.0.0.0:9501` dan `ws://0.0.0.0:9502` akan berhasil.
 
-Karena `Swoole\WebSocket\Server` mewarisi dari `Swoole\Http\Server`, Anda dapat
-menggunakan HTTP untuk melakukan semua push WebSocket. Untuk detail lebih
-lanjut, silakan merujuk ke callback `onRequest` pada [Dokumentasi Swoole](https://wiki.swoole.com/#/websocket_server?id=websocketserver)
+Karena `Swoole\WebSocket\Server` mewarisi dari `Swoole\Http\Server`, Anda dapat menggunakan HTTP untuk memicu semua push WebSocket. Untuk detail lebih lanjut, Anda dapat melihat bagian callback `onRequest` di [dokumentasi Swoole](https://wiki.swoole.com/#/websocket_server?id=websocketserver).
 
-Jika Anda ingin menonaktifkannya, Anda dapat menambahkan item konfigurasi
-`open_websocket_protocol` ke layanan `http` dalam file
-`config/autoload/server.php`.
+Jika Anda perlu menonaktifkannya, Anda dapat mengubah file `config/autoload/server.php` dan menambahkan item konfigurasi `open_websocket_protocol` ke service `http`.
 
 ```php
 <?php
 return [
-    // Unrelated configs are ignored
+    // Konfigurasi lain dari file ini dihapus
     'servers' => [
         [
             'name' => 'http',
@@ -151,12 +143,9 @@ return [
 ];
 ```
 
-## Connected Context
+## Connection Context
 
-Callback untuk onOpen, onMessage, dan onClose pada WebSocket tidak dipicu dalam
-coroutine yang sama, sehingga tidak dapat langsung menggunakan informasi yang
-disimpan di context. **Connected Context** disediakan oleh komponen WebSocket
-Server, dan API-nya sama dengan context coroutine.
+Callback onOpen, onMessage, dan onClose pada WebSocket service tidak dipicu dalam coroutine yang sama, sehingga Anda tidak bisa langsung menggunakan coroutine context untuk menyimpan informasi state. WebSocket Server component menyediakan context **level koneksi**, dan API-nya persis sama dengan coroutine context.
 
 ```php
 <?php
@@ -166,19 +155,20 @@ namespace App\Controller;
 
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
 use Hyperf\WebSocketServer\Context;
-use Swoole\Http\Request;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
-        $server->push($frame->fd, 'Username: ' . Context::get('username'));
+        $response = (new Response($server))->init($frame);
+        $response->push(new Frame(payloadData: 'Username: ' . Context::get('username')));
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         Context::set('username', $request->cookie['username']);
     }
@@ -189,7 +179,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface
 
 ```
 # /etc/nginx/conf.d/ng_socketio.conf
-# multiple ws server
+# Multiple ws servers
 upstream io_nodes {
     server ws1:9502;
     server ws2:9502;
@@ -203,23 +193,19 @@ server {
     # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     # proxy_set_header Host $host;
     # proxy_http_version 1.1;
-    # Forward to multiple ws server
+    # Forward ke multiple ws servers
     proxy_pass http://io_nodes;
   }
 }
 ```
 
-## Sender
+## Message Sender
 
-Ketika Anda ingin menutup koneksi `WebSocket` di layanan `HTTP`, Anda dapat
-menggunakan `Hyperf\WebSocketServer\Sender`.
+Ketika kita ingin menutup koneksi `WebSocket` di service `HTTP`, kita bisa langsung menggunakan `Hyperf\WebSocketServer\Sender`.
 
-`Sender` akan memeriksa apakah `fd` dibawa oleh `Worker` saat ini. Jika ya,
-pesan akan dikirim langsung. Jika tidak, pesan akan dikirim ke semua `Worker`
-lainnya melalui `PipeMessage`. `Worker` lain akan melakukan hal yang sama seperti
-yang disebutkan di atas.
+`Sender` akan menentukan apakah `fd` dimiliki oleh `Worker` saat ini. Jika iya, maka akan mengirim data secara langsung; jika tidak, akan mengirim melalui `PipeMessage` ke semua `Worker` kecuali dirinya sendiri, kemudian `Worker` lain akan menentukannya. Jika `fd` tersebut dimiliki oleh `Worker` tersebut, maka akan mengirim data yang sesuai ke client.
 
-`Sender` mendukung `push` dan `disconnect`.
+`Sender` mendukung dua API: `push` dan `disconnect`, sebagai berikut:
 
 ```php
 <?php
@@ -258,13 +244,11 @@ class ServerController
 }
 ```
 
-## Menangani HTTP Request di Websocket Server
+## Menangani HTTP Request di WebSocket Service
 
-Selain memisahkan layanan HTTP dan layanan WebSocket melalui port, kita juga
-dapat mendengarkan HTTP request di dalam WebSocket.
+Selain memisahkan HTTP service dan WebSocket service melalui port, kita juga dapat mendengarkan HTTP request di WebSocket.
 
-Karena item konfigurasi `server.servers.*.callbacks` semuanya adalah singleton,
-kita perlu mendefinisikan konfigurasi singleton baru di `dependencies`.
+Karena item konfigurasi di `server.servers.*.callbacks` bersifat singleton, kita perlu mengkonfigurasi instance terpisah di `dependencies`.
 
 ```php
 <?php
@@ -273,8 +257,7 @@ return [
 ];
 ```
 
-Kemudian ubah konfigurasi `callbacks` di layanan `WebSocket` kita. Bagian
-berikut menyembunyikan konfigurasi yang tidak relevan.
+Kemudian ubah konfigurasi `callbacks` di service `WebSocket` kita. Konfigurasi yang tidak relevan disembunyikan di bawah.
 
 ```php
 <?php
@@ -304,4 +287,4 @@ return [
 ];
 ```
 
-Akhirnya, kita dapat menambahkan routing `HTTP` di `ws`.
+Terakhir, kita dapat menambahkan route `HTTP` di `ws`.

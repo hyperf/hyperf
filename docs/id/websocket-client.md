@@ -1,7 +1,6 @@
-# WebSocket coroutine client
+# WebSocket Coroutine Client
 
-Hyperf menyediakan enkapsulasi untuk WebSocket Client. WebSocket Server dapat
-diakses melalui komponen [hyperf/websocket-client](https://github.com/hyperf/websocket-client).
+Hyperf menyediakan enkapsulasi untuk WebSocket Client. Anda dapat mengakses WebSocket Server berdasarkan komponen [hyperf/websocket-client](https://github.com/hyperf/websocket-client);
 
 ## Instalasi
 
@@ -11,8 +10,7 @@ composer require hyperf/websocket-client
 
 ## Penggunaan
 
-`Hyperf\WebSocketClient\ClientFactory` disediakan untuk membuat objek
-`Hyperf\WebSocketClient\Client`.
+Komponen ini menyediakan `Hyperf\WebSocketClient\ClientFactory` untuk membuat objek client `Hyperf\WebSocketClient\Client`. Mari kita demokan langsung melalui kode:
 
 ```php
 <?php
@@ -31,27 +29,24 @@ class IndexController
 
     public function index()
     {
-        // The address of the peer service. If there is no prefix like ws:// or wss://, then the ws:// would be used as default.
+        // Alamat dari layanan peer. Jika awalan ws:// atau wss:// tidak diberikan, ws:// akan ditambahkan secara default.
         $host = '127.0.0.1:9502';
-        // Create Client object through ClientFactory. Short-lived objects will be created.
+        // Buat objek Client melalui ClientFactory. Objek yang dibuat adalah objek short-lived.
         $client = $this->clientFactory->create($host);
-        // Send a message to the WebSocket server
-        $client->push('Use WebSocket Client to send data in HttpServer.');
-        // Get a response from the server. The server should use 'push()' to send messages to fd of the client, only in this way, can the response be received.
-        // A Frame object is taken as an example in following with 2 seconds timeout.
+        // Kirim pesan ke WebSocket server
+        $client->push('Mengirim data menggunakan WebSocket Client di HttpServer.');
+        // Dapatkan pesan yang direspon oleh server. Server perlu mengirim pesan ke fd dari client ini melalui push untuk mendapatkannya; set timeout ke 2s, dan tipe data yang diterima adalah objek Frame.
         /** @var Frame $msg */
         $msg = $client->recv(2);
-        // Get text data: $res_msg->data
+        // Dapatkan data teks: $res_msg->data
         return $msg->data;
     }
 }
 ```
 
-## Menonaktifkan $autoClose
+## Menonaktifkan penutupan otomatis
 
-Secara default, objek `Client` yang dibuat akan ditutup dengan `defer`. Jika
-hal ini tidak diinginkan, auto-close dapat dinonaktifkan dengan mengatur
-`$autoClose` ke `false` saat `Client` sedang diinstansiasi.
+Secara default, objek `Client` yang dibuat akan otomatis menutup koneksi melalui `defer`. Jika tidak ingin otomatis tertutup, lewatkan parameter kedua `$autoClose` sebagai `false` saat membuat objek `Client`:
 
 ```php
 $autoClose = false;

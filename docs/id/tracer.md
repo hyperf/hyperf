@@ -1,34 +1,18 @@
-# Pelacakan Call Link
+# Tracing
 
-Dalam arsitektur microservice, akan ada banyak service yang dipecah, yang
-berarti sebuah request bisnis mungkin melewati setidaknya 3 atau 4 service,
-bahkan puluhan atau lebih. Di bawah arsitektur ini, sangat sulit ketika kita
-perlu melakukan debugging terhadap masalah tertentu. Oleh karena itu, kita
-memerlukan sistem pelacakan call link (call link tracking) untuk membantu kita
-menampilkan link panggilan service secara dinamis sehingga kita dapat menemukan
-masalah dengan cepat, dan juga mengoptimalkan service berdasarkan informasi
-link tersebut.
+Dalam skenario microservice, sebuah request bisnis tunggal bisa melintasi minimal 3-4 service, dan maksimal puluhan bahkan lebih. Melakukan debugging masalah dalam arsitektur seperti ini sangatlah sulit. Kita memerlukan sistem call chain tracing untuk menampilkan tautan panggilan service secara dinamis, sehingga kita dapat dengan cepat menemukan titik masalah, dan juga menyesuaikan service berdasarkan informasi tautan tersebut.
 
-Di `Hyperf`, kami menyediakan komponen
-[hyperf/tracer](https://github.com/hyperf/tracer) untuk melacak dan
-menganalisis panggilan dari setiap request lintas jaringan. Saat ini, sistem
-[Zipkin](https://zipkin.io/) dan sistem [Jaeger](https://www.jaegertracing.io/)
-telah dihubungkan sesuai dengan protokol [OpenTracing](https://opentracing.io).
-User juga dapat menyesuaikan hal ini secara mandiri dengan mengikuti protokol
-OpenTracing.
+Di `Hyperf`, kami menyediakan komponen [hyperf/tracer](https://github.com/hyperf/tracer) untuk melacak dan menganalisis panggilan di seluruh network request. Saat ini, komponen ini terintegrasi dengan sistem [Zipkin](https://zipkin.io/) dan [Jaeger](https://www.jaegertracing.io/) berdasarkan protokol [OpenTracing](https://opentracing.io). Pengguna juga dapat membuat implementasi kustom berdasarkan protokol OpenTracing.
 
 ## Instalasi
 
-### Melalui Composer
+### Install komponen melalui Composer
 
 ```bash
 composer require hyperf/tracer
 ```
 
-Komponen [hyperf/tracer](https://github.com/hyperf/tracer) telah menginstal
-dependensi yang terkait dengan [Zipkin](https://zipkin.io/) secara default. Jika
-Anda ingin menggunakan [Jaeger](https://www.jaegertracing.io/), Anda perlu
-menjalankan perintah berikut untuk menginstal dependensi yang sesuai:
+Komponen [hyperf/tracer](https://github.com/hyperf/tracer) secara default menginstal dependensi [Zipkin](https://zipkin.io/). Jika Anda ingin menggunakan [Jaeger](https://www.jaegertracing.io/), Anda juga perlu menjalankan perintah berikut untuk menginstal dependensi yang sesuai:
 
 ```bash
 composer require jonahgeorge/jaeger-client-php
@@ -36,8 +20,7 @@ composer require jonahgeorge/jaeger-client-php
 
 ### Tambahkan konfigurasi komponen
 
-Jika file tersebut belum ada, jalankan perintah berikut untuk menambahkan file
-konfigurasi `config/autoload/opentracing.php`:
+Jika file belum ada, Anda dapat menjalankan perintah berikut untuk menambahkan file konfigurasi `config/autoload/opentracing.php`:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/tracer
@@ -47,59 +30,51 @@ php bin/hyperf.php vendor:publish hyperf/tracer
 
 ### Konfigurasi
 
-#### Mengaktifkan pelacakan
+#### Mengatur switch tracing
 
-Secara default, ini menyediakan pemantauan panggilan `Guzzle HTTP`, panggilan
-`Redis`, dan panggilan `DB` atau pemrosesan aspect `AOP` untuk mencapai
-propagasi dan pelacakan dari call link. Pelacakan ini tidak diaktifkan secara
-default. Anda perlu mengubah item `enable` di dalam file konfigurasi
-`config/autoload/opentracing.php` untuk mengaktifkan pelacakan dari panggilan
-remote tertentu.
+Secara default, monitoring atau pemrosesan `AOP` aspect disediakan untuk panggilan `Guzzle HTTP`, panggilan `Redis`, dan panggilan `DB` untuk mengimplementasikan propagasi dan tracing call chain. Secara default, tracing ini tidak diaktifkan. Anda perlu mengaktifkan tracing untuk panggilan remote tertentu dengan mengubah switch di item `enable` dalam file konfigurasi `config/autoload/opentracing.php`.
 
 ```php
 <?php
 
 return [
     'enable' => [
-        // enable the tracing of Guzzle HTTP calls
+        // Mengaktifkan atau menonaktifkan tracing untuk panggilan Guzzle HTTP
         'guzzle' => false,
-        // enable the tracing of Redis calls
+        // Mengaktifkan atau menonaktifkan tracing untuk panggilan Redis
         'redis' => false,
-        // enable the tracing of DB calls
+        // Mengaktifkan atau menonaktifkan tracing untuk panggilan DB
         'db' => false,
     ],
 ];
 ```
 
-Sebelum mulai melacak, kita perlu memilih driver Tracer yang akan digunakan
-dan mengonfigurasi Tracer tersebut.
+Sebelum memulai tracing, kita juga perlu memilih driver Tracer yang akan digunakan dan mengkonfigurasi Tracer.
 
-#### Memilih driver tracker
+#### Memilih driver Tracer
 
-Nilai yang sesuai dengan `default` dalam file konfigurasi adalah nama driver
-yang digunakan. Konfigurasi spesifik dari driver didefinisikan di bawah item
-`tracer`, menggunakan nama driver yang sama sebagai `key`.
+Nilai yang sesuai dengan `default` dalam file konfigurasi adalah nama driver yang digunakan. Konfigurasi spesifik dari driver didefinisikan di bawah item `tracer`, menggunakan driver yang sama sebagai `key`.
 
 ```php
 <?php
 
 return [
-    // Select the default Tracer driver, the selected Tracer name corresponds to the key defined under tracers
+    // Memilih default Tracer driver, nama Tracer yang dipilih sesuai dengan key yang didefinisikan di bawah tracers
     'default' => env('TRACER_DRIVER', 'staging_zipkin'),
 
-    // Other configurations are omitted here in this example
+    // Konfigurasi lainnya tidak disebutkan di sini
     'enable' => [],
 
     'tracer' => [
-        // Zipkin config
+        // Konfigurasi Zipkin
         'staging_zipkin' => [
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
-        // another Zipkin config
+        // Konfigurasi Zipkin lainnya
         'producton_zipkin' => [
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
-        // Jaeger config
+        // Konfigurasi Jaeger
         'jaeger' => [
             'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
         ],
@@ -107,59 +82,51 @@ return [
 ];
 ```
 
-Perhatikan bahwa seperti yang ditunjukkan pada contoh konfigurasi, Anda dapat
-mengonfigurasi beberapa set driver Zipkin atau driver Jaeger. Meskipun sistem
-dasar yang digunakan sama, konfigurasi spesifiknya bisa berbeda. Skenario umum
-adalah kita menginginkan tingkat sampling (sampling rate) 100% di lingkungan
-pengujian (test environment), tetapi 1% di lingkungan produksi (production
-environment). Dua set driver dapat dikonfigurasi, dan kemudian driver yang
-berbeda dapat dipilih sesuai dengan environment variable di bawah item `default`.
+Perhatikan, seperti yang ditunjukkan dalam contoh konfigurasi, Anda dapat mengkonfigurasi beberapa driver Zipkin atau driver Jaeger. Meskipun mereka menggunakan sistem dasar yang sama, konfigurasi spesifik mereka bisa berbeda. Skenario umum adalah kita ingin 100% sampling di lingkungan staging, tetapi 1% sampling di lingkungan production. Anda dapat mengkonfigurasi dua driver dan kemudian memilih driver yang berbeda berdasarkan environment variable di item `default`.
 
-#### Mengonfigurasi Zipkin
+#### Mengkonfigurasi Zipkin
 
-Saat menggunakan Zipkin, tambahkan konfigurasi spesifik dari Zipkin ke item
-`tracer` di dalam file konfigurasi.
+Saat menggunakan Zipkin, tambahkan konfigurasi spesifik Zipkin ke item `tracer` dalam file konfigurasi.
 
 ```php
 <?php
 use Zipkin\Samplers\BinarySampler;
 
 return [
-    // default Tracer
+    // Memilih default Tracer
     'default' => env('TRACER_DRIVER', 'zipkin'),
 
-    // Other configurations are omitted here in this example
+    // Demonstrasi tidak memperluas konfigurasi di dalam enable
     'enable' => [],
 
     'tracer' => [
-        // Zipkin drive config
+        // Konfigurasi driver Zipkin
         'zipkin' => [
-            // current app config
+            // Konfigurasi aplikasi saat ini
             'app' => [
                 'name' => env('APP_NAME', 'skeleton'),
-                // If ipv6 and ipv6 are null, the component will automatically detect from the Server
+                // Jika ipv4 dan ipv6 kosong, komponen akan mendeteksinya secara otomatis dari Server
                 'ipv4' => '127.0.0.1',
                 'ipv6' => null,
                 'port' => 9501,
             ],
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
             'options' => [
-                // the endpoint address of Zipkin service
+                // URL endpoint service Zipkin
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
-                // Request timeout (in seconds)
+                // Timeout request dalam detik
                 'timeout' => env('ZIPKIN_TIMEOUT', 1),
             ],
-            // Sampler, track all requests by default
+            // Sampler, default melacak semua request
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
     ],
 ];
 ```
 
-#### Mengonfigurasi Jaeger
+#### Mengkonfigurasi Jaeger
 
-Saat menggunakan Jaeger, tambahkan konfigurasi spesifik dari Jaeger ke item
-`tracer` di dalam file konfigurasi.
+Saat menggunakan Jaeger, tambahkan konfigurasi spesifik Jaeger ke item `tracer` dalam file konfigurasi.
 
 ```php
 <?php
@@ -167,25 +134,25 @@ use Hyperf\Tracer\Adapter\JaegerTracerFactory;
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 return [
-    // default Tracer
+    // Memilih default Tracer
     'default' => env('TRACER_DRIVER', 'jaeger'),
 
-    // Other configurations are omitted here in this example
+    // Demonstrasi tidak memperluas konfigurasi di dalam enable
     'enable' => [],
 
     'tracer' => [
-        // Jaeger drive config
+        // Konfigurasi driver Jaeger
         'jaeger' => [
             'driver' => JaegerTracerFactory::class,
-            // project name
+            // Nama proyek
             'name' => env('APP_NAME', 'skeleton'),
             'options' => [
-                // Sampler, track all requests by default
+                // Sampler, default melacak semua request
                 'sampler' => [
                     'type' => SAMPLER_TYPE_CONST,
                     'param' => true,
                 ],
-                // the address which should report to
+                // Reporting agent
                 'local_agent' => [
                     'reporting_host' => env('JAEGER_REPORTING_HOST', 'localhost'),
                     'reporting_port' => env('JAEGER_REPORTING_PORT', 5775),
@@ -196,18 +163,15 @@ return [
 ];
 ```
 
-Konfigurasi lebih lanjut tentang Jaeger dapat ditemukan di
-[sini](https://github.com/jonahgeorge/jaeger-client-php).
+Untuk konfigurasi lebih lanjut tentang Jaeger, Anda bisa melihatnya [[di sini](https://github.com/jonahgeorge/jaeger-client-php)].
 
-#### Mengaktifkan pelacakan JsonRPC
+#### Mengkonfigurasi switch tracing JsonRPC
 
-Pelacakan link JsonRPC tidak berada dalam konfigurasi terpadu, dan untuk
-sementara termasuk dalam versi `Beta` versi.
+JsonRPC link tracing tidak ada dalam konfigurasi terpadu dan saat ini merupakan fitur versi `Beta`.
 
-Kita hanya perlu mengonfigurasi `aspects.php`, dan menambahkan `Aspect` berikut
-untuk mengaktifkannya.
+Kita hanya perlu mengkonfigurasi `aspects.php` dan menambahkan `Aspect` berikut untuk mengaktifkannya.
 
-> Tip: Jangan lupa untuk menambahkan TraceMiddleware yang sesuai di sisi lawan.
+> Tip: Jangan lupa untuk menambahkan TraceMiddleware yang sesuai di sisi peer.
 
 ```php
 <?php
@@ -217,13 +181,11 @@ return [
 ];
 ```
 
-#### Mengaktifkan pelacakan coroutine
+#### Mengkonfigurasi switch tracing Coroutine
 
-Pelacakan link coroutine tidak disertakan dalam konfigurasi terpadu, ini
-merupakan versi opsional dari fungsi tersebut.
+Coroutine link tracing tidak ada dalam konfigurasi terpadu dan merupakan fitur opsional.
 
-Kita hanya perlu mengonfigurasi `aspects.php` dan menambahkan `Aspect` berikut
-untuk mengaktifkannya.
+Kita hanya perlu mengkonfigurasi `aspects.php` dan menambahkan `Aspect` berikut untuk mengaktifkannya.
 
 ```php
 <?php
@@ -233,16 +195,13 @@ return [
 ];
 ```
 
-### Mengonfigurasi middleware atau listener
+### Mengkonfigurasi middleware atau listener
 
-Setelah mengonfigurasi driver, Anda perlu mengonfigurasi middleware atau
-listener event siklus request untuk mengumpulkan informasi guna mengaktifkan
-fungsi pengumpulan.
+Setelah mengkonfigurasi driver, untuk mengumpulkan informasi, Anda juga perlu mengkonfigurasi middleware atau event listener siklus request untuk mengaktifkan fungsi pengumpulan.
 
-- Menambahkan middleware
+- Tambahkan middleware
 
-Buka file `config/autoload/middlewares.php` dan aktifkan middleware pada
-node `http`.
+Buka file `config/autoload/middlewares.php` dan aktifkan middleware di node `http`.
 
 ```php
 <?php
@@ -250,15 +209,15 @@ node `http`.
 declare(strict_types=1);
 
 return [
-     'http' => [
-         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
-     ],
+    'http' => [
+        \Hyperf\Tracer\Middleware\TraceMiddleware::class,
+    ],
 ];
 ```
 
-- atau menambahkan listener
+- Atau tambahkan listener
 
-Buka file `config/autoload/listeners.php` dan tambahkan listener tersebut.
+Buka file `config/autoload/listeners.php` dan tambahkan listener.
 
 ```php
 <?php
@@ -266,35 +225,29 @@ Buka file `config/autoload/listeners.php` dan tambahkan listener tersebut.
 declare(strict_types=1);
 
 return [
-     \Hyperf\Tracer\Listener\RequestTraceListener::class,
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 
-### Mengonfigurasi Span tag
+### Mengkonfigurasi Span tag
 
-Untuk beberapa nama Span Tag yang informasi pelacakannya dikumpulkan secara
-otomatis oleh Hyperf, Anda dapat mengubah nama yang sesuai dengan mengubah
-konfigurasi Span Tag. Cukup tambahkan konfigurasi `tags` dalam file konfigurasi
-`config/autoload/opentracing.php`. Referensi konfigurasi adalah sebagai berikut.
-Jika item konfigurasi ada, nilai dari item konfigurasi tersebut yang akan
-berlaku. Jika item konfigurasi tidak ada, nilai default dari komponen yang akan
-berlaku.
+Untuk beberapa nama Span Tag yang dikumpulkan secara otomatis oleh Hyperf, Anda dapat mengubah nama yang sesuai dengan mengubah konfigurasi Span Tag. Anda hanya perlu menambahkan konfigurasi `tags` di file konfigurasi `config/autoload/opentracing.php`. Lihat konfigurasi di bawah. Jika item konfigurasi ada, nilai item konfigurasi tersebut yang akan digunakan. Jika item konfigurasi tidak ada, nilai default komponen yang akan digunakan.
 
 ```php
 return [
     'tags' => [
-        // HTTP client (Guzzle)
+        // HTTP Client (Guzzle)
         'http_client' => [
             'http.url' => 'http.url',
             'http.method' => 'http.method',
             'http.status_code' => 'http.status_code',
         ],
-        // Redis client
+        // Redis Client
         'redis' => [
             'arguments' => 'arguments',
             'result' => 'result',
         ],
-        // database client (hyperf/database)
+        // Database Client (hyperf/database)
         'db' => [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
@@ -304,35 +257,21 @@ return [
 ];
 ```
 
-### Mengganti sampler
+### Mengganti Sampler
 
-Sampler default mencatat call link untuk semua request, yang akan memberikan
-dampak tertentu pada performa, terutama penggunaan memori. Jadi kita hanya
-perlu melacak call link saat kita menginginkannya, sehingga kita perlu mengganti
-sampler tersebut. Sangat mudah untuk mengganti sampler, sebagai contoh pada
-Zipkin, cukup ubah nilai yang sesuai pada item konfigurasi
-`opentracing.zipkin.sampler` ke instance objek sampler Anda, selama objek
-sampler Anda mengimplementasikan interface class `Zipkin\Sampler`.
+Sampler default mencatat call chain untuk semua request, yang memiliki dampak tertentu pada performa, terutama penggunaan memori. Oleh karena itu, kita hanya perlu melacak call chain ketika kita menginginkannya. Maka kita perlu mengganti sampler. Menggantinya juga sangat sederhana. Mengambil Zipkin sebagai contoh, cukup ubah nilai yang sesuai dengan item konfigurasi `opentracing.zipkin.sampler` ke instance objek sampler Anda, selama objek sampler Anda mengimplementasikan class interface `Zipkin\Sampler`.
 
-### Mengakses layanan pelacakan link Alibaba Cloud
+### Mengakses Alibaba Cloud Link Tracing Service
 
-Saat kita menggunakan layanan pelacakan link Alibaba Cloud, karena sisi lawan
-juga mendukung protokol `Zipkin`, Anda dapat langsung mengubah nilai
-`endpoint_url` di dalam file konfigurasi `config/autoload/opentracing.php` ke
-alamat `region` Aliyun Anda yang sesuai. Alamat spesifik dapat diperoleh di
-layanan pelacakan link Alibaba Cloud. Untuk detail lebih lanjut, silakan merujuk
-ke [Dokumen Bantuan Layanan Pelacakan Link Alibaba Cloud](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)
+Ketika kita menggunakan layanan link tracing Alibaba Cloud, karena pihak server juga mendukung protokol `Zipkin`, kita bisa langsung mengubah `endpoint_url` di file konfigurasi `config/autoload/opentracing.php` ke alamat `region` Alibaba Cloud Anda yang sesuai. Alamat spesifik dapat diperoleh di layanan link tracing Alibaba Cloud. Untuk detail lebih lanjut, silakan merujuk ke [Dokumen Bantuan Alibaba Cloud Link Tracing Service](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv).
 
 ### Menggunakan driver Tracer lainnya
 
-Anda juga dapat menggunakan driver Tracer lainnya yang mengikuti protokol
-OpenTracing. Pada field Driver, isi dengan kelas apa pun yang
-mengimplementasikan `Hyperf\Tracer\Contract\NamedFactoryInterface`. Interface
-ini hanya memiliki satu fungsi `make()`, parameternya adalah nama driver, dan
-perlu mengembalikan instance yang mengimplementasikan `OpenTracing\Tracer`.
+Anda juga dapat menggunakan driver Tracer lain yang sesuai dengan protokol OpenTracing. Di item Driver, isi class apa pun yang mengimplementasikan `Hyperf\Tracer\Contract\NamedFactoryInterface`. Interface ini hanya memiliki satu fungsi make, parameternya adalah nama driver, dan perlu mengembalikan instance yang mengimplementasikan OpenTracing\Tracer.
 
 ## Referensi
+
 - [Opentracing](https://opentracing.io)
 - [Zipkin](https://zipkin.io/)
 - [Jaeger](https://www.jaegertracing.io/)
-- [Dapper, sistem pelacakan untuk sistem terdistribusi skala besar](https://bigbully.github.io/Dapper-translation/)
+- [Dapper, A Large-Scale Distributed Systems Tracing System](https://bigbully.github.io/Dapper-translation/)

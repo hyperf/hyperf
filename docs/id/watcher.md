@@ -1,18 +1,8 @@
-# Watcher (Hot Reload)
+# Hot Update Watcher
 
-Sejak versi `2.0` menggunakan `BetterReflection` untuk mengumpulkan `abstract
-syntax tree (AST)` dan `reflection data`, kecepatan pemindaian menjadi jauh lebih
-lambat dibandingkan versi `1.1`.
+> Pertama kali dijalankan akan relatif lambat karena belum ada cache. Kedua kali dijalankan, pengumpulan file dilakukan secara dinamis berdasarkan waktu modifikasi, sehingga waktu startup masih cukup lama.
 
-> Startup pertama aplikasi akan lebih lambat karena belum ada cache pemindaian
-> yang tersedia. Kecepatan startup berikutnya akan meningkat, tetapi karena
-> `BetterReflection` perlu diinstansiasi, waktu startup masih relatif lama.
-
-Selain menyelesaikan masalah startup di atas, komponen `Watcher` juga menangani
-pembaruan (restart) aplikasi segera setelah perubahan file terjadi.
-
-> Komponen ini hanya cocok untuk lingkungan pengembangan (development), silakan
-> gunakan dengan hati-hati di lingkungan produksi (production).
+Selain mengatasi masalah startup di atas, komponen `Watcher` juga menyediakan fungsi restart segera setelah modifikasi file.
 
 ## Instalasi
 
@@ -22,35 +12,35 @@ composer require hyperf/watcher --dev
 
 ## Konfigurasi
 
-### Publish konfigurasi
+### Publikasi konfigurasi
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/watcher
 ```
 
-### Petunjuk Konfigurasi
+### Deskripsi konfigurasi
 
-|      Nama      |     Default      |                                      Deskripsi                                       |
-| :------------: | :--------------: | :----------------------------------------------------------------------------------: |
-|     driver     | `ScanFileDriver` |                          File watcher dengan metode polling default                  |
-|      bin       |   `PHP_BINARY`   | Skrip yang digunakan untuk memulai layanan, contoh: `php -d swoole.use_shortname=Off`|
-|   watch.dir    | `app`, `config`  |                                 Direktori yang diawasi                               |
-|   watch.file   |      `.env`      |                                  File yang diawasi                                   |
-| watch.interval |      `2000`      |                                Interval polling (ms)                                 |
-|      ext       |  `.php`, `.env`  |                     Ekstensi file di dalam direktori yang diawasi                    |
+| Konfigurasi | Nilai Default | Deskripsi |
+| :---------: | :-----------: | :--------------------------------------------------------: |
+| driver      | `ScanFileDriver` | Driver pemindaian file terjadiwal default |
+| bin         | `PHP_BINARY`  | Skrip untuk memulai service, mis., `php -d swoole.use_shortname=Off` |
+| watch.dir   | `app`, `config` | Direktori yang dipantau |
+| watch.file  | `.env`        | File yang dipantau |
+| watch.interval | `2000`      | Interval pemindaian (milidetik) |
+| ext         | `.php`, `.env` | Ekstensi file di bawah direktori yang dipantau |
 
-## Dukungan Driver
+## Driver yang Didukung
 
-|                Driver                 |                 Catatan                 |
-| :-----------------------------------: | :-------------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver  |        tidak memerlukan ekstensi        |
-|  Hyperf\Watcher\Driver\FswatchDriver  |            memerlukan fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver    | memerlukan find, MAC memerlukan gfind |
-| Hyperf\Watcher\Driver\FindNewerDriver |             memerlukan find             |
+| Driver                                     | Deskripsi                           |
+| :----------------------------------------: | :---------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver       | Tidak memerlukan ekstensi           |
+| Hyperf\Watcher\Driver\FswatchDriver        | Perlu menginstal fswatch            |
+| Hyperf\Watcher\Driver\FindDriver           | Perlu menginstal find, gfind di MAC |
+| Hyperf\Watcher\Driver\FindNewerDriver      | Perlu menginstal find               |
 
 ### Instalasi `fswatch`
 
-Mac:
+Mac
 
 ```bash
 brew install fswatch
@@ -62,7 +52,7 @@ Ubuntu/Debian
 apt-get install fswatch
 ```
 
-Linux:
+Lainnya
 
 ```bash
 wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.14.0.tar.gz \
@@ -73,27 +63,15 @@ wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.
 && make install
 ```
 
-## Memulai (Startup)
+## Menjalankan
 
-Karena struktur direktori, perintah startup harus dijalankan di direktori
-root proyek.
+Karena alasan direktori, perlu dijalankan dari direktori root proyek.
 
 ```bash
 php bin/hyperf.php server:watch
 ```
 
-## Startup dengan Docker
+## Keterbatasan
 
-Saat mengonfigurasi file watcher untuk hot-reloading di Docker, tentukan
-entrypoint pada Dockerfile sebagai berikut:
-
-```bash
-ENTRYPOINT ["php", "/opt/www/bin/hyperf.php", "server:watch"]
-```
-
-## Masalah
-
-- Untuk saat ini, ada sedikit masalah di lingkungan Docker Alpine, yang akan
-  diperbaiki pada versi mendatang.
-- Penghapusan file dan perubahan pada `.env` memerlukan restart manual agar
-  dapat diterapkan.
+- Saat ini, ada beberapa masalah kecil di lingkungan Alpine Docker yang akan diperbaiki kemudian.
+- Menghapus file dan memodifikasi `.env` memerlukan restart manual agar dapat diterapkan.

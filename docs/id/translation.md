@@ -1,7 +1,6 @@
-# I18n
+# Internasionalisasi
 
-Dukungan internasionalisasi (internationalization) pada Hyperf sangat ramah,
-memungkinkan proyek Anda untuk mendukung berbagai bahasa.
+Hyperf menyediakan dukungan yang sangat baik untuk internasionalisasi, memungkinkan project Anda mendukung banyak bahasa.
 
 # Instalasi
 
@@ -9,19 +8,11 @@ memungkinkan proyek Anda untuk mendukung berbagai bahasa.
 composer require hyperf/translation
 ```
 
-> Komponen ini merupakan komponen independen tanpa dependensi yang terkait dengan
-> framework, dan dapat digunakan kembali secara terpisah untuk proyek atau
-> framework lainnya.
+> Komponen ini adalah komponen independen yang tidak memiliki ketergantungan terkait framework dan dapat digunakan kembali secara independen di project atau framework lain.
 
 # File Bahasa
 
-Secara default, file bahasa Hyperf ditempatkan di bawah folder
-`storage/languages`. Anda juga dapat mengubah folder file bahasa ini di
-`config/autoload/translation.php`. Setiap bahasa memiliki subfoldernya
-masing-masing, misalnya `en` merujuk pada file bahasa Inggris, `zh_CN` merujuk
-pada file bahasa Mandarin Sederhana. Anda dapat membuat folder bahasa baru
-beserta file bahasa di dalamnya sesuai dengan kebutuhan proyek Anda. Contoh
-strukturnya adalah sebagai berikut:
+Secara default, file bahasa Hyperf ditempatkan di bawah `storage/languages`. Anda juga dapat mengganti folder file bahasa di `config/autoload/translation.php`. Setiap bahasa sesuai dengan subdirektori, misalnya, `en` merujuk pada file bahasa Inggris, dan `zh_CN` merujuk pada file bahasa Mandarin Sederhana. Anda dapat membuat folder bahasa baru dan file bahasa di dalamnya sesuai dengan kebutuhan Anda. Contohnya adalah sebagai berikut:
 
 ```
 /storage
@@ -32,40 +23,38 @@ strukturnya adalah sebagai berikut:
             messages.php
 ```
 
-Semua file bahasa mengembalikan sebuah array dengan key berupa string:
+Semua file bahasa mengembalikan array, di mana kunci dari array tersebut adalah string:
 
 ```php
 <?php
 // storage/languages/en/messages.php
 
 return [
-    'welcome' => 'Welcome to our application',
+    'welcome' => 'Selamat datang di aplikasi kami',
 ];
 ```
 
-## Mengonfigurasi Locale
+## Mengonfigurasi Lingkungan Bahasa
 
-### Mengonfigurasi Default Locale
+### Mengonfigurasi Lingkungan Bahasa Default
 
-Konfigurasi yang relevan untuk komponen internasionalisasi diatur dalam file
-konfigurasi `config/autoload/translation.php`. Anda dapat mengubahnya sesuai
-dengan kebutuhan Anda.
+Semua konfigurasi yang terkait dengan komponen internasionalisasi diatur dalam file konfigurasi `config/autoload/translation.php`, yang dapat Anda ubah sesuai kebutuhan.
 
 ```php
 <?php
 // config/autoload/translation.php
 
 return [
-    // default language
+    // Bahasa default
     'locale' => 'zh_CN',
-    // Fallback language, when the language text of the default language is not provided, the corresponding language text of the fallback language will be used
+    // Bahasa cadangan, digunakan ketika teks bahasa dari bahasa default tidak tersedia
     'fallback_locale' => 'en',
-    // Folder where language files are stored
+    // Folder tempat file bahasa disimpan
     'path' => BASE_PATH . '/storage/languages',
 ];
 ```
 
-### Mengonfigurasi Locale Sementara
+### Mengonfigurasi Lingkungan Bahasa Sementara
 
 ```php
 <?php
@@ -80,7 +69,7 @@ class FooController
     
     public function index()
     {
-        // Only valid for the current request or coroutine lifetime
+        // Hanya berlaku dalam siklus hidup request atau coroutine saat ini
         $this->translator->setLocale('zh_CN');
     }
 }
@@ -90,9 +79,7 @@ class FooController
 
 ## Menerjemahkan melalui TranslatorInterface
 
-Penerjemahan string dapat dilakukan secara langsung dengan melakukan inject
-pada `Hyperf\Contract\TranslatorInterface` dan memanggil method `trans` dari
-instance tersebut:
+Anda dapat langsung menginjeksi `Hyperf\Contract\TranslatorInterface` dan memanggil metode `trans` dari instance untuk menerjemahkan string:
 
 ```php
 <?php
@@ -114,10 +101,8 @@ class FooController
 
 ## Menerjemahkan melalui Fungsi Global
 
-Anda juga dapat menerjemahkan string melalui fungsi global `__()` atau
-`trans()`. Parameter pertama dari fungsi tersebut menerima format `key`
-(merujuk pada key yang menggunakan string terjemahan sebagai key) atau
-`file.key`.
+Anda juga dapat menggunakan fungsi global `__()` atau `trans()` untuk menerjemahkan string.
+Argumen pertama dari fungsi menggunakan format `key` (merujuk pada kunci yang digunakan sebagai string terjemahan) atau format `file.key`.
 
 ```php
 echo __('messages.welcome');
@@ -126,62 +111,48 @@ echo trans('messages.welcome');
 
 # Mendefinisikan Placeholder dalam String Terjemahan
 
-Anda juga dapat mendefinisikan placeholder dalam string bahasa, di mana semua
-placeholder diawali dengan tanda `:`. Sebagai contoh, menggunakan username
-sebagai placeholder:
+Anda juga dapat mendefinisikan placeholder dalam string bahasa, di mana semua placeholder diawali dengan `:`. Misalnya, gunakan username sebagai placeholder:
 
 ```php
 <?php
 // storage/languages/en/messages.php
 
 return [
-    'welcome' => 'Welcome :name',
+    'welcome' => 'Selamat datang :name',
 ];
 ```
 
-Ganti placeholder menggunakan parameter kedua dari fungsi:
+Gunakan argumen kedua dari fungsi untuk mengganti placeholder:
 
 ```php
 echo __('messages.welcome', ['name' => 'Hyperf']);
 ```
 
-Jika placeholder menggunakan huruf kapital semua, atau huruf pertamanya
-kapital, maka string hasil terjemahan juga akan disesuaikan dengan format
-huruf kapital tersebut:
+Jika placeholder semuanya huruf besar, atau huruf pertama adalah huruf besar, string terjemahan juga akan dalam bentuk huruf besar yang sesuai:
 
 ```php
-'welcome' => 'Welcome, :NAME', // Welcome, HYPERF
-'goodbye' => 'Goodbye, :Name', // Goodbye, Hyperf
+'welcome' => 'Selamat datang, :NAME', // Selamat datang, HYPERF
+'goodbye' => 'Selamat tinggal, :Name', // Selamat tinggal, Hyperf
 ```
 
-# Menangani Bentuk Jamak (Plural)
+# Menangani Bentuk Jamak
 
-Aturan bentuk jamak berbeda-beda di setiap bahasa. Hal ini mungkin tidak
-terlalu diperhatikan dalam bahasa Mandarin, namun saat menerjemahkan bahasa
-lain, kita perlu menangani bentuk jamak dari kata-kata tersebut. Kita dapat
-menggunakan karakter pipe `"|"`, yang dapat digunakan untuk membedakan bentuk
-tunggal dan jamak dari string:
+Bahasa yang berbeda memiliki aturan bentuk jamak yang berbeda. Dalam bahasa Indonesia, kita mungkin tidak terlalu memperhatikan hal ini, tetapi kita perlu menangani bentuk jamak saat menerjemahkan bahasa lain. Kita dapat menggunakan karakter `「pipa」` untuk membedakan antara bentuk tunggal dan jamak dari sebuah string:
 
 ```php
-'apples' => 'There is one apple|There are many apples',
+'apples' => 'Ada satu apel|Ada banyak apel',
 ```
 
-Anda juga dapat menentukan rentang angka untuk membuat aturan jamak yang lebih
-kompleks:
+Anda juga dapat menentukan rentang numerik untuk membuat aturan bentuk jamak yang lebih kompleks:
 
 ```php
-'apples' => '{0} There are none|[1,19] There are some|[20,*] There are many',
+'apples' => '{0} Tidak ada|[1,19] Ada beberapa|[20,*] Ada banyak',
 ```
 
-Dengan menggunakan karakter pipe `"|"`, setelah aturan bentuk jamak
-didefinisikan, fungsi global `trans_choice` dapat digunakan untuk mendapatkan
-representasi string literal sesuai dengan `"amount"` (jumlah) yang diberikan.
-Pada contoh berikut, karena jumlahnya lebih besar dari `1`, maka bentuk jamak
-dari string terjemahan akan dikembalikan:
+Setelah mendefinisikan aturan bentuk jamak menggunakan karakter `「pipa」`, Anda dapat menggunakan fungsi global `trans_choice` untuk mendapatkan teks string untuk `「jumlah」` yang diberikan. Dalam contoh di bawah, karena jumlahnya lebih besar dari `1`, bentuk jamak dari string terjemahan dikembalikan:
 
 ```php
 echo trans_choice('messages.apples', 10);
 ```
 
-Tentu saja, selain fungsi global `trans_choice()`, Anda juga dapat menggunakan
-method `transChoice` dari `Hyperf\Contract\TranslatorInterface`.
+Tentu saja, selain fungsi global `trans_choice()`, Anda juga dapat menggunakan metode `transChoice` dari `Hyperf\Contract\TranslatorInterface`.

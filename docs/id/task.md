@@ -1,14 +1,6 @@
 # Task
 
-Pada tahap ini, `Swoole` tidak memiliki cara untuk melakukan `hook` terhadap
-semua fungsi pemblokir (blocking functions), yang berarti beberapa fungsi
-masih akan menyebabkan `process blocking` yang akan memengaruhi penjadwalan
-coroutine. Pada saat ini, kita dapat mensimulasikan coroutine dengan
-menggunakan komponen `Task`. Untuk mencapai tujuan memanggil fungsi pemblokir
-tanpa memblokir proses, pada dasarnya ini masih berupa proses multi-process
-yang menjalankan fungsi pemblokir, sehingga kinerjanya jelas akan lebih rendah
-daripada coroutine asli (native coroutine), tergantung pada jumlah
-`Task Worker`.
+Saat ini, `Swoole` belum bisa me-`hook` semua fungsi blocking. Artinya, beberapa fungsi masih bisa menyebabkan `process blocking` dan mengganggu penjadwalan coroutine. Dalam kasus seperti ini, kita bisa menggunakan komponen `Task` untuk mensimulasikan pemrosesan coroutine, sehingga fungsi blocking tetap bisa dipanggil tanpa mem-block process. Pada dasarnya, fungsi blocking tetap berjalan di banyak process, jadi performanya jauh lebih rendah dibanding coroutine native, tergantung jumlah process `Task Worker`.
 
 ## Instalasi
 
@@ -18,8 +10,7 @@ composer require hyperf/task
 
 ## Konfigurasi
 
-Karena Task bukan merupakan komponen bawaan (default), Anda perlu
-menambahkan konfigurasi terkait `Task` ke `server.php` saat menggunakannya.
+Karena `Task` bukan komponen default, Anda perlu menambahkan konfigurasi terkait `Task` ke `server.php` saat menggunakannya.
 
 ```php
 <?php
@@ -29,27 +20,27 @@ declare(strict_types=1);
 use Hyperf\Server\Event;
 
 return [
-    // Item konfigurasi tidak relevan lainnya diabaikan di sini
+    // Item konfigurasi lain yang tidak terkait dihilangkan di sini
     'settings' => [
-        // Jumlah Task Worker, konfigurasikan jumlah yang sesuai berdasarkan konfigurasi server Anda
+        // Jumlah Task Worker, konfigurasikan angka yang sesuai berdasarkan konfigurasi server Anda
         'task_worker_num' => 8,
-        // Karena `Task` terutama menangani metode yang tidak dapat dijadikan coroutine, disarankan untuk mengatur `false` di sini guna menghindari kebingungan data di bawah coroutine
+        // Karena `Task` terutama menangani method yang tidak bisa di-coroutine-kan, disarankan untuk mengatur ini ke `false` untuk menghindari kekacauan data di bawah coroutine
         'task_enable_coroutine' => false,
     ],
     'callbacks' => [
-        // Callback Task
+        // Task callbacks
         Event::ON_TASK => [Hyperf\Framework\Bootstrap\TaskCallback::class, 'onTask'],
         Event::ON_FINISH => [Hyperf\Framework\Bootstrap\FinishCallback::class, 'onFinish'],
     ],
 ];
+
 ```
 
 ## Penggunaan
 
-Komponen Task menyediakan dua metode penggunaan: `active method delivery`
-dan `annotation delivery`.
+Komponen Task menyediakan dua metode penggunaan: `pengiriman method aktif` dan `pengiriman annotation`.
 
-### Active method delivery
+### Pengiriman method aktif
 
 ```php
 <?php
@@ -65,7 +56,7 @@ class MethodTask
     {
         return [
             'worker.cid' => $cid,
-            // Mengembalikan -1 ketika task_enable_coroutine bernilai false, jika tidak akan mengembalikan ID coroutine yang sesuai
+            // Mengembalikan -1 ketika task_enable_coroutine false, jika tidak mengembalikan ID coroutine yang sesuai
             'task.cid' => Coroutine::id(),
         ];
     }
@@ -74,15 +65,12 @@ class MethodTask
 $container = ApplicationContext::getContainer();
 $exec = $container->get(TaskExecutor::class);
 $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id()]));
+
 ```
 
-### Menggunakan anotasi
+### Menggunakan Annotation
 
-Menggunakan `active method delivery` tidak terlalu intuitif. Di sini kita
-mengimplementasikan anotasi `#[Task]` yang sesuai dan menulis ulang panggilan
-metode melalui `AOP`. Saat berada di dalam proses `Worker`, metode tersebut
-secara otomatis dikirimkan (delivered) ke proses `Task`, dan coroutine akan
-menunggu data dikembalikan.
+`Pengiriman method aktif` kurang intuitif. Karena itu, kami mengimplementasikan annotation `#[Task]` dan menulis ulang pemanggilan method menggunakan `AOP`. Ketika berada di process `Worker`, task otomatis dikirim ke process `Task`, dan coroutine menunggu hasilnya.
 
 ```php
 <?php
@@ -98,7 +86,7 @@ class AnnotationTask
     {
         return [
             'worker.cid' => $cid,
-            // Mengembalikan -1 ketika task_enable_coroutine=false, jika tidak akan mengembalikan ID coroutine yang sesuai
+            // Mengembalikan -1 ketika task_enable_coroutine=false, jika tidak mengembalikan ID coroutine yang sesuai
             'task.cid' => Coroutine::id(),
         ];
     }
@@ -109,21 +97,21 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> `use Hyperf\Task\Annotation\Task;` diperlukan saat menggunakan anotasi `#[Task]`
+> Saat menggunakan annotation `#[Task]`, pastikan Anda `use Hyperf\Task\Annotation\Task;`
 
-Anotasi ini mendukung parameter berikut
+Annotation mendukung parameter berikut:
 
-| Konfigurasi | Tipe | Default | Keterangan |
-| :------: | :---: | :----: | :------------------------------------------------------------: |
-| timeout | int | 10 | Batas waktu (timeout) eksekusi Task |
-| workerId | int | -1 | Menentukan ID proses tugas yang akan dikirim (-1 berarti pengiriman acak ke proses yang menganggur/idle) |
+| Konfigurasi | Tipe  | Default | Deskripsi                                              |
+| :---------: | :---: | :-----: | :----------------------------------------------------: |
+| timeout     | int   | 10      | Timeout eksekusi task                                  |
+| workerId    | int   | -1      | Menentukan ID Task process untuk pengiriman (-1 berarti dikirim secara acak ke process yang idle) |
 
 ## Lampiran
 
-Swoole belum memiliki daftar fungsi coroutine untuk saat ini:
+Daftar fungsi yang belum di-coroutine-kan oleh Swoole:
 
-- mysql, lapisan bawah menggunakan libmysqlclient, yang tidak disarankan, disarankan untuk menggunakan pdo_mysql/mysqli yang sudah mengimplementasikan coroutine
-- mongo, lapisan bawah menggunakan mongo-c-client
+- mysql: menggunakan libmysqlclient secara internal, tidak direkomendasikan; disarankan menggunakan pdo_mysql/mysqli yang sudah di-coroutine-kan.
+- mongo: menggunakan mongo-c-client secara internal.
 - pdo_pgsql
 - pdo_ori
 - pdo_odbc
@@ -131,14 +119,9 @@ Swoole belum memiliki daftar fungsi coroutine untuk saat ini:
 
 ### MongoDB
 
-> Karena `MongoDB` tidak dapat di-`hook`, kita dapat memanggilnya melalui `Task`. Berikut adalah pengantar singkat tentang cara memanggil `MongoDB` melalui anotasi.
+> Karena `MongoDB` tidak bisa `di-hook`, kita dapat menggunakan `Task` untuk memanggilnya. Berikut adalah pengenalan singkat tentang cara memanggil `MongoDB` menggunakan metode annotation.
 
-Di bawah ini kita mengimplementasikan dua metode `insert` dan `query`. Perlu
-dicatat bahwa metode `manager` tidak dapat menggunakan `Task`, karena `Task`
-akan diproses di dalam `proses Task` yang sesuai, lalu mengembalikan data dari
-`proses Task` ke `proses Worker`. Oleh karena itu, parameter input dan output
-dari `metode Task` tidak boleh membawa `IO` apa pun, seperti mengembalikan
-instansiasi `Redis` dan sebagainya.
+Di sini kita implementasikan dua method, `insert` dan `query`. Perhatikan bahwa method `manager` tidak bisa menggunakan `Task`, karena `Task` diproses di `Task process` lalu datanya dikembalikan ke `Worker process`. Karena itu, sebaiknya tidak membawa `IO` apa pun di parameter input/output `Task method`, misalnya mengembalikan objek `Redis` yang sudah diinstansiasi.
 
 ```php
 <?php
@@ -185,9 +168,10 @@ class MongoTask
         return $this->manager = new Manager($uri, []);
     }
 }
+
 ```
 
-Penggunaan adalah sebagai berikut:
+Penggunaannya sebagai berikut:
 
 ```php
 <?php
@@ -203,12 +187,6 @@ $result = $client->query('hyperf.test', [], [
 ]);
 ```
 
-## Opsi lain
+## Skema Lain
 
-Jika mekanisme Task tidak dapat memenuhi persyaratan kinerja, Anda dapat
-mencoba proyek sumber terbuka (open source) lain di bawah organisasi Hyperf,
-yaitu [GoTask](https://github.com/hyperf/gotask). GoTask memulai proses Go
-sebagai sidecar proses utama Swoole melalui fungsi manajemen proses Swoole, dan
-menggunakan komunikasi proses untuk mengirimkan tugas ke sidecar untuk diproses
-dan menerima nilai pengembalian. Ini dapat dipahami sebagai versi Go dari
-Swoole TaskWorker.
+Jika mekanisme Task tidak dapat memenuhi kebutuhan performa, Anda dapat mencoba proyek open-source lain di bawah organisasi Hyperf: [GoTask](https://github.com/hyperf/gotask). GoTask menggunakan fungsi manajemen process Swoole untuk memulai process Go sebagai Sidecar ke process utama Swoole, dan menggunakan komunikasi antar-process untuk mengirimkan task ke sidecar untuk diproses dan menerima nilai kembali. Ini dapat dipahami sebagai TaskWorker versi Go dari Swoole.

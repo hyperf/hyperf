@@ -1,11 +1,10 @@
-# Layanan TCP/UDP
+# TCP/UDP Server
 
-Secara bawaan, framework menyediakan kemampuan untuk membuat layanan `TCP/UDP`.
-Anda hanya perlu melakukan konfigurasi sederhana untuk dapat menggunakannya.
+Framework menyediakan kemampuan untuk membuat layanan `TCP/UDP` secara default. Anda dapat menggunakannya dengan konfigurasi sederhana.
 
-## Menggunakan layanan TCP
+## Menggunakan TCP Server
 
-### Membuat kelas TcpServer
+### Membuat Class TcpServer
 
 ```php
 <?php
@@ -36,7 +35,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // Konfigurasi berikut telah menghapus item konfigurasi lain yang tidak relevan
+    // Item konfigurasi yang tidak relevan dihapus
     'servers' => [
         [
             'name' => 'tcp',
@@ -55,7 +54,7 @@ return [
 ];
 ```
 
-### Mengimplementasikan klien
+### Implementasi Client
 
 ```php
 <?php
@@ -66,13 +65,16 @@ $client->send('Hello World.');
 $ret = $client->recv(); // recv:Hello World.
 ```
 
-## Menggunakan layanan UDP
+## Menggunakan UDP Service
 
-### Membuat kelas UdpServer
+> Docker menggunakan protokol TCP untuk komunikasi secara default. Jika Anda perlu menggunakan protokol UDP, Anda perlu mengkonfigurasi jaringan Docker.
+```shell
+docker run -p 9502:9502/udp <image-name>
+```
 
-> Jika tidak ada file interface OnPacketInterface, Anda tidak harus
-> mengimplementasikan interface ini, dan hasil jalannya akan konsisten dengan
-> interface yang diimplementasikan, asalkan konfigurasinya benar.
+### Membuat Class UdpServer
+
+> Jika file interface `OnPacketInterface` tidak tersedia, Anda tidak perlu mengimplementasikan interface ini. Hasil eksekusi akan sama seperti mengimplementasikan interface, selama konfigurasinya benar.
 
 ```php
 <?php
@@ -88,7 +90,7 @@ class UdpServer implements OnPacketInterface
     public function onPacket($server, $data, $clientInfo): void
     {
         var_dump($clientInfo);
-        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server:' . $data);
+        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server：' . $data);
     }
 }
 ```
@@ -104,7 +106,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // Konfigurasi berikut telah menghapus item konfigurasi lain yang tidak relevan
+    // Item konfigurasi yang tidak relevan dihapus
     'servers' => [
         [
             'name' => 'udp',
@@ -123,11 +125,11 @@ return [
 ];
 ```
 
-## Event
+## Events
 
-| Event | Catatan |
-| :---------------: | :---------------: |
-| Event::ON_CONNECT | Memantau event koneksi masuk |
+|       Event       |         Deskripsi         |
+| :---------------: | :------------------------: |
+| Event::ON_CONNECT | Memantau event pembentukan koneksi |
 | Event::ON_RECEIVE | Memantau event penerimaan data |
-| Event::ON_CLOSE | Memantau event koneksi ditutup |
-| Event::ON_PACKET | Event penerimaan data UDP |
+|  Event::ON_CLOSE  | Memantau event penutupan koneksi |
+| Event::ON_PACKET  | Event penerimaan data UDP |

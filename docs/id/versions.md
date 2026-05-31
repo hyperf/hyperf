@@ -1,39 +1,13 @@
-# Versi
+# Version Description
 
-## Aturan Versi
+## Version Rules
 
-Hyperf menggunakan aturan penomoran versi `x.y.z` untuk menamai setiap versi,
-seperti versi 1.2.3, di mana 1 adalah `x`, 2 adalah `y`, dan 3 adalah `z`. Anda
-dapat membuat rencana pembaruan framework Hyperf berdasarkan aturan versi
-tersebut.
-- `x` menunjukkan versi major. Ketika core Hyperf mengalami banyak perubahan
-  refactoring, atau ketika ada banyak perubahan API yang destruktif (breaking
-  changes), versi tersebut akan dirilis sebagai versi `x`. Secara umum,
-  perubahan versi `x` tidak kompatibel dengan versi `x` sebelumnya, namun tidak
-  selalu berarti tidak kompatibel sepenuhnya. Identifikasi spesifik dilakukan
-  berdasarkan panduan upgrade dari versi yang bersangkutan.
-- `y` merepresentasikan versi iteratif dari fungsi utama. Ketika beberapa
-  public API mengalami perubahan destruktif, termasuk perubahan atau
-  penghapusan public API yang dapat menyebabkan ketidakkompatibelan dengan
-  versi sebelumnya, versi tersebut akan dirilis sebagai versi `y`.
-- `z` berarti versi perbaikan yang sepenuhnya kompatibel. Ketika
-  perbaikan bug atau perbaikan keamanan dilakukan pada fungsi komponen yang
-  sudah ada, versi `z` akan dipilih untuk dirilis. Ketika sebuah bug
-  menyebabkan suatu fungsi sama sekali tidak dapat digunakan, ada kemungkinan
-  saat memperbaiki bug ini di versi `z`, dilakukan perubahan destruktif
-  pada API. Namun karena fungsi tersebut sebelumnya benar-benar tidak dapat
-  digunakan, perubahan seperti itu tidak akan dirilis di versi `y`. Selain
-  perbaikan bug, versi `z` juga dapat menyertakan beberapa fitur atau
-  komponen baru, di mana fitur dan komponen baru ini tidak akan memengaruhi
-  penggunaan kode sebelumnya.
+Hyperf menggunakan aturan penomoran versi x.y.z untuk semua versi, misalnya versi 1.2.3, di mana 1 adalah x, 2 adalah y, dan 3 adalah z. Anda bisa menyusun rencana pembaruan framework Hyperf berdasarkan aturan ini.
 
-## Upgrade
+- x mewakili major version. Ketika core Hyperf mengalami refactoring besar, atau ada banyak perubahan API yang bersifat breaking, maka akan dirilis sebagai x version. Perubahan di x version umumnya tidak kompatibel dengan x version sebelumnya, tapi tidak selalu sepenuhnya tidak kompatibel. Detailnya harus diverifikasi sesuai upgrade guide versi terkait.
+- y mewakili major feature iteration version. Ketika beberapa public API memiliki perubahan breaking, termasuk perubahan atau penghapusan public API, yang berpotensi tidak kompatibel dengan versi sebelumnya, maka akan dirilis sebagai y version.
+- z mewakili fully compatible fix version. Ketika ada perbaikan bug atau keamanan pada fitur yang ada, akan dirilis sebagai z version. Jika sebuah bug menyebabkan fitur tidak bisa digunakan sama sekali, perubahan breaking pada API bisa saja dilakukan dalam z version. Namun, karena fiturnya sudah tidak bisa dipakai, perubahan semacam itu tidak akan dirilis sebagai y version. Selain perbaikan bug, z version juga bisa menyertakan fitur atau komponen baru tanpa memengaruhi kode sebelumnya.
 
-Ketika Anda ingin melakukan upgrade versi Hyperf, jika itu adalah upgrade ke
-versi `x` atau `y`, silakan ikuti panduan upgrade untuk versi yang bersangkutan
-di dalam dokumen. Jika Anda ingin melakukan upgrade versi `z`, Anda
-dapat langsung menjalankan perintah `composer update hyperf` di direktori
-root proyek Anda untuk memperbarui paket dependensi. Kami tidak menyarankan
-Anda melakukan upgrade versi komponen tertentu secara terpisah, melainkan
-meng-upgrade semua komponen bersama-sama untuk mendapatkan pengalaman
-pengembangan yang lebih konsisten.
+## Upgrading Versions
+
+Ketika Anda ingin meningkatkan versi Hyperf, untuk upgrade ke x dan y version, ikuti upgrade guide untuk versi yang sesuai di dokumentasi. Jika ingin upgrade ke z version, langsung jalankan `composer update hyperf` di direktori root proyek untuk memperbarui paket dependensi. Kami tidak menyarankan upgrade satu komponen secara terpisah; sebaiknya upgrade semua komponen secara seragam untuk pengalaman yang lebih konsisten.

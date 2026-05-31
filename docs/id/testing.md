@@ -1,8 +1,7 @@
-# Pengujian Otomatis
+# Automated Testing
 
-Di Hyperf, testing diimplementasikan menggunakan `phpunit` secara default, dan
-pada 3.1 sudah mendukung framework `pest` berbasis phpunit. Lihat
-[dokumentasi Pest](https://pestphp.com/docs/installation).
+Di Hyperf, pengujian dilakukan melalui `phpunit` secara default, dan mulai dari versi 3.1, framework `pest` yang berbasis phpunit juga didukung [Dokumentasi](https://pestphp.com/docs/installation).
+
 
 ```shell
 composer require hyperf/testing --dev
@@ -23,9 +22,7 @@ composer require pestphp/pest --dev
 
 ## Bootstrap
 
-Hyperf menyediakan berkas `bootstrap.php` default, yang memungkinkan pengguna
-memindai dan memuat library yang sesuai ke dalam memori saat menjalankan unit
-test.
+Hyperf menyediakan file `bootstrap.php` default, yang memungkinkan pengguna untuk memindai dan memuat library yang sesuai ke dalam memori saat menjalankan unit test.
 
 ```php
 <?php
@@ -38,7 +35,7 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
-// Diaktifkan secara default. Saat menggunakan fitur pest --parallel atau operasi parallel native lain, baris ini perlu dikomentari
+// Diaktifkan secara default. Harus dikomentari saat menggunakan fitur pest --parallel atau operasi paralel native lainnya.
 Swoole\Runtime::enableCoroutine(true);
 
 require BASE_PATH . '/vendor/autoload.php';
@@ -57,18 +54,14 @@ Menjalankan unit test
 composer test
 ```
 
-## Catatan Penting
+## Catatan
 
-- `hyperf/testing` menyediakan Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php). Cukup gunakan Trait ini pada `Test` tertentu untuk mengaktifkan lingkungan coroutine.
-- Saat menggunakan parameter `--parallel` dari pest, komentari `Swoole\Runtime::enableCoroutine(true)` di `test/bootstrap.php`.
+- `hyperf/testing` menyediakan Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php). Gunakan kelas ini pada kasus `Test` tertentu untuk mengaktifkan lingkungan coroutine.
+- Saat menggunakan fitur `--parallel` di pest, `Swoole\Runtime::enableCoroutine(true)` di `test/bootstrap.php` perlu dikomentari.
 
-## Simulasi HTTP Request
+## Mocking HTTP Requests
 
-Saat mengembangkan antarmuka (interface/API), kita biasanya memerlukan skrip
-pengujian otomatis untuk memastikan bahwa interface yang kita sediakan berjalan
-seperti yang diharapkan. Hyperf framework menyediakan kelas
-`Hyperf\Testing\Client`, yang memungkinkan Anda mensimulasikan pemrosesan HTTP
-request tanpa menjalankan HTTP server.
+Saat mengembangkan antarmuka, kita biasanya membutuhkan script test otomatis untuk memastikan bahwa antarmuka yang kita sediakan berjalan seperti yang diharapkan. Framework Hyperf menyediakan kelas `Hyperf\Testing\Client`, yang memungkinkan Anda untuk mensimulasikan request layanan HTTP tanpa harus menjalankan Server:
 
 ```php
 <?php
@@ -79,9 +72,7 @@ $client = make(Client::class);
 $result = $client->get('/');
 ```
 
-Karena Hyperf mendukung konfigurasi multi-port selain menguji interface port
-default, bagaimana cara kita menguji pemrosesan request lain untuk port yang
-berbeda?
+Karena Hyperf mendukung konfigurasi multi-port, selain memverifikasi antarmuka port default, bagaimana jika kita ingin memverifikasi antarmuka di port lain?
 
 ```php
 <?php
@@ -90,15 +81,13 @@ use Hyperf\Testing\Client;
 
 $client = make(Client::class, ['server' => 'adminHttp']);
 
-$result = $client->json('/user/0', [
+$result = $client->json('/user/0',[
     'nickname' => 'Hyperf'
 ]);
 
 ```
 
-Secara default, framework menggunakan `JsonPacker` dan akan langsung mem-parse
-`request body` sebagai `array`. Jika Anda mengembalikan `string` secara
-langsung, Anda perlu mengatur `Packer` yang sesuai
+Secara default, framework menggunakan `JsonPacker`, yang akan langsung mem-parse `Body` menjadi `array`. Jika Anda mengembalikan `string` secara langsung, Anda perlu mengatur `Packer` yang sesuai.
 
 ```php
 <?php
@@ -144,7 +133,7 @@ $data = Json::decode((string) $response->getBody());
 
 ## Contoh
 
-Mari kita tulis sebuah DEMO kecil untuk mengujinya.
+Mari kita tulis DEMO kecil untuk mengujinya.
 
 ```php
 <?php
@@ -211,16 +200,11 @@ class ExampleTest extends TestCase
 
 ## Debugging Kode
 
-Men-debug kode secara manual menggunakan metode seperti `dd()` dan `var_dump`
-serta membuka interface terkait di browser menjadi kurang efisien dibandingkan
-dengan `php-fpm` tradisional karena selain perubahan kode, Anda juga perlu
-me-restart `server` di command line untuk menerapkan perubahan tersebut. Oleh
-karena itu, akan lebih mudah untuk melakukan debugging jenis ini menggunakan
-pengujian otomatis.
+Dalam skenario FPM, kita biasanya memodifikasi kode dan kemudian membuka browser untuk mengakses antarmuka yang sesuai, sehingga kita biasanya membutuhkan dua fungsi, `dd` dan `dump`. Namun Hyperf berjalan dalam mode `CLI`. Bahkan jika kedua fungsi ini disediakan, kita perlu me-restart `Server` di `CLI`, dan kemudian memanggil antarmuka yang sesuai di browser untuk melihat hasilnya. Ini sebenarnya tidak menyederhanakan proses, tetapi membuatnya lebih merepotkan.
 
-Misalkan kita mengimplementasikan fungsi untuk menanyakan informasi pengguna di
-`UserDao`
+Selanjutnya, saya akan memperkenalkan cara melakukan debugging kode dengan cepat dengan bekerja sama dengan `testing` dan menyelesaikan unit testing sebagai bonus.
 
+Misalkan kita mengimplementasikan fungsi untuk mengambil informasi pengguna di `UserDao`:
 ```php
 namespace App\Service\Dao;
 
@@ -246,14 +230,13 @@ class UserDao extends Dao
 }
 ```
 
-Kemudian kita menulis unit test yang sesuai
+Kemudian kita menulis unit test yang sesuai:
 
 ```php
 namespace HyperfTest\Cases;
 
 use HyperfTest\HttpTestCase;
 use App\Service\Dao\UserDao;
-
 /**
  * @internal
  * @coversNothing
@@ -271,36 +254,23 @@ class UserTest extends HttpTestCase
 }
 ```
 
-Kemudian jalankan pengujian tunggal kita
+Kemudian jalankan unit test kita:
 
 ```
-composer test - --filter=testUserDaoFirst
+composer test -- --filter=testUserDaoFirst
 ```
 
 ## Test Doubles
 
-Gerard Meszaros mendefinisikan jenis pengujian ini dalam Meszaros2007
-berdasarkan konsep pengganti (stand-in):
+`Gerard Meszaros` memperkenalkan konsep test doubles di `Meszaros2007`:
 
-Terkadang sulit untuk menguji `system under test (SUT)` karena bergantung pada
-komponen lain yang tidak dapat digunakan di lingkungan pengujian. Hal ini
-mungkin disebabkan karena komponen tersebut tidak tersedia, tidak mengembalikan
-hasil yang diperlukan oleh pengujian, atau pengeksekusiannya akan menimbulkan
-efek samping yang tidak diinginkan. Dalam kasus lain, strategi pengujian
-memerlukan kontrol lebih atau visibilitas lebih terhadap perilaku internal dari
-system under test.
+Terkadang sulit untuk menguji `System Under Test (SUT)` karena ia bergantung pada komponen lain yang tidak dapat digunakan di lingkungan test. Ini mungkin karena komponen-komponen tersebut tidak tersedia, mereka tidak mengembalikan hasil yang diperlukan untuk test, atau mengeksekusinya memiliki efek samping yang merugikan. Dalam kasus lain, strategi pengujian kita membutuhkan lebih banyak kontrol atau lebih banyak visibilitas ke dalam perilaku internal dari sistem yang diuji.
 
-Jika Anda tidak dapat menggunakan (atau memilih untuk tidak menggunakan)
-komponen dependen yang sebenarnya (DOC) saat menulis pengujian, Anda dapat
-menggunakan test double sebagai gantinya. Test double tidak harus berperilaku
-sama persis dengan komponen dependen yang sebenarnya; ia hanya perlu
-menyediakan API yang sama dengan komponen asli, sehingga system under test akan
-menganggapnya sebagai komponen asli!
+Jika Anda tidak dapat (atau memilih untuk tidak) menggunakan komponen dependen yang sebenarnya (DOC) saat menulis test, Anda dapat menggunakan test double sebagai pengganti. Test double tidak perlu berperilaku persis seperti komponen dependen yang sebenarnya; ia hanya perlu menyediakan API yang sama dengan komponen asli, sehingga sistem yang diuji akan mengira itu adalah komponen yang sebenarnya!
 
-Berikut ini menunjukkan penggunaan test double untuk dependency injection melalui
-constructor dan dependency injection melalui anotasi `#[Inject]`.
+Berikut menunjukkan test doubles yang diinjeksi melalui konstruktor dan melalui annotation `#[Inject]`.
 
-### Menginjeksi dependency test doubles melalui constructor
+### Test Double dengan Dependency Diinjeksi melalui Konstruktor
 
 ```php
 <?php
@@ -388,7 +358,7 @@ class DemoLogicTest extends HttpTestCase
 }
 ```
 
-### Menginjeksi dependency test doubles melalui anotasi Inject
+### Test Double dengan Dependency Diinjeksi melalui Annotation `Inject`
 
 ```php
 <?php
@@ -481,11 +451,11 @@ class DemoLogicTest extends HttpTestCase
 }
 ```
 
-# Cakupan Unit Test
+# Unit Test Coverage
 
-## Menggunakan phpdbg untuk menghasilkan cakupan unit test
+## Menggunakan phpdbg untuk Menghasilkan Unit Test Coverage
 
-Modifikasi konten dari file `phpunit.xml` sebagai berikut:
+Ubah file `phpunit.xml` sebagai berikut:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -499,12 +469,12 @@ Modifikasi konten dari file `phpunit.xml` sebagai berikut:
          processIsolation="false"
          stopOnFailure="false">
     <php>
-        <!-- other PHP.ini or environment variables -->
+        <!-- Pengaturan PHP.ini atau variabel lingkungan lainnya -->
         <ini name="memory_limit" value="-1" />
     </php>
     <testsuites>
         <testsuite name="Tests">
-            // Direktori test case yang perlu dijalankan
+            // Direktori untuk kasus test yang perlu dijalankan
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
@@ -514,11 +484,11 @@ Modifikasi konten dari file `phpunit.xml` sebagai berikut:
               ignoreDeprecatedCodeUnits="true"
               disableCodeCoverageIgnore="false">
         <include>
-            // File yang perlu dihitung cakupan unit test-nya
+            // File yang perlu dihitung unit test coverage-nya
             <directory suffix=".php">./app</directory>
         </include>
         <exclude>
-            // File yang perlu diabaikan saat menghasilkan cakupan unit test
+            // File yang akan diabaikan saat menghasilkan unit test coverage
             <directory suffix=".php">./app/excludeFile</directory>
         </exclude>
         <report>
@@ -532,7 +502,8 @@ Modifikasi konten dari file `phpunit.xml` sebagai berikut:
 </phpunit>
 ```
 
-Jalankan perintah berikut:
+
+Jalankan perintah berikut
 
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
