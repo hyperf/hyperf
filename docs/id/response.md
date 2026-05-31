@@ -1,22 +1,12 @@
 # Response
 
-Dalam Hyperf, Anda dapat memperoleh objek proxy response dengan menginjeksikan
-interface `Hyperf\HttpServer\Contract\ResponseInterface`. Secara default, DI
-container akan mengembalikan objek `Hyperf\HttpServer\Response`. Anda dapat
-memanggil semua method dari `Psr\Http\Message\ResponseInterface` secara
-langsung melalui objek ini.
+Di Hyperf, Anda bisa inject proxy object `Response` buat nanganin response lewat interface `Hyperf\HttpServer\Contract\ResponseInterface`. Secara default, ia ngembaliin objek `Hyperf\HttpServer\Response`, dan objek ini bisa langsung panggil semua method dari `Psr\Http\Message\ResponseInterface`.
 
-> Catatan: Objek response PSR-7 standar bersifat immutable. Nilai kembalian
-> dari semua method yang diawali dengan `with` adalah objek baru dan tidak akan
-> mengubah nilai dari objek aslinya.
+> Catatan: Standar PSR-7 dirancang dengan `immutable mechanism` untuk Response. Semua return value dari method yang diawali dengan `with` adalah objek baru dan tidak akan mengubah nilai objek asli.
 
-## Mengembalikan Format JSON
+## Mengembalikan Format Json
 
-Anda dapat mengembalikan konten berformat `Json` secara cepat menggunakan
-method `json($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
-`Content-Type` dari objek response juga akan diatur ke `application/json`.
-`$data` menerima array atau objek yang mengimplementasikan interface
-`Hyperf\Contract\Arrayable`.
+`Hyperf\HttpServer\Contract\ResponseInterface` nyediain method `json($data)` buat balikin response ke format `Json` dan set `Content-Type` ke `application/json`. `$data` bisa array atau objek yang implementasiin interface `Hyperf\Contract\Arrayable`.
 
 ```php
 <?php
@@ -37,13 +27,9 @@ class IndexController
 }
 ```
 
-## Mengembalikan Format XML
+## Mengembalikan Format Xml
 
-Anda dapat mengembalikan konten berformat `XML` secara cepat menggunakan
-method `xml($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
-`Content-Type` dari objek response juga akan diatur ke `application/xml`.
-`$data` menerima array atau objek yang mengimplementasikan interface
-`Hyperf\Contract\Xmlable`.
+`Hyperf\HttpServer\Contract\ResponseInterface` nyediain method `xml($data)` buat balikin response ke format `XML` dan set `Content-Type` ke `application/xml`. `$data` bisa array atau objek yang implementasiin interface `Hyperf\Contract\Xmlable`.
 
 ```php
 <?php
@@ -64,13 +50,9 @@ class IndexController
 }
 ```
 
-## Mengembalikan Konten Raw
+## Mengembalikan Format Raw
 
-Anda dapat mengembalikan konten mentah (raw) secara cepat menggunakan method
-`raw($data)` dari `Hyperf\HttpServer\Contract\ResponseInterface`.
-`Content-Type` dari objek response juga akan diatur ke `plain/text`.
-`$data` menerima string atau objek yang mengimplementasikan method
-`__toString()`.
+`Hyperf\HttpServer\Contract\ResponseInterface` nyediain method `raw($data)` buat balikin response ke format `raw` dan set `Content-Type` ke `plain/text`. `$data` bisa string atau objek yang implementasiin `__toString()`.
 
 ```php
 <?php
@@ -90,22 +72,19 @@ class IndexController
 
 ## Mengembalikan View
 
-Silakan merujuk ke [View](id/view.md).
+Silakan merujuk ke bagian [View](id/view.md) dari dokumentasi.
 
 ## Redirect
 
-`Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
-`redirect(string $toUrl, int $status = 302, string $schema = 'http')` untuk
-mengembalikan objek `Psr7ResponseInterface` yang telah dikonfigurasi dengan
-status redirection.
+`Hyperf\HttpServer\Contract\ResponseInterface` nyediain `redirect(string $toUrl, int $status = 302, string $schema = 'http')` buat balikin objek `Psr7ResponseInterface` dengan status redirect.
 
-`redirect`:   
+Method `redirect`:
 
-|  Arguments  |  Type  | Default Value |                                                      Comment                                                      |
+| Parameter | Tipe | Nilai Default | Keterangan |
 |:------:|:------:|:------:|:--------------------------------------------------------------------------------------------------------------:|
-| toUrl  | string |   null   | Jika argumen tidak diawali dengan `http://` atau `https://`, URL yang sesuai akan digabungkan secara otomatis berdasarkan Host dari server saat ini, dan protokol penggabungan berdasarkan argumen `$schema` |
-| status |  int   |  302   |                                                   Status code dari Response                                                   |
-| schema | string |  http  |                 Berlaku ketika `$toUrl` tidak diawali dengan `http://` atau `https://`, hanya `http` atau `https` yang tersedia                |
+| toUrl | string | Tidak ada | Kalo parameter gak ada `http://` atau `https://`, bakal otomatis bikin URL berdasarkan Host service saat ini, plus protokol sesuai `$schema` |
+| status | int | 302 | Response status code |
+| schema | string | http | Berlaku ketika `toUrl` tidak mengandung `http://` atau `https://`, hanya `http` atau `https` yang bisa diberikan |
 
 ```php
 <?php
@@ -118,13 +97,13 @@ class IndexController
 {
     public function redirect(ResponseInterface $response): Psr7ResponseInterface
     {
-        // redirect() method will return an Psr\Http\Message\ResponseInterface object, needs to return the object.
+        // Method redirect() mengembalikan objek Psr\Http\Message\ResponseInterface, yang perlu dikembalikan lagi
         return $response->redirect('/anotherUrl');
     }
 }
 ```
 
-## Pengaturan Cookie
+## Cookie Setting
 
 ```php
 <?php
@@ -144,12 +123,9 @@ class IndexController
 }
 ```
 
-## Chunk Transfer Encoding
+## Chunked Transfer Encoding
 
-`Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
-`write(string $data)` untuk mengirim konten response ke browser secara bertahap
-dan mengatur `Transfer-Encoding` menjadi `chunked`. `$data` menerima string atau
-objek yang mengimplementasikan method `__toString()`.
+`Hyperf\HttpServer\Contract\ResponseInterface` nyediain `write(string $data)` buat ngirim response ke browser secara bertahap dan set `Transfer-Encoding` ke `chunked`. `$data` bisa string atau objek yang implementasiin `__toString()`.
 
 ```php
 <?php
@@ -165,19 +141,19 @@ class IndexController
     {
        $response
             ->withStatus(200)
-            ->withHeader('X-Event-Mode', 'Enabled') // Custom Header
+            ->withHeader('X-Event-Mode', 'Enabled') // ⭐ Custom Header
             ->withHeader('X-Stream-Time', '5s');
         $streamer = new EventStream($this->response->getConnection(), $response);
         $startTime = time();
         $totalSteps = 5;
-        $streamer->write("data: --- EventStream dimulai (total {$totalSteps} langkah) ---\n\n");
+        $streamer->write("data: --- 🚀 EventStream started (total {$totalSteps} steps) ---\n\n");
         for ($i = 1; $i <= $totalSteps; ++$i) {
             Coroutine::sleep(1);
             $elapsed = time() - $startTime;
-            $message = "data: [detik ke-{$i}] data chunk selesai dikirim. Waktu berlalu: {$elapsed} detik\n\n";
+            $message = "data: 【{$i} second】data block sent. Time elapsed: {$elapsed} seconds\n\n";
             $streamer->write($message);
         }
-        $streamer->write("data: --- EventStream selesai ---\n\n");
+        $streamer->write("data: --- ✅ EventStream ended ---\n\n");
         $streamer->end();
 
         return 'Hello Hyperf';
@@ -185,28 +161,20 @@ class IndexController
 }
 ```
 
-!> Perhatikan: setelah memanggil `write` untuk mengirim data secara bertahap,
-jika Anda kembali menggunakan `return` untuk mengembalikan data, data tersebut
-tidak akan dikembalikan secara normal. Pada contoh di atas, `Hello Hyperf` tidak
-akan di-output, hanya `data: [detik ke-{$i}] data chunk selesai dikirim. Waktu
-berlalu: {$elapsed} detik\n\n` yang akan di-output.
+!> Catatan: Abis panggil `write` buat ngirim data bertahap, kalo Anda pake `return` buat balikin data lagi, data tersebut gak bakal tampil. Di contoh di atas, `Hello Hyperf` gak bakal muncul, cuma `data: 【{$i} second】data block sent. Time elapsed: {$elapsed} seconds\n\n`.
 
-## Download File
+## File Download
 
-`Hyperf\HttpServer\Contract\ResponseInterface` menyediakan method
-`download(string $file, string $name = '')` untuk mengembalikan objek
-`Psr7ResponseInterface` yang telah dikonfigurasi dengan status download file.
-Jika request mengandung header `if-match` atau `if-none-match`, Hyperf juga
-akan membandingkannya dengan `ETag` sesuai standar protokol, dan jika cocok,
-ia akan mengembalikan response dengan status code `304`.
+`Hyperf\HttpServer\Contract\ResponseInterface` menyediakan `download(string $file, string $name = '')` untuk mengembalikan objek `Psr7ResponseInterface` dengan status file download yang telah ditentukan.
 
-`download`:   
+Jika request mengandung header `if-match` atau `if-none-match`, Hyperf juga akan membandingkannya dengan `ETag` sesuai dengan standar protokol. Jika cocok, response dengan status code `304` akan dikembalikan.
 
-| Arguments |  Type  | Default Value |                                Comment                                 |
+Method `download`:
+
+| Parameter | Tipe | Nilai Default | Keterangan |
 |:----:|:------:|:------:|:-------------------------------------------------------------------:|
-| file | string |   null   | Untuk mengembalikan path absolut dari file yang diunduh, gunakan konstanta `BASE_PATH` untuk menemukan direktori root proyek |
-| name | string |   null   |         Nama file yang diunduh oleh klien, jika kosong, nama asli dari file yang diunduh akan digunakan          |
-
+| file | string | Tidak ada | Path absolut ke file yang akan dikembalikan untuk di-download. Gunakan konstanta BASE_PATH untuk menemukan direktori root project |
+| name | string | Tidak ada | Nama file untuk client download. Jika kosong, nama asli file yang di-download akan digunakan |
 
 ```php
 <?php

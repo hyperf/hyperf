@@ -1,4 +1,4 @@
-# Pool
+# Connection Pool
 
 ## Instalasi
 
@@ -6,29 +6,17 @@
 composer require hyperf/pool
 ```
 
-## Mengapa pool dibutuhkan?
+## Mengapa kita membutuhkan pool?
 
-Ketika jumlah konkurensi sangat rendah, koneksi dapat dibuat secara
-sementara. Namun, ketika throughput layanan mencapai skala ratusan atau ribuan,
-proses `Connect` and `Close` yang sering dapat menjadi bottleneck bagi layanan.
-Secara praktis, saat layanan dimulai, beberapa koneksi dapat dibuat dan disimpan
-dalam sebuah antrean. Saat dibutuhkan, satu koneksi diambil dari antrean dan
-digunakan, lalu dikembalikan ke antrean setelah selesai digunakan. Struktur data
-dari antrean ini dikelola oleh connection pool.
+Saat konkurensi rendah, koneksi bisa dibuat sesuai kebutuhan. Namun, ketika throughput layanan mencapai ratusan atau ribuan permintaan, operasi `Connect` dan `Close` yang sering bisa jadi bottleneck. Dengan membuat sekumpulan koneksi saat layanan dimulai dan menyimpannya dalam antrean, Anda bisa mengambil koneksi saat dibutuhkan, memakainya, lalu mengembalikannya. Mengelola antrean ini adalah tugas pool.
 
-## Penggunaan
+## Menggunakan pool
 
-Untuk komponen-komponen yang disediakan oleh Hyperf, connection pool telah
-diadaptasikan. Pengguna tidak perlu menyadarinya saat menggunakan. Hyperf secara
-otomatis menyelesaikan pengambilan dan pengembalian koneksi.
+Untuk komponen Hyperf resmi, pool sudah terintegrasi. Anda tidak perlu mengelolanya secara eksplisit, framework secara otomatis menangani pengambilan dan pelepasan koneksi.
 
-## Custom connection pool
+## Custom pool
 
-Untuk mendefinisikan sebuah connection pool, Anda terlebih dahulu harus
-mengimplementasikan subclass yang mewarisi `Hyperf\Pool\Pool` dan
-mengimplementasikan abstract method `createConnection`, serta mengembalikan objek
-yang mengimplementasikan interface `Hyperf\Contract\ConnectionInterface`. Contoh
-demonstrasinya adalah sebagai berikut:
+Untuk mendefinisikan pool, Anda perlu membuat subclass yang meng-extend `Hyperf\Pool\Pool` dan mengimplementasikan method abstrak `createConnection`. Method ini harus mengembalikan objek yang mengimplementasikan interface `Hyperf\Contract\ConnectionInterface`. Setelah itu, custom pool Anda siap digunakan. Lihat contoh di bawah ini:
 
 ```php
 <?php
@@ -46,13 +34,11 @@ class MyConnectionPool extends Pool
 }
 ```
 
-Dengan cara ini, koneksi dapat diambil dan dikembalikan dengan memanggil method
-`get(): ConnectionInterface` dan `release(ConnectionInterface $connection): void`
-pada objek instansiasi `MyConnectionPool`.
+Setelah instansiasi, Anda dapat menggunakan method `get(): ConnectionInterface` dan `release(ConnectionInterface $connection): void` dari objek `MyConnectionPool` untuk mengambil dan melepaskan koneksi.
 
 ## SimplePool
 
-Implementasi pool sederhana telah disediakan oleh Hyperf.
+Framework menyediakan implementasi pool yang sangat sederhana.
 
 ```php
 <?php
@@ -70,24 +56,19 @@ $pool = $factory->get('your pool name', function () use ($host, $port, $ssl) {
 
 $connection = $pool->get();
 
-$client = $connection->getConnection(); // The Client which mentioned above.
+$client = $connection->getConnection(); // Instance Client seperti yang disebutkan di atas.
 
-// Do something.
+// Lakukan sesuatu.
 
 $connection->release();
 
 ```
 
-## Low-frequency Interface
+## Low-frequency component
 
-Pool memiliki interface bawaan `LowFrequencyInterface`. Komponen frekuensi rendah
-(low-frequency) digunakan secara default, dan menentukan apakah akan melepaskan
-koneksi berlebih di dalam pool berdasarkan frekuensi pengambilan koneksi dari
-pool.
+Pool dilengkapi dengan `LowFrequencyInterface` bawaan untuk menangani koneksi frekuensi rendah. Secara default, komponen ini digunakan untuk menentukan apakah akan melepaskan koneksi berlebih dari pool berdasarkan frekuensi pengambilan koneksi.
 
-Jika kita perlu mengganti komponen low-frequency yang sesuai, Anda dapat langsung
-menggantinya pada konfigurasi `dependencies`. Mengambil komponen database sebagai
-contoh:
+Jika Anda perlu mengganti low-frequency component, Anda bisa langsung menggantinya di konfigurasi `dependencies`. Berikut adalah contoh menggunakan komponen database:
 
 ```php
 <?php
@@ -99,27 +80,24 @@ namespace App\Pool;
 class Frequency extends \Hyperf\Pool\Frequency
 {
     /**
-     * The time interval of the calculated frequency
-     * @var int
+     * Interval waktu untuk perhitungan frekuensi
      */
-    protected $time = 10;
+    protected int $time = 10;
 
     /**
-     * Threshold
-     * @var int
+     * Frekuensi untuk memicu low-frequency handler
      */
-    protected $lowFrequency = 5;
+    protected int $lowFrequency = 5;
 
     /**
-     * Minimum time interval for continuous low frequency triggering
-     * @var int
+     * Interval waktu minimum antara pemicuan low-frequency yang berurutan
      */
-    protected $lowFrequencyInterval = 60;
+    protected int $lowFrequencyInterval = 60;
 }
 
 ```
 
-Ubah pemetaan (mapping) sebagai berikut:
+Ubah hubungan mapping sebagai berikut:
 
 ```php
 <?php
@@ -128,15 +106,11 @@ return [
 ];
 ```
 
-### Frekuensi konstan (Constant frequency)
+### Constant Frequency
 
-Hyperf juga menyediakan komponen low-frequency lainnya, yaitu
-`ConstantFrequency`.
+Framework juga menyediakan low-frequency component lain yang disebut `ConstantFrequency`.
 
-Ketika komponen ini diinstansiasi, timer akan dijalankan dan method
-`Pool::flushOne(false)` akan dipanggil secara berkala. Method ini akan mengambil
-koneksi dari pool dan koneksi tersebut akan dihancurkan jika method tersebut
-menilai koneksi telah menganggur (idle) lebih dari jangka waktu tertentu.
+Setelah komponen ini diinstansiasi, ia akan memulai timer yang memanggil method `Pool::flushOne(false)` pada interval tetap. Method ini mengambil satu koneksi dari pool dan menghancurkannya jika sudah melebihi batas waktu idle.
 
 ```php
 <?php

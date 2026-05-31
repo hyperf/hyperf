@@ -1,16 +1,7 @@
 # Paginator
 
-Ketika Anda perlu melakukan paginasi data, Anda dapat menggunakan komponen
-[hyperf/paginator](https://github.com/hyperf/paginator) untuk menyelesaikan
-masalah Anda dengan mudah. Anda dapat melakukan sedikit enkapsulasi kueri data
-Anda untuk mendapatkan paginasi yang lebih baik. Komponen ini juga dapat
-berfungsi dengan baik pada framework lainnya.
-
-Dalam kebanyakan kasus, paginator digunakan ketika melakukan kueri dari
-database. Komponen [hyperf/database](https://github.com/hyperf/database) telah
-mengadaptasi komponen paginator ini. Anda dapat dengan mudah menggunakan
-paginator selama kueri data. Detail selengkapnya ada pada bab
-[Database - Paginator](id/db/paginator.md).
+Ketika Anda perlu melakukan paginasi data, Anda dapat dengan mudah menyelesaikan masalah Anda dengan komponen [hyperf/paginator](https://github.com/hyperf/paginator). Anda dapat membungkus query data untuk memanfaatkan fungsionalitas paginasi, dan komponen ini juga dapat digunakan di framework lain.
+Biasanya, kebutuhan paginasi Anda mungkin ada dalam query database. Komponen [hyperf/database](https://github.com/hyperf/database) telah digabungkan dengan komponen paginator, memungkinkan Anda untuk dengan mudah memanggil paginator guna mencapai paginasi saat melakukan query data. Untuk detailnya, lihat bab [Database Model - Paginator](id/db/paginator.md).
 
 # Instalasi
 
@@ -20,16 +11,7 @@ composer require hyperf/paginator
 
 # Penggunaan Dasar
 
-Selama terdapat set data dan kebutuhan paginasi, Anda dapat menginstansiasi
-class `Hyperf\Paginator\Paginator` untuk memproses paginasi. Constructor dari
-class ini menerima parameter
-`__construct($items, int $perPage, ?int $currentPage = null, array $options = [])`.
-Cukup kirimkan set data ke parameter `$items` dalam bentuk `Array (Array)` atau
-class collection `Hyperf\Collection\Collection`, lalu atur jumlah data per
-halaman `$perPage` serta nomor halaman saat ini `$currentPage`. Parameter
-`$options` dapat menentukan semua atribut dari instance paginator dalam bentuk
-`Key-Value`, dan Anda dapat merujuk ke atribut internal dari class paginator
-untuk detail selengkapnya.
+Cukup sediakan dataset dan tentukan kebutuhan paginasi, lalu proses dengan menginstansiasi kelas `Hyperf\Paginator\Paginator`. Konstruktor kelas ini menerima parameter `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])`. Kita hanya perlu melewatkan dataset dalam bentuk `Array` atau kelas `Hyperf\Collection\Collection` ke parameter `$items`, dan mengatur jumlah data per halaman `$perPage` serta nomor halaman saat ini `$currentPage`. Parameter `$options` dapat mendefinisikan semua atribut dalam instance paginator dalam bentuk `Key-Value`. Untuk detailnya, lihat atribut internal dari kelas paginator.
 
 ```php
 <?php
@@ -49,7 +31,7 @@ class UserController
         $currentPage = (int) $request->input('page', 1);
         $perPage = (int) $request->input('per_page', 2);
 
-        // Perform query according to $currentPage and $perPage. The Collection type is used here.
+        // Lakukan query data berdasarkan $currentPage dan $perPage di sini; berikut menggunakan Collection sebagai pengganti
         $collection = new Collection([
             ['id' => 1, 'name' => 'Tom'],
             ['id' => 2, 'name' => 'Sam'],
@@ -66,35 +48,35 @@ class UserController
 
 # Metode Paginator
 
-## Mendapatkan nomor halaman saat ini
+## Mendapatkan Nomor Halaman Saat Ini
 
 ```php
 <?php
 $currentPage = $paginator->currentPage();
 ```
 
-## Mendapatkan jumlah item di halaman saat ini
+## Mendapatkan Jumlah Item di Halaman Saat Ini
 
 ```php
 <?php
 $count = $paginator->count();
 ```
 
-## Mendapatkan item pertama di halaman saat ini
+## Mendapatkan Indeks Item Pertama di Halaman Saat Ini
 
 ```php
 <?php
 $firstItem = $paginator->firstItem();
 ```
 
-## Mendapatkan item terakhir di halaman saat ini
+## Mendapatkan Indeks Item Terakhir di Halaman Saat Ini
 
 ```php
 <?php
 $lastItem = $paginator->lastItem();
 ```
 
-## Apakah ada halaman berikutnya atau tidak
+## Memeriksa Apakah Ada Halaman Lain
 
 ```php
 <?php
@@ -103,42 +85,42 @@ if ($paginator->hasMorePages()) {
 }
 ```
 
-## Mendapatkan URL dari halaman terkait
+## Mendapatkan URL untuk Halaman yang Sesuai
 
 ```php
 <?php
-// URL of the next page
+// URL halaman berikutnya
 $nextPageUrl = $paginator->nextPageUrl();
-// URL of the previous page
+// URL halaman sebelumnya
 $previousPageUrl = $paginator->previousPageUrl();
-// URL of the $page
+// Mendapatkan URL untuk nomor halaman $page yang ditentukan
 $url = $paginator->url($page);
 ```
 
-## Apakah sedang berada di halaman pertama atau tidak
+## Apakah di Halaman Pertama
 
 ```php
 <?php
 $onFirstPage = $paginator->onFirstPage();
 ```
 
-## Apakah masih ada halaman lain
+## Apakah Ada Halaman Lain
 
 ```php
 <?php
 $hasMorePages = $paginator->hasMorePages();
 ```
 
-## Mendapatkan jumlah item per halaman
+## Jumlah Item per Halaman
 
 ```php
 <?php
 $perPage = $paginator->perPage();
 ```
 
-## Total jumlah data
+## Total Jumlah Data
 
-> Metode ini tidak ada di `Hyperf\Paginator\Paginator`, Anda perlu menggunakan `Hyperf\Paginator\LengthAwarePaginator`
+> `Hyperf\Paginator\Paginator` tidak ada metode ini. Anda perlu menggunakan `Hyperf\Paginator\LengthAwarePaginator`
 
 ```php
 <?php

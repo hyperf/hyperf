@@ -1,12 +1,12 @@
-# Rate Limiter Token Bucket
+# Token Bucket Rate Limiter
 
-## Installation
+## Instalasi
 
 ```bash
 composer require hyperf/rate-limit
 ```
 
-## Configuration
+## Konfigurasi
 
 ### Publikasikan Konfigurasi
 
@@ -14,21 +14,20 @@ composer require hyperf/rate-limit
 php bin/hyperf.php vendor:publish hyperf/rate-limit
 ```
 
-### Deskripsi Konfigurasi
+### Penjelasan Konfigurasi
 
-|  config item   | default |         remark        |
-|:--------------:|:-------:|:---------------------:|
-| create         | 1       | Jumlah token yang dihasilkan per detik            |
-| consume        | 1       | Jumlah token yang dikonsumsi per request            |
-| capacity       | 2       | Kapasitas maksimum dari token bucket                 |
-| limitCallback  | `[]`    | Metode callback saat rate limit dipicu               |
-| waitTimeout    | 1       | Timeout dalam antrean tunggu                          |
+| Konfigurasi | Default | Tipe | Deskripsi |
+|:-----------:|:-------:|:----:|:---------:|
+| create         | 1      |int| Token yang dihasilkan per detik |
+| consume        | 1      |int| Token yang dikonsumsi per request |
+| capacity       | 2      |int| Kapasitas maksimum token bucket |
+| limitCallback  | `[]`   |null\|callable| Method callback ketika rate limiting dipicu |
+| waitTimeout    | 1      |int| Waktu tunggu antrean dalam detik |
+| key            | URL request saat ini |callable\|string| Key untuk rate limiting |
 
-## Usage
+## Menggunakan Rate Limiter
 
-Komponen ini menyediakan annotation `Hyperf\RateLimit\Annotation\RateLimit` yang
-bekerja pada class dan method class, serta dapat menimpa (override) file
-konfigurasi. Sebagai contoh:
+Komponen ini menyediakan annotation `Hyperf\RateLimit\Annotation\RateLimit` yang bisa diterapkan ke class dan method class, dengan kemampuan menimpa konfigurasi file. Contoh:
 
 ```php
 <?php
@@ -46,28 +45,25 @@ class RateLimitController
     #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
-        return ["QPS 1, Peek3"];
+        return ["QPS 1, Peak 3"];
     }
 
     #[RequestMapping(path: "test2")]
     #[RateLimit(create: 2, consume: 2, capacity: 4)]
     public function test2()
     {
-        return ["QPS 2, Peek2"];
+        return ["QPS 2, Peak 2"];
     }
 }
 ``` 
-Prioritas konfigurasi: `Method Annotation > Class Annotation > File Konfigurasi > Konfigurasi Default`
+Prioritas konfigurasi: `Method Annotation > Class Annotation > Configuration File > Default Configuration`
 
-## Memicu Rate Limit
+## Memicu Rate Limiting
+Ketika rate limiting dipicu, secara default akan melemparkan `Hyperf\RateLimit\Exception\RateLimitException`.
 
-Ketika rate limit dipicu, `Hyperf\RateLimit\Exception\RateLimitException` akan
-dilempar (thrown) secara default.
+Ini bisa ditangani melalui [Exception Handler](id/exception-handler.md) atau dengan mengkonfigurasi `limitCallback`.
 
-Anda dapat menggunakan [Exception Handler](id/exception-handler.md) atau
-mengonfigurasi `limitCallback` untuk menangani callback saat rate limit dipicu.
-
-Sebagai contoh:
+Contoh:
 ```php
 <?php
 
@@ -79,34 +75,31 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
 #[Controller(prefix: "rate-limit")]
-#[RateLimit(limitCallback: {RateLimitController::class, "limitCallback"})]
+#[RateLimit(limitCallback: [RateLimitController::class, "limitCallback"])]
 class RateLimitController
 {
     #[RequestMapping(path: "test")]
     #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
-        return ["QPS 1, Peek3"];
+        return ["QPS 1, Peak 3"];
     }
     
     public static function limitCallback(float $seconds, ProceedingJoinPoint $proceedingJoinPoint)
     {
-        // $seconds Token generation time interval, in seconds
-        // $proceedingJoinPoint The entry point for the execution of this request
-        // You can handle it by yourself, or continue its execution by calling `$proceedingJoinPoint->process()`
+        // $seconds: Interval untuk pembuatan token berikutnya, dalam detik
+        // $proceedingJoinPoint: Join point dari eksekusi request ini
+        // Anda bisa memanggil `$proceedingJoinPoint->process()` untuk melanjutkan eksekusi, atau menanganinya sendiri
         return $proceedingJoinPoint->process();
     }
 }
 ```
 
-## Kustomisasi Key Rate Limit Token Bucket
+## Menyesuaikan Key Token Bucket Rate Limit
 
-Key default didasarkan pada `url` dari request saat ini. Ketika seorang user
-memicu rate limit, user lain juga akan dibatasi untuk me-request `url` ini.
+Key default didasarkan pada `url` request saat ini. Ketika satu pengguna memicu rate limiting, pengguna lain juga ikut terbatasi ketika meminta `url` ini.
 
-Jika pembatasan rate limit dengan granularitas berbeda diperlukan, seperti
-pembatasan pada dimensi user, rate limit dapat dilakukan berdasarkan `ID` user,
-sehingga ketika user A dibatasi, user B tetap dapat me-request dengan normal:
+Jika Anda membutuhkan rate limiting yang lebih granular, misalnya di level pengguna, Anda bisa melakukan rate limiting berdasarkan `ID` pengguna, sehingga jika pengguna A terkena rate limiting, pengguna B tetap bisa melakukan request secara normal:
 
 ```php
 <?php
@@ -122,16 +115,18 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TestController
 {
-    #[RateLimit(create: 1, capacity: 3, key: {TestController::class, "getUserId"})]
+    /**
+     * @RateLimit(create=1, capacity=3, key={TestController::class, "getUserId"})
+     */
     public function test()
     {
-        return ["QPS 1, 峰值3"];
+        return ["QPS 1, Peak 3"];
     }
 
     public static function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $request = ApplicationContext::getContainer()->get(RequestInterface::class);
-        // In the same way, traffic can be limited based on different dimensions such as mobile phone number and IP address.
+        // Demikian pula, Anda bisa melakukan rate limiting berdasarkan dimensi lain seperti nomor telepon, alamat IP, dll.
         return $request->input('user_id');
     }
 }

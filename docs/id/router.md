@@ -1,24 +1,16 @@
 # Routing
 
-Secara default, routing menggunakan paket
-[nikic/fast-route](https://github.com/nikic/FastRoute). Komponen
-[hyperf/http-server](https://github.com/hyperf/http-server) bertanggung jawab
-untuk menghubungkan ke server `Hyperf`, sedangkan routing `RPC` diimplementasikan
-oleh komponen [hyperf/rpc-server](https://github.com/hyperf/rpc-server).
+Secara default, routing ditangani oleh [nikic/fast-route](https://github.com/nikic/FastRoute) dan diintegrasikan ke `Hyperf` lewat komponen [hyperf/http-server](https://github.com/hyperf/http-server). RPC routing ditangani oleh komponen [hyperf/rpc-server](https://github.com/hyperf/rpc-server).
 
-## HTTP routing
+## HTTP Routing
 
-### Mendefinisikan routing melalui file konfigurasi
+### Mendefinisikan Route melalui File Konfigurasi
 
-Di dalam skeleton [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton),
-semua definisi routing secara default didefinisikan di file `config/routes.php`.
-`Hyperf` juga mendukung `annotation routing`, yang merupakan metode yang
-direkomendasikan, terutama ketika ada banyak route.
+Di [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton), semua route didefinisikan di `config/routes.php` secara default. Kalo route-nya banyak, Anda bisa perluas file ini. Tapi `Hyperf` juga support `Annotation Routing`, yang kami rekomendasiin, terutama kalo route-nya udah banyak.
 
-#### Mendefinisikan route menggunakan closure
+#### Mendefinisikan Route melalui Closure
 
-Hanya dibutuhkan sebuah URI dan sebuah closure (Closure) untuk membuat route
-dasar:
+Bikin route dasar cuma butuh URI dan `Closure`. Langsung aja liat kode:
 
 ```php
 <?php
@@ -29,37 +21,32 @@ Router::get('/hello-hyperf', function () {
 });
 ```
 
-Sekarang Anda dapat mengakses route tersebut dengan mengirim request ke
-`http://host:port/hello-hyperf` melalui browser atau command line `cURL`.
+Akses route ini lewat `http://host:port/hello-hyperf` di browser atau pake `cURL`.
 
-#### Mendefinisikan routing standar
+#### Mendefinisikan Standard Routes
 
-Routing standar mengacu pada routing yang ditangani oleh `controller` dan
-`action`. Metode ini sangat mirip dengan definisi closure, dengan perbedaan
-jelas bahwa logika bisnis dapat didelegasikan ke kelas controller masing-masing:
+Standard route adalah route yang ditangani oleh `Controller` dan `Action`. Kalo pake pola `Request Handler`, caranya mirip. Liat kode berikut:
 
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
 
-// Any of the following three definitions can achieve the same effect
+// Salah satu dari tiga metode berikut akan mencapai efek yang sama
 Router::get('/hello-hyperf', 'App\Controller\IndexController::hello');
 Router::get('/hello-hyperf', 'App\Controller\IndexController@hello');
 Router::get('/hello-hyperf', [App\Controller\IndexController::class, 'hello']);
 ```
 
-Route tersebut didefinisikan untuk menghubungkan path `/hello-hyperf` ke method
-`hello` di bawah `App\Controller\IndexController`.
+Definisi route ini mengikat path `/hello-hyperf` ke method `hello` di `App\Controller\IndexController`.
 
-#### Method routing yang tersedia
+#### Metode Routing yang Tersedia
 
-Router menyediakan beberapa method untuk membantu Anda meregistrasikan HTTP
-request routing apa pun:
+Router nyediain beberapa method buat daftarin route berbagai HTTP request:
 
 ```php
 use Hyperf\HttpServer\Router\Router;
 
-// Register the route of the HTTP METHOD consistent with the method name
+// Mendaftarkan route untuk metode HTTP yang sesuai dengan nama method
 Router::get($uri, $callback);
 Router::post($uri, $callback);
 Router::put($uri, $callback);
@@ -67,13 +54,11 @@ Router::patch($uri, $callback);
 Router::delete($uri, $callback);
 Router::head($uri, $callback);
 
-// Register the route of any HTTP METHOD
+// Mendaftarkan route untuk metode HTTP apapun
 Router::addRoute($httpMethod, $uri, $callback);
 ```
 
-Kadang-kadang Anda mungkin perlu meregistrasikan route yang dapat merespons
-beberapa HTTP method yang berbeda sekaligus. Hal ini dapat dicapai dengan
-menggunakan method `addRoute`:
+Kadang Anda perlu daftarin route yang bisa ngerespon beberapa metode HTTP sekaligus. Bisa pake method `addRoute`:
 
 ```php
 use Hyperf\HttpServer\Router\Router;
@@ -81,11 +66,9 @@ use Hyperf\HttpServer\Router\Router;
 Router::addRoute(['GET', 'POST','PUT','DELETE'], $uri, $callback);
 ```
 
-#### Cara mendefinisikan route groups
+#### Mendefinisikan Route Groups
 
-Route group menambahkan prefix group ke setiap URI. Route sebenarnya adalah
-`group/route`, yaitu `/user/index`, `/user/store`, `/user/update`,
-`/user/delete`
+Route aktualnya adalah `group/route`, yaitu `/user/index`, `/user/store`, `/user/update`, `/user/delete`
 
 ```php
 Router::addGroup('/user/',function (){
@@ -96,71 +79,42 @@ Router::addGroup('/user/',function (){
 });
 ```
 
-### Mendefinisikan routing via annotations
+### Mendefinisikan Route melalui Annotation
 
-`Hyperf` menyediakan fungsi routing [annotation](id/annotation.md) yang sangat
-praktis. Anda dapat langsung mendefinisikan route dengan menentukan annotation
-`#[Controller]` atau `#[AutoController]` pada kelas mana saja.
+`Hyperf` nyediain fitur routing [Annotation](id/annotation.md) yang praktis. Anda bisa langsung define route di class mana pun pake annotation `#[Controller]` atau `#[AutoController]`.
 
-! > Kelas annotation yang muncul di bawah adalah kelas di bawah namespace
-`use Hyperf\HttpServer\Annotation\`, seperti
-`Hyperf\HttpServer\Annotation\AutoController`.
+!> Class annotation yang muncul di bawah ini termasuk dalam namespace `use Hyperf\HttpServer\Annotation\`, seperti `Hyperf\HttpServer\Annotation\AutoController`
 
-#### Parameter annotation
+#### Parameter Annotation
 
-Baik `#[Controller]` maupun `#[AutoController]` menyediakan dua parameter,
-yaitu `prefix` dan `server`.
+Baik `#[Controller]` maupun `#[AutoController]` menyediakan parameter `prefix` dan `server`.
 
-`prefix` menunjukkan prefix untuk semua route method di bawah controller. Secara
-default, bagian setelah `\Controller\` pada namespace kelas controller akan
-digunakan sebagai prefix route dengan nomenklatur SnakeCase, misal
-`\App\Controller\Demo\UserController` maka secara default prefix-nya adalah
-`demo/user`.
+`prefix` merepresentasikan prefix route untuk semua method di dalam controller. Secara default, bagian setelah `\Controller\` di namespace controller class digunakan sebagai prefix route dalam format snake_case.
 
-Sebagai contoh, jika `App\Controller\Demo\UserController`, prefix-nya secara
-default akan menjadi `demo/user`, dan jika path dari suatu method di dalam kelas
-tersebut adalah `index`, route akhirnya akan menjadi `/demo/user/index`.
+Misalnya, untuk `App\Controller\Demo\UserController`, prefix defaultnya adalah `demo/user`. Jika path suatu method di dalam class adalah `index`, maka route akhirnya adalah `/demo/user/index`.
 
-! > Perlu dicatat bahwa `prefix` tidak selalu berlaku. Ketika path dari sebuah
-method di dalam kelas dimulai dengan `/`, path tersebut didefinisikan dari
-bagian awal `URI`, yang berarti nilai prefix akan diabaikan.
+!> Perhatikan bahwa `prefix` tidak selalu berlaku. Ketika path suatu method di dalam class diawali dengan `/`, itu menandakan bahwa path tersebut didefinisikan dari awal `URI`, yang berarti nilai `prefix` akan diabaikan.
 
-`server` menunjukkan pada `HTTP Server` mana route tersebut didefinisikan. Karena
-Hyperf mendukung beberapa `HTTP Server` secara bersamaan, parameter ini dapat
-digunakan untuk membedakan route didefinisikan untuk `Server` yang mana, dengan
-nilai default `http`.
+`server` menunjukkan `HTTP Server` mana tempat route tersebut didefinisikan. Karena Hyperf mendukung menjalankan multiple `HTTP Servers` secara bersamaan, parameter ini bisa digunakan untuk membedakan `Server` mana yang menjadi target definisi route. Nilai defaultnya adalah `http`.
 
-|              Controller              |           Annotation            |      Route URI      |
-|:------------------------------------:|:-------------------------------:|:-------------------:|
-|   App\Controller\MyDataController    |        @AutoController()        |   /my_data/index    |
-|   App\Controller\MydataController    |        @AutoController()        |    /mydata/index    |
-|   App\Controller\MyDataController    | @AutoController(prefix="/data") |     /data/index     |
-| App\Controller\Demo\MyDataController |        @AutoController()        | /demo/my_data/index |
-| App\Controller\Demo\MyDataController | @AutoController(prefix="/data") |     /data/index     |
+| Controller | Annotation | Access Route |
+|:------------------------------------:|:-------------------------------:|:------------------:|
+| App\Controller\MyDataController | @AutoController() | /my_data/index |
+| App\Controller\MydataController | @AutoController() | /mydata/index |
+| App\Controller\MyDataController | @AutoController(prefix="/data") | /data/index |
+| App\Controller\Demo\MydataController | @AutoController() | /demo/mydata/index |
+| App\Controller\Demo\MyDataController | @AutoController(prefix="/data") | /data/index |
 
-
-
-|              Controller              |                                    Annotation                                     |      Route URI      |
+| Controller | Annotation | Access Route |
 |:------------------------------------:|:---------------------------------------------------------------------------------:|:-------------------:|
-|   App\Controller\MyDataController    |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        |   /my_data/index    |
-| App\Controller\Demo\MyDataController |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        | /demo/my_data/index |
-| App\Controller\Demo\MyDataController | @Controller(prefix="/data") + @RequestMapping(path: "index", methods: "get,post") |     /data/index     |
-|   App\Controller\MyDataController    |       @Controller() + @RequestMapping(path: "/index", methods: "get,post")        |       /index        |
+| App\Controller\MyDataController | @Controller() + @RequestMapping(path: "index", methods: "get,post") | /my_data/index |
+| App\Controller\Demo\MyDataController | @Controller() + @RequestMapping(path: "index", methods: "get,post") | /demo/my_data/index |
+| App\Controller\Demo\MyDataController | @Controller(prefix="/data") + @RequestMapping(path: "index", methods: "get,post") | /data/index |
+| App\Controller\MyDataController | @Controller() + @RequestMapping(path: "/index", methods: "get,post") | /index |
 
-#### Annotation AutoController
+#### Annotation `#[AutoController]`
 
-`#[AutoController]` menyediakan dukungan routing binding untuk sebagian besar
-skenario akses sederhana. Saat menggunakan `#[AutoController]`, `Hyperf` akan
-secara otomatis mem-parsing semua method `public` dari kelas tersebut dan
-menyediakan method request `GET` dan `POST`.
-
-> Saat menggunakan annotation `#[AutoController]`, diperlukan namespace
-`use Hyperf\HttpServer\Annotation\AutoController;`.
-
-Nama controller berformat Pascal case akan dikonversi ke snake_case secara
-otomatis. Berikut adalah contoh korespondensi antara controller, annotation,
-dan route yang dihasilkan:
-
+`#[AutoController]` nyediain binding route buat skenario akses sederhana. Pas pake `#[AutoController]`, `Hyperf` otomatis parse semua method `public` di class dan nyediain metode request `GET` dan `POST`.
 
 ```php
 <?php
@@ -174,28 +128,21 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class UserController
 {
-    // Hyperf will automatically generate a /user/index route for this method, allowing requests via GET or POST
+    // Hyperf akan secara otomatis membuat route /user/index untuk method ini,
+    // mengizinkan request melalui GET atau POST
     public function index(RequestInterface $request)
     {
-        // Obtain the id parameter from the request
+        // Mendapatkan parameter id dari request
         $id = $request->input('id', 1);
         return (string)$id;
     }
 }
 ```
 
-#### Annotation Controller
+#### Annotation `#[Controller]`
 
-`#[Controller]` ada untuk memenuhi persyaratan definisi routing yang lebih
-mendetail. Penggunaan annotation `#[Controller]` digunakan untuk menunjukkan
-bahwa kelas saat ini adalah kelas `controller`, dan annotation
-`#[RequestMapping]` diperlukan untuk memperbarui definisi detail dari method
-request dan URI.
-
-Kami juga menyediakan berbagai annotation `mapping` yang cepat dan praktis,
-seperti `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`,
-`#[PatchMapping]`, dan `#[DeleteMapping]`, masing-masing sesuai dengan HTTP
-method yang cocok.
+`#[Controller]` ada buat kebutuhan routing yang lebih detail. Annotation `#[Controller]` nandain bahwa class ini adalah `Controller` class, dan harus dipake bareng `#[RequestMapping]` buat ngatur metode dan path request secara lebih detail.
+Kami juga nyediain berbagai `Mapping` annotations yang praktis, kayak `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]`, dan `#[DeleteMapping]`, 5 annotation buat nandain metode request yang berbeda.
 
 ```php
 <?php
@@ -210,27 +157,25 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 #[Controller]
 class UserController
 {
-    // Hyperf will automatically generate a /user/index route for this method, allowing requests via GET or POST
+    // Hyperf akan secara otomatis membuat route /user/index untuk method ini,
+    // mengizinkan request melalui GET atau POST
     #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
-        // Obtain the id parameter from the request
+        // Mendapatkan parameter id dari request
         $id = $request->input('id', 1);
         return (string)$id;
     }
 }
 ```
 
-### Route parameter
+### Route Parameters
 
-> Parameter route yang diberikan harus konsisten dengan nama key dan tipe
-parameter controller, jika tidak, controller tidak dapat menerima parameter
-tersebut.
+> Route parameters yang didefinisikan harus konsisten sama key name dan tipe parameter controller; kalo gak, controller gak bisa nerima parameter yang dimaksud.
 
 ```php
 Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
-Akses parameter route melalui injection pada method controller.
 
 ```php
 public function info(int $id)
@@ -240,83 +185,61 @@ public function info(int $id)
 }
 ```
 
-Akses parameter route melalui objek request.
+Mendapatkan melalui method `route`:
 
 ```php
 public function index(RequestInterface $request)
 {
-    // Jika ada maka akan dikembalikan, jika tidak ada maka akan mengembalikan nilai default null
+    // Mengembalikan jika ada, jika tidak mengembalikan nilai default null
     $id = $request->route('id');
-    // Jika ada maka akan dikembalikan, jika tidak ada maka akan mengembalikan nilai default 0
+    // Mengembalikan jika ada, jika tidak mengembalikan nilai default 0
     $id = $request->route('id', 0);
 }
 ```
 
-#### Parameter wajib (Required parameters)
+#### Required Parameters
 
-Kita dapat mendefinisikan parameter route wajib menggunakan `{}`. Misalnya,
-`/user/{id}` menyatakan bahwa `id` adalah parameter wajib.
+Kita bisa define parameter buat `$uri` pake `{}`, misal `/user/{id}`, itu nandain `id` sebagai required parameter.
 
-#### Parameter opsional (Optional parameters)
+#### Optional Parameters
 
-Terkadang Anda ingin parameter route bersifat opsional. Dalam hal ini, Anda dapat
-menggunakan `[]` untuk menyatakan parameter di dalam tanda kurung siku sebagai
-parameter opsional, seperti `/user/[{id}]`.
+Kadang Anda pengen parameter ini opsional. Bisa pake `[]` buat optional parameter, kayak `/user/[{id}]`.
 
-#### Validasi parameter
+#### Validating Parameters
 
-Anda juga dapat menggunakan regular expression untuk memvalidasi parameter.
-Berikut adalah beberapa contoh:
+Anda juga bisa menggunakan regular expression untuk memvalidasi parameter. Berikut adalah beberapa contoh:
+
 ```php
 use Hyperf\HttpServer\Router\Router;
 
-// Matches /user/42, but not /user/xyz
+// Cocok dengan /user/42, tetapi tidak bisa mencocokkan /user/xyz
 Router::addRoute('GET', '/user/{id:\d+}', 'handler');
 
-// Matches /user/foobar, but not /user/foo/bar
+// Cocok dengan /user/foobar, tetapi tidak bisa mencocokkan /user/foo/bar
 Router::addRoute('GET', '/user/{name}', 'handler');
 
-// Matches /user/foo/bar as well
+// Juga bisa mencocokkan /user/foo/bar
 Router::addRoute('GET', '/user/{name:.+}', 'handler');
 
-// This route
+// Route ini
 Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
-// Is equivalent to these two routes
+// Setara dengan dua route berikut
 Router::addRoute('GET', '/user/{id:\d+}', 'handler');
 Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
 
-// Multiple nested optional parts are possible as well
+// Multiple nested brackets opsional juga diizinkan
 Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
 
-// This route is NOT valid, because optional parts can only occur at the end
+// Ini adalah route yang tidak valid karena bagian opsional hanya bisa muncul di akhir
 Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
 ```
 
-#### Mendapatkan informasi routing
+#### Mendapatkan Informasi Route
 
-Jika komponen devtool terinstal, Anda dapat menggunakan perintah
-`php bin/hyperf.php describe:routes` untuk mendapatkan daftar informasi routing.
-Anda juga dapat memberikan opsi path, yang memudahkan untuk mendapatkan
-informasi tentang satu route saja, contoh:
-`php bin/hyperf.php describe:routes --path=/foo/bar`.
+Kalo komponen devtool terinstal, Anda bisa pake perintah `php bin/hyperf.php describe:routes` buat liat daftar route.
+Ada juga opsi `path` buat liat route tertentu: `php bin/hyperf.php describe:routes --path=/foo/bar`.
 
-## HTTP exception
+## HTTP Exceptions
 
-Ketika route gagal dicocokkan, seperti `route not found (404)`, `request method
-not allowed (405)`, dan exception HTTP lainnya, Hyperf secara seragam akan
-melempar exception yang mewarisi kelas
-`Hyperf\HttpMessage\Exception\HttpException`. Anda perlu mengelola exception ini
-melalui mekanisme `ExceptionHandler` dan melakukan pemrosesan respons yang
-sesuai. Secara default, Anda dapat langsung menggunakan
-`Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` yang disediakan oleh
-komponen untuk menangkap dan memproses exception. Perlu dicatat bahwa Anda harus
-mengonfigurasi exception handler ini di file konfigurasi
-`config/autoload/exceptions.php` dan memastikan urutan rantai antara beberapa
-exception handler sudah benar.
-
-Ketika Anda perlu menyesuaikan respons untuk HTTP exception seperti `route not
-found (404)` dan `request method not allowed (405)`, Anda dapat langsung
-mengimplementasikan penanganan exception Anda sendiri berdasarkan kode
-`HttpExceptionHandler` dan mengonfigurasi exception handler Anda sendiri. Untuk
-logika dan petunjuk penggunaan exception handler, silakan merujuk ke
-[Exception Handling](id/exception-handler.md).
+Kalo gak ada route yang cocok, misalnya `Route not found (404)` atau `Method not allowed (405)`, Hyperf bakal lempar subclass dari `Hyperf\HttpMessage\Exception\HttpException`. Exception ini perlu ditangani lewat mekanisme ExceptionHandler. Secara default, Anda bisa pake `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` dari komponen buat nangkep dan nanganin exception. Tapi exception handler ini perlu dikonfigurasi sendiri di `config/autoload/exceptions.php`, dan pastiin urutan multiple exception handlers udah bener.
+Kalo pengen ngubah response buat situasi HTTP exception kayak `Route not found (404)` atau `Method not allowed (405)`, Anda bisa implementasiin exception handler sendiri, tinggal turunin dari `HttpExceptionHandler`. Soal logika dan cara pake exception handlers, liat [Exception Handler](id/exception-handler.md)

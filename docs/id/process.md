@@ -1,17 +1,10 @@
 # Custom Process
 
-[hyperf/process](https://github.com/hyperf/process) memungkinkan Anda
-menambahkan custom process yang ditentukan oleh pengguna. Fitur ini biasanya
-digunakan untuk membuat process khusus untuk monitoring, reporting, atau tugas
-khusus lainnya. Ketika server dimulai, ia akan secara otomatis membuat process
-dan mengeksekusi subprocess yang ditentukan. Jika process berhenti secara tidak
-terduga, server akan secara otomatis me-restart process tersebut.
+[hyperf/process](https://github.com/hyperf/process) memungkinkan Anda menambahkan worker process kustom. Biasanya digunakan untuk membuat process khusus untuk monitoring, pelaporan, atau tugas spesifik lainnya. Process ini dibuat otomatis saat Server dimulai dan menjalankan fungsi child process yang ditentukan. Jika process keluar secara tidak terduga, Server akan merestartnya.
 
-## Membuat Custom Process
+## Membuat custom process
 
-Implementasikan subclass yang mewarisi `Hyperf\Process\AbstractProcess` dan
-implementasikan interface method `handle(): void` dengan kode logika Anda di
-dalam method tersebut. Mari kita ambil kode ini sebagai contoh:
+Untuk membuat custom process, buat subclass yang meng-extend `Hyperf\Process\AbstractProcess` dan implementasikan method `handle(): void`, lalu isi dengan logika Anda. Contohnya:
 
 ```php
 <?php
@@ -25,18 +18,16 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Kode Anda ...
     }
 }
 ```
 
-Ini mendefinisikan class custom process, tetapi class tersebut belum terdaftar
-di `ProcessManager`. Kita dapat mendaftarkannya menggunakan salah satu dari dua
-cara: `configuration file` atau `annotation`.
+Ini melengkapi kelas custom process, tetapi belum didaftarkan ke `ProcessManager`. Anda dapat mendaftarkannya menggunakan `file konfigurasi` atau `annotation`.
 
-### Registrasi melalui configuration file
+### Mendaftarkan melalui file konfigurasi
 
-Cukup tambahkan class custom process Anda di `config/autoload/processes.php`:
+Cukup tambahkan kelas custom process Anda ke `config/autoload/processes.php`:
 
 ```php
 // config/autoload/processes.php
@@ -45,10 +36,9 @@ return [
 ];
 ```
 
-### Registrasi melalui annotation
+### Mendaftarkan melalui Annotation
 
-Cukup definisikan annotation `#[Process]` pada class custom process, dan Hyperf
-akan mengumpulkan serta secara otomatis menyelesaikan proses registrasi:
+Cukup definisikan annotation `#[Process]` pada kelas custom process Anda, dan Hyperf akan mengumpulkan serta mendaftarkannya secara otomatis:
 
 ```php
 <?php
@@ -64,23 +54,16 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Kode Anda ...
     }
 }
 ```
 
-> Ketika menggunakan annotation `#[Process]`, namespace
-> `use Hyperf\Process\Annotation\Process;` diperlukan;
+> Saat menggunakan annotation `#[Process]`, pastikan Anda `use Hyperf\Process\Annotation\Process;`.
 
-## Menambahkan Kondisi untuk Startup Process
+## Mengatur kondisi启动
 
-Terkadang custom process tidak harus selalu dijalankan setiap saat. Apakah
-sebuah custom process dijalankan atau tidak dapat ditentukan berdasarkan
-konfigurasi atau kondisi tertentu dengan meng-override method `isEnable($server): bool`
-pada class custom process. Method ini secara default diimplementasikan dengan
-mengembalikan nilai `true`, yang akan berjalan bersamaan dengan startup
-service. Jika method mengembalikan nilai `false`, custom process tidak akan
-dijalankan saat service dimulai.
+Terkadang, Anda mungkin tidak ingin menjalankan custom process setiap saat. Apakah process dijalankan bisa tergantung pada konfigurasi atau kondisi tertentu. Caranya dengan meng-override method `isEnable(): bool` di kelas custom process. Secara default method ini mengembalikan `true`, yang berarti process ikut berjalan saat service menyala. Jika mengembalikan `false`, custom process tidak akan berjalan.
 
 ```php
 <?php
@@ -96,22 +79,20 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Kode Anda ...
     }
-
+    
     public function isEnable($server): bool
     {
-        // Do not start with service startup
-        return false;
+        // Tidak ikut serta dalam startup service
+        return false;   
     }
 }
 ```
 
-## Mengonfigurasi Custom Process
+## Mengonfigurasi custom process
 
-Terdapat beberapa parameter konfigurasi dalam custom process, yang dapat
-didefinisikan dengan meng-override attribute yang sesuai pada subclass atau
-mendefinisikan attribute yang sesuai pada annotation `#[Process]`.
+Custom process memiliki beberapa parameter yang dapat dikonfigurasi. Parameter-parameter ini dapat didefinisikan baik dengan meng-override properti yang sesuai di subclass atau dengan mendefinisikan atribut yang sesuai di dalam annotation `#[Process]`.
 
 ```php
 <?php
@@ -122,46 +103,39 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-#[Process(name: "foo_process", name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
-     * Number of processes
-     * @var int
+     * Jumlah process
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
-     * Process name
-     * @var string
+     * Nama process
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
-     * Redirect the standard input and output of a custom process
-     * @var bool
+     * Mengalihkan input dan output standar dari custom process
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
-     * Pipe type
-     * @var int
+     * Tipe pipe
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
-     * Whether to enable coroutine
-     * @var bool
+     * Apakah akan mengaktifkan coroutine
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 
 ## Contoh Penggunaan
 
-Kita membuat sebuah child process untuk memantau jumlah kegagalan antrean
-(failure queue), dan melaporkan peringatan ketika terdapat data di dalam
-failure queue tersebut.
+Kita akan membuat child process untuk memantau jumlah tugas gagal dalam antrean dan melaporkan peringatan jika ada data di antrean gagal.
 
 ```php
 <?php
@@ -185,9 +159,38 @@ class DemoProcess extends AbstractProcess
             $count = $redis->llen('queue:failed');
 
             if ($count > 0) {
-                $logger->warning('The num of failed queue is ' . $count);
+                $logger->warning('Jumlah antrean gagal adalah ' . $count);
             }
 
+            sleep(1);
+        }
+    }
+}
+```
+
+Jika Anda menggunakan asynchronous I/O dan tidak bisa meletakkan logika langsung ke dalam loop, Anda dapat mencoba pendekatan berikut:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+use Swoole\Timer;
+
+#[Process(name: "demo_process")]
+class DemoProcess extends AbstractProcess
+{
+    public function handle(): void
+    {
+        Timer::tick(1000, function(){
+            var_dump(1);
+            // Lakukan sesuatu...
+        });
+
+        while (true) {
             sleep(1);
         }
     }

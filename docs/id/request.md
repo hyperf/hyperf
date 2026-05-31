@@ -1,35 +1,22 @@
-# Objek Request
+# Request Object
 
-`Objek Request (Request)` diimplementasikan sepenuhnya berdasarkan standar
-[PSR-7](https://www.php-fig.org/psr/psr-7/) dan diimplementasikan oleh
-[hyperf/http-message](https://github.com/hyperf/http-message).
+`Request Object` diimplementasikan sepenuhnya berdasarkan standar [PSR-7](https://www.php-fig.org/psr/psr-7/), dan implementasinya didukung oleh komponen [hyperf/http-message](https://github.com/hyperf/http-message).
 
-> Perhatikan bahwa standar [PSR-7](https://www.php-fig.org/psr/psr-7/) `Request`
-> dirancang dengan `immutable mechanism` (mekanisme tidak dapat diubah), semua
-> method yang dimulai dengan awalan `with` mengembalikan objek baru dan tidak
-> akan mengubah nilai dari objek aslinya.
+> Catatan: Standar [PSR-7](https://www.php-fig.org/psr/psr-7/) dirancang dengan `immutable mechanism` untuk `Request`. Semua return value dari method yang diawali dengan `with` adalah objek baru dan tidak akan mengubah nilai objek asli.
 
 ## Instalasi
 
-Komponen ini sepenuhnya independen dan cocok untuk proyek framework apa pun.
+Komponen ini sepenuhnya independen dan cocok untuk project framework apapun.
 
 ```bash
 composer require hyperf/http-message
 ```
 
-> Jika digunakan dalam proyek framework lain, hanya API yang disediakan oleh
-> PSR-7 yang didukung. Untuk detailnya, Anda dapat merujuk langsung ke
-> spesifikasi relevan dari PSR-7. Penggunaan yang dijelaskan dalam dokumen ini
-> terbatas pada penggunaan saat menggunakan Hyperf.
+> Kalo dipake di project framework lain, cuma API dari PSR-7 yang didukung. Detailnya liat spesifikasi PSR-7. Pemakaian yang dijelasin di dokumen ini cuma berlaku pas pake Hyperf.
 
-## Mendapatkan Objek Request
+## Mendapatkan Request Object
 
-Anda dapat menginjeksikan `Hyperf\HttpServer\Contract\RequestInterface` melalui
-container untuk mendapatkan `Hyperf\HttpServer\Request` yang sesuai. Objek yang
-sebenarnya diinjeksikan adalah objek proxy yang mengimplementasikan `PSR-7
-request object (Request)` untuk setiap request, yang berarti objek ini hanya
-dapat diperoleh selama siklus hidup `onRequest`. Berikut adalah contoh cara
-mendapatkan objek request:
+Anda bisa dapetin `Hyperf\HttpServer\Request` dengan cara inject `Hyperf\HttpServer\Contract\RequestInterface` lewat container. Objek yang di-inject sebenarnya adalah proxy object, yang diproxy adalah `PSR-7 Request Object` untuk tiap request. Artinya, objek ini cuma bisa diakses dalam siklus hidup `onRequest`. Contohnya:
 
 ```php
 declare(strict_types=1);
@@ -51,23 +38,18 @@ class IndexController
 
 ### Dependency Injection dan Parameter
 
-Jika Anda ingin mendapatkan parameter routing melalui parameter method controller,
-Anda dapat mencantumkan parameter yang sesuai setelah dependency, dan framework
-akan secara otomatis menginjeksikan parameter tersebut ke dalam parameter
-method. Sebagai contoh, jika route Anda didefinisikan sebagai berikut:
+Kalo mau dapetin route parameters lewat parameter method controller, tinggal tulis parameter yang dimau setelah dependencies. Framework bakal otomatis inject parameter yang sesuai. Misalnya, kalo route-nya didefinisikan kayak gini:
 
 ```php
-// Metode annotation
+// Mode Annotation
 #[GetMapping(path: "/user/{id:\d+}")]
-
-// Metode konfigurasi
+// Mode Konfigurasi
 use Hyperf\HttpServer\Router\Router;
 
 Router::addRoute(['GET', 'HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
-Maka Anda dapat mendapatkan parameter `query` `id` dengan mendeklarasikan
-parameter `$id` pada parameter method, seperti yang ditunjukkan di bawah ini:
+Anda bisa mendapatkan parameter `Query` `id` dengan mendeklarasikan parameter `$id` di parameter method, seperti yang ditunjukkan di bawah ini:
 
 ```php
 declare(strict_types=1);
@@ -87,9 +69,7 @@ class IndexController
 }
 ```
 
-Selain mendapatkan parameter route melalui dependency injection, Anda juga dapat
-mendapatkan parameter route melalui method `route` dari objek request, seperti
-yang ditunjukkan di bawah ini:
+Selain lewat dependency injection, route parameters juga bisa diakses pake method `route`:
 
 ```php
 declare(strict_types=1);
@@ -104,10 +84,9 @@ class IndexController
 {
     public function info(RequestInterface $request)
     {
-        // Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default null
+        // Mengembalikan jika ada, jika tidak mengembalikan nilai default null
         $id = $request->route('id');
-
-        // Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default 0
+        // Mengembalikan jika ada, jika tidak mengembalikan nilai default 0
         $id = $request->route('id', 0);
         // ...
     }
@@ -116,25 +95,17 @@ class IndexController
 
 ### Request Path & Method
 
-Selain menggunakan `API` yang ditentukan oleh standar
-[PSR-7](https://www.php-fig.org/psr/psr-7/)
-`Hyperf\HttpServer\Contract\RequestInterface`, objek request juga menyediakan
-berbagai method untuk mengakses data request. Di bawah ini adalah daftar
-beberapa contoh method:
+Selain API dari standar [PSR-7](https://www.php-fig.org/psr/psr-7/), `Hyperf\HttpServer\Contract\RequestInterface` juga nyediain berbagai method buat ngeliat request. Berikut contoh beberapa method:
 
 #### Mendapatkan Request Path
 
-Method `path()` mengembalikan informasi path yang di-request. Dengan kata lain,
-jika alamat tujuan dari request yang masuk adalah
-`http://domain.com/foo/bar?baz=1`, maka `path()` akan mengembalikan `foo/bar`:
+Method `path()` ngembaliin informasi path dari request. Maksudnya, kalo alamat request-nya `http://domain.com/foo/bar?baz=1`, maka `path()` bakal ngembaliin `foo/bar`:
 
 ```php
 $uri = $request->path();
 ```
 
-Method `is(...$patterns)` dapat memverifikasi apakah path request yang masuk
-cocok dengan aturan yang ditentukan. Saat menggunakan method ini, Anda juga
-dapat meneruskan karakter `*` sebagai wildcard:
+Method `is(...$patterns)` buat ngecek apakah path request cocok sama aturan tertentu. Pake karakter `*` sebagai wildcard:
 
 ```php
 if ($request->is('user/*')) {
@@ -144,24 +115,19 @@ if ($request->is('user/*')) {
 
 #### Mendapatkan Request URL
 
-Anda dapat menggunakan method `url()` atau `fullUrl()` untuk mendapatkan `URL`
-lengkap dari request yang masuk. Method `url()` mengembalikan `URL` tanpa
-`query parameters`, dan nilai kembalian dari method `fullUrl()` berisi `query
-parameters`:
+Pake method `url()` atau `fullUrl()` buat dapetin `URL` lengkap dari request. `url()` ngembaliin `URL` tanpa `Query Parameters`, sedangkan `fullUrl()` nyertain `Query Parameters`:
 
 ```php
-// Tanpa query parameter
+// Tanpa query parameters
 $url = $request->url();
 
-// Dengan query parameter
+// Dengan query parameters
 $url = $request->fullUrl();
 ```
 
 #### Mendapatkan Request Method
 
-Method `getMethod()` akan mengembalikan method request dari `HTTP`. Anda juga
-dapat menggunakan method `isMethod(string $method)` untuk memverifikasi apakah
-method request dari `HTTP` cocok dengan aturan yang ditentukan:
+Method `getMethod()` akan mengembalikan metode `HTTP` request. Anda juga bisa menggunakan method `isMethod(string $method)` untuk memverifikasi apakah metode `HTTP` request cocok dengan aturan yang ditentukan:
 
 ```php
 $method = $request->getMethod();
@@ -171,52 +137,37 @@ if ($request->isMethod('post')) {
 }
 ```
 
-### PSR-7 Request dan Method
+### PSR-7 Request dan Methods
 
-Komponen message [hyperf/http-message](https://github.com/hyperf/http-message)
-sendiri merupakan implementasi dari komponen standar
-[PSR-7](https://www.php-fig.org/psr/psr-7/) dan method interface dapat
-dipanggil melalui objek request (Request) yang diinjeksikan.
-Jika request dideklarasikan sebagai interface standar
-[PSR-7](https://www.php-fig.org/psr/psr-7/)
-`Psr\Http\Message\ServerRequestInterface` selama injeksi, framework akan
-secara otomatis mengonversinya ke objek `Hyperf\HttpServer\Request` yang setara
-yang mengimplementasikan `Hyperf\HttpServer\Contract\RequestInterface`.
+Komponen [hyperf/http-message](https://github.com/hyperf/http-message) itu sendiri adalah komponen yang mengimplementasikan standar [PSR-7](https://www.php-fig.org/psr/psr-7/). Method terkait bisa dipanggil melalui `Request Object` yang diinjeksikan.
+Jika dideklarasikan sebagai interface `Psr\Http\Message\ServerRequestInterface` dari standar [PSR-7](https://www.php-fig.org/psr/psr-7/) saat injeksi, framework akan secara otomatis mengonversinya menjadi objek `Hyperf\HttpServer\Request`, yang setara dengan `Hyperf\HttpServer\Contract\RequestInterface`.
 
-> Disarankan untuk menggunakan `Hyperf\HttpServer\Contract\RequestInterface`
-> untuk injeksi agar Anda mendapatkan dukungan fitur auto-complete dari IDE
-> untuk method-method eksklusif.
+> Disarankan pake `Hyperf\HttpServer\Contract\RequestInterface` buat inject, biar dapet auto-completion IDE buat method khusus.
 
-## Preprocessing & Normalisasi Input
+## Input Pre-processing & Normalization
 
 ### Mendapatkan Input
 
 #### Mendapatkan Semua Input
 
-Anda dapat menggunakan method `all()` untuk mendapatkan semua data input dalam
-bentuk `array`:
+Pake method `all()` buat dapetin semua data input dalam bentuk `array`:
 
 ```php
 $all = $request->all();
 ```
 
-#### Mendapatkan Nilai Input yang Ditentukan
+#### Mendapatkan Nilai Input Tertentu
 
-Gunakan `input(string $key, $default = null)` dan `inputs(array $keys, $default
-= null): array` untuk mendapatkan `satu` atau `beberapa` nilai input dari
-bentuk apa pun:
+Mendapatkan `satu` atau `lebih` nilai input dalam bentuk apapun melalui `input(string $key, $default = null)` dan `inputs(array $keys, $default = null): array`:
 
 ```php
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
+// Mengembalikan jika ada, jika tidak mengembalikan null
 $name = $request->input('name');
-
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+// Mengembalikan jika ada, jika tidak mengembalikan nilai default Hyperf
 $name = $request->input('name', 'Hyperf');
 ```
 
-Jika data form yang dikirimkan berisi data dalam bentuk array, Anda dapat
-menggunakan dot syntax (sintaks titik) untuk mendapatkan nilai bersarang dari
-array tersebut:
+Kalo data form yang dikirim bentuknya `array`, pake sintaks `dot` buat ngaksesnya:
 
 ```php
 $name = $request->input('products.0.name');
@@ -226,56 +177,40 @@ $names = $request->input('products.*.name');
 
 #### Mendapatkan Input dari Query String
 
-Gunakan method `input` atau `inputs` untuk mendapatkan data input dari seluruh
-request (termasuk `query parameters`), dan method `query(?string $key = null,
-$default = null)` untuk mendapatkan input hanya dari query string:
+Menggunakan method `input`, `inputs` bisa mendapatkan data input (termasuk `Query Parameters`) dari seluruh request, sementara method `query(?string $key = null, $default = null)` hanya bisa mendapatkan data input dari query string:
 
 ```php
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
+// Mengembalikan jika ada, jika tidak mengembalikan null
 $name = $request->query('name');
-
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+// Mengembalikan jika ada, jika tidak mengembalikan nilai default Hyperf
 $name = $request->query('name', 'Hyperf');
-
-// Jika tidak mengirimkan parameter, semua Query parameter dikembalikan sebagai array asosiatif
+// Mengembalikan semua Query parameters dalam bentuk associative array jika tidak ada parameter yang diberikan
 $name = $request->query();
 ```
 
 #### Mendapatkan Informasi Input `JSON`
 
-Jika format data `body` request adalah `JSON`, selama nilai header `Content-Type`
-dari `objek Request (Request)` diatur dengan benar ke `application/json`, Anda
-dapat menggunakan method `input(string $key, $default = null)` untuk mengakses
-data `JSON` dan Anda bahkan dapat menggunakan dot syntax untuk membaca array
-`JSON`:
+Jika format data dari `Body` request adalah `JSON`, selama `Content-Type` `Header Value` dari `Request Object` telah diatur dengan benar ke `application/json`, Anda bisa mengakses data `JSON` melalui method `input(string $key, $default = null)`, dan Anda bahkan bisa menggunakan sintaks `dot` untuk membaca array `JSON`:
 
 ```php
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
+// Mengembalikan jika ada, jika tidak mengembalikan null
 $name = $request->input('user.name');
-
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+// Mengembalikan jika ada, jika tidak mengembalikan nilai default Hyperf
 $name = $request->input('user.name', 'Hyperf');
-
 // Mengembalikan semua data Json dalam bentuk array
 $name = $request->all();
 ```
 
-#### Menentukan Apakah Nilai Input Ada
+#### Menentukan Keberadaan Nilai Input
 
-Untuk menentukan apakah suatu nilai ada dalam request, Anda dapat menggunakan
-method `has($keys)`. Jika nilai tersebut ada dalam request, method akan
-mengembalikan `true`, jika tidak ada akan mengembalikan `false`. Parameter
-pertama dapat berupa string atau array yang berisi beberapa string. Dalam kasus
-terakhir, method akan mengembalikan `true` hanya jika semua key yang ditentukan
-ada:
+Untuk menentukan apakah suatu nilai ada di request, Anda bisa menggunakan method `has($keys)`. Jika nilai tersebut ada di request, maka mengembalikan `true`, jika tidak mengembalikan `false`. `$keys` bisa berupa string, atau array yang berisi multiple strings. Nilai `true` hanya akan dikembalikan jika semuanya ada:
 
 ```php
-// Hanya memeriksa satu nilai
+// Hanya mengecek satu nilai
 if ($request->has('name')) {
     // ...
 }
-
-// Memeriksa beberapa nilai sekaligus
+// Mengecek beberapa nilai sekaligus
 if ($request->has(['name', 'email'])) {
     // ...
 }
@@ -285,44 +220,35 @@ if ($request->has(['name', 'email'])) {
 
 #### Mendapatkan Cookies dari Request
 
-Gunakan method `getCookieParams()` untuk mendapatkan semua `Cookies` dari
-request sebagai array asosiatif.
+Gunakan method `getCookieParams()` untuk mendapatkan semua `Cookies` dari request, yang akan mengembalikan associative array.
 
 ```php
 $cookies = $request->getCookieParams();
 ```
 
-Anda dapat menggunakan method `cookie(string $key, $default = null)` untuk
-mendapatkan nilai dari cookie yang sesuai:
+Jika Anda ingin mendapatkan nilai `Cookie` tertentu, Anda bisa mendapatkan nilai yang sesuai melalui method `cookie(string $key, $default = null)`:
 
  ```php
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan null
+// Mengembalikan jika ada, jika tidak mengembalikan null
 $name = $request->cookie('name');
-
-// Jika ada, kembalikan nilai; jika tidak ada, kembalikan nilai default Hyperf
+// Mengembalikan jika ada, jika tidak mengembalikan nilai default Hyperf
 $name = $request->cookie('name', 'Hyperf');
  ```
 
-### File
+### Files
 
-#### Mendapatkan File yang Diunggah
+#### Mendapatkan Uploaded Files
 
-Anda dapat menggunakan method `file(string $key, $default):
-?Hyperf\HttpMessage\Upload\UploadedFile` untuk mendapatkan objek file yang
-diunggah dari request. Jika file yang diunggah ada, method ini mengembalikan
-instance dari kelas `Hyperf\HttpMessage\Upload\UploadedFile`, yang mewarisi
-kelas `SplFileInfo` dari `PHP` dan juga menyediakan berbagai method untuk
-berinteraksi dengan file tersebut:
+Anda bisa menggunakan method `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` untuk mendapatkan uploaded file object dari request. Jika uploaded file ada, method ini mengembalikan instance dari class `Hyperf\HttpMessage\Upload\UploadedFile`. Class ini mewarisi class `SplFileInfo` dari `PHP` dan juga menyediakan berbagai method untuk berinteraksi dengan file:
 
 ```php
-// Jika ada, kembalikan objek Hyperf\HttpMessage\Upload\UploadedFile; jika tidak ada, kembalikan null
+// Mengembalikan objek Hyperf\HttpMessage\Upload\UploadedFile jika ada, jika tidak mengembalikan null
 $file = $request->file('photo');
 ```
 
 #### Memeriksa Apakah File Ada
 
-Anda dapat menggunakan method `hasFile(string $key): bool` untuk mengonfirmasi
-apakah ada file dalam request:
+Anda bisa menggunakan method `hasFile(string $key): bool` untuk mengonfirmasi apakah suatu file ada di request:
 
 ```php
 if ($request->hasFile('photo')) {
@@ -330,10 +256,9 @@ if ($request->hasFile('photo')) {
 }
 ```
 
-#### Memverifikasi Keberhasilan Unggahan
+#### Memverifikasi Keberhasilan Upload
 
-Selain memeriksa apakah file yang diunggah ada, Anda juga dapat memverifikasi
-apakah file yang diunggah valid melalui method `isValid(): bool`:
+Selain memeriksa apakah uploaded file ada, Anda juga bisa memverifikasi apakah uploaded file valid melalui method `isValid(): bool`:
 
 ```php
 if ($request->file('photo')->isValid()) {
@@ -341,34 +266,27 @@ if ($request->file('photo')->isValid()) {
 }
 ```
 
-#### Path & Ekstensi File
+#### File Path & Extension
 
-Kelas `UploadedFile` juga berisi method untuk mengakses path lengkap file dan
-ekstensinya. Method `getExtension()` akan menentukan ekstensi file berdasarkan
-konten file tersebut. Ekstensi ini mungkin berbeda dari ekstensi yang diberikan
-oleh client:
+Class `UploadedFile` juga berisi method untuk mengakses path lengkap dan extension dari file. Method `getExtension()` menentukan extension file berdasarkan konten file. Extension ini mungkin berbeda dengan extension yang disediakan oleh client:
 
 ```php
-// Path ini adalah path sementara file yang diunggah
+// Path ini adalah temporary path dari uploaded file
 $path = $request->file('photo')->getPath();
 
-// Karena tmp_name file upload Swoole tidak mempertahankan nama file asli, method ini telah ditulis ulang untuk mendapatkan suffix nama file asli
+// Karena tmp_name uploaded file Swoole tidak mempertahankan nama file asli, method ini telah ditulis ulang untuk mendapatkan suffix dari nama file asli
 $extension = $request->file('photo')->getExtension();
 ```
 
-#### Menyimpan File yang Diunggah
+#### Menyimpan Uploaded Files
 
-File yang diunggah disimpan di lokasi sementara sebelum disimpan secara manual.
-Jika Anda tidak menyimpan file tersebut, file akan dihapus dari lokasi sementara
-setelah request selesai. Gunakan `moveTo(string $targetPath): void` untuk
-memindahkan file sementara ke lokasi `$targetPath` untuk penyimpanan persisten.
-Contoh kodenya adalah sebagai berikut:
+File upload nyimpan di lokasi sementara sebelum Anda simpen secara permanen. Kalo gak disimpen, file bakal dihapus setelah request selesai. Makanya kita perlu nyimpen file secara permanen. Pake `moveTo(string $targetPath): void` buat mindahin temporary file ke `$targetPath`. Contohnya:
 
 ```php
 $file = $request->file('photo');
 $file->moveTo('/foo/bar.jpg');
 
-// Menentukan apakah file sudah dipindahkan melalui method isMoved(): bool
+// Menentukan apakah method telah dipindahkan melalui method isMoved(): bool
 if ($file->isMoved()) {
     // ...
 }
@@ -376,12 +294,11 @@ if ($file->isMoved()) {
 
 ## Event Terkait
 
-Ketika `enable_request_lifecycle` diaktifkan pada konfigurasi service, setiap
-request yang masuk dapat memicu tiga event berikut.
+Kalo `enable_request_lifecycle` diaktifin di konfigurasi service, setiap request bakal memicu tiga event berikut:
 
 ### Contoh Konfigurasi
 
-> Kode lain yang tidak terkait dihapus dari contoh berikut.
+> Berikut menghapus kode lain yang tidak relevan
 
 ```php
 <?php
@@ -404,25 +321,24 @@ return [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
             'options' => [
-                // Whether to enable request lifecycle event
+                // Apakah akan mengaktifkan request lifecycle event
                 'enable_request_lifecycle' => false,
             ],
         ],
     ],
 ];
-
 ```
 
 ### Daftar Event
 
 - Hyperf\HttpServer\Event\RequestReceived
 
-Event ini dipicu saat request diterima.
+Event ini dipicu ketika sebuah request diterima.
 
 - Hyperf\HttpServer\Event\RequestHandled
 
-Event ini dipicu saat request selesai diproses.
+Event ini dipicu ketika request telah diproses.
 
 - Hyperf\HttpServer\Event\RequestTerminated
 
-Event ini dipicu saat coroutine yang membawa request saat ini dihancurkan.
+Event ini dipicu ketika coroutine yang membawa request saat ini dihancurkan.

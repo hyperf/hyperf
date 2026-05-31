@@ -8,17 +8,17 @@ composer require hyperf/redis
 
 ## Konfigurasi
 
-| Konfigurasi |  Tipe   |   Nilai Default    |   Keterangan    |
-|:------:|:-------:|:-----------:|:---------:|
-|  host  | string  | 'localhost' | Host dari Redis Server |
-|  auth  | string  |     null      |   Password dari Redis Server    |
-|  port  | integer |    6379     |   Port dari Redis Server    |
-|   db   | integer |      0      |    DB dari Redis Server     |
-| cluster.enable | boolean |    false    |          Apakah mode cluster?          |
-|  cluster.name  | string  |    null     |             Nama cluster             |
-| cluster.seeds  |  array  |     []      | Seed dari cluster, format: ['host:port'] |
-|      pool      | object  |     {}      |           Connection pool           |
-|    options     | object  |     {}      |         Opsi dari Redis Client         |
+| Konfigurasi | Tipe | Default | Keterangan |
+|:--------------:|:-------:|:-----------:|:------------------------------:|
+|      host      | string  | 'localhost' |           Host Redis           |
+|      auth      | string  |     None    |           Password             |
+|      port      | integer |    6379     |           Port                 |
+|       db       | integer |      0      |           DB                   |
+| cluster.enable | boolean |    false    |   Apakah mode cluster diaktifkan |
+|  cluster.name  | string  |    null     |           Nama cluster         |
+| cluster.seeds  |  array  |     []      | Array alamat koneksi cluster ['host:port'] |
+|      pool      | object  |     {}      | Konfigurasi connection pool    |
+|    options     | object  |     {}      | Opsi konfigurasi Redis         |
 
 ```php
 <?php
@@ -41,17 +41,15 @@ return [
             'heartbeat' => -1,
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
-        'options' => [ // Options of Redis Client, see https://github.com/phpredis/phpredis#setoption
+        'options' => [ // Opsi Redis client, lihat https://github.com/phpredis/phpredis#setoption
             \Redis::OPT_PREFIX => env('REDIS_PREFIX', ''),
-            // or 'prefix' => env('REDIS_PREFIX', ''), v3.0.38 or later
+            // atau 'prefix' => env('REDIS_PREFIX', ''), untuk v3.0.38 atau lebih tinggi
         ],
     ],
 ];
-
 ```
 
-Gunakan perintah berikut untuk mempublikasikan (`publish`) file konfigurasi
-lengkap:
+Untuk mempublikasikan file konfigurasi lengkap, gunakan perintah:
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/redis
@@ -59,28 +57,21 @@ php bin/hyperf.php vendor:publish hyperf/redis
 
 ## Penggunaan
 
-`hyperf/redis` mengimplementasikan proxy dari `ext-redis` dan connection pool.
-Pengguna dapat langsung menginjeksikan `\Hyperf\Redis\Redis` melalui container
-dependency injection untuk menggunakan Redis client. Objek yang didapatkan
-sebenarnya adalah proxy dari objek `\Redis`.
+`hyperf/redis` mengimplementasikan proxy `ext-redis` dan connection pool. Pengguna dapat langsung menginjeksi `\Hyperf\Redis\Redis` melalui container dependency injection untuk menggunakan Redis client. Yang Anda dapatkan sebenarnya adalah objek proxy dari `\Redis`.
 
 ```php
 <?php
-
 use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
 $redis = $container->get(\Hyperf\Redis\Redis::class);
 $result = $redis->keys('*');
-
 ```
 
-## Konfigurasi multi-resource
+## Konfigurasi Multi-Database
 
-Terkadang, satu resource `Redis` tidak dapat memenuhi kebutuhan, dan sebuah
-proyek sering kali perlu mengonfigurasi beberapa resource sekaligus. Pada saat
-ini, kita dapat mengubah file konfigurasi `redis.php` sebagai berikut:
+Terkadang dalam penggunaan nyata, satu database `Redis` tidak cukup, dan sebuah proyek sering kali perlu mengkonfigurasi beberapa database. Pada saat ini, kita perlu memodifikasi file konfigurasi `redis.php` sebagai berikut:
 
 ```php
 <?php
@@ -105,7 +96,7 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
-    // Tambahkan connection pool Redis baru bernama foo
+    // Tambahkan connection pool Redis bernama 'foo'
     'foo' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
@@ -121,18 +112,14 @@ return [
         ],
     ],
 ];
-
 ```
 
-### Menggunakan melalui class proxy
+### Menggunakan Proxy Class
 
-Kita dapat menulis ulang sebuah class `FooRedis` dan mewarisi (inherit) class
-`Hyperf\Redis\Redis`, lalu mengubah properti `poolName` ke nama pool di atas,
-yaitu `foo`, untuk menyelesaikan peralihan connection pool, contohnya:
+Kita dapat menulis ulang kelas `FooRedis` dan mewarisi kelas `Hyperf\Redis\Redis`, lalu mengubah `poolName` menjadi `foo` seperti di atas, yang akan menyelesaikan pergantian connection pool. Contoh:
 
 ```php
 <?php
-
 use Hyperf\Redis\Redis;
 
 class FooRedis extends Redis
@@ -141,21 +128,15 @@ class FooRedis extends Redis
     protected $poolName = 'foo';
 }
 
-// Dapatkan atau langsung injeksikan class saat ini melalui DI container
+// Dapatkan kelas saat ini melalui container DI atau injeksi langsung
 $redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
-
 ```
 
-### Menggunakan melalui factory
+### Menggunakan Factory Class
 
-Ketika setiap resource sesuai dengan skenario statis, class proxy adalah cara
-yang baik untuk membedakan resource, tetapi terkadang kebutuhan bisa lebih
-dinamis. Pada saat ini, kita dapat menggunakan factory class
-`Hyperf\Redis\RedisFactory` untuk meneruskan argumen `poolName` secara dinamis
-guna mengambil client dari connection pool yang sesuai tanpa membuat class
-proxy untuk setiap resource, contohnya:
+Ketika setiap database sesuai dengan skenario penggunaan yang tetap, menggunakan proxy class adalah cara yang baik untuk membedakannya. Namun terkadang kebutuhan bisa lebih dinamis. Dalam kasus ini, kita dapat menggunakan factory class `Hyperf\Redis\RedisFactory` untuk secara dinamis melewatkan `poolName` guna mendapatkan client dari connection pool yang sesuai, tanpa perlu membuat proxy class untuk setiap database. Contoh:
 
 ```php
 <?php
@@ -164,25 +145,24 @@ use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-// Dapatkan atau langsung injeksikan class RedisFactory melalui DI container
+// Dapatkan kelas RedisFactory melalui container DI atau injeksi langsung
 $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
-## Mode Sentinel
+## Sentinel Mode
 
-Untuk mengaktifkan mode sentinel, Anda dapat mengubah file konfigurasi `.env`
-atau `redis.php` sebagai berikut:
+Untuk mengaktifkan Sentinel mode, ubah konfigurasi di file `.env` atau `redis.php` sebagai berikut:
 
-Gunakan `;` untuk memisahkan beberapa node sentinel
+Pisahkan beberapa node sentinel dengan `;`
 
 ```env
 REDIS_HOST=
-REDIS_AUTH="Redis instance password"
+REDIS_AUTH=Password instance Redis
 REDIS_PORT=
 REDIS_DB=
 REDIS_SENTINEL_ENABLE=true
-REDIS_SENTINEL_PASSWORD="Redis sentinel password"
+REDIS_SENTINEL_PASSWORD=Password sentinel Redis
 REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
 ```
 
@@ -218,15 +198,14 @@ return [
 ];
 ```
 
-## Mode Cluster
+## Cluster Mode
 
 ### Menggunakan `name`
 
-Konfigurasikan `cluster`, ubah `redis.ini`, atau ubah `Dockerfile`, sebagai
-berikut:
+Konfigurasi `cluster`, modifikasi `redis.ini`, atau Anda juga dapat memodifikasi `Dockerfile` sebagai berikut:
 
 ```shell
-    # - config PHP
+    # - konfigurasi PHP
     && { \
         echo "upload_max_filesize=100M"; \
         echo "post_max_size=108M"; \
@@ -243,7 +222,7 @@ Konfigurasi PHP yang sesuai adalah sebagai berikut:
 
 ```php
 <?php
-// Abaikan konfigurasi lain yang tidak relevan
+// Konfigurasi lainnya diabaikan
 return [
     'default' => [
         'cluster' => [
@@ -255,14 +234,13 @@ return [
 ];
 ```
 
-### Menggunakan seeds
+### Menggunakan `seeds`
 
-Tentu saja, Anda juga dapat menggunakan `seeds` secara langsung tanpa
-mengonfigurasi `name`, sebagai berikut:
+Tentu saja, Anda juga dapat langsung menggunakan `seeds` tanpa mengkonfigurasi `name`. Sebagai berikut:
 
 ```php
 <?php
-// Abaikan konfigurasi lain yang tidak relevan
+// Konfigurasi lainnya diabaikan
 return [
     'default' => [
         'cluster' => [
@@ -277,9 +255,9 @@ return [
 ];
 ```
 
-## Opsi (Options)
+## Options
 
-Pengguna dapat mengubah `options` untuk mengatur opsi konfigurasi `Redis`.
+Pengguna dapat memodifikasi `options` untuk mengatur opsi konfigurasi `Redis`.
 
 Sebagai contoh, mengubah serialisasi `Redis` menjadi serialisasi `PHP`.
 
@@ -304,13 +282,13 @@ return [
         ],
         'options' => [
             \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
-            // or 'serializer' => \Redis::SERIALIZER_PHP, v3.0.38 or later
+            // atau 'serializer' => \Redis::SERIALIZER_PHP, untuk v3.0.38 atau lebih tinggi
         ],
     ],
 ];
 ```
 
-Sebagai contoh, mengatur agar `Redis` tidak pernah timeout:
+Sebagai contoh, mengatur `Redis` agar tidak pernah timeout:
 
 ```php
 <?php
@@ -333,11 +311,10 @@ return [
         ],
         'options' => [
             \Redis::OPT_READ_TIMEOUT => -1,
-            // or 'read_timeout' => -1, v3.0.38 or later
+            // atau 'read_timeout' => -1, untuk v3.1.3 atau lebih tinggi
         ],
     ],
 ];
 ```
 
-> Perhatikan bahwa pada beberapa versi ekstensi `phpredis`, tipe nilai dari
-> `options` harus berupa `string`.
+> Untuk beberapa versi ekstensi `phpredis`, `value` dari `option` harus bertipe `string`.

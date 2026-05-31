@@ -1,65 +1,56 @@
 # RPN - Reverse Polish Notation
 
-![PHPUnit](https://github.com/hyperf/rpn-incubator/workflows/PHPUnit/badge.svg)
+`RPN` adalah metode ekspresi matematika yang diperkenalkan oleh matematikawan Polandia Jan Łukasiewicz pada tahun 1920. Dalam reverse Polish notation, semua operator ditempatkan setelah operand, sehingga disebut juga postfix notation. Reverse Polish notation tidak memerlukan tanda kurung untuk mengidentifikasi prioritas operator.
 
-`RPN` adalah metode ekspresi matematika yang diperkenalkan oleh matematikawan
-Polandia Jan Vukasevich pada tahun 1920. Dalam reverse Polish notation, semua
-operator ditempatkan setelah operand, sehingga disebut juga dengan postfix
-notation. Reverse Polish notation tidak memerlukan tanda kurung untuk
-mengidentifikasi prioritas operator (operator precedence).
-
-```
+```bash
 composer require hyperf/rpn
 ```
 
 ## Logika RPN
 
-Logika dasar
+Logika dasar:
 
-- selagi (while) ada input
-    - baca simbol berikutnya X
-    - JIKA X adalah operand
-        - masukkan ke stack (push)
-    - JIKA X adalah operator
-        - terdapat tabel a priori bahwa operator tersebut mengambil n argumen
-        - JIKA operand di stack kurang dari n
+- while ada input
+    - Baca simbol berikutnya X
+    - IF X adalah operand
+        - Push ke stack
+    - ELSE IF X adalah operator
+        - Ada tabel prioritas yang memberikan bahwa operator membutuhkan n argumen
+        - IF ada kurang dari n operand di stack
             - (Error) Pengguna tidak memasukkan operand yang cukup
-    - Selain itu, keluarkan (pop) n operand dari stack
-    - Hitung operasi operator.
-    - masukkan (push) nilai hasil perhitungan ke stack
-- JIKA hanya ada satu nilai di stack
-    - Nilai ini adalah hasil dari seluruh perhitungan
-- JIKA LEBIH DARI satu nilai di stack
-    - (Error) Pengguna memasukkan operand yang berlebihan
+        - Else, pop n operand dari stack
+        - Hitung operator.
+        - Push nilai yang telah dihitung ke stack
+- IF hanya ada satu nilai di stack
+    - Nilai ini adalah hasil dari seluruh ekspresi
+- ELSE ada lebih dari satu nilai
+    - (Error) Pengguna memasukkan operand tambahan
 
-Contoh
+Contoh:
 
-Ekspresi infix `5 + ((1 + 2) * 4) - 3` ditulis sebagai
+Ekspresi infix `5 + ((1 + 2) * 4) - 3` ditulis sebagai:
 
 `5 1 2 + 4 * + 3 -`
 
-Tabel berikut menunjukkan bagaimana ekspresi Reverse Polish ini dievaluasi dari
-kiri ke kanan, dengan nilai perantara yang diberikan dalam kolom stack, yang
-digunakan untuk melacak algoritma.
+Tabel berikut menunjukkan proses evaluasi dari ekspresi reverse Polish ini dari kiri ke kanan. Kolom stack menunjukkan nilai antara yang digunakan untuk melacak algoritma.
 
-| input | action | stack | comment |
-| ---- | -------- | ------- | ---------------------------- |
-| 5 | Push | 5 | |
-| 1 | Push | 5, 1 | |
-| 2 | Push | 5, 1, 2 | |
-| + | Addition | 5, 3 | Pop 1, 2, push result 3 |
-| 4 | Push | 5, 3, 4 | |
-| * | Multiplication | 5, 12 | Pop 3, 4, push result 12 |
-| + | Add operation | 17 | Pop 5, 12, push result 17 |
-| 3 | push | 17, 3 | |
-| - | Subtraction | 14 | Pop 17, 3, push result 14 |
+| Input | Operasi     | Stack      | Catatan                          |
+| ----- | ----------- | ---------- | -------------------------------- |
+| 5     | Push        | 5          |                                  |
+| 1     | Push        | 5, 1       |                                  |
+| 2     | Push        | 5, 1, 2    |                                  |
+| +     | Penambahan  | 5, 3       | 1, 2 pop, push hasil 3           |
+| 4     | Push        | 5, 3, 4    |                                  |
+| *     | Perkalian   | 5, 12      | 3, 4 pop, push hasil 12          |
+| +     | Penambahan  | 17         | 5, 12 pop, push hasil 17         |
+| 3     | Push        | 17, 3      |                                  |
+| -     | Pengurangan | 14         | 17, 3 pop, push hasil 14         |
 
-Ketika perhitungan selesai, hanya ada satu operand yang tersisa di stack, yang
-merupakan hasil akhir dari ekspresi: 14
+Ketika perhitungan selesai, hanya ada satu operand di stack, yang merupakan hasil dari ekspresi: 14.
 
 ## Penggunaan
 
-Evaluasi ekspresi RPN secara langsung
+Hitung ekspresi RPN secara langsung:
 
 ```php
 <?php
@@ -69,7 +60,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', []); // '14'
 ```
 
-Mengatur presisi perhitungan
+Atur presisi perhitungan:
 
 ```php
 <?php
@@ -79,7 +70,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', [], 2); // '14.00'
 ```
 
-Mengatur variabel
+Atur variabel:
 
 ```php
 <?php
@@ -89,9 +80,9 @@ $calculator = new Calculator();
 $calculator->calculate('[0] 1 2 + 4 * + [1] -', [5, 10]); // '7'
 ```
 
-### Mengonversi ekspresi infix menjadi ekspresi postfix
+### Mengonversi Infix Expression ke Postfix Expression
 
-> Penggunaan variabel sementara tidak didukung
+> Variabel belum didukung
 
 ```php
 <?php

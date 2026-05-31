@@ -1,7 +1,6 @@
-# Komponen RPC berbasis Multiplexing
+# RPC Component Berbasis Multiplexing
 
-Komponen ini berbasis protokol `TCP`, dan desain multiplexing dipinjam dari
-komponen `AMQP`.
+Komponen ini didasarkan pada protokol `TCP`, dan desain multiplexing terinspirasi oleh komponen `AMQP`.
 
 ## Instalasi
 
@@ -11,12 +10,9 @@ composer require hyperf/rpc-multiplex
 
 ## Konfigurasi Server
 
-Ubah file konfigurasi `config/autoload/server.php`, konfigurasi berikut
-menghapus konfigurasi yang tidak relevan.
+Modifikasi file konfigurasi `config/autoload/server.php`. Konfigurasi berikut telah menghapus pengaturan yang tidak relevan.
 
-Pada pengaturan `settings`, aturan pemaketan (subcontracting) tidak boleh
-diubah, hanya `package_max_length` yang dapat diubah, konfigurasi ini harus
-konsisten antara `Server` dan `Client`.
+Dalam konfigurasi `settings`, aturan pemecahan paket tidak dapat dimodifikasi. Hanya `package_max_length` yang dapat dimodifikasi, dan konfigurasi ini harus konsisten antara `Server` dan `Client`.
 
 ```php
 <?php
@@ -44,12 +40,16 @@ return [
                 'package_body_offset' => 4,
                 'package_max_length' => 1024 * 1024 * 2,
             ],
+            'options' => [
+                // Dalam multiplexing, hindari error dari penulisan socket multiple yang melintasi coroutine
+                'send_channel_capacity' => 65535,
+            ],
         ],
     ],
 ];
 ```
 
-Buat `RpcService`
+Membuat `RpcService`
 
 ```php
 <?php
@@ -60,9 +60,7 @@ use App\JsonRpc\CalculatorServiceInterface;
 use Hyperf\RpcMultiplex\Constant;
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", server="rpc", protocol=Constant::PROTOCOL_DEFAULT)
- */
+#[RpcService(name: "CalculatorService", server: "rpc", protocol: Constant::PROTOCOL_DEFAULT)]
 class CalculatorService implements CalculatorServiceInterface
 {
 }
@@ -70,7 +68,7 @@ class CalculatorService implements CalculatorServiceInterface
 
 ## Konfigurasi Client
 
-Ubah file konfigurasi `config/autoload/services.php`
+Modifikasi file konfigurasi `config/autoload/services.php`
 
 ```php
 <?php
@@ -85,7 +83,7 @@ return [
             'id' => App\JsonRpc\CalculatorServiceInterface::class,
             'protocol' => Hyperf\RpcMultiplex\Constant::PROTOCOL_DEFAULT,
             'load_balancer' => 'random',
-            // Which service center does the consumer want to obtain node information from, if not configured, the node information will not be obtained from the service center
+            // Dari service center mana consumer ini mendapatkan node information? Jika tidak dikonfigurasi, node information tidak akan diambil dari service center.
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
@@ -97,16 +95,16 @@ return [
                 'connect_timeout' => 5.0,
                 'recv_timeout' => 5.0,
                 'settings' => [
-                    // The maximum value of the package body. If it is less than the data size returned by the Server, an exception will be thrown, so try to control the package body size as much as possible.
+                    // Nilai maksimum paket body. Jika lebih kecil dari ukuran data yang dikembalikan oleh Server, exception akan dilempar, jadi usahakan untuk mengontrol ukuran paket body
                     'package_max_length' => 1024 * 1024 * 2,
                 ],
-                // number of retries, default is 2
+                // Jumlah retry, nilai default adalah 2
                 'retry_count' => 2,
-                // retry interval, milliseconds
+                // Interval retry, milidetik
                 'retry_interval' => 100,
-                // Number of multiplexed clients
+                // Jumlah multiplexing clients
                 'client_count' => 4,
-                // Heartbeat interval non-numeric means no heartbeat
+                // Interval heartbeat, non-numerik berarti heartbeat tidak diaktifkan
                 'heartbeat' => 30,
             ],
         ],
@@ -114,10 +112,9 @@ return [
 ];
 ```
 
-### Pusat Registrasi
+### Registry Center
 
-Jika Anda perlu menggunakan registry, Anda perlu menambahkan listener berikut
-secara manual
+Jika Anda perlu menggunakan registry center, Anda perlu menambahkan listener berikut secara manual
 
 ```php
 <?php
@@ -128,9 +125,9 @@ return [
 
 ## Penggunaan
 
-- Mendefinisikan antarmuka (interface)
+- Mendefinisikan Interface
 
-Misalnya, kita perlu mendesain layanan RPC untuk mengirimkan kode SMS:
+Sebagai contoh, kita perlu mendesain layanan RPC untuk mengirim SMS
 
 ```php
 <?php
@@ -143,10 +140,9 @@ interface PushInterface
 {
     public function sendSmsCode(string $mobile, string $code): bool;
 }
-
 ```
 
-- Server mengimplementasikan antarmuka
+- Server mengimplementasikan Interface
 
 ```php
 <?php
@@ -170,7 +166,7 @@ class PushService implements PushInterface
 }
 ```
 
-- Client melakukan pemanggilan (call)
+- Client melakukan pemanggilan
 
 ```php
 <?php
@@ -179,5 +175,4 @@ use Hyperf\Context\ApplicationContext;
 use RPC\Push\PushInterface;
 
 ApplicationContext::getContainer()->get(PushInterface::class)->sendSmsCode('18600000001', '6666');
-
 ```

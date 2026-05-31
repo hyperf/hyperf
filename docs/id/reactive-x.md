@@ -1,68 +1,38 @@
-# Integrasi ReactiveX
+# ReactiveX Integration
 
-Komponen [hyperf/reactive-x](https://github.com/hyperf/reactive-x) menyediakan
-integrasi ReactiveX dalam lingkungan Swoole/Hyperf.
+Komponen [hyperf/reactive-x](https://github.com/hyperf/reactive-x) menyediakan integrasi ReactiveX di lingkungan Swoole/Hyperf.
 
 ## Sejarah ReactiveX
 
-ReactiveX adalah singkatan dari Reactive Extensions, yang umumnya disingkat
-sebagai Rx. Pada awalnya, ini merupakan ekstensi untuk LINQ. Rx dikembangkan
-oleh tim yang dipimpin oleh arsitek Microsoft Erik Meijer, dan dijadikan open
-source pada November 2012. Rx adalah sebuah model pemrograman. Tujuannya adalah
-untuk menyediakan interface pemrograman yang konsisten guna membantu developer
-menangani data stream asinkron dengan lebih mudah. Library Rx mendukung .NET,
-JavaScript, dan C++. Rx menjadi semakin populer dalam beberapa tahun terakhir,
-dan kini mendukung hampir semua bahasa pemrograman populer. Sebagian besar
-library bahasa Rx dikelola oleh organisasi ReactiveX, dengan beberapa yang
-paling populer adalah RxJava/RxJS/Rx.NET, dan situs web komunitasnya adalah
-[reactivex.io](http://reactivex.io).
+ReactiveX, umumnya disingkat Rx, adalah kependekan dari Reactive Extensions. Awalnya merupakan ekstensi dari LINQ yang dikembangkan oleh tim yang dipimpin arsitek Microsoft Erik Meijer, dan dirilis sebagai open-source pada November 2012. Rx adalah model pemrograman yang bertujuan menyediakan antarmuka yang konsisten untuk membantu developer menangani aliran data asinkron dengan lebih mudah. Pustaka Rx mendukung .NET, JavaScript, dan C++. Rx semakin populer dan kini mendukung hampir semua bahasa pemrograman utama. Sebagian besar pustaka bahasa untuk Rx dikelola oleh organisasi ReactiveX, seperti RxJava, RxJS, dan Rx.NET. Situs web komunitasnya adalah [reactivex.io](http://reactivex.io).
 
 ## Apa itu ReactiveX
 
-Definisi dari Microsoft adalah bahwa Rx merupakan sebuah library fungsi yang
-memungkinkan developer menulis program berbasis event dan asinkron menggunakan
-observable sequence dan operator query bergaya LINQ. Dengan menggunakan Rx,
-developer dapat menggunakan Observable untuk merepresentasikan data stream
-asinkron, menggunakan Operator LINQ untuk melakukan query pada data stream
-asinkron, dan menggunakan Scheduler untuk memparameterisasi pemrosesan konkuren
-dari data stream asinkron. Rx dapat didefinisikan sebagai berikut: Rx =
-Observables + LINQ + Schedulers.
+Microsoft mendefinisikan Rx sebagai pustaka fungsi yang memungkinkan developer menulis program asinkron dan berbasis event menggunakan observable sequences dan operator query bergaya LINQ. Menggunakan Rx, developer dapat merepresentasikan aliran data asinkron dengan Observables, melakukan query aliran data asinkron dengan operator LINQ, dan memparametrikan pemrosesan konkuren dari aliran data asinkron dengan Schedulers. Rx dapat didefinisikan sebagai: Rx = Observables + LINQ + Schedulers.
 
-Definisi yang diberikan oleh [Reactivex.io](http://reactivex.io) adalah bahwa Rx
-merupakan interface pemrograman untuk pemrograman asinkron menggunakan
-observable data stream. ReactiveX menggabungkan esensi dari observer pattern,
-iterator pattern, dan pemrograman fungsional.
+[Reactivex.io](http://reactivex.io) mendefinisikan Rx sebagai antarmuka pemrograman untuk pemrograman asinkron menggunakan aliran data observable. ReactiveX menggabungkan esensi dari pola Observer, pola Iterator, dan pemrograman fungsional.
 
-> Dua bagian di atas diambil dari [RxDocs](https://github.com/mcxiaoke/RxDocs).
+> Dua bagian di atas dikutip dari [RxDocs](https://github.com/mcxiaoke/RxDocs).
 
-## Pertimbangkan Sebelum Menggunakan
+## Hal yang perlu dipertimbangkan sebelum digunakan
 
 ### Kelebihan
 
-- Dengan menggunakan cara berpikir pemrograman reaktif (reactive programming),
-  beberapa masalah asinkron yang kompleks dapat disederhanakan.
+- Melalui mode berpikir reactive programming, beberapa masalah asinkron yang kompleks dapat disederhanakan.
 
-- Jika Anda sudah memiliki pengalaman pemrograman reaktif di bahasa lain (seperti
-  RxJS/RxJava), komponen ini dapat membantu Anda menerapkan pengalaman tersebut
-  ke Hyperf.
+- Jika Anda memiliki pengalaman dengan reactive programming di bahasa lain (seperti RxJS/RxJava), komponen ini dapat membantu Anda membawa pengalaman tersebut ke Hyperf.
 
-- Meskipun Swoole menyarankan penulisan program asinkron seperti program
-  sinkron melalui coroutine, Swoole tetap memiliki banyak event, dan menangani
-  event adalah keunggulan dari Rx.
+- Meskipun di Swoole disarankan untuk menulis program asinkron seperti program sinkron melalui coroutine, Swoole masih mengandung sejumlah besar event, dan pemrosesan event adalah keunggulan utama Rx.
 
-- Rx juga dapat memainkan peran penting jika bisnis Anda melibatkan pemrosesan
-  stream seperti WebSocket, gRPC streaming, dll.
+- Jika bisnis Anda mengandung stream processing, seperti WebSocket, gRPC streaming, dll., Rx juga dapat memainkan peran penting.
 
 ### Kekurangan
 
-- Cara berpikir pemrograman reaktif cukup berbeda dengan cara berpikir
-  berorientasi objek tradisional, yang mengharuskan developer untuk beradaptasi.
+- Cara berpikir reactive programming cukup berbeda dari pemrograman berorientasi objek tradisional, butuh waktu untuk beradaptasi.
 
-- Rx hanya menyediakan cara berpikir, tidak ada keajaiban tambahan. Masalah
-  yang dapat diselesaikan dengan pemrograman reaktif juga dapat diselesaikan
-  dengan cara tradisional.
+- Rx hanya menyediakan cara berpikir, tanpa sihir tambahan. Masalah yang bisa diselesaikan dengan reactive programming juga bisa diselesaikan dengan cara tradisional.
 
-- RxPHP bukanlah yang terbaik dalam keluarga Rx.
+- RxPHP bukan yang terbaik dalam keluarga Rx.
 
 ## Instalasi
 
@@ -70,29 +40,21 @@ iterator pattern, dan pemrograman fungsional.
 composer require hyperf/reactive-x
 ```
 
-## Paket
+## Enkapsulasi
 
-Mari kita perkenalkan beberapa enkapsulasi dari komponen ini dengan contoh dan
-demonstrasikan kemampuan kuat dari Rx. Semua contoh dapat ditemukan dalam
-komponen ini di bawah direktori `src/Example`.
+Berikut ini beberapa contoh enkapsulasi dari komponen ini untuk menunjukkan kemampuan Rx. Semua contoh bisa ditemukan di `src/Example` komponen ini.
 
 ### Observable::fromEvent
 
-`Observable::fromEvent` mengubah event standar PSR menjadi observable sequence.
+`Observable::fromEvent` mengonversi event standar PSR menjadi observable sequences.
 
-Event listener untuk mencetak SQL statement disediakan secara default di dalam
-paket skeleton hyperf-skeleton, dengan lokasi default di
-`app/Listener/DbQueryExecutedListener.php`. Mari kita lakukan beberapa
-optimasi pada listener ini:
+Dalam paket skeleton hyperf-skeleton, event listener untuk mencetak pernyataan SQL disediakan secara default, berlokasi di `app/Listener/DbQueryExecutedListener.php`. Di bawah ini, kami melakukan beberapa optimasi pada listener ini:
 
-1. Hanya mencetak SQL query yang memakan waktu lebih dari 100ms.
+1. Hanya mencetak query SQL yang melebihi 100ms.
 
-2. Setiap koneksi hanya dapat mencetak maksimal 1 kali per detik untuk
-   menghindari hard disk penuh akibat program bermasalah.
+2. Maksimal mencetak sekali per detik untuk setiap koneksi, agar hard drive tidak banjir oleh program yang bermasalah.
 
-Tanpa ReactiveX, poin pertama tidak masalah, namun poin kedua akan memerlukan
-beberapa pemikiran ekstra. Dengan ReactiveX, persyaratan ini dapat diselesaikan
-dengan mudah melalui contoh kode berikut:
+Tanpa ReactiveX, masalah nomor 1 mudah, tapi nomor 2 butuh usaha lebih. Dengan ReactiveX, kedua kebutuhan ini bisa diselesaikan dengan mudah:
 
 ```php
 <?php
@@ -130,19 +92,13 @@ class SqlListener implements ListenerInterface
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {
@@ -155,9 +111,7 @@ class SqlListener implements ListenerInterface
                     return [$event->connectionName, $event->time, $sql];
                 }
             )->subscribe(
-                function ($message) {
-                    $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message));
-                }
+                fn ($message) => $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message))
             );
     }
 }
@@ -165,13 +119,11 @@ class SqlListener implements ListenerInterface
 
 ### Observable::fromChannel
 
-Mengubah Channel dalam coroutine Swoole menjadi observable sequence.
+Mengonversi Channel dalam coroutine Swoole menjadi observable sequence.
 
-Channel dalam coroutine Swoole bersifat read dan write satu-ke-satu. Bagaimana
-jika kita ingin melakukan publikasi dan langganan (publish and subscribe)
-banyak-ke-banyak melalui Channel di bawah ReactiveX?
+Channel di coroutine Swoole bersifat satu-ke-satu untuk baca-tulis. Lalu bagaimana cara membuat subscription dan publishing multi-ke-multi menggunakan Channel di ReactiveX?
 
-Lihat contoh di bawah ini.
+Silakan lihat contoh di bawah ini.
 
 ```php
 <?php
@@ -203,12 +155,9 @@ $chan->push('world');
 
 ### Observable::fromCoroutine
 
-Membuat satu atau lebih coroutine dan mengubah hasil eksekusinya menjadi
-observable sequence.
+Membuat satu atau lebih coroutine dan mengonversi hasil eksekusi menjadi observable sequence.
 
-Sekarang kita membiarkan dua fungsi bersaing dalam coroutine konkuren, dan
-fungsi mana pun yang selesai dieksekusi lebih dulu akan mengembalikan hasilnya.
-Efeknya serupa dengan `Promise.race` pada JavaScript.
+Sekarang kita biarkan dua fungsi berlomba dalam coroutine konkuren, dan mengembalikan hasil dari yang selesai lebih dulu. Efeknya mirip `Promise.race` di JavaScript.
 
 ```php
 <?php
@@ -236,14 +185,11 @@ echo $result->pop(); // 2;
 
 ### Observable::fromHttpRoute
 
-Semua HTTP request sebenarnya berbasis event. Sehingga routing HTTP request
-juga dapat diambil alih dengan ReactiveX.
+Semua permintaan HTTP sebenarnya berbasis event. Oleh karena itu, routing permintaan HTTP juga dapat dikelola oleh ReactiveX.
 
-> Karena kita akan menambahkan route, ini harus dieksekusi sebelum Server
-> dimulai, misalnya di dalam event listener `BootApplication`.
+> Karena kita menambahkan route, pastikan untuk menjalankan ini sebelum Server dimulai, misalnya di event listener `BootApplication`.
 
-Misalkan kita memiliki route upload dengan traffic yang besar, yang perlu
-disangga (buffer) di dalam memori dan diunggah secara batch setelah terkumpul sepuluh upload.
+Misalnya ada route upload dengan lalu lintas tinggi yang perlu di-buffer di memori dan diproses secara batch setelah sepuluh kali upload.
 
 ```php
 <?php
@@ -288,33 +234,25 @@ class BatchSaveRoute implements ListenerInterface
 }
 ```
 
-Setelah mengambil alih route, jika Anda perlu mengontrol Response yang
-dikembalikan, Anda dapat menambahkan parameter ketiga dari `fromHttpRoute`,
-yang sama dengan route biasa, misalnya:
+Setelah mengambil alih routing, jika Anda perlu mengontrol Response yang dikembalikan, Anda dapat menambahkan parameter ketiga di `fromHttpRoute`, yang sama dengan cara penulisan route normal, seperti:
 
 ```php
 $observable = Observable::fromHttpRoute('GET', '/hello-hyperf', 'App\Controller\IndexController::hello');
 ```
 
-Pada titik ini, `Observable` bertindak seperti middleware. Setelah mendapatkan
-observable sequence dari objek request, ia akan terus meneruskan objek request
-tersebut ke `Controller` yang sebenarnya.
+Pada saat ini, `Observable` bertindak seperti middleware. Setelah mendapatkan observable sequence dari objek request, ia akan terus melewatkan objek request ke `Controller` yang sebenarnya.
 
 ### IpcSubject
 
-Komunikasi antar-proses (inter-process communication) dari Swoole juga berbasis
-event. Komponen ini menyediakan versi Subject lintas-proses yang sesuai,
-berbasis pada empat [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) yang disediakan oleh RxPHP, yang dapat digunakan untuk berbagi informasi
-antar-proses.
+Komunikasi antar-process Swoole juga berbasis event. Selain empat [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) yang disediakan RxPHP, komponen ini juga menyediakan versi Subject lintas-process yang bisa dipakai untuk berbagi informasi antar process.
 
-Sebagai contoh, kita perlu membuat chat room berbasis WebSocket dengan
-persyaratan sebagai berikut:
+Misalnya, kita perlu membuat chat room berbasis WebSocket dengan kebutuhan berikut:
 
-1. Pesan chat room perlu dibagikan di antara `Worker process`.
+1. Pesan chat room perlu dibagikan antar `Worker processes`.
 
-2. 5 pesan terakhir ditampilkan saat user pertama kali login.
+2. 5 pesan terbaru ditampilkan ketika pengguna login untuk pertama kalinya.
 
-Kita melakukan ini melalui `ReplaySubject` versi lintas-proses.
+Kita implementasikan ini melalui versi lintas-process dari `ReplaySubject`.
 
 ```php
 <?php
@@ -343,9 +281,9 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
     public function __construct(BroadcasterInterface $broadcaster)
     {
         $relaySubject = make(ReplaySubject::class, ['bufferSize' => 5]);
-        // The first parameter is the original RxPHP Subject object.
-        // The second parameter is the broadcast mode, the default is the whole process broadcast
-        // The third parameter is the channel ID, each channel can only receive messages from the same channel.
+        // Parameter pertama adalah objek Subject RxPHP asli.
+        // Parameter kedua adalah metode broadcast, defaultnya adalah broadcast seluruh process
+        // Parameter ketiga adalah ID channel. Setiap channel hanya dapat menerima pesan dari channel yang sama.
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
@@ -368,28 +306,23 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 }
 ```
 
-Untuk kemudahan, komponen ini menggunakan `IpcSubject` untuk mengenkapsulasi
-sebuah "message bus" `MessageBusInterface`. Cukup inject `MessageBusInterface`
-untuk mengirim dan menerima informasi yang dibagikan oleh semua proses
-(termasuk custom process). Fitur seperti configuration center dapat
-diimplementasikan dengan mudah melalui cara ini.
+Untuk kemudahan, komponen ini menggunakan `IpcSubject` untuk membungkus "message bus" `MessageBusInterface`. Anda tinggal menginjeksi `MessageBusInterface` untuk mengirim dan menerima informasi yang dibagikan di semua process (termasuk custom process). Fitur seperti configuration center bisa dengan mudah diimplementasikan lewat ini.
 
 ```php
 <?php
 $bus = make(Hyperf\ReactiveX\MessageBusInterface::class);
-// whole process broadcast information
+// Broadcast informasi ke semua process
 $bus->onNext('Hello Hyperf');
-// subscription info
+// Berlangganan informasi
 $bus->subscribe(function($message){
     echo $message;
 });
 ```
 
-> Karena ReactiveX perlu menggunakan event loop, harap dicatat bahwa API yang
-> berkaitan dengan ReactiveX harus dipanggil setelah Swoole Server dijalankan.
+> Karena ReactiveX perlu event loop, pastikan untuk memanggil API ReactiveX hanya setelah Swoole Server dijalankan.
 
 ## Referensi
 
-* [Dokumentasi Rx Bahasa Mandarin](https://mcxiaoke.gitbooks.io/rxdocs/content/)
-* [Dokumentasi Rx Bahasa Inggris](http://reactivex.io/)
-* [Repository RxPHP](https://github.com/ReactiveX/RxPHP)
+* [Rx Dokumentasi Bahasa Mandarin](https://mcxiaoke.gitbooks.io/rxdocs/content/)
+* [Rx Dokumentasi Bahasa Inggris](http://reactivex.io/)
+* [RxPHP Repository](https://github.com/ReactiveX/RxPHP)

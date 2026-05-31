@@ -1,18 +1,9 @@
 # Retry
 
-Komunikasi jaringan pada dasarnya tidak stabil, sehingga dalam sistem
-terdistribusi, diperlukan desain toleransi kesalahan (fault-tolerant) yang
-baik. Melakukan retry secara membabi buta sangatlah berbahaya. Ketika terjadi
-masalah komunikasi, jika setiap request di-retry sekali saja, hal ini setara
-dengan peningkatan beban IO sistem sebesar 100%, yang dapat dengan mudah memicu
-bencana avalanche. Retry juga harus mempertimbangkan penyebab kesalahan. Jika
-kesalahannya adalah masalah yang tidak dapat diselesaikan dengan retry, maka
-melakukan retry hanya akan membuang-buang sumber daya. Selain itu, jika
-interface yang di-retry tidak bersifat idempotent, hal ini juga dapat
-menyebabkan inkonsistensi data dan masalah lainnya.
+Komunikasi jaringan pada dasarnya tidak stabil, sehingga dalam distributed systems, desain fault-tolerant yang baik sangat diperlukan. Retry tanpa pandang bulu sangat berbahaya. Ketika terjadi masalah komunikasi, jika setiap request di-retry sekali, itu setara dengan peningkatan 100% pada beban IO sistem, yang dapat dengan mudah memicu avalanche. Retry juga harus mempertimbangkan penyebab error. Jika itu adalah masalah yang tidak dapat diselesaikan dengan retry, melakukan retry hanya membuang-buang sumber daya. Selain itu, jika interface yang di-retry tidak idempoten, hal ini juga dapat menyebabkan masalah seperti inkonsistensi data.
 
-Komponen ini menyediakan mekanisme retry yang kaya untuk memenuhi kebutuhan
-retry dalam berbagai skenario.
+Komponen ini menyediakan serangkaian mekanisme retry yang kaya untuk memenuhi kebutuhan retry dalam berbagai skenario.
+
 
 ## Instalasi
 
@@ -22,40 +13,30 @@ composer require hyperf/retry
 
 ## Hello World
 
-Tambahkan annotation `#[Retry]` ke method yang perlu di-retry.
+Tambahkan annotation `#[Retry]` pada method yang membutuhkan retry.
 
 ```php
 /**
- * Retry the method on exception
+ * Retry method ketika terjadi exception
  */
 #[Retry]
 public function foo()
 {
-    // make a remote call
+    // Memulai remote call
 }
 ```
 
-Strategi Retry default dapat memenuhi sebagian besar kebutuhan retry sehari-hari
-tanpa retry berlebih yang dapat menyebabkan avalanche.
+Strategi Retry default dapat memenuhi sebagian besar kebutuhan retry harian dan tidak akan menyebabkan avalanche akibat retry yang berlebihan.
 
 ## Kustomisasi Mendalam
 
-Komponen ini mencapai sifat pluggable dengan menggabungkan beberapa strategi
-retry. Setiap strategi berfokus pada aspek yang berbeda dari proses retry,
-seperti penilaian retry, interval retry, dan pemrosesan hasil. Dengan
-menyesuaikan strategi yang digunakan pada annotation, Anda dapat mengonfigurasi
-aspek retry yang sesuai untuk skenario apa pun.
+Komponen ini mencapai pluggability dengan menggabungkan beberapa retry strategies. Setiap strategi fokus pada aspek yang berbeda dari proses retry, seperti retry judgment, retry interval, result processing, dll. Dengan menyesuaikan strategi yang digunakan dalam annotation, Anda dapat mengkonfigurasi aspek retry yang diadaptasi untuk skenario apa pun.
 
-Disarankan untuk membuat alias annotation Anda sendiri sesuai dengan kebutuhan
-bisnis yang spesifik. Di bawah ini kami mendemonstrasikan cara membuat
-annotation baru dengan jumlah percobaan maksimal 3 kali.
+Sangat disarankan untuk membangun alias annotation Anda sendiri sesuai dengan kebutuhan bisnis spesifik. Di bawah ini kami mendemonstrasikan cara membuat annotation baru dengan jumlah maksimum percobaan sebanyak 3.
 
-> Pada annotation `Retry` default, Anda dapat mengontrol jumlah maksimum retry
-> dengan `#[Retry(maxAttempts=3)]`. Demi demonstrasi, anggap saja fitur ini
-> tidak ada.
+> Dalam annotation `Retry` default, Anda dapat mengontrol jumlah maksimum retry melalui `#[Retry(maxAttempts=3)]`. Untuk tujuan demonstrasi, anggaplah itu tidak ada.
 
-Pertama, Anda perlu membuat sebuah `annotation class` dan mewarisi
-`\Hyperf\Retry\Annotations\AbstractRetry`.
+Pertama, Anda perlu membuat `annotation class` baru dan mewarisi `\Hyperf\Retry\Annotations\AbstractRetry`.
 
 ```php
 <?php
@@ -72,10 +53,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Override property `$policies` sesuai dengan kebutuhan Anda. Untuk membatasi
-jumlah retry, gunakan `MaxAttemptsRetryPolicy`. `MaxAttemptsRetryPolicy` juga
-membutuhkan sebuah parameter, yaitu batas jumlah percobaan maksimum,
-`$maxAttempts`. Tambahkan kedua property ini ke class di atas.
+Sesuai kebutuhan Anda, override properti `$policies`. Untuk membatasi jumlah retry, Anda perlu menggunakan `MaxAttemptsRetryPolicy`. `MaxAttemptsRetryPolicy` juga membutuhkan parameter, yaitu batas maksimum percobaan, `$maxAttempts`. Tambahkan kedua properti ini ke kelas di atas.
 
 ```php
 <?php
@@ -96,11 +74,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Sekarang, annotation `#[MyRetry]` akan menyebabkan method apa pun dijalankan
-tiga kali dalam perulangan. Kita juga perlu menambahkan policy baru
-`ClassifierRetryPolicy` untuk mengontrol error apa saja yang dapat di-retry.
-Secara default, penambahan `ClassifierRetryPolicy` hanya akan melakukan retry
-setelah dilemparkannya `Throwable`.
+Sekarang, annotation `#[MyRetry]` akan menyebabkan method apa pun di-loop sebanyak tiga kali. Kita juga perlu menambahkan strategi baru, `ClassifierRetryPolicy`, untuk mengontrol jenis error apa yang dapat di-retry. Setelah menambahkan `ClassifierRetryPolicy`, secara default ia hanya akan melakukan retry setelah melemparkan `Throwable`.
 
 ```php
 <?php
@@ -122,10 +96,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Anda dapat terus menyempurnakan annotation tersebut hingga memenuhi kebutuhan
-kustomisasi Anda. Sebagai contoh, konfigurasikan untuk hanya melakukan retry
-pada `TimeoutException` yang ditentukan pengguna, dan gunakan interval jeda
-(sleep) variabel dengan panjang minimal 100ms untuk retry, sebagai berikut:
+Anda dapat terus menyempurnakan annotation ini hingga memenuhi kebutuhan kustom Anda. Sebagai contoh, konfigurasikan untuk hanya me-retry `TimeoutException` yang didefinisikan pengguna, dan menggunakan interval variabel di mana retry tidur setidaknya selama 100 milidetik. Caranya sebagai berikut:
 
 ```php
 <?php
@@ -151,17 +122,15 @@ class MyRetry extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-Cukup pastikan file tersebut dipindai (scanned) oleh Hyperf, maka Anda dapat
-menggunakan annotation `#[MyRetry]` pada method untuk melakukan retry pada error
-timeout.
+Selama Anda memastikan bahwa file tersebut di-scan oleh Hyperf, Anda dapat menggunakan annotation `#[MyRetry]` di dalam method untuk me-retry error timeout.
 
 ## Konfigurasi Default
 
-Properti default annotation lengkap dari `#[Retry]` adalah sebagai berikut:
+Properti default lengkap dari annotation `#[Retry]` adalah sebagai berikut:
 
 ```php
 /**
- * Array of retry policies. Think of these as stacked middlewares.
+ * Array dari retry policies. Anggap ini sebagai middleware yang ditumpuk.
  * @var string[]
  */
 public $policies = [
@@ -173,20 +142,20 @@ public $policies = [
 ];
 
 /**
- * The algorithm for retry intervals.
+ * Algoritma untuk interval retry.
  */
 public string $sleepStrategyClass = SleepStrategyInterface::class;
 
 /**
- * Max Attampts.
+ * Maksimum percobaan.
  */
 public int $maxAttempts = 10;
 
 /**
  * Retry Budget.
- * ttl: Seconds of token lifetime.
- * minRetriesPerSec: Base retry token generation speed.
- * percentCanRetry: Generate new token at this ratio of the request volume.
+ * ttl: Detik masa berlaku token.
+ * minRetriesPerSec: Kecepatan dasar pembuatan token retry.
+ * percentCanRetry: Hasilkan token baru dengan rasio ini dari volume request.
  *
  * @var array|RetryBudgetInterface
  */
@@ -197,164 +166,144 @@ public $retryBudget = [
 ];
 
 /**
- * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
- * while for flat strategy this is the interval for every try.
+ * Interval waktu dasar (ms) untuk setiap percobaan. Untuk backoff strategy ini adalah interval untuk percobaan pertama,
+ * sedangkan untuk flat strategy ini adalah interval untuk setiap percobaan.
  */
 public int $base = 0;
 
 /**
- * Configures a Predicate which evaluates if an exception should be retried.
- * The Predicate must return true if the exception should be retried, otherwise it must return false.
+ * Mengonfigurasi Predicate yang mengevaluasi apakah sebuah exception harus di-retry.
+ * Predicate harus mengembalikan true jika exception harus di-retry, jika tidak harus mengembalikan false.
  *
  * @var callable|string
  */
 public $retryOnThrowablePredicate = '';
 
 /**
- * Configures a Predicate which evaluates if an result should be retried.
- * The Predicate must return true if the result should be retried, otherwise it must return false.
+ * Mengonfigurasi Predicate yang mengevaluasi apakah sebuah hasil harus di-retry.
+ * Predicate harus mengembalikan true jika hasil harus di-retry, jika tidak harus mengembalikan false.
  *
  * @var callable|string
  */
 public $retryOnResultPredicate = '';
 
 /**
- * Configures a list of Throwable classes that are recorded as a failure and thus are retried.
- * Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions.
+ * Mengonfigurasi daftar kelas Throwable yang dicatat sebagai kegagalan dan karenanya di-retry.
+ * Throwable apa pun yang cocok atau mewarisi dari salah satu daftar akan di-retry, kecuali diabaikan melalui ignoreExceptions.
  *
- * Ignoring an Throwable has priority over retrying an exception.
+ * Mengabaikan Throwable memiliki prioritas lebih tinggi daripada me-retry exception.
  *
  * @var array<string|\Throwable>
  */
 public $retryThrowables = [\Throwable::class];
 
 /**
- * Configures a list of error classes that are ignored and thus are not retried.
- * Any exception matching or inheriting from one of the list will not be retried, even if marked via retryExceptions.
+ * Mengonfigurasi daftar kelas error yang diabaikan dan karenanya tidak di-retry.
+ * Exception apa pun yang cocok atau mewarisi dari salah satu daftar tidak akan di-retry, bahkan jika ditandai melalui retryExceptions.
  *
  * @var array<string|\Throwable>
  */
 public $ignoreThrowables = [];
 
 /**
- * The fallback callable when all attempts exhausted.
+ * Callable fallback ketika semua percobaan habis.
  *
  * @var callable|string
  */
 public $fallback = '';
 ```
 
-## Strategi Pilihan
+## Strategi Opsional
 
-### Policy Percobaan Maksimum `MaxAttemptsRetryPolicy`
-
-| Parameter | Tipe | Deskripsi |
-| ---------- | --- | --- |
-| maxAttempts | int | Jumlah percobaan maksimum |
-
-### Policy Klasifikasi Error `ClassifierRetryPolicy`
-
-Operasikan classifier untuk menentukan apakah error dapat di-retry.
+### Max Attempts Policy `MaxAttemptsRetryPolicy`
 
 | Parameter | Tipe | Deskripsi |
 | ---------- | --- | --- |
-| ignoreThrowables | array | Nama class `Throwable` yang diabaikan. Memiliki prioritas lebih tinggi daripada `retryThrowables` |
-| retryThrowables | array | Nama class `Throwable` yang di-retry. Memiliki prioritas lebih tinggi daripada `retryOnThrowablePredicate` |
-| retryOnThrowablePredicate | callable | Mengirimkan fungsi untuk menentukan apakah `Throwable` dapat di-retry. Mengembalikan true jika retry memungkinkan, false jika tidak. |
-| retryOnResultPredicate | callable | Menggunakan fungsi untuk menentukan apakah nilai kembalian (return value) dapat di-retry. Mengembalikan true jika retry memungkinkan, false jika tidak. |
+| maxAttempts | int | Jumlah maksimum percobaan |
 
-### Policy Fallback `FallbackRetryPolicy`
 
-Menjalankan method alternatif setelah percobaan retry kehabisan sumber daya.
+### Error Classifier Policy `ClassifierRetryPolicy`
+
+Menentukan apakah sebuah error dapat di-retry melalui classifier.
 
 | Parameter | Tipe | Deskripsi |
 | ---------- | --- | --- |
-| fallback | callable | method fallback |
+| ignoreThrowables | array | Nama kelas `Throwable` yang diabaikan. Memiliki prioritas lebih tinggi dari `retryThrowables` |
+| retryThrowables | array | Nama kelas `Throwable` yang perlu di-retry. Memiliki prioritas lebih tinggi dari `retryOnThrowablePredicate` |
+| retryOnThrowablePredicate | callable | Menentukan apakah `Throwable` dapat di-retry melalui sebuah fungsi. Jika dapat di-retry, return true, jika tidak return false. |
+| retryOnResultPredicate | callable | Menentukan apakah nilai kembalian dapat di-retry melalui sebuah fungsi. Jika dapat di-retry, return true, jika tidak return false. |
 
-Selain kode yang dikenali oleh `is_callable`, `fallback` juga dapat diisi
-dengan format `class@method`. Framework akan mengambil `class` yang sesuai dari
-`Container`, lalu mengeksekusi method `method`-nya.
+### Fallback Policy `FallbackRetryPolicy`
 
-### Policy Jeda `SleepRetryPolicy`
-
-Menyediakan dua strategi jeda retry. Jeda retry yang sama (FlatStrategy) dan
-jeda retry variabel (BackoffStrategy).
+Menjalankan method alternatif setelah sumber daya retry habis.
 
 | Parameter | Tipe | Deskripsi |
 | ---------- | --- | --- |
-| base | int | Waktu jeda dasar (ms) |
-| strategy | string | Nama class apa pun yang mengimplementasikan `Hyperf\Retry\SleepStrategyInterface`, seperti `Hyperf\Retry\BackoffStrategy` |
+| fallback | callable | Method fallback |
 
-### Policy Timeout `TimeoutRetryPolicy`
+Selain kode yang dapat diidentifikasi oleh `is_callable`, `fallback` juga dapat diisi dalam format `class@method`. Framework akan mendapatkan `class` yang sesuai dari `Container` dan kemudian menjalankan method `method`-nya.
 
-Keluar dari sesi retry setelah total waktu eksekusi melebihi batas waktu.
+### Sleep Policy `SleepRetryPolicy`
 
-| Parameter | Tipe | Deskripsi |
-| ---------- | --- | --- |
-| timeout | float | batas waktu (detik) |
-
-### Policy Circuit Breaker `CircuitBreakerRetryPolicy`
-
-Setelah retry gagal, sesi retry akan langsung ditandai sebagai circuit breaker
-selama jangka waktu tertentu, dan tidak ada percobaan lebih lanjut yang akan
-dilakukan.
+Menyediakan dua strategi interval retry: Flat Retry Interval (FlatStrategy) dan Variable-Length Retry Interval (BackoffStrategy).
 
 | Parameter | Tipe | Deskripsi |
 | ---------- | --- | --- |
-| circuitBreakerState.resetTimeout | float | Waktu yang dibutuhkan untuk pemulihan (detik) |
+| base | int | Waktu tidur dasar (milidetik) |
+| strategy | string | Nama kelas apa pun yang mengimplementasikan `Hyperf\Retry\SleepStrategyInterface`, seperti `Hyperf\Retry\BackoffStrategy` |
 
-### Policy Anggaran `BudgetRetryPolicy`
+### Timeout Policy `TimeoutRetryPolicy`
 
-Setiap annotation `#[Retry]` akan menghasilkan token bucket yang sesuai, dan
-setiap kali method ber-annotation tersebut dipanggil, sebuah token dengan waktu
-kedaluwarsa (ttl) akan dimasukkan ke dalam token bucket. Jika terjadi error
-yang dapat di-retry, sejumlah token yang sesuai (percentCanRetry) harus
-dikonsumsi sebelum melakukan retry, jika tidak, retry tidak akan dilakukan (error
-akan terus diteruskan ke bawah). Sebagai contoh, ketika percentCanRetry=0.2,
-setiap retry mengonsumsi 5 token. Dengan cara ini, ketika peer sedang down,
-maksimal 20% konsumsi retry tambahan yang akan terjadi, yang seharusnya dapat
-diterima oleh sebagian besar sistem.
-
-Untuk mengakomodasi beberapa method yang lebih jarang digunakan, sejumlah
-tertentu token "jaminan minimal" (minRetriesPerSec) juga dihasilkan per detik
-untuk memastikan stabilitas sistem.
+Keluar dari sesi retry setelah total waktu eksekusi melebihi waktu yang ditentukan.
 
 | Parameter | Tipe | Deskripsi |
-| --- | --- | --- |
-| retryBudget.ttl | int | Waktu kedaluwarsa token pemulihan (detik) |
-| retryBudget.minRetriesPerSec | int | Jumlah minimum retry per detik untuk "jaminan minimal" |
-| retryBudget.percentCanRetry | float | Jumlah retry tidak melebihi persentase dari total request |
+| ---------- | --- | --- |
+| timeout | float | Waktu timeout (detik) |
 
-> Token bucket dari komponen retry tidak dibagi di antara worker, sehingga
-> jumlah akhir retry dikalikan dengan jumlah worker.
+### Circuit Breaker Policy `CircuitBreakerRetryPolicy`
+
+Setelah retry gagal dan keluar dari sesi retry, secara langsung ditandai sebagai fused untuk jangka waktu tertentu, dan tidak ada percobaan lebih lanjut yang dilakukan.
+
+| Parameter | Tipe | Deskripsi |
+| ---------- | --- | --- |
+| circuitBreakerState.resetTimeout | float | Waktu yang diperlukan untuk pemulihan (detik) |
+
+### Budget Policy `BudgetRetryPolicy`
+
+Setiap annotation `#[Retry]` menghasilkan token bucket yang sesuai. Setiap kali method yang diberi annotation dipanggil, sebuah token dengan waktu kedaluwarsa (ttl) ditempatkan di token bucket. Jika terjadi error yang dapat di-retry, sejumlah token yang sesuai (percentCanRetry) harus dikonsumsi sebelum melakukan retry, jika tidak maka tidak akan di-retry (error terus diteruskan ke bawah). Sebagai contoh, ketika percentCanRetry=0.2, 5 token dikonsumsi untuk setiap retry. Dengan demikian, ketika peer crash, itu hanya akan menyebabkan maksimum 20% konsumsi retry tambahan, yang seharusnya dapat diterima untuk sebagian besar sistem.
+
+Untuk mengakomodasi beberapa method dengan frekuensi penggunaan yang lebih rendah, sejumlah token "minimum" (minRetriesPerSec) dihasilkan setiap detik untuk memastikan stabilitas sistem.
+
+| Parameter | Tipe | Deskripsi |
+| ---------- | --- | --- |
+| retryBudget.ttl | int | Waktu kedaluwarsa token (detik) |
+| retryBudget.minRetriesPerSec | int | Jumlah minimum retry yang dijamin per detik |
+| retryBudget.percentCanRetry | float | Persentase retry yang tidak melebihi total jumlah request |
+
+> Token bucket dari komponen retry tidak dibagikan antar worker, sehingga jumlah retry akhir harus dikalikan dengan jumlah worker.
 
 ## Alias Annotation
 
-Karena konfigurasi annotation retry cukup rumit, beberapa alias bawaan
-disediakan di sini untuk kemudahan penulisan.
+Karena konfigurasi retry annotation relatif kompleks, beberapa alias preset disediakan di sini untuk kemudahan penulisan.
 
 * `#[RetryThrowable]` hanya me-retry `Throwable`. Sama seperti `#[Retry]` default.
 
-* `#[RetryFalsy]` hanya me-retry error yang nilai kembaliannya secara longgar
-  sama dengan false ($result == false), bukan exception.
+* `#[RetryFalsy]` hanya me-retry error di mana nilai kembalian secara loose sama dengan false ($result == false), dan tidak me-retry exception.
 
-* `#[BackoffRetryThrowable]` Versi interval jeda retry variabel dari
-  `#[RetryThrowable]`, dengan interval jeda retry minimal 100ms.
+* `#[BackoffRetryThrowable]` Versi interval retry variabel dari `#[RetryThrowable]`, dengan interval retry setidaknya 100 milidetik.
 
-* `#[BackoffRetryFalsy]` Versi interval jeda retry variabel dari
-  `#[RetryFalsy]`, dengan interval jeda retry minimal 100ms.
+* `#[BackoffRetryFalsy]` Versi interval retry variabel dari `#[RetryFalsy]`, dengan interval retry setidaknya 100 milidetik.
 
-## Pemanggilan Berantai yang Fasih (Fluent Chain Call)
+## Fluent Chained Calls
 
-Selain menggunakan komponen ini pada method yang memiliki annotation, Anda juga
-dapat menggunakannya pada fungsi PHP biasa.
+Selain menggunakan komponen ini dengan metode annotation, Anda juga dapat menggunakannya melalui fungsi PHP biasa.
 
 ```php
 <?php
 
 $result = \Hyperf\Retry\Retry::with(
-    new \Hyperf\Retry\Policy\ClassifierRetryPolicy(), // Retry all Throwables by default
-    new \Hyperf\Retry\Policy\MaxAttemptsRetryPolicy(5) //Retry up to 5 times
+    new \Hyperf\Retry\Policy\ClassifierRetryPolicy(), // Default retry semua Throwable
+    new \Hyperf\Retry\Policy\MaxAttemptsRetryPolicy(5) // Retry maksimal 5 kali
 )->call(function(){
     if (rand(1, 100) >= 20){
         return true;
@@ -362,18 +311,16 @@ $result = \Hyperf\Retry\Retry::with(
     throw new Exception;
 });
 ```
-
-Untuk meningkatkan keterbacaan, penulisan fasih (fluent writing) berikut juga
-dapat digunakan.
+Untuk meningkatkan keterbacaan, Anda juga dapat menggunakan sintaks fluent berikut.
 
 ```php
 <?php
 
-$result = \Hyperf\Retry\Retry::whenReturns(false) // Retry when false is returned
-    ->max(3) // up to 3 times
-    ->inSeconds(5) // up to 5 seconds
-    ->sleep(1) // 1ms interval
-    ->fallback(function(){return true;}) // fallback function
+$result = \Hyperf\Retry\Retry::whenReturns(false) // Retry ketika mengembalikan false
+    ->max(3) // Maksimal 3 kali
+    ->inSeconds(5) // Maksimal 5 detik
+    ->sleep(1) // Interval 1 milidetik
+    ->fallback(function(){return true;}) // Fungsi fallback
     ->call(function(){
         if (rand(1, 100) >= 20){
             return true;

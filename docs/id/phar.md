@@ -1,4 +1,4 @@
-# Phar packager
+# Phar Packager
 
 ## Instalasi
 
@@ -8,43 +8,41 @@ composer require hyperf/phar
 
 ## Penggunaan
 
-- Dikemas secara default
+- Packaging default
 
 ```shell
 php bin/hyperf.php phar:build
 ```
 
-- Mengatur nama package
+- Tentukan nama paket
 
 ```shell
 php bin/hyperf.php phar:build --name=your_project.phar
 ```
 
-- Mengatur versi package
+- Tentukan versi paket
 
 ```shell
 php bin/hyperf.php phar:build --phar-version=1.0.1
 ```
 
-- Mengatur file startup
+- Tentukan file startup
 
 ```shell
 php bin/hyperf.php phar:build --bin=bin/hyperf.php
 ```
 
-- Mengatur direktori pengemasan (packaging)
+- Tentukan direktori packaging
 
 ```shell
 php bin/hyperf.php phar:build --path=BASE_PATH
 ```
 
-- Memetakan file eksternal
+- Petakan file eksternal
 
-> Membutuhkan hyperf/phar versi >= v2.1.7
+> Memerlukan hyperf/phar versi >= v2.1.7
 
-Perintah berikut memungkinkan package `phar` untuk membaca file `.env` di
-direktori yang sama, sehingga `phar` dapat didistribusikan ke berbagai
-lingkungan (environment).
+Perintah berikut memungkinkan paket `phar` membaca file `.env` di direktori yang sama, yang memudahkan distribusi `phar` ke berbagai environment.
 
 ```shell
 php bin/hyperf.php phar:build -M .env
@@ -56,53 +54,47 @@ php bin/hyperf.php phar:build -M .env
 php your_project.phar start
 ```
 
-## Perhatian
+## Hal yang Perlu Diperhatikan
 
-Setelah dikemas, aplikasi berjalan dalam bentuk package `phar`, yang berbeda
-dengan berjalan dalam mode source code. Direktori `runtime` di dalam package
-`phar` tidak dapat ditulis (not writable).
-Oleh karena itu, kita perlu melakukan override beberapa lokasi direktori yang
-dapat ditulis.
+Setelah packaging, aplikasi berjalan sebagai paket `phar`. Berbeda dengan mode source code, direktori `runtime` di dalam paket `phar` tidak bisa ditulisi, jadi kita perlu mengubah beberapa lokasi direktori yang bisa ditulisi.
 
-> Ubah sesuai dengan situasi yang sebenarnya
+> Sesuaikan dengan kondisi aktual.
 
 - pid_file
 
-Ubah konfigurasi `server.php`.
+Ubah konfigurasi `server.php`:
 
 ```php
 <?php
 
 return [
-     'settings' => [
-         'pid_file' => '/tmp/runtime/hyperf.pid',
-     ],
+    'settings' => [
+        'pid_file' => '/tmp/runtime/hyperf.pid',
+    ],
 ];
 ```
 
 - logger
 
-Ubah konfigurasi `logger.php`
+Ubah konfigurasi `logger.php`:
 
 ```php
 <?php
 return [
-     'default' => [
-         'handler' => [
-             'class' => Monolog\Handler\StreamHandler::class,
-             'constructor' => [
-                 'stream' => '/tmp/runtime/logs/hyperf.log',
-                 'level' => Monolog\Logger::INFO,
-             ],
-         ],
-     ],
+    'default' => [
+        'handler' => [
+            'class' => Monolog\Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => '/tmp/runtime/logs/hyperf.log',
+                'level' => Monolog\Logger::INFO,
+            ],
+        ],
+    ],
 ];
 ```
 
 - scan_cacheable
 
-Phar packager akan secara otomatis mengatur `scan_cacheable` menjadi `true` di
-dalam konfigurasi `config.php`.
+Phar packager akan secara aktif mengatur `scan_cacheable` dalam konfigurasi `config.php` menjadi `true`.
 
-Tentu saja, Anda juga dapat secara aktif mengubah konfigurasi ini menjadi
-`true`.
+Tentu saja, Anda juga dapat secara aktif mengubah konfigurasi ini menjadi `true`.
