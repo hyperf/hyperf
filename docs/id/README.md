@@ -1,71 +1,24 @@
-# Pendahuluan
-> **Catatan:** Untuk informasi lebih lengkap, lihat versi bahasa Mandarin di [README (zh‑cn)](../zh-cn/README.md).
+# Pendahuluan 3.1
 
-Hyperf adalah framework PHP CLI yang sangat performan dan fleksibel, ditenagai
-oleh coroutine server canggih dan sejumlah besar komponen yang telah teruji
-dalam pertempuran. Selain mengalahkan framework PHP-FPM secara meyakinkan dalam
-benchmark, Hyperf unik karena fokusnya pada fleksibilitas dan komposisi. Hyperf
-hadir dengan dependency injector berkemampuan AOP (aspect-oriented programming)
-untuk memastikan komponen dan kelas bersifat pluggable dan meta-programmable.
-Semua komponen inti Hyperf secara ketat mengikuti standar
-[PSR](https://www.php-fig.org/psr) dan dapat digunakan di framework lain.
+Hyperf adalah framework PHP coroutine berperforma tinggi, sangat fleksibel, dan progresif. Framework ini dilengkapi dengan server coroutine bawaan dan berbagai komponen yang umum digunakan, memberikan peningkatan performa yang signifikan dibandingkan framework tradisional berbasis PHP-FPM. Selain memberikan performa luar biasa, Hyperf juga mempertahankan fleksibilitas dan ekstensibilitas yang tinggi. Komponen standar diimplementasikan berdasarkan [standar PSR](https://www.php-fig.org/psr), dan dengan desain Dependency Injection (DI) yang kuat, sebagian besar komponen atau class dapat diganti dan digunakan kembali.
 
-Arsitektur Hyperf dibangun menggunakan kombinasi `Coroutines`,
-`Dependency injection`, `Events`, `Annotations`, dan `AOP`. Selain menyediakan
-client coroutine umum seperti `MySQL` dan `Redis`, `Hyperf` juga menyediakan
-versi yang kompatibel dengan coroutine untuk `WebSocket server / client`,
-`JSON RPC server / client`, `gRPC server / client`,
-`Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`,
-`Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`,
-`Apollo configuration center`, `Aliyun ACM`, `ETCD configuration center`,
-`Token bucket algorithm-based limiter`, `Universal connection pool`,
-`Circuit breaker`, `Swagger`, `Snowflake`, `Simply Redis MQ`, `RabbitMQ`, `NSQ`,
-`Nats`, `Seconds level crontab`, `Custom Processes`, dll. Oleh karena itu,
-developer dapat sepenuhnya menghindari implementasi versi yang kompatibel dengan
-coroutine dari library-library ini.
+Pustaka komponen framework ini tidak hanya mencakup `MySQL client` dan `Redis client` berbasis coroutine standar, tetapi juga `Eloquent ORM` (dioptimalkan untuk coroutine), `WebSocket server/client`, `JSON RPC server/client`, `gRPC server/client`, `Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Aliyun ACM application configuration management`, `ETCD configuration center`, `Rate limiter based on token bucket algorithm`, `General connection pool`, `Circuit breaker`, `Swagger document generation`, `View engine`, `Snowflake global ID generator`, dan lain-lain, sehingga Anda tidak perlu repot-repot mengimplementasikan sendiri versi yang kompatibel dengan coroutine.
 
-Tenang saja, Hyperf tetap merupakan sebuah framework PHP. Hyperf menyediakan
-semua package yang Anda harapkan: `Middleware`, `Event Manager`,
-`Coroutine-optimized Eloquent ORM` (dan Model Cache!), `Translation`,
-`Validation`, `View engine (Blade/Smarty/Twig/Plates/ThinkTemplate)` dan
-banyak lagi.
+Hyperf juga menyediakan fitur-fitur yang sangat praktis seperti `PSR-11 compliant dependency injection container`, `Annotations`, `AOP (Aspect-Oriented Programming)`, `PSR-15 compliant middleware`, `Custom processes`, `PSR-14 compliant event manager`, `Redis/RabbitMQ message queue`, `Automatic model caching`, `PSR-16 compliant caching`, `Crontab second-level scheduled tasks`, `Internationalization (i18n)`, `Validation`, dan lain-lain, yang memenuhi berbagai skenario teknis dan bisnis, serta siap pakai langsung (out-of-the-box).
 
-# Asal-usul
+# Motivasi Framework
 
-Meskipun ada banyak framework PHP baru, kami masih belum menemukan framework
-yang memadukan desain elegan dengan performa ultra-tinggi, kami juga belum
-menemukan framework yang merintis jalan untuk microservices PHP. Dengan visi
-ini, kami akan terus berinvestasi dalam masa depan framework ini, dan Anda
-sangat disambut untuk bergabung bersama kami dalam berkontribusi pada
-pengembangan open-source Hyperf.
+Meskipun PHP development frameworks saat ini berkembang dengan pesat, kami belum melihat sebuah framework sempurna yang menggabungkan desain elegan dengan ultra-high performance, belum ada juga yang benar-benar membuka jalan bagi PHP microservices. Inilah motivasi di balik Hyperf dan para anggota timnya. Kami akan terus berinvestasi dan mencurahkan tenaga ke dalam hal ini, dan kami menyambut Anda untuk bergabung bersama kami dalam berpartisipasi pada pengembangan open-source.
 
-# Tujuan Desain
+# Filosofi Desain
 
-`Hyperspeed + Flexibility = Hyperf`. Persamaan yang tersembunyi dalam nama
-kami menunjukkan ambisi awal pendirian Hyperf.
+`Hyperspeed + Flexibility = Hyperf`. Dari namanya sendiri, kami telah menetapkan `ultra-high performance` dan `fleksibilitas` sebagai DNA Hyperf.
 
-Hyperspeed: Memanfaatkan coroutine `Swoole` dan `Swow`, Hyperf mampu menangani
-lalu lintas dalam jumlah masif. Tim Hyperf melakukan banyak optimasi pada
-framework untuk mengeliminasi setiap bottleneck antara end-user dan engine
-kami yang sangat cepat.
+- Untuk ultra-high performance, kami mendasarkan desain pada Swoole coroutine dan melakukan optimasi ekstensif di dalam framework untuk memastikan output ultra-high performance.
+- Untuk fleksibilitas, kami mendasarkan desain pada komponen dependency injection Hyperf yang kuat. Komponen-komponen diimplementasikan berdasarkan kontrak yang sesuai dengan standar PSR dan kontrak yang ditentukan oleh Hyperf, memastikan bahwa sebagian besar komponen atau class dalam framework dapat diganti.
 
-Flexibility: Kami percaya komponen Dependency Injection kami adalah yang
-terbaik di kelasnya. Dengan bantuan `Hyperf DI`, semua komponen dan kelas
-bersifat pluggable dan meta-programmable. Sebaliknya, semua komponen Hyperf
-dimaksudkan untuk dibagikan kepada dunia. Komitmen kami terhadap standar PSR
-berarti Anda dapat menggunakan komponen Hyperf di framework apa pun yang
-kompatibel.
+Berdasarkan karakteristik ini, Hyperf memiliki kemungkinan yang sangat luas, seperti implementasi Web service, gateway service, distributed middleware, arsitektur microservice, game server, Internet of Things (IoT), dan lain-lain.
 
-Melalui karakteristik ini, Hyperf telah menemukan potensi terpendam di
-banyak bidang: mengimplementasikan Web server, gateway server, software
-middleware terdistribusi, arsitektur microservices, game server, dan
-Internet-of-Things (IoT).
+# Production Ready
 
-# Siap untuk Produksi
-
-Bersamaan dengan dokumentasi multibahasa kami yang terpelihara dengan baik,
-sejumlah besar unit test untuk setiap komponen memastikan kebenaran logisnya.
-Sebelum `Hyperf` dirilis ke publik (20-06-2019), ia telah digunakan secara
-pribadi oleh beberapa perusahaan internet menengah dan besar untuk berbagai
-layanan, yang telah berjalan tanpa insiden selama bertahun-tahun di lingkungan
-produksi yang keras.
+Kami telah melakukan pengujian unit secara ekstensif untuk memastikan kebenaran logika komponen dan memelihara dokumentasi berkualitas tinggi. Sebelum Hyperf resmi dibuka untuk publik, framework ini telah melalui pengujian ketat di lingkungan produksi. Kami baru membuka proyek ini secara resmi setelah uji coba tersebut. Hingga saat ini, banyak perusahaan internet besar/menengah/kecil yang menggunakan Hyperf di lingkungan produksi mereka.

@@ -1,43 +1,42 @@
 # Membuat Komponen Baru
 
-`Hyperf` secara resmi menyediakan tools untuk membuat paket komponen dengan
-cepat.
+`Hyperf` menyediakan alat untuk membuat paket komponen dengan cepat.
 
-```
-# Create a component package that adapts to the latest version of Hyperf
+```bash
+# Buat paket komponen yang sesuai dengan versi terbaru Hyperf
 composer create-project hyperf/component-creator your_component dev-master
 
-# Create a component package that adapts to Hyperf 2.0 version
+# Buat paket komponen yang sesuai dengan versi Hyperf 2.0
 composer create-project hyperf/component-creator your_component "2.0.*"
 ```
 
-## Menggunakan paket komponen yang belum dipublikasikan di dalam proyek
+## Menggunakan Paket Komponen yang Belum Dipublikasikan di Proyek
 
-Misalkan direktori proyek adalah sebagai berikut:
+Misalkan struktur direktori proyek sebagai berikut:
 
 ```
-/opt/project // direktori proyek
-/opt/your_component // direktori paket komponen
+/opt/project // Direktori proyek
+/opt/your_component // Direktori paket komponen
 ```
 
-Mengasumsikan komponen tersebut bernama `your_component/your_component`.
+Asumsikan nama komponen adalah `your_component/your_component`.
 
-Ubah `/opt/project/composer.json`:
+Modifikasi `/opt/project/composer.json`:
 
-> Konfigurasi lain yang tidak relevan diabaikan di bawah ini
+> Konfigurasi lain yang tidak relevan dihilangkan di bawah ini.
 
 ```json
 {
-     "require": {
-         "your_component/your_component": "dev-master"
-     },
-     "repositories": {
-         "your_component": {
-             "type": "path",
-             "url": "/opt/your_component"
-         }
-     }
+    "require": {
+        "your_component/your_component": "dev-master"
+    },
+    "repositories": {
+        "your_component": {
+            "type": "path",
+            "url": "/opt/your_component"
+        }
+    }
 }
 ```
 
-Terakhir, jalankan `composer update -o` di dalam direktori `/opt/project`.
+Terakhir, jalankan `composer update -o` di direktori `/opt/project`.

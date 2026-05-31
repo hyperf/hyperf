@@ -1,99 +1,69 @@
 # Pengantar Panduan
 
-Untuk membantu developer mengembangkan komponen Hyperf dengan lebih baik dan
-membangun ekosistem bersama, kami menyediakan panduan ini sebagai panduan dalam
-pengembangan komponen. Sebelum membaca panduan ini, Anda perlu membaca
-dokumentasi Hyperf secara **menyeluruh**, terutama bab [coroutine](id/coroutine.md)
-dan [Dependency Injection](id/di.md). Jika Anda kurang memahami komponen dasar
-Hyperf, hal itu dapat menyebabkan kesalahan selama pengembangan.
+Untuk membantu para developer membuat komponen untuk Hyperf dengan lebih baik dan membangun ekosistem bersama, kami menyediakan panduan ini. Sebelum membaca, Anda harus **telah membaca secara menyeluruh** dokumentasi Hyperf, terutama bab [Coroutine](../coroutine.md) dan [Dependency Injection](../di.md). Kurangnya pemahaman yang memadai tentang komponen dasar Hyperf dapat menyebabkan kesalahan selama pengembangan.
 
 # Tujuan Pengembangan Komponen
 
-Dalam pengembangan di bawah arsitektur PHP-FPM tradisional, biasanya ketika kita
-perlu menggunakan library pihak ketiga untuk menyelesaikan kebutuhan kita, kita
-akan langsung memasukkan library yang sesuai melalui Composer. Namun, di bawah
-Hyperf, karena dua karakteristik yaitu `persistent application` dan `coroutine`
-menyebabkan beberapa perbedaan dalam siklus hidup (life cycle) dan mode aplikasi,
-sehingga tidak semua `library` dapat digunakan secara langsung di Hyperf. Tentu
-saja, beberapa `library` yang dirancang dengan baik juga dapat digunakan secara
-langsung. Setelah membaca panduan ini, Anda akan mengetahui cara mengidentifikasi
-apakah suatu `library` dapat digunakan secara langsung dalam proyek, dan
-bagaimana cara melakukan perubahan jika tidak bisa.
+Dalam pengembangan tradisional dengan arsitektur PHP-FPM, ketika perlu menggunakan library pihak ketiga, biasanya kita menambahkan `Library` yang sesuai melalui Composer. Namun di Hyperf, karena sifat `persistent application` dan `coroutine`, siklus hidup dan mode aplikasinya berbeda. Oleh karena itu, tidak semua `Library` bisa langsung digunakan di Hyperf, meskipun beberapa `Library` yang dirancang dengan baik memang bisa langsung dipakai. Dengan membaca panduan ini secara menyeluruh, Anda akan tahu cara membedakan apakah suatu `Library` bisa langsung digunakan dan, jika tidak, modifikasi apa yang diperlukan.
 
 # Persiapan Pengembangan Komponen
 
-Persiapan pengembangan yang dimaksud di sini, selain kondisi pengoperasian dasar
-Hyperf, lebih berfokus pada cara mengatur struktur kode dengan lebih mudah untuk
-memfasilitasi pengembangan komponen. Perlu dicatat bahwa metode berikut mungkin
-tidak dapat berjalan (jump) karena *masalah softlink (softlink issue)* dan tidak
-berlaku untuk lingkungan pengembangan di bawah Windows untuk Docker.
+Persiapan pengembangan yang dimaksud di sini, selain kondisi dasar menjalankan Hyperf, lebih berfokus pada cara mengatur struktur kode dengan lebih nyaman untuk memfasilitasi pengembangan komponen. Perhatikan bahwa metode berikut mungkin tidak cocok untuk lingkungan pengembangan Windows untuk Docker karena *masalah dengan soft link traversal*.
 
-Dalam hal pengorganisasian kode, kami menyarankan untuk melakukan clone pada
-proyek skeleton [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
-dan proyek library komponen [hyperf/hyperf](https://github.com/hyperf/hyperf).
-Lakukan hal berikut untuk mendapatkan struktur seperti di bawah ini:
+Mengenai pengaturan kode, kami menyarankan untuk meng-clone project skeleton [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) dan proyek library komponen [hyperf/hyperf](https://github.com/hyperf/hyperf) di direktori yang sama. Lakukan operasi berikut untuk mencapai struktur di bawah ini:
 
 ```bash
-// Install the skeleton and configure it
-composer create-project hyperf/hyperf-skeleton
+// Install skeleton dan selesaikan konfigurasi
+composer create-project hyperf/hyperf-skeleton 
 
-// Clone the hyperf component library project, remember to replace hyperf with your Github ID, that is, clone the project you forked
+// Clone proyek library komponen hyperf, ingat untuk mengganti hyperf dengan Github ID Anda, yaitu clone proyek yang Anda fork
 git clone git@github.com:hyperf/hyperf.git
 ```
 
-Strukturnya adalah sebagai berikut:
+Hasilkan struktur berikut:
 
 ```
 .
 ├── hyperf
-│ ├── bin
-│ └── src
+│   ├── bin
+│   └── src
 └── hyperf-skeleton
-     ├── app
-     ├── bin
-     ├──config
-     ├── runtime
-     ├── test
-     └── vendor
+    ├── app
+    ├── bin
+    ├── config
+    ├── runtime
+    ├── test
+    └── vendor
 ```
 
-Tujuannya adalah agar proyek `hyperf-skeleton` dapat langsung mengambil sumber
-melalui bentuk `path`, sehingga Composer dapat langsung memuat proyek di dalam
-folder `hyperf` sebagai dependensi ke dalam direktori `vendor` dari proyek
-`hyperf-skeleton`. Kita menambahkan item `repositories` ke file `composer.json`
-di dalam `hyperf-skeleton`, sebagai berikut:
+Tujuannya agar proyek `hyperf-skeleton` bisa memuat proyek-proyek di folder `hyperf` sebagai dependensi ke direktori `vendor` melalui bentuk sumber `path`. Kita tambahkan item `repositories` ke file `composer.json` di `hyperf-skeleton`, sebagai berikut:
 
 ```json
 {
-     "repositories": {
-         "hyperf": {
-             "type": "path",
-             "url": "../hyperf/src/*"
-         }
-     }
+    "repositories": {
+        "hyperf": {
+            "type": "path",
+            "url": "../hyperf/src/*"
+        }
+    }
 }
 ```
 
-Kemudian hapus file `composer.lock` dan folder `vendor` di dalam proyek
-`hyperf-skeleton`, lalu jalankan `composer update` untuk memperbarui dependensi
-kembali. Perintahnya adalah sebagai berikut:
+Kemudian, hapus file `composer.lock` dan folder `vendor` di proyek `hyperf-skeleton`, dan jalankan `composer update` untuk memperbarui dependensi lagi. Perintahnya sebagai berikut:
 
 ```bash
 cd hyperf-skeleton
 rm -rf composer.lock && rm -rf vendor && composer update
 ```
 
-Akhirnya, semua folder proyek di dalam folder `hyperf-skeleton/vendor/hyperf`
-akan terhubung ke folder `hyperf` melalui `softlink`. Kita dapat menggunakan
-perintah `ls -l` untuk memverifikasi apakah `softlink` telah berhasil dibuat:
+Pada akhirnya, ini memastikan bahwa semua folder proyek di dalam `hyperf-skeleton/vendor/hyperf` terhubung ke folder `hyperf` melalui `soft links`. Kita dapat memverifikasi apakah `soft links` telah berhasil dibuat menggunakan perintah `ls -l`:
 
 ```bash
 cd vendor/hyperf/
 ls -l
 ```
 
-Ketika kita melihat hubungan koneksi seperti berikut, itu berarti `softlink`
-telah berhasil dibuat:
+Ketika kita melihat hubungan koneksi yang mirip dengan di bawah ini, itu menandakan bahwa `soft links` telah berhasil dibuat:
 
 ```
 cache -> ../../../hyperf/src/cache
@@ -122,7 +92,4 @@ testing -> ../../../hyperf/src/testing
 support -> ../../../hyperf/src/support
 ```
 
-Pada titik ini, kita dapat langsung memodifikasi file di dalam `vendor/hyperf`
-melalui IDE, tetapi yang kita modifikasi sebenarnya adalah kode di dalam
-`hyperf`, sehingga pada akhirnya kita dapat langsung melakukan `commit` pada
-proyek `hyperf`, lalu mengirimkan `Pull Request (PR)` ke trunk utama.
+Pada titik ini, kita bisa memodifikasi file di `vendor/hyperf` langsung dari IDE, tapi sebenarnya yang berubah adalah kode di `hyperf`. Dengan cara ini, kita bisa langsung `commit` di proyek `hyperf` dan mengirimkan `Pull Request (PR)` ke branch utama.
