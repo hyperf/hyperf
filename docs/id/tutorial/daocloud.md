@@ -1,65 +1,46 @@
-# Tutorial Build DevOps DaoCloud
+# Setup DaoCloud DevOps
 
-Sebagai developer individu, biaya penggunaan `Gitlab` dan `Docker Swarm cluster`
-yang dibangun sendiri tentu saja tidak dapat diterima. Berikut adalah layanan
-`Devops` bernama `DaoCloud`.
+Sebagai pengembang individu, biaya membangun `Gitlab` dan `Docker Swarm Cluster` sendiri jelas tidak masuk akal. Di sinilah layanan `DevOps` bernama `DaoCloud` hadir.
 
-Alasan rekomendasinya sederhana, karena layanan ini gratis dan berfungsi dengan
-baik.
+Alasan merekomendasikannya sederhana: gratis dan berfungsi dengan baik.
 
 [DaoCloud](https://dashboard.daocloud.io)
 
-## Cara Penggunaan
+## Cara Menggunakan
 
-Anda hanya perlu memperhatikan tiga halaman yaitu `project`, `application`, dan
-`cluster management`.
+Anda hanya perlu fokus pada tiga tab: `Projects`, `Applications`, dan `Cluster Management`.
 
 ### Membuat Project
 
-Pertama, kita perlu membuat project baru di `projects`. DaoCloud mendukung
-berbagai repositori mirror, yang dapat dipilih sesuai kebutuhan.
+Pertama, kita perlu membuat project baru di `Projects`. DaoCloud mendukung berbagai image registry, yang dapat dipilih sesuai kebutuhan Anda.
 
-Di sini saya menggunakan repositori
-[hyperf-demo](https://github.com/limingxinleo/hyperf-demo) sebagai contoh untuk
-konfigurasi. Ketika pembuatan berhasil, akan ada URL yang sesuai di bawah
-`WebHooks` pada `Github repository`.
+Di sini, saya akan menggunakan repository [hyperf-demo](https://github.com/limingxinleo/hyperf-demo) sebagai contoh untuk konfigurasi. Ketika pembuatan berhasil, URL yang sesuai akan muncul di bawah `WebHooks` dari `Github repository` yang sesuai.
 
-Selanjutnya, mari kita modifikasi `Dockerfile` di dalam repositori dan
-tambahkan `&& apk add wget \` di bawah `apk add`. Alasan spesifiknya di sini
-kurang begitu jelas, jika Anda tidak memperbarui `wget`, akan ada masalah saat
-menggunakannya. Namun tidak ada masalah jika menggunakan Gitlab CI yang
-dibangun sendiri.
+Selanjutnya, modifikasi `Dockerfile` di repository dan tambahkan `&& apk add wget \` di bawah `apk add`. Alasannya kurang jelas, tapi jika `wget` tidak ditambahkan, akan muncul masalah saat digunakan. Namun, Gitlab CI bawaan tidak memiliki masalah serupa.
 
-Ketika kode di-submit, `DaoCloud` akan melakukan operasi pengemasan (packaging)
-yang sesuai.
+Setelah setiap pengiriman kode, `DaoCloud` akan menjalankan operasi packaging yang sesuai untuk proyek yang Anda buat.
 
 ### Membuat Cluster
 
-Kemudian kita pergi ke `cluster management`, buat sebuah `cluster`, dan
-tambahkan `hosts`.
+Kemudian kita pergi ke `Cluster Management`, buat `Cluster`, dan tambahkan `Host`.
 
-Saya tidak akan membahas detailnya di sini, cukup ikuti langkah-langkah di atas.
+Saya tidak akan menjelaskan secara detail di sini; ikuti langkah-langkahnya satu per satu seperti yang diinstruksikan di atas.
 
 ### Membuat Application
 
-Klik Apply -> Create Application -> Pilih project tadi -> Deploy
+Klik Applications -> Create Application -> Pilih proyek yang baru dibuat (wajib sudah pernah push kode minimal sekali, dan `DaoCloud` sudah menghasilkan image) -> Deploy.
 
-Sesuai petunjuk, untuk port host, pengguna dapat memilih port yang tidak
-digunakan. Karena `DaoCloud` tidak memiliki fungsi `Config` dari `Swarm`, kita
-memetakan (map) `.env` ke kontainer secara aktif.
+Ikuti petunjuknya. Anda bisa memilih port yang tidak terpakai untuk host. Karena `DaoCloud` tidak memiliki fitur `Config` seperti `Swarm`, kita perlu memetakan file `.env` ke container secara manual.
 
-Tambahkan `Volume`, direktori kontainer `/opt/www/.env`, direktori host
-gunakan alamat tempat Anda menyimpan file `.env`, baik itu dapat ditulis
-(writable) atau tidak.
+Tambahkan `Volume`: direktori container `/opt/www/.env`, direktori host diisi dengan lokasi file `.env`, dan atur sebagai read-only.
 
-Kemudian klik Deploy Now.
+Kemudian klik "Deploy Now".
 
 ### Pengujian
 
-Buka host untuk mengakses nomor port tadi, dan Anda dapat melihat data tampilan
-selamat datang dari `Hyperf`.
+Akses port yang baru saja digunakan di host, dan Anda akan melihat data antarmuka selamat datang dari `Hyperf`.
 
-```
+```bash
 $ curl http://127.0.0.1:9501
 {"code":0,"data":{"user":"Hyperf","method":"GET","message":"Hello Hyperf."}}
 ```

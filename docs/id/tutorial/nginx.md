@@ -1,50 +1,46 @@
-# Reverse Proxy Nginx
+# Nginx Reverse Proxy
 
-[Nginx](http://nginx.org/) adalah HTTP dan reverse proxy server berkinerja
-tinggi, kodenya sepenuhnya diimplementasikan dengan `C`. Berdasarkan kinerjanya
-yang tinggi dan banyak keunggulannya, kita dapat mengaturnya sebagai front-end
-server dari `hyperf`, yang mengimplementasikan load balancing atau front-end
-server HTTPS, dll.
+[Nginx](http://nginx.org/) adalah server HTTP dan reverse proxy berperforma tinggi, yang kodenya ditulis murni dalam C. Berkat performa dan keunggulannya, kita bisa menggunakannya sebagai front-end server untuk Hyperf, baik untuk keperluan load balancing maupun sebagai front-end server HTTPS.
 
-## Mengonfigurasi Proxy HTTP
+## Konfigurasi Proxy HTTP
 
 ```nginx
-# At least one Hyperf node is required, multiple configuration lines
+# Setidaknya diperlukan satu node Hyperf; beberapa baris untuk beberapa node
 upstream hyperf {
-    # IP and port of Hyperf HTTP Server
+    # IP dan Port dari Hyperf HTTP Server
     server 127.0.0.1:9501;
     server 127.0.0.1:9502;
 }
 
 server {
-    # listening port
+    # Port yang di-listen
     listen 80; 
-    # Bound domain name, fill in your domain name
+    # Nama domain yang terikat pada server, isi dengan domain Anda
     server_name proxy.hyperf.io;
 
     location / {
-        # Forward the client's Host and IP information to the corresponding node
+        # Teruskan informasi Host dan IP klien ke node yang sesuai
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         
-        # Forward cookies, set SameSite
+        # Teruskan Cookie, atur SameSite
         proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
         
-        # Execute proxy access to real server
+        # Jalankan proxy akses ke server sebenarnya
         proxy_pass http://hyperf;
     }
 }
 ```
 
-## Mengonfigurasi Proxy WebSocket
+## Konfigurasi Proxy WebSocket
 
 ```nginx
-# At least one Hyperf node is required, multiple configuration lines
+# Setidaknya diperlukan satu node Hyperf; beberapa baris untuk beberapa node
 upstream hyperf_websocket {
-    # Set the load balancing mode to IP Hash algorithm mode, so that each request from different clients will interact with the same node
+    # Atur mode load balancing ke algoritma IP Hash agar klien yang sama selalu terhubung ke node yang sama
     ip_hash;
-    # IP and port of Hyperf WebSocket Server
+    # IP dan Port dari Hyperf WebSocket Server
     server 127.0.0.1:9503;
     server 127.0.0.1:9504;
 }
@@ -59,15 +55,15 @@ server {
         proxy_set_header Upgrade websocket;
         proxy_set_header Connection "Upgrade";
         
-        # Forward the client's Host and IP information to the corresponding node  
+        # Teruskan informasi Host dan IP klien ke node yang sesuai
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
     
-        # The connection between the client and the server is automatically disconnected after 60s of no interaction, please set according to the actual business scenario
+        # Putuskan koneksi otomatis setelah 60 detik tanpa interaksi, sesuaikan dengan kebutuhan bisnis
         proxy_read_timeout 60s ;
         
-        # Execute proxy access to real server
+        # Jalankan proxy akses ke server sebenarnya
         proxy_pass http://hyperf_websocket;
     }
 }

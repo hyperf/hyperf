@@ -1,19 +1,13 @@
-# Deployment Aplikasi dengan Supervisor
+# Deployment Supervisor
 
-[Supervisor](http://www.supervisord.org/) adalah alat process management untuk
-sistem Linux/Unix. Satu atau lebih process dapat dengan mudah dipantau,
-dijalankan, dihentikan, dan dijalankan ulang. Ketika process yang dikelola
-oleh Supervisor terhenti secara tidak sengaja (ter-kill), Supervisor secara
-otomatis akan menjalankannya kembali. Hal ini sangat memudahkan untuk mencapai
-pemulihan process secara otomatis tanpa harus menulis shell script untuk
-mengelola process tersebut.
+[Supervisor](http://www.supervisord.org/) adalah alat manajemen proses untuk sistem `Linux/Unix`. Ia dapat memonitor, memulai, menghentikan, dan me-restart satu atau lebih proses dengan mudah. Proses yang dikelola [Supervisor](http://www.supervisord.org/) akan otomatis di-restart jika tidak sengaja di-`Killed`, sehingga kita bisa mencapai pemulihan proses otomatis tanpa perlu menulis script `shell` sendiri.
 
-## Instalasi Supervisor
+## Menginstal Supervisor
 
-Berikut adalah contoh metode instalasi pada sistem CentOS:
+Berikut adalah contoh metode instalasi di `CentOS`:
 
 ```bash
-# Install the epel source, if it has been installed before, skip this step
+# Install sumber epel; lewati langkah ini jika sudah diinstal sebelumnya
 yum install -y epel-release
 yum install -y supervisor  
 ```
@@ -24,48 +18,54 @@ yum install -y supervisor
 cp /etc/supervisord.conf /etc/supervisord.d/supervisord.conf
 ```
 
-Edit file konfigurasi yang baru disalin `/etc/supervisord.d/supervisord.conf`
-dan simpan file setelah menambahkan konfigurasi berikut di bagian akhir file:
+Edit file konfigurasi yang baru saja disalin `/etc/supervisord.d/supervisord.conf`, dan tambahkan konten berikut di akhir file sebelum menyimpan:
 
 ```ini
-# Create a new application and set a name, here is set to hyperf
+# Buat aplikasi baru dan atur nama, di sini diatur ke hyperf
 [program:hyperf]
-# Here is the startup command of the project you want to manage, corresponding to the real path of your project
-command=php /var/www/hyperf/bin/hyperf.php start
-# Which user to run the process as
+# Atur perintah yang akan dijalankan di direktori yang ditentukan
+directory=/var/www/hyperf/
+# Ini adalah perintah startup untuk proyek yang ingin Anda kelola
+command=php ./bin/hyperf.php start
+# Sebagai user mana proses ini akan dijalankan
 user=root
-# automatically the app when supervisor starts
+# Mulai otomatis aplikasi ini ketika supervisor dijalankan
 autostart=true
-# Automatically restart the process after the process exits
+# Restart otomatis proses setelah keluar
 autorestart=true
-# retry interval in seconds
-startsecs=5
-# number of retries
+# Berapa lama proses harus berjalan untuk dianggap berhasil dimulai
+startsecs=1
+# Jumlah percobaan ulang
 startretries=3
-# stderr log output location
+# Lokasi output log stderr
 stderr_logfile=/var/www/hyperf/runtime/stderr.log
-# stdout log output location
+# Lokasi output log stdout
 stdout_logfile=/var/www/hyperf/runtime/stdout.log
 ```
 
-## Menjalankan Supervisor
+!> Disarankan untuk meningkatkan nilai `minfds` di file konfigurasi, yang default-nya adalah `1024`. Anda juga harus memodifikasi [ulimit](https://wiki.swoole.com/#/other/sysctl?id=ulimit-settings) sistem untuk mencegah masalah `Failed to open stream: Too many open files`.
 
-Jalankan perintah berikut untuk memulai program Supervisor berdasarkan file
-konfigurasi:
+## Memulai Supervisor
+
+Jalankan perintah berikut untuk memulai program Supervisor berdasarkan file konfigurasi:
 
 ```bash
 supervisord -c /etc/supervisord.d/supervisord.conf
 ```
 
-## Menggunakan `supervisorctl` untuk Mengelola Aplikasi
+## Menggunakan supervisorctl untuk Mengelola Proyek
 
 ```bash
-# start the hyperf application
+# Mulai aplikasi hyperf
 supervisorctl start hyperf
-# restart hyperf application
+# Restart aplikasi hyperf
 supervisorctl restart hyperf
-# stop hyperf application
-supervisorctl stop hyperf
-# View the running status of all managed projects
+# Hentikan aplikasi hyperf
+supervisorctl stop hyperf  
+# Lihat status berjalan dari semua proyek yang dikelola
 supervisorctl status
+# Muat ulang file konfigurasi
+supervisorctl update
+# Restart semua program
+supervisorctl reload
 ```

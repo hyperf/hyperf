@@ -1,30 +1,26 @@
 # Alibaba Cloud Log Service
 
-Mengumpulkan log bisa menjadi masalah yang merepotkan ketika men-deploy proyek
-dalam `Docker cluster`, namun Alibaba Cloud menyediakan `log collection system`
-yang sangat berguna. Dokumen ini secara singkat memperkenalkan cara menggunakan
-pengumpulan log Alibaba Cloud.
+Saat men-deploy proyek di cluster `Docker Swarm`, pengumpulan log bisa jadi rumit. Untungnya, Alibaba Cloud menyediakan `Log Collection System` yang sangat praktis. Dokumen ini akan memperkenalkan cara menggunakannya.
 
-* [Membangun cluster Docker Swarm](id/tutorial/docker-swarm.md)
+* [Pengaturan Cluster Docker Swarm](docker-swarm.md)
 
-## Mengaktifkan Layanan Log
+## Mengaktifkan Log Service
 
-Langkah pertama adalah mengaktifkan `Log Service` pada Alibaba Cloud.
+Langkah pertama adalah mengaktifkan `Log Service` di Alibaba Cloud.
 
 [Dokumentasi Log Service](https://help.aliyun.com/product/28958.html)
 
-Tutorial berikut adalah panduan langkah demi langkah yang berurutan tentang cara
-menggunakan layanan log.
+Berikut adalah panduan langkah demi langkah menggunakan Log Service.
 
-## Menginstal kontainer Logtail
+## Menginstal Container Logtail
 
-[Dokumen proses pengumpulan log Docker standar](https://help.aliyun.com/document_detail/66659.html)
+[Dokumentasi Proses Pengumpulan Log Docker Standar](https://help.aliyun.com/document_detail/66659.html)
 
 | Parameter | Deskripsi |
-| :-----------------------------------: | :-------------------------------------------: |
-| ${your_region_name} | Region ID, misalnya wilayah East China 1 adalah cn-hangzhou |
-| ${your_aliyun_user_id} | User ID, silakan ganti dengan ID pengguna akun utama Alibaba Cloud Anda. |
-| ${your_machine_group_user_defined_id} | ID kustom grup mesin dari cluster. Berikut ini menggunakan Hyperf |
+| :---: | :---: |
+| ${your_region_name} | ID Region, misalnya region East China 1 adalah cn-hangzhou |
+| ${your_aliyun_user_id} | Identifikasi pengguna, ganti dengan ID akun utama Alibaba Cloud Anda. |
+| ${your_machine_group_user_defined_id} | Identifikasi kustom untuk machine group cluster. Hyperf digunakan di bawah ini. |
 
 ```
 docker run -d -v /:/logtail_host:ro -v /var/run/docker.sock:/var/run/docker.sock \
@@ -38,69 +34,67 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 ### Membuat Project
 
-Masuk ke Alibaba Cloud Log Service, klik `Create Project`, dan isi informasi berikut
+Masuk ke Alibaba Cloud Log Service, klik `Create Project`, dan isi informasi berikut:
 
-| Parameter | Contoh pengisian |
-| :------------: | :------------------: |
-| Project name | hyperf |
-| Comments | Untuk demonstrasi sistem log |
+| Parameter | Contoh |
+| :---: | :---: |
+| Nama Project | hyperf |
+| Deskripsi | Digunakan untuk demonstrasi sistem log |
 | Region | East China 1 (Hangzhou) |
-| Activate service | Detailed log |
-| Log Storage Location | Current Project |
+| Aktifkan Layanan | Detailed Logs |
+| Lokasi Penyimpanan Log | Current Project |
 
 ### Membuat Logstore
 
-Kecuali untuk parameter berikut, isi sesuai kebutuhan, yang lain dapat menggunakan nilai default
+Selain parameter berikut, isi sesuai kebutuhan dan biarkan sisanya default.
 
-| Parameter | Contoh pengisian |
-| :------------: | :-------------: |
-| Logstore name | hyperf-demo-api |
-| save permanently | false |
-| Data retention time | 60 |
+| Parameter | Contoh |
+| :---: | :---: |
+| Nama Logstore | hyperf-demo-api |
+| Permanent Storage | false |
+| Waktu Retensi Data | 60 |
 
 ### Mengakses Data
 
-1. Pilih Docker file
+1. Pilih Docker File
 
-2. Buat grup mesin
+2. Buat Machine Group
 
-Jika Anda sudah membuat grup mesin, Anda dapat melewati langkah ini
+Jika Anda sudah membuat machine group, Anda dapat melewati langkah ini.
 
-| Parameter | Contoh pengisian |
-| :------------: | :------------: |
-| Machine Group Name | Hyperf |
-| Machine group ID | User-defined ID |
-| User Defined Logo | Hyperf |
+| Parameter | Contoh |
+| :---: | :---: |
+| Nama Machine Group | Hyperf |
+| Identifikasi Machine Group | User-defined identifier |
+| User-defined Identifier | Hyperf |
 
-3. Konfigurasikan grup mesin
+3. Konfigurasi Machine Group
 
-Terapkan grup mesin yang baru saja Anda buat
+Terapkan machine group yang baru saja dibuat.
 
-4. Konfigurasikan Logtail
+4. Konfigurasi Logtail
 
-Whitelist `Label`, di sini Anda dapat mengisi sesuai kebutuhan, berikut ini
-dikonfigurasi sesuai dengan nama proyek, dan nama proyek akan diatur saat
-kontainer Docker berjalan.
+Whitelist `Label` bisa diisi sesuai kebutuhan. Konfigurasikan sesuai nama proyek di bawah; nama proyek akan ditentukan saat container Docker berjalan.
 
-| Parameter | Contoh pengisian | Contoh pengisian |
-| :------------: | :------------------------------------------------: | :-------------: |
-| Configuration Name | hyperf-demo-api | |
-| Log Path | /opt/www/runtime/logs | *.log |
-| Label whitelist | app.name | hyperf-demo-api |
-| Pattern | Full Regular Pattern | |
-| single-line mode | false | |
-| Sample log | `[2019-03-07 11:58:57] hyperf.WARNING: xxx` | |
-| First line regular expression | `\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*` | |
-| Extract fields | true | |
-| Regular Expression | `\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*)` | |
-| Log extraction content | time name level content | |
+| Parameter | Contoh | Contoh |
+| :---: | :---: | :---: |
+| Nama Konfigurasi | hyperf-demo-api | |
+| Path Log | /opt/www/runtime/logs | *.log |
+| Label Whitelist | app.name | hyperf-demo-api |
+| Mode | Full Regex Mode | |
+| Single-line Mode | false | |
+| Contoh Log | `[2019-03-07 11:58:57] hyperf.WARNING: xxx` | |
+| First-line Regex | `\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*` | |
+| Extract Fields | true | |
+| Regex | `\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*)` | |
+| Konten Ekstraksi Log | time name level content | |
 
-5. Konfigurasi analisis kueri
+5. Konfigurasi Analisis Query
 
-properti indeks field
+Atribut Index Field
 
-| Field name | Type | Alias | Chinese word segmentation | Open statistics |
-| :------: | :---: | :-----: | :------: | :------: |
+| Nama Field | Tipe | Alias | Chinese Word Segmentation | Aktifkan Statistik |
+| :---: | :---: | :---: | :---: | :---: |
 | name | text | name | false | true |
 | level | text | level | false | true |
 | time | text | time | false | false |
@@ -108,13 +102,13 @@ properti indeks field
 
 ### Menjalankan Image
 
-Saat menjalankan image, Anda hanya perlu mengatur `labels` Kontainer.
+Saat menjalankan image, cukup atur `labels` Container.
 
 | name | value |
-| :------: | :-------------: |
+| :---: | :---: |
 | app.name | hyperf-demo-api |
 
-Misalnya Dockerfile berikut
+Contoh, Dockerfile berikut:
 
 ```Dockerfile
 # Default Dockerfile
@@ -122,12 +116,9 @@ Misalnya Dockerfile berikut
 FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="hyperf-demo-api"
 
-#Other content omitted
+# Konten lainnya diabaikan
 ```
 
-## Hal yang Perlu Diperhatikan
+## Catatan
 
-- Batasan driver penyimpanan Docker: Saat ini, hanya `overlay` dan `overlay2`
-  yang didukung. Untuk driver penyimpanan lainnya, Anda perlu melakukan `mount`
-  pada direktori tempat log berada, lalu mengumpulkan log dari host
-  `~/logtail_host/your_path` sebagai gantinya.
+- Batasan driver storage Docker: saat ini hanya `overlay` dan `overlay2` yang didukung. Untuk driver lain, Anda perlu me-`mount` direktori log ke mesin lokal, lalu kumpulkan log dari `~/logtail_host/your_path` pada host.
