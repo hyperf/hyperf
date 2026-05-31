@@ -1,6 +1,6 @@
 # GraphQL
 
-Komponen GraphQL mengabstraksi [thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite).
+Komponen GraphQL menyediakan abstraksi dari [thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite).
 
 ## Instalasi
 
@@ -50,15 +50,12 @@ class GraphQLController
 ```
 
 Query:
-
 ```graphql
 {
     hello(name: "graphql")
 }
 ```
-
 Response:
-
 ```json
 {
     "data": {
@@ -102,7 +99,7 @@ class Product
 }
 ```
 
-Tambahkan ke `GraphQLController`:
+Tambahkan kode berikut ke `GraphQLController`:
 
 ```php
 <?php
@@ -117,7 +114,6 @@ public function product(string $name, float $price): Product
 ```
 
 Query:
-
 ```graphql
 {
     hello(name: "graphql")
@@ -129,7 +125,6 @@ Query:
 ```
 
 Response:
-
 ```json
 {
     "data": {
@@ -142,4 +137,4 @@ Response:
 }
 ```
 
-Untuk penggunaan lebih lanjut, lihat dokumentasi [GraphQLite](https://graphqlite.thecodingmachine.io/docs/queries).
+Untuk contoh penggunaan lebih lanjut, lihat [dokumentasi GraphQLite](https://graphqlite.thecodingmachine.io/docs/queries).

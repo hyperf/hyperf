@@ -1,8 +1,6 @@
 # Guzzle HTTP Client
 
-Komponen [hyperf/guzzle](https://github.com/hyperf/guzzle) berbasis Guzzle
-untuk pemrosesan coroutine, dan digantikan ke dalam Guzzle melalui Swoole HTTP
-client sebagai coroutine driver untuk mencapai coroutineization dari HTTP client.
+Komponen [hyperf/guzzle](https://github.com/hyperf/guzzle) melakukan pemrosesan coroutine di atas Guzzle. Komponen ini mengganti handler Guzzle dengan Swoole HTTP client sebagai driver coroutine, sehingga operasi HTTP client menjadi coroutine-friendly.
 
 ## Instalasi
 
@@ -12,22 +10,16 @@ composer require hyperf/guzzle
 
 ## Penggunaan
 
-Cukup atur `Hyperf\Guzzle\CoroutineHandler` di dalam komponen ini ke dalam
-Guzzle client sebagai handler untuk mengubahnya menjadi operasi coroutine.
-Untuk memudahkan pembuatan objek Guzzle dari coroutine, kami menyediakan class
-factory `Hyperf\Guzzle\ClientFactory` untuk membuat client dengan mudah.
-Berikut adalah contohnya:
+Cukup set `Hyperf\Guzzle\CoroutineHandler` sebagai handler di Guzzle client untuk mengaktifkan operasi coroutine-friendly. Untuk memudahkan pembuatan objek Guzzle yang coroutine-friendly, kami menyediakan factory class `Hyperf\Guzzle\ClientFactory` untuk pembuatan client yang mudah. Contoh kode:
 
 ```php
 <?php 
 use Hyperf\Guzzle\ClientFactory;
 
-class Foo {
-    /**
-     * @var \Hyperf\Guzzle\ClientFactory
-     */
-    private $clientFactory;
-    
+class Foo
+{
+    private ClientFactory $clientFactory;
+
     public function __construct(ClientFactory $clientFactory)
     {
         $this->clientFactory = $clientFactory;
@@ -35,9 +27,9 @@ class Foo {
     
     public function bar()
     {
-        // $options is equivalent to the $config parameter of the GuzzleHttp\Client constructor
+        // $options sama dengan parameter $config dari konstruktor GuzzleHttp\Client
         $options = [];
-        // $client is a coroutineized GuzzleHttp\Client object
+        // $client adalah objek GuzzleHttp\Client yang coroutine-friendly
         $client = $this->clientFactory->create($options);
     }
 }
@@ -45,13 +37,11 @@ class Foo {
 
 ### Menggunakan versi ^7.0
 
-Dependensi komponen pada `Guzzle` telah diubah dari `^6.3` menjadi `^6.3 |
-^7.0`. Versi `^7.0` dapat diinstal secara default, tetapi komponen berikut
-akan berkonflik dengan `^7.0`:
+Ketergantungan komponen pada `Guzzle` telah diubah dari `^6.3` menjadi `^6.3 | ^7.0`. Secara default, dimungkinkan untuk menginstal versi `^7.0`, namun komponen berikut bertentangan dengan `^7.0`.
 
 - hyperf/metric
 
-Anda dapat melakukan tindakan berikut secara aktif untuk menyelesaikan konflik:
+Anda dapat secara aktif menjalankan operasi berikut untuk menyelesaikan konflik:
 
 ```
 composer require "promphp/prometheus_client_php:2.2.1"
@@ -59,17 +49,13 @@ composer require "promphp/prometheus_client_php:2.2.1"
 
 - overtrue/flysystem-cos
 
-Karena library dependen bergantung pada `guzzlehttp/guzzle-services`, dan tidak
-mendukung `^7.0`, masalah ini tidak dapat diselesaikan untuk sementara waktu.
+Karena library dependensi bergantung pada `guzzlehttp/guzzle-services`, yang tidak mendukung `^7.0`, untuk saat ini tidak dapat diselesaikan.
 
 ## Menggunakan Konfigurasi Swoole
 
-Terkadang kita ingin memodifikasi konfigurasi `Swoole` secara langsung, sehingga
-kami juga menyediakan item konfigurasi terkait. Namun, konfigurasi ini tidak
-dapat berfungsi di dalam `Curl Guzzle client`, jadi gunakan dengan hati-hati.
+Terkadang kita ingin langsung memodifikasi konfigurasi `Swoole`, jadi kami juga menyediakan item konfigurasi yang relevan. Namun, konfigurasi ini tidak akan berlaku di `Curl Guzzle client`, jadi gunakan dengan hati-hati.
 
-> Konfigurasi ini akan menggantikan konfigurasi asli. Sebagai contoh, timeout
-> di bawah ini akan digantikan menjadi 10.
+> Konfigurasi ini akan menggantikan konfigurasi asli. Sebagai contoh, timeout berikut akan digantikan oleh 10.
 
 ```php
 <?php
@@ -93,18 +79,11 @@ $response = $client->get('/');
 
 ## Connection Pool
 
-Hyperf tidak hanya mengimplementasikan `Hyperf\Guzzle\CoroutineHandler`, tetapi
-juga mengimplementasikan `Hyperf\Guzzle\PoolHandler` berbasis
-`Hyperf\Pool\SimplePool`.
+Selain mengimplementasikan `Hyperf\Guzzle\CoroutineHandler`, Hyperf juga mengimplementasikan `Hyperf\Guzzle\PoolHandler` berdasarkan `Hyperf\Pool\SimplePool`.
 
-### Mengapa?
+### Alasan
 
-Terdapat batas atas pada jumlah koneksi TCP host. Ketika konkurensi kita
-melebihi batas atas ini, request tidak dapat dibuat secara normal. Selain itu,
-akan ada TIME-WAIT setelah koneksi TCP berakhir, sehingga koneksi tidak dapat
-dilepaskan tepat waktu. Oleh karena itu, kita memerlukan connection pool untuk
-mempertahankan tahap ini, meminimalkan dampak TIME-WAIT, dan memungkinkan
-koneksi TCP digunakan kembali.
+Sederhananya, jumlah koneksi TCP pada sebuah host terbatas. Jika konkurensi melebihi batas ini, permintaan tidak bisa dibuat secara normal. Selain itu, ada fase TIME-WAIT setelah koneksi TCP berakhir, jadi koneksi tidak bisa dilepaskan secara real-time. Akibatnya, konkurensi aktual jauh lebih rendah dari batas TCP. Karena itu, kita perlu connection pool untuk mengelola fase ini, meminimalkan dampak TIME-WAIT, dan memungkinkan koneksi TCP dipakai ulang.
 
 ### Penggunaan
 
@@ -125,7 +104,7 @@ if (Coroutine::inCoroutine()) {
     ]);
 }
 
-// Default retry middleware
+// Middleware retry default
 $retry = make(RetryMiddleware::class, [
     'retries' => 1,
     'delay' => 10,
@@ -141,8 +120,7 @@ $client = make(Client::class, [
 ]);
 ```
 
-Selain itu, framework juga menyediakan `HandlerStackFactory` untuk memudahkan
-pembuatan `$stack` di atas.
+Selain itu, framework juga menyediakan `HandlerStackFactory` untuk memudahkan pembuatan `$stack` di atas.
 
 ```php
 <?php
@@ -159,16 +137,13 @@ $client = make(Client::class, [
 ]);
 ```
 
-## Menggunakan `ClassMap` untuk Menggantikan `GuzzleHttp\Client`
+## Menggunakan `ClassMap` untuk mengganti `GuzzleHttp\Client`
 
-Jika komponen pihak ketiga tidak menyediakan interface yang dapat menggantikan
-`Handler`, kita juga dapat menggunakan `ClassMap` untuk langsung menggantikan
-`Client` guna mencapai tujuan coroutineization dari client.
+Jika komponen pihak ketiga tidak menyediakan antarmuka untuk mengganti `Handler`, kita juga dapat menggunakan fungsi `ClassMap` untuk langsung mengganti `Client` agar client menjadi coroutine-friendly.
 
-> Tentu saja, Anda juga dapat menggunakan SWOOLE_HOOK untuk mencapai tujuan
-> yang sama.
+> Tentu saja, Anda juga dapat menggunakan `SWOOLE_HOOK` untuk mencapai tujuan yang sama.
 
-Berikut adalah contohnya:
+Contoh kode:
 
 class_map/GuzzleHttp/Client.php
 
@@ -182,21 +157,21 @@ use Hyperf\Coroutine\Coroutine;
 
 class Client implements ClientInterface
 {
-    // Omitted other unchanged codes
+    // Kode untuk bagian lain yang tidak berubah diabaikan
 
     public function __construct(array $config = [])
     {
         $inCoroutine = Coroutine::inCoroutine();
         if (!isset($config['handler'])) {
-            // The corresponding Handler can choose CoroutineHandler or PoolHandler as needed
+            // Handler yang sesuai dapat dipilih sebagai CoroutineHandler atau PoolHandler sesuai kebutuhan
             $config['handler'] = HandlerStack::create($inCoroutine ? new CoroutineHandler() : null);
         } elseif ($inCoroutine && $config['handler'] instanceof HandlerStack) {
             $config['handler']->setHandler(new CoroutineHandler());
         } elseif (!is_callable($config['handler'])) {
-            throw new \InvalidArgumentException('handler must be a callable');
+            throw new \InvalidArgumentException('handler harus berupa callable');
         }
 
-        // Convert the base_uri to a UriInterface
+        // Konversi base_uri menjadi UriInterface
         if (isset($config['base_uri'])) {
             $config['base_uri'] = Psr7\uri_for($config['base_uri']);
         }
@@ -204,7 +179,6 @@ class Client implements ClientInterface
         $this->configureDefaults($config);
     }
 }
-
 ```
 
 config/autoload/annotations.php
