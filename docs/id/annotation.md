@@ -1,64 +1,31 @@
 # Annotation
 
-Annotation adalah fitur yang sangat kuat di Hyperf yang dapat digunakan untuk
-mengurangi banyak konfigurasi dalam bentuk annotation dan untuk
-mengimplementasikan berbagai fitur yang sangat memudahkan.
+Annotation adalah fitur yang sangat kuat di Hyperf. Dengan annotation, Anda bisa mengurangi banyak konfigurasi dan mengimplementasikan berbagai fungsi dengan mudah.
 
 ## Konsep
 
-### Apa itu annotation?
+### Apa itu Annotation?
 
-Annotation menawarkan kemampuan untuk menambahkan informasi metadata terstruktur yang
-dapat dibaca mesin pada deklarasi di dalam kode: class, method, function,
-parameter, property, dan class constant dapat menjadi target dari sebuah
-annotation. Metadata yang didefinisikan oleh annotation kemudian dapat diperiksa
-saat runtime menggunakan Reflection API. Oleh karena itu, annotation dapat
-dianggap sebagai bahasa konfigurasi yang disematkan langsung ke dalam kode.
+Annotation menyediakan cara untuk menambahkan metadata terstruktur yang bisa dibaca mesin ke bagian deklarasi dalam kode. Target annotation bisa berupa class, method, function, parameter, property, atau class constant. Lewat Reflection API, metadata dari annotation bisa diakses saat runtime. Jadi annotation bisa dibilang seperti bahasa konfigurasi yang tertanam langsung di dalam kode.
 
-Dengan annotation, implementasi generik dari suatu fitur dan penggunaan
-konkretnya dalam aplikasi dapat dipisahkan (decoupled). Dalam beberapa hal, ini
-dapat dibandingkan dengan interface dan implementasinya. Namun, jika interface
-dan implementasi berkaitan dengan kode, annotation berkaitan dengan memberikan
-informasi tambahan (annotating) dan konfigurasi. Interface dapat diimplementasi
-oleh class, sedangkan annotation juga dapat dideklarasikan pada method, function,
-parameter, property, dan class constant. Dengan demikian, annotation lebih
-fleksibel daripada interface.
+Dengan annotation, implementasi fungsi dan penggunaannya dalam aplikasi bisa dipisahkan. Kurang lebih mirip kayak interface dan implementasinya. Tapi interface dan implementasi masih terkait kode, sedangkan annotation lebih ke deklarasi informasi tambahan dan konfigurasi. Interface bisa diimplementasikan lewat class, sementara annotation bisa dipasang di method, function, parameter, property, dan class constant. Makanya annotation lebih fleksibel daripada interface.
 
-Contoh sederhana dari penggunaan annotation adalah mengubah interface yang memiliki
-method opsional untuk menggunakan annotation. Mari kita asumsikan sebuah interface
-ActionHandler yang merepresentasikan suatu operasi dalam aplikasi, di mana
-beberapa implementasi dari action handler memerlukan setup dan yang lainnya
-tidak. Alih-alih mengharuskan semua class yang mengimplementasikan ActionHandler
-untuk mengimplementasikan method setUp(), sebuah annotation dapat digunakan. Salah
-satu keuntungan dari pendekatan ini adalah kita dapat menggunakan annotation
-tersebut beberapa kali.
+Contoh sederhana: mengimplementasikan method opsional dari sebuah interface pakai annotation. Misalnya interface `ActionHandler` mewakili operasi aplikasi, beberapa implementasi `action handler` butuh `setup`, beberapa nggak. Daripada maksa semua class untuk implementasiin interface `ActionHandler` dan method `setUp()`, kita bisa pake annotation. Keuntungannya, Anda bisa pake annotation berkali-kali.
 
-### Bagaimana annotation bekerja?
+### Bagaimana Cara Kerja Annotation?
 
-Seperti yang telah dikatakan bahwa annotation hanyalah definisi metadata yang
-harus bekerja dengan aplikasi agar dapat berfungsi. Di Hyperf, data dalam
-annotation dikumpulkan ke dalam class
-`Hyperf\Di\Annotation\AnnotationCollector` untuk digunakan oleh aplikasi.
-Bergantung pada kebutuhan Anda, Anda juga dapat mengumpulkan data tersebut ke
-class kustom Anda sendiri, kemudian membaca dan memanfaatkan metadata annotation
-yang terkumpul di tempat di mana annotation itu sendiri diharapkan bekerja untuk
-mencapai implementasi fungsional yang diinginkan.
+Seperti yang sudah disinggung, annotation hanyalah definisi metadata dan perlu dipadukan dengan aplikasi agar berfungsi. Di Hyperf, data annotation bakal dikumpulkan ke kelas `Hyperf\Di\Annotation\AnnotationCollector` buat dipake aplikasi. Tentu aja, Anda juga bisa ngumpulinnya ke kelas kustom sendiri. Nantinya, metadata annotation yang udah dikumpulin bakal dibaca dan dipake di tempat yang sesuai, sesuai fungsi yang diinginkan.
 
-### Mengabaikan annotation tertentu
+### Mengabaikan Annotation Tertentu
 
-Dalam beberapa kasus, kita mungkin ingin mengabaikan annotation tertentu.
-Sebagai contoh, ketika kita mengakses beberapa tool yang menghasilkan dokumen
-secara otomatis, banyak tool menggunakan annotation untuk mendefinisikan konten
-struktural yang relevan dari dokumen tersebut. Annotation ini mungkin tidak
-sejalan dengan bagaimana Hyperf digunakan, sehingga kita dapat mengatur agar
-annotation tersebut diabaikan melalui `config/autoload/annotations.php`.
+Kadang kita perlu ngabaikan annotation tertentu. Misalnya, pas pake tools yang otomatis generate dokumentasi, banyak tool kayak gitu define struktur dokumentasi lewat annotation, dan annotation tersebut mungkin gak cocok sama cara kerja Hyperf. Kita bisa atur annotation yang mau diabaikan di `config/autoload/annotations.php`.
 
 ```php
 use JetBrains\PhpStorm\ArrayShape;
 
 return [
     'scan' => [
-        // Annotation di array ignore_annotations akan diabaikan oleh annotation scanner
+        // Annotation dalam array ignore_annotations akan diabaikan oleh annotation scanner
         'ignore_annotations' => [
             ArrayShape::class,
         ],
@@ -68,16 +35,11 @@ return [
 
 ## Menggunakan Annotation
 
-Ada tiga tipe penerapan dari annotation, yaitu pada `class`, `method of class`,
-dan `property of class`.
+Ada 3 tipe objek aplikasi untuk annotation: `class`, `class method`, dan `class property`.
 
-### Menggunakan class annotation
+### Menggunakan Class Annotation
 
-Definisi annotation tingkat class berada di blok komentar di atas keyword
-`class`. Sebagai contoh, `Controller` dan `AutoController` yang umum digunakan
-adalah contoh penggunaan dari class level annotation. Contoh kode berikut adalah
-contoh penggunaan class level annotation yang benar, yang menunjukkan bahwa
-annotation `ClassAnnotation` diterapkan pada class `Foo`.
+Class annotation didefinisikan di blok komentar di atas keyword `class`. Contohnya `Controller` dan `AutoController` yang sering dipake, itu contoh klasik class annotation. Kode di bawah ini nunjukin cara yang benar, yaitu annotation `ClassAnnotation` dipasang di kelas `Foo`.
 
 ```php
 <?php
@@ -85,13 +47,9 @@ annotation `ClassAnnotation` diterapkan pada class `Foo`.
 class Foo {}
 ```
 
-### Menggunakan method annotation
+### Menggunakan Class Method Annotation
 
-Definisi annotation tingkat method berada di blok komentar di atas method class.
-Sebagai contoh, `RequestMapping` yang umum digunakan adalah contoh penggunaan dari
-method level annotation. Contoh kode berikut adalah contoh penggunaan method
-level annotation yang benar, yang menunjukkan bahwa annotation `MethodAnnotation`
-diterapkan pada method `bar` dari class `Foo`.
+Class method annotation didefinisikan di blok komentar di atas method. Contohnya `RequestMapping`, itu contoh klasik class method annotation. Kode di bawah ini nunjukin cara yang benar, yaitu annotation `MethodAnnotation` dipasang di method `Foo::bar()`.
 
 ```php
 <?php
@@ -100,19 +58,14 @@ class Foo
     #[MethodAnnotation]
     public function bar()
     {
-        // some code
+        // beberapa kode
     }
 }
 ```
 
-### Menggunakan property annotation
+### Menggunakan Class Property Annotation
 
-Definisi annotation tingkat property berada di blok komentar di atas property.
-Sebagai contoh, `Value` dan `Inject` yang sering digunakan adalah contoh
-penggunaan dari property level annotation. Contoh kode berikut adalah contoh
-penggunaan property level annotation yang benar, yang menunjukkan bahwa
-annotation `PropertyAnnotation` diterapkan pada property `$bar` dari class
-`Foo`.
+Class property annotation didefinisikan di blok komentar di atas property. Contohnya `Value` dan `Inject`, itu contoh klasik class property annotation. Kode di bawah ini nunjukin cara yang benar, yaitu annotation `PropertyAnnotation` dipasang di property `$bar` dari kelas `Foo`.
 
 ```php
 <?php
@@ -123,15 +76,15 @@ class Foo
 }
 ```
 
-### Pengiriman parameter annotation
+### Cara Memberikan Parameter Annotation
 
-- Melewatkan parameter tunggal utama: `#[DemoAnnotation('value')]`
-- Melewatkan parameter string: `#[DemoAnnotation(key1: 'value1', key2: 'value2')]`
-- Melewatkan parameter array: `#[DemoAnnotation(key: ['value1', 'value2'])]`
+- Melewatkan parameter utama tunggal `#[DemoAnnotation('value')]`
+- Melewatkan parameter string `#[DemoAnnotation(key1: 'value1', key2: 'value2')]`
+- Melewatkan parameter array `#[DemoAnnotation(key: ['value1', 'value2'])]`
 
 ## Custom Annotation
 
-### Membuat class Annotation
+### Membuat Kelas Annotation
 
 ```php
 <?php
@@ -149,7 +102,7 @@ class Foo extends AbstractAnnotation
 }
 ```
 
-Menggunakan class annotation:
+Menggunakan kelas annotation:
 
 ```php
 <?php
@@ -158,47 +111,28 @@ use App\Annotation\Foo;
 #[Foo(bar: [1, 2], baz: 3)]
 class IndexController extends AbstractController
 {
-    // Memanfaatkan data annotation
+    // Menggunakan data annotation
 }
 ```
 
-Perlu dicatat bahwa pada contoh kode di atas, class annotation mewarisi
-abstract class `Hyperf\Di\Annotation\AbstractAnnotation`. Ini tidak wajib untuk
-class annotation, tetapi untuk class annotation Hyperf, wajib untuk mengimplementasi
-interface `Hyperf\Di\Annotation\AnnotationInterface`, sehingga peran dari abstract
-class di sini adalah untuk menyediakan definisi minimal. Abstract class tersebut
-telah diimplementasikan untuk Anda agar dapat `secara otomatis menetapkan
-parameter annotation ke property class`, dan `secara otomatis mengumpulkan data
-annotation ke AnnotationCollector sesuai aturan berdasarkan lokasi penggunaan
-annotation`.
+Perhatikan: di contoh di atas, kelas annotation mewarisi `AbstractAnnotation`. Ini sebenarnya tidak wajib, tapi untuk kelas annotation Hyperf, wajib mengimplementasikan interface `AnnotationInterface`. Abstract class ini cuma nyediain cara definisi yang minimalis, udah ada fitur praktis kayak `distribusi otomatis parameter annotation ke properti kelas` dan `pengumpulan otomatis ke AnnotationCollector sesuai aturan posisi pemakaian annotation`.
 
 ### Custom Annotation Collector
 
-Alur eksekusi spesifik dari pengumpulan annotation juga diimplementasikan di
-dalam class annotation. Method terkait dibatasi oleh
-`Hyperf\Di\Annotation\AnnotationInterface`. Interface tersebut memerlukan
-implementasi dari tiga method berikut, dan Anda dapat mengimplementasikan logika
-yang sesuai berdasarkan kebutuhan Anda sendiri:
+Proses pengumpulan annotation sebenarnya diimplementasikan di dalam kelas annotation itu sendiri. Method terkait diatur oleh `Hyperf\Di\Annotation\AnnotationInterface`. Interface ini mewajibkan 3 method berikut, dan Anda bisa ngimplementasiin logika sesuai kebutuhan:
 
-- `public function collectClass(string $className): void;` Method ini akan
-  dijalankan ketika annotation didefinisikan pada class.
-- `public function collectMethod(string $className, ?string $target): void;`
-  Method ini akan dijalankan ketika annotation didefinisikan pada method.
-- `public function collectProperty(string $className, ?string $target): void`
-  Method ini akan dijalankan ketika annotation didefinisikan pada property.
+- `public function collectClass(string $className): void;` Method ini dipicu ketika annotation yang didefinisikan pada class dipindai
+- `public function collectMethod(string $className, ?string $target): void;` Method ini dipicu ketika annotation yang didefinisikan pada class method dipindai
+- `public function collectProperty(string $className, ?string $target): void` Method ini dipicu ketika annotation yang didefinisikan pada class property dipindai
 
-Karena framework menyediakan fitur cache untuk annotation collector, Anda perlu
-mengonfigurasi custom collector ke `annotations.scan.collectors`. Dengan begitu,
-framework dapat otomatis melakukan cache terhadap annotation yang sudah
-dikumpulkan dan menggunakannya kembali pada startup berikutnya. Jika collector
-terkait tidak dikonfigurasi, custom annotation hanya akan aktif saat `server`
-pertama kali dijalankan, dan tidak akan aktif pada startup berikutnya.
+Karena framework udah punya cache buat annotation collector, Anda perlu konfigurasi custom collector di `annotations.scan.collectors` biar framework otomatis nyimpen cache annotation yang udah dikumpulin dan pake lagi pas startup berikutnya.
+Kalau collectornya gak dikonfigurasi, custom annotation cuma bakal jalan pas `server` pertama kali dijalankan, tapi gagal di startup berikutnya.
 
 ```php
 <?php
 
 return [
-    // Perhatikan bahwa pada file konfigurasi di config/autoload tidak ada layer annotations ini
+    // Perhatikan bahwa tidak ada level annotations dalam file konfigurasi di bawah folder config/autoload
     'annotations' => [
         'scan' => [
             'collectors' => [
@@ -207,27 +141,23 @@ return [
         ],
     ],
 ];
-
 ```
 
-### Memanfaatkan data annotation
+### Memanfaatkan Data Annotation
 
-Ketika tidak ada method pengumpulan annotation kustom, metadata annotation akan
-dikumpulkan di class `Hyperf\Di\Annotation\AnnotationCollector` secara default.
-Static method dari class tersebut dapat dengan mudah memperoleh metadata yang
-sesuai untuk penilaian logika atau implementasi.
+Kalau Anda gak define metode pengumpulan annotation sendiri, metadata annotation bakal dikumpulin ke `Hyperf\Di\Annotation\AnnotationCollector` secara default. Lewat method statis dari kelas ini, Anda bisa dapetin metadata yang dibutuhin buat logika atau implementasi.
 
 ### Fitur ClassMap
 
-Framework ini menyediakan konfigurasi `class_map`, yang memungkinkan pengguna untuk dengan mudah mengganti class yang perlu dimuat.
+Framework menyediakan konfigurasi `class_map`, yang dapat memudahkan pengguna untuk langsung mengganti kelas yang perlu dimuat.
 
-Misalnya, kita mengimplementasikan fitur yang secara otomatis dapat menyalin *coroutine context*:
+Sebagai contoh, kita mengimplementasikan fungsi yang dapat secara otomatis menyalin coroutine context:
 
-Pertama, kita mengimplementasikan class `Coroutine` yang digunakan untuk menyalin context. Method `create()` di dalamnya, dapat menyalin context dari parent ke child.
+Pertama, kita implementasikan kelas `Coroutine` untuk menyalin context. Method `create()` dapat menyalin context dari parent class ke subclass.
 
-Untuk menghindari konflik penamaan, disepakati untuk menggunakan `class_map` sebagai nama folder, diikuti dengan folder namespace dan file yang akan diganti.
+Untuk menghindari konflik penamaan, disepakati untuk menggunakan `class_map` sebagai nama folder, diikuti oleh folder dan file dari namespace yang akan diganti.
 
-Contoh: `class_map/Hyperf/Coroutine/Coroutine.php`
+Seperti: `class_map/Hyperf/Coroutine/Coroutine.php`
 
 [Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/Context/Coroutine.php)
 
@@ -265,15 +195,15 @@ class Coroutine
     }
 
     /**
-     * @return int Returns the coroutine ID of the coroutine just created.
-     *             Returns -1 when coroutine create failed.
+     * @return int Mengembalikan ID coroutine dari coroutine yang baru dibuat.
+     *             Mengembalikan -1 ketika pembuatan coroutine gagal.
      */
     public function create(callable $callable): int
     {
         $id = Co::id();
         $coroutine = Co::create(function () use ($callable, $id) {
             try {
-                // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
+                // Tidak boleh menyalin semua context untuk menghindari socket yang sudah terikat ke coroutine lain.
                 Context::copy($id, [
                     AppendRequestIdProcessor::REQUEST_ID,
                     ServerRequestInterface::class,
@@ -292,10 +222,9 @@ class Coroutine
         }
     }
 }
-
 ```
 
-Kemudian, kita mengimplementasikan objek yang persis sama dengan `Hyperf\Coroutine\Coroutine`. Di mana method `create()` diganti dengan method yang telah kita implementasikan di atas.
+Kemudian, kita implementasikan objek yang persis sama dengan `Hyperf\Coroutine\Coroutine`. Method `create()` diganti dengan method yang kita implementasikan di atas.
 
 [Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/ClassMap/Coroutine.php)
 
@@ -326,8 +255,8 @@ use Throwable;
 class Coroutine
 {
     /**
-     * Returns the current coroutine ID.
-     * Returns -1 when running in non-coroutine context.
+     * Mengembalikan ID coroutine saat ini.
+     * Mengembalikan -1 ketika berjalan di konteks non-coroutine.
      */
     public static function id(): int
     {
@@ -351,10 +280,10 @@ class Coroutine
     }
 
     /**
-     * Returns the parent coroutine ID.
-     * Returns 0 when running in the top level coroutine.
-     * @throws RunningInNonCoroutineException when running in non-coroutine context
-     * @throws CoroutineDestroyedException when the coroutine has been destroyed
+     * Mengembalikan ID coroutine parent.
+     * Mengembalikan 0 ketika berjalan di tingkat coroutine paling atas.
+     * @throws RunningInNonCoroutineException ketika berjalan di konteks non-coroutine
+     * @throws CoroutineDestroyedException ketika coroutine telah dihancurkan
      */
     public static function parentId(?int $coroutineId = null): int
     {
@@ -362,8 +291,8 @@ class Coroutine
     }
 
     /**
-     * @return int Returns the coroutine ID of the coroutine just created.
-     *             Returns -1 when coroutine create failed.
+     * @return int Mengembalikan ID coroutine dari coroutine yang baru dibuat.
+     *             Mengembalikan -1 ketika pembuatan coroutine gagal.
      */
     public static function create(callable $callable): int
     {
@@ -385,10 +314,9 @@ class Coroutine
         return Co::exists($id);
     }
 }
-
 ```
 
-Lalu konfigurasikan `class_map` sebagai berikut:
+Kemudian konfigurasi `class_map`, sebagai berikut:
 
 ```php
 <?php
@@ -406,12 +334,11 @@ return [
             'mixin',
         ],
         'class_map' => [
-            // Nama class yang akan dipetakan => path file tempat class berada
+            // Nama kelas yang akan dipetakan => Path file tempat kelas berada
             Coroutine::class => BASE_PATH . '/class_map/Hyperf/Coroutine/Coroutine.php',
         ],
     ],
 ];
-
 ```
 
-Dengan demikian, method seperti `co()` dan `parallel()` secara otomatis bisa mendapatkan data di context dari parent coroutine, misalnya `Request`.
+Dengan begitu, method seperti `co()` dan `parallel()` bisa otomatis dapetin parent coroutine beserta data di context, misalnya `Request`.
