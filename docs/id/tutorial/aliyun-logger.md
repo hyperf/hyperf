@@ -2,7 +2,7 @@
 
 Saat men-deploy proyek di cluster `Docker Swarm`, pengumpulan log bisa jadi rumit. Untungnya, Alibaba Cloud menyediakan `Log Collection System` yang sangat praktis. Dokumen ini akan memperkenalkan cara menggunakannya.
 
-* [Pengaturan Cluster Docker Swarm](docker-swarm.md)
+* [Pengaturan Cluster Docker Swarm](id/tutorial/docker-swarm.md)
 
 ## Mengaktifkan Log Service
 

@@ -4,7 +4,7 @@
 
 > Jika Anda menggunakan Swoole 4.7.0 atau lebih tinggi dengan opsi native curl yang diaktifkan, Anda tidak perlu mengikuti dokumentasi ini.
 
-> Karena komponen ini menggunakan `Curl` secara default, kita perlu mengganti `GuzzleClient` dengan client yang mendukung coroutine, atau memodifikasi konstanta [SWOOLE_HOOK_FLAGS](../coroutine.md#swoole-runtime-hook-level).
+> Karena komponen ini menggunakan `Curl` secara default, kita perlu mengganti `GuzzleClient` dengan client yang mendukung coroutine, atau memodifikasi konstanta [SWOOLE_HOOK_FLAGS](id/coroutine.md#swoole-runtime-hook-level).
 
 ## Mengganti `Handler`
 
@@ -41,7 +41,7 @@ $app->oauth->setGuzzleOptions([
 
 ## Memodifikasi `SWOOLE_HOOK_FLAGS`
 
-Lihat [SWOOLE_HOOK_FLAGS](../coroutine.md#swoole-runtime-hook-level).
+Lihat [SWOOLE_HOOK_FLAGS](id/coroutine.md#swoole-runtime-hook-level).
 
 ## Cara Menggunakan EasyWeChat
 
