@@ -1,66 +1,43 @@
 # Snowflake
 
-## Pengenalan Algoritma
+## Pendahuluan
 
-`Snowflake` adalah algoritma pembuatan ID unik global terdistribusi yang
-diusulkan oleh Twitter. Hasil dari algoritma pembuat `ID` ini berupa integer
-panjang dengan ukuran `64bit`. Pada algoritma standar, strukturnya ditunjukkan
-pada gambar di bawah ini:
+`Snowflake` adalah algoritma global unique ID generation terdistribusi yang diusulkan oleh Twitter. Hasil yang dihasilkan oleh algoritma ini adalah bilangan bulat panjang `64bit`. Dalam algoritma standar, strukturnya seperti yang ditunjukkan di bawah ini:
 
 ![snowflake](imgs/snowflake.jpeg)
 
-- `One bit`, tidak digunakan.
-  - Bit tertinggi dalam sistem biner adalah bit tanda (sign bit). `ID` yang
-    kita hasilkan umumnya berupa integer positif, sehingga bit tertinggi
-    diatur tetap menjadi 0.
-  
-- `41 bits` untuk mencatat timestamp (MS).
-  - `41 bits` dapat merepresentasikan `2^41 - 1` angka.
-  - Dengan kata lain, `41 bits` dapat merepresentasikan nilai milidetik sebesar
-    `2^41 - 1`, dan dalam satuan tahun adalah
-    `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` atau sekitar `69` tahun.
-  
-- `10 bits`, digunakan untuk mencatat `ID` mesin pekerja (working machine).
-  - Dapat di-deploy di `2^10` node, termasuk `5` bit `DatacenterId` dan `5` bit
-    `WorkerId`.
-  
-- `12 bits`, nomor seri (serial number), digunakan untuk mencatat `id` berbeda
-  yang dibuat dalam milidetik yang sama.
-  - `12 bits` dapat mewakili angka integer positif maksimum `2^12 - 1` dengan
-    total `4095` angka, yang mewakili `4095` nomor seri `ID` yang dibuat oleh
-    mesin yang sama dalam interval waktu yang sama (MS).
+- `1 bit`, tidak digunakan.
+  - Bit tertinggi dalam biner adalah bit tanda. `ID` yang kita hasilkan umumnya adalah bilangan bulat positif, jadi bit tertinggi ini ditetapkan ke 0.
 
-`Snowflake` dapat menjamin bahwa:
+- `41 bits`, digunakan untuk mencatat timestamp (milidetik).
+  - `41 bits` dapat merepresentasikan angka `2^41 - 1`.
+  - Artinya, `41 bits` dapat merepresentasikan `2^41 - 1` nilai milidetik. Dikonversi menjadi tahun, yaitu `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` sekitar `69` tahun.
 
- - Semua `ID` yang dihasilkan bertambah seiring waktu.
- - Tidak ada `ID` duplikat yang akan dibuat di seluruh sistem terdistribusi
-   (Karena terdapat perbedaan antara `DatacenterId (5 bits)` dan
-   `WorkerId (5 bits)`).
+- `10 bits`, digunakan untuk mencatat mesin `ID`.
+  - Dapat di-deploy pada total `2^10` yaitu `1024` node, termasuk `5 bits` `DatacenterId` dan `5 bits` `WorkerId`.
+
+- `12 bits`, nomor seri, digunakan untuk mencatat `id` yang berbeda yang dihasilkan dalam milidetik yang sama.
+  - Bilangan bulat positif maksimum yang dapat direpresentasikan oleh `12 bits` adalah `2^12 - 1`, total `4095` angka, digunakan untuk merepresentasikan `4095` nomor seri `ID` yang dihasilkan pada mesin yang sama pada timestamp (milidetik) yang sama.
+
+`Snowflake` dapat menjamin:
+
+ - Semua `ID` yang dihasilkan bertambah berdasarkan tren waktu.
+ - Tidak ada `ID` duplikat yang akan dihasilkan di seluruh sistem terdistribusi (karena `DatacenterId (5 bits)` dan `WorkerId (5 bits)` digunakan untuk pembedaan).
  
-Komponen [hyperf/snowflake](https://github.com/hyperf/snowflake) menyediakan
-ekstabilitas yang baik dalam desainnya, memungkinkan Anda untuk
-mengimplementasikan algoritma varian lain berbasis snowflake dengan ekstensi
-yang sederhana.
+Komponen `Hyperf/snowflake` memiliki scalability yang baik dalam desain, memungkinkan Anda untuk mengimplementasikan algoritma varian lain berdasarkan Snowflake melalui ekstensi sederhana.
 
 ## Instalasi
 
-```
+```bash
 composer require hyperf/snowflake
 ```
 
 ## Penggunaan
 
-Framework menyediakan `MetaGeneratorInterface` dan `IdGeneratorInterface`.
-`MetaGeneratorInterface` menghasilkan file `Meta` dari `ID`, dan
-`IdGeneratorInterface` menghasilkan `distributed ID` berdasarkan file `Meta`
-yang sesuai.
+Framework menyediakan `MetaGeneratorInterface` dan `IdGeneratorInterface`. `MetaGeneratorInterface` akan menghasilkan file `Meta` untuk `ID`, dan `IdGeneratorInterface` akan menghasilkan `distributed ID` berdasarkan file `Meta` yang sesuai.
 
-Secara default, `MetaGeneratorInterface` yang digunakan oleh framework adalah
-`generator tingkat milidetik` berbasis `Redis`.
-File konfigurasi terletak di `config/autoload/snowflake.php`. Jika file
-konfigurasi tidak ada, Anda dapat menjalankan perintah
-`php bin/hyperf.php vendor:publish hyperf/snowflake` untuk membuat konfigurasi
-default. Isi dari file konfigurasi adalah sebagai berikut:
+`MetaGeneratorInterface` yang digunakan oleh framework secara default adalah `generator level milidetik` berbasis `Redis`.
+File konfigurasi terletak di `config/autoload/snowflake.php`. Jika file konfigurasi tidak ada, Anda dapat membuat konfigurasi default dengan menjalankan perintah `php bin/hyperf.php vendor:publish hyperf/snowflake`. Isi file konfigurasi adalah sebagai berikut:
 
 ```php
 <?php
@@ -76,21 +53,19 @@ return [
     RedisMilliSecondMetaGenerator::class => [
         // Redis Pool
         'pool' => 'default',
-        // To calculate the Key of WorkerId
+        // Key yang digunakan untuk menghitung WorkerId
         'key' => RedisMilliSecondMetaGenerator::DEFAULT_REDIS_KEY
     ],
     RedisSecondMetaGenerator::class => [
         // Redis Pool
         'pool' => 'default',
-        // To calculate the Key of WorkerId
+        // Key yang digunakan untuk menghitung WorkerId
         'key' => RedisMilliSecondMetaGenerator::DEFAULT_REDIS_KEY
     ],
 ];
-
 ```
 
-Menggunakan `Snowflake` di dalam framework sangatlah mudah. Anda hanya perlu
-mengambil objek `IdGeneratorInterface` dari `DI`.
+Menggunakan `Snowflake` di framework sangat sederhana, Anda hanya perlu mengambil objek `IdGeneratorInterface` dari `DI`.
 
 ```php
 <?php
@@ -103,8 +78,7 @@ $generator = $container->get(IdGeneratorInterface::class);
 $id = $generator->generate();
 ```
 
-Ketika Anda perlu mengembalikan `Meta` dari `ID` yang bersangkutan, Anda hanya
-perlu memanggil `degenerate`.
+Ketika Anda perlu melakukan inferensi balik dari `ID` ke `Meta` yang sesuai, Anda hanya perlu memanggil `degenerate`.
 
 ```php
 <?php
@@ -117,33 +91,23 @@ $generator = $container->get(IdGeneratorInterface::class);
 $meta = $generator->degenerate($id);
 ```
 
-## Override Generator 'Meta'
+## Menulis Ulang `Meta` Generator
 
-Ada banyak cara untuk mengimplementasikan `distributed global unique ID`, dan
-ada juga banyak varian berdasarkan algoritma `Snowflake`. Meskipun semuanya
-adalah algoritma `Snowflake`, mereka tidaklah sama. Sebagai contoh, seseorang
-mungkin membuat `Meta` berdasarkan `UserId` alih-alih `WorkerId`. Selanjutnya,
-mari kita buat implementasi `MetaGenerator` sederhana.
-
-Secara singkat, `UserId` pasti akan melebihi '10 bits'. Oleh karena itu,
-`DataCenterId` dan `WorkerId` default tidak dapat menampungnya secara langsung.
-Dengan demikian, nilai modulo dari `UserId` perlu digunakan.
+Ada banyak cara untuk mengimplementasikan `distributed global unique ID`, dan juga ada banyak algoritma varian yang didasarkan pada algoritma `Snowflake`. Meskipun semuanya adalah algoritma `Snowflake`, mereka tidak semuanya sama. Misalnya, beberapa orang mungkin menghasilkan `Meta` berdasarkan `UserId` daripada `WorkerId`. Selanjutnya, mari kita implementasikan `MetaGenerator` sederhana.
+Sederhananya, `UserId` pasti akan melebihi `10 bits`, jadi `DataCenterId` dan `WorkerId` default tentu tidak dapat menampungnya, sehingga perlu mengambil modulo dari `UserId`.
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-use Hyperf\Snowflake\IdGenerator;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 
 class UserDefinedIdGenerator
 {
-    /**
-     * @var IdGenerator\SnowflakeIdGenerator
-     */
-    protected $idGenerator;
+    protected SnowflakeIdGenerator $idGenerator;
 
-    public function __construct(IdGenerator\SnowflakeIdGenerator $idGenerator)
+    public function __construct(SnowflakeIdGenerator $idGenerator)
     {
         $this->idGenerator = $idGenerator;
     }
@@ -168,21 +132,40 @@ $generator = $container->get(UserDefinedIdGenerator::class);
 $userId = 20190620;
 
 $id = $generator->generate($userId);
-
 ```
 
-## Penerapan Pada Model Database
+## Aplikasi di Database Model
 
-Setelah mengonfigurasi `Snowflake`, kita dapat membuat model database secara
-langsung menggunakan `ID` `Snowflake` sebagai primary key.
+Setelah mengkonfigurasi Snowflake, kita dapat membuat model database menggunakan snowflake id sebagai primary key secara langsung.
 
 ```php
 <?php
+use Hyperf\Database\Model\Model;
+use Hyperf\Snowflake\Concern\Snowflake;
 
-class User extends \Hyperf\Database\Model\Model {
-    use \Hyperf\Snowflake\Concern\Snowflake;
+class User extends Model {
+    use Snowflake;
 }
 ```
 
-Ketika model user dibuat, algoritma `Snowflake` akan digunakan untuk
-menghasilkan primary key secara default.
+Model User di atas akan secara default menggunakan algoritma Snowflake untuk menghasilkan primary key ketika dibuat.
+
+Karena Snowflake akan menimpa method `creating`, dan pengguna mungkin perlu mengatur method `creating` mereka sendiri, akan ada masalah dimana `ID` tidak dapat dihasilkan. Di sini, pengguna hanya perlu menanganinya sendiri sebagai berikut:
+
+```php
+<?php
+use Hyperf\Database\Model\Model;
+use Hyperf\Snowflake\Concern\Snowflake;
+
+class User extends Model {
+    use Snowflake {
+        creating as create;
+    }
+
+    public function creating()
+    {
+        $this->create();
+        // Lakukan sesuatu ...
+    }
+}
+```

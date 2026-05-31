@@ -1,101 +1,95 @@
 # Hyperf Swagger
 
-Komponen `hyperf/swagger` didasarkan pada `zircote/swagger-php` untuk pembungkusan (packaging).
+Komponen `hyperf/swagger` dikemas berdasarkan `zircote/swagger-php`.
 
-Untuk daftar lengkap anotasi yang didukung, silakan lihat [OpenApi\Annotations namespace](https://github.com/zircote/swagger-php/blob/master/src/Annotations) atau [Dokumentasi situs](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects).
+Untuk daftar lengkap anotasi yang didukung, lihat [OpenApi\Annotations namespace](https://github.com/zircote/swagger-php/blob/master/src/Annotations) atau [situs dokumentasi](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects).
 
 ## Instalasi
 
-```
+```bash
 composer require hyperf/swagger
 ```
 
 ## Konfigurasi
 
-```
+```bash
 php bin/hyperf.php vendor:publish hyperf/swagger
 ```
 
-| Nama parameter | Peran |
-| -------- | ------------------------------------------------------------ |
-| enable | Mengaktifkan atau menonaktifkan generator dokumen Swagger |
-| port | Nomor port generator dokumen Swagger |
-| json_dir | Direktori tempat file JSON yang dihasilkan oleh Generator Dokumen Swagger disimpan |
-| html | Path ke file HTML yang dihasilkan oleh generator dokumen Swagger |
-| url | Path URL ke dokumen Swagger |
-| auto_generate | Apakah akan menghasilkan dokumen Swagger secara otomatis |
-| scan.paths | Path ke file API interface yang akan dipindai, bertipe array | 
+| Parameter | Deskripsi |
+| --------- | ----------- |
+| enable | Apakah akan mengaktifkan generator dokumentasi Swagger |
+| port | Nomor port dari generator dokumentasi Swagger |
+| json_dir | Direktori tempat file JSON yang dihasilkan oleh generator dokumentasi Swagger disimpan |
+| html | Jalur file tempat file HTML yang dihasilkan oleh generator dokumentasi Swagger disimpan |
+| url | Jalur URL dari dokumentasi Swagger |
+| auto_generate | Apakah akan secara otomatis menghasilkan dokumentasi Swagger |
+| scan.paths | Array dari jalur file API interface yang perlu di-scan |
 
-## Menghasilkan dokumentasi
+## Menghasilkan Dokumentasi
 
-Jika `auto_generate` dikonfigurasi, dokumentasi akan dihasilkan secara
-otomatis pada event inisialisasi framework, tanpa perlu memanggil:
+Jika `auto_generate` dikonfigurasi, dokumentasi akan dihasilkan secara otomatis selama event inisialisasi framework, sehingga tidak perlu dipanggil secara manual.
+
 ```shell
 php bin/hyperf.php gen:swagger
 ```
 
 ## Penggunaan
 
-> Namespace SA yang muncul di bawah adalah `use Hyperf\Swagger\Annotation as SA`
+> Namespace SA yang disebutkan di bawah mengacu pada `use Hyperf\Swagger\Annotation as SA`.
 
-Framework dapat menjalankan beberapa server, dan route dari masing-masing
-server dapat dibedakan berdasarkan anotasi `SA\HyperfServer`, lalu menghasilkan
-file swagger yang berbeda (menggunakan konfigurasi tersebut sebagai nama
-file).
+Framework dapat menjalankan banyak server. Route dari setiap server dapat dibedakan dengan anotasi `SA\HyperfServer`, dan file Swagger yang berbeda dapat dihasilkan (menggunakan konfigurasi ini sebagai nama file).
 
 Ini dapat dikonfigurasi pada class controller atau method:
+
 ```php
 #[SA\HyperfServer('http')]
 ```
 
 ```php
-#[SA\Post(path: '/test', summary: 'POST form example', tags: ['Api/Test'])]
+#[SA\Post(path: '/test', summary: 'CONTOH POST form', tags: ['Api/Test'])]
 #[SA\RequestBody(
-    description: 'Request parameters'.
+    description: 'Parameter request',
     content: [
         new SA\MediaType(
-            mediaType: 'application/x-www-form-urlencoded'.
+            mediaType: 'application/x-www-form-urlencoded',
             schema: new SA\Schema(
-                required: ['username', 'age'].
+                required: ['username', 'age'],
                 properties: [
-                    new SA\Property(property: 'username', description: 'User name field description', type: 'string').
-                    new SA\Property(property: 'age', description: 'Age field description', type: 'string').
-                    new SA\Property(property: 'city', description: 'City field description', type: 'string').
+                    new SA\Property(property: 'username', description: 'Deskripsi field nama pengguna', type: 'string'),
+                    new SA\Property(property: 'age', description: 'Deskripsi field usia', type: 'string'),
+                    new SA\Property(property: 'city', description: 'Deskripsi field kota', type: 'string'),
                 ]
-            ).
-        ).
-    ].
+            ),
+        ),
+    ],
 )]
-#[SA\Response(response: 200, description: 'Description of the returned value')]
+#[SA\Response(response: 200, description: 'Deskripsi nilai kembalian')]
 public function test()
 {
 }
 ```
 
 ```php
-#[SA\Get(path: '/test', summary: 'GET example', tags: ['Api/Test'])]
-#[SA\Parameter(name: 'username', description: 'User name field description', in : 'query', required: true, schema: new SA\Schema(type: 'string'))]
-#[SA\Parameter(name: 'age', description: 'Age field description', in : 'query', required: true, schema: new SA\Schema(type: 'string'))]
-#[SA\Parameter(name: 'city', description: 'City field description', in : 'query', required: false, schema: new SA\Schema(type: 'string'))]
+#[SA\Get(path: '/test', summary: 'CONTOH GET', tags: ['Api/Test'])]
+#[SA\QueryParameter(name: 'username', description: 'Deskripsi field nama pengguna', required: true, schema: new SA\Schema(type: 'string'))]
+#[SA\QueryParameter(name: 'age', description: 'Deskripsi field usia', required: true, schema: new SA\Schema(type: 'string'))]
+#[SA\QueryParameter(name: 'city', description: 'Deskripsi field kota', required: false, schema: new SA\Schema(type: 'string'))]
 #[SA\Response(
-    response: 200.
-    description: 'Description of the returned value'.
+    response: 200,
+    description: 'Deskripsi nilai kembalian',
     content: new SA\JsonContent(
-        example: '{"code":200, "data":[]}'
-    ).
+        example: '{"code":200,"data":[]}'
+    ),
 )]
 public function list(ConversationRequest $request): array
 {
 }
 ```
 
-### Kombinasi validator
+### Bekerja dengan Validator
 
-Pada anotasi `SA\Property` dan `SA\QueryParameter`, kita dapat menambahkan
-parameter `rules`,
-
-lalu bekerja sama dengan `SwaggerRequest` untuk memverifikasi validitas
-parameter di dalam middleware.
+Dalam anotasi `SA\Property` dan `SA\QueryParameter`, kita dapat menambahkan parameter `rules`, lalu menggunakan `SwaggerRequest` pada middleware untuk memvalidasi parameter tersebut.
 
 ```php
 <?php
@@ -109,11 +103,11 @@ use Hyperf\Swagger\Annotation as SA;
 #[SA\HyperfServer(name: 'http')]
 class CardController extends Controller
 {
-    #[SA\Post('/user/save', summary: 'Save user info', tags: ['user-management'])]
-    #[SA\QueryParameter(name: 'token', description: 'auth token', type: 'string', rules: 'required|string')]
+    #[SA\Post('/user/save', summary: 'Simpan informasi pengguna', tags: ['Manajemen Pengguna'])]
+    #[SA\QueryParameter(name: 'token', description: 'Token autentikasi', type: 'string', rules: 'required|string')]
     #[SA\RequestBody(content: new SA\JsonContent(properties: [
-        new SA\Property(property: 'nickname', type: 'integer', rules: 'required|string'),
-        new SA\Property(property: 'gender', type: 'integer', rules: 'required|integer|in:0,1,2'),
+        new SA\Property(property: 'nickname', description: 'Nama panggilan', type: 'integer', rules: 'required|string'),
+        new SA\Property(property: 'gender', description: 'Jenis kelamin', type: 'integer', rules: 'required|integer|in:0,1,2'),
     ]))]
     #[SA\Response(response: '200', content: new SA\JsonContent(ref: '#/components/schemas/SavedSchema'))]
     public function info(SwaggerRequest $request)
@@ -125,10 +119,9 @@ class CardController extends Controller
 }
 ```
 
-### Mengganti Swagger Dashboard
+### Mengganti Swagger UI
 
-Berikut ini adalah halaman default front-end Swagger. Anda dapat mengubah
-konfigurasi `swagger.html` untuk menggantinya.
+Berikut adalah halaman front-end default Swagger. Jika perlu dikustomisasi, ubah konfigurasi `swagger.html`.
 
 ```html
 <!DOCTYPE html>
@@ -161,7 +154,7 @@ konfigurasi `swagger.html` untuk menggantinya.
     };
     function GetQueryString(name) {
       var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var r = window.location.search.substr(1).match(reg); // Ambil string setelah '?' di URL dan cocokkan dengan regular expression
       var context = "";
       if (r != null)
         context = decodeURIComponent(r[2]);
@@ -174,8 +167,7 @@ konfigurasi `swagger.html` untuk menggantinya.
 </html>
 ```
 
-Sebagai contoh, ketika domain `unpkg.hyperf.wiki` tidak dapat diakses, Anda
-dapat menggantinya menjadi `unpkg.com`.
+Sebagai contoh, jika `unpkg.hyperf.wiki` tidak tersedia, Anda dapat menggantinya secara manual dengan `unpkg.com` dengan memodifikasi konfigurasi `config/autoload/swagger.php`.
 
 ```php
 <?php
@@ -217,7 +209,7 @@ return [
     };
     function GetQueryString(name) {
       var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var r = window.location.search.substr(1).match(reg); // Ambil string setelah '?' di URL dan cocokkan dengan regular expression
       var context = "";
       if (r != null)
         context = decodeURIComponent(r[2]);
@@ -235,5 +227,4 @@ HTML,
         'paths' => null,
     ],
 ];
-
 ```

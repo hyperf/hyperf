@@ -1,165 +1,148 @@
 * Pendahuluan
-
-  * [Tentang Hyperf](id/README.md)
-  * [Komunikasi](id/communication.md)
-  * [Donasi](id/donate.md)
-  * [Kontribusi](id/contribute.md)
+  * [Pendahuluan Proyek](id/README.md)
+  * [Komunitas Online](id/communication.md)
+  * [Donasi dan Sponsor](id/donate.md)
+  * [Berkontribusi](id/contribute.md)
   * [Layanan Enterprise](id/enterprise-service.md)
 
-* Versi
-
+* Manajemen Versi
   * [Perencanaan Rilis](id/release-planning.md)
   * [Versi](id/versions.md)
-  * [Changelog](id/changelog/3.1.md)
+  * [Catatan Perubahan](id/changelog/3.1.md)
 
-* Mulai Cepat
-
+* Memulai
   * [Instalasi](id/quick-start/install.md)
   * [Mulai Cepat](id/quick-start/overview.md)
   * [FAQ](id/quick-start/questions.md)
-  * [Pemberitahuan Penggunaan](id/quick-start/important.md)
+  * [Hal Penting](id/quick-start/important.md)
+  * [Video Tutorial](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * Arsitektur Inti
-
   * [Siklus Hidup](id/lifecycle.md)
   * [Coroutine](id/coroutine.md)
   * [Konfigurasi](id/config.md)
-  * [Anotasi](id/annotation.md)
+  * [Annotation](id/annotation.md)
   * [Dependency Injection](id/di.md)
-  * [Event Dispatcher](id/event.md)
-  * [AOP](id/aop.md)
+  * [Mekanisme Event](id/event.md)
+  * [AOP (Aspect-Oriented Programming)](id/aop.md)
 
-* Fondasi
-
+* Fitur Dasar
   * [Router](id/router.md)
   * [Middleware](id/middleware/middleware.md)
   * [Controller](id/controller.md)
   * [Request](id/request.md)
   * [Response](id/response.md)
-  * [Exception Handler](id/exception-handler.md)
+  * [Penanganan Exception](id/exception-handler.md)
   * [Cache](id/cache.md)
   * [Logger](id/logger.md)
   * [Paginator](id/paginator.md)
-  * [Command](id/command.md)
+  * [Command Line](id/command.md)
   * [Testing](id/testing.md)
   * [View](id/view.md)
   * [View Engine](id/view-engine.md)
-  * [Translation](id/translation.md)
-  * [Validation](id/validation.md)
-  * [Session](id/session.md)
-  * [File System](id/filesystem.md)
+  * [Internasionalisasi](id/translation.md)
+  * [Validator](id/validation.md)
+  * [Manajemen Session](id/session.md)
+  * [Filesystem](id/filesystem.md)
 
-* Database
-
+* Model Database
   * [Mulai Cepat](id/db/quick-start.md)
   * [Query Builder](id/db/querybuilder.md)
   * [Model](id/db/model.md)
   * [Generator](id/db/gen.md)
   * [Relationship](id/db/relationship.md)
-  * [Paginator](id/db/paginator.md)
-  * [Model Event](id/db/event.md)
-  * [Model Cache](id/db/model-cache.md)
-  * [Migration](id/db/migration.md)
+  * [Paginasi](id/db/paginator.md)
+  * [Model Events](id/db/event.md)
+  * [Model Caching](id/db/model-cache.md)
+  * [Database Migration](id/db/migration.md)
   * [Mutator](id/db/mutators.md)
-  * [Simple DB](id/db/db.md)
-  * [API Resource](id/db/resource.md)
+  * [Komponen DB](id/db/db.md)
+  * [API Resources](id/db/resource.md)
   * [Scout](id/scout.md)
 
 * Ekosistem Hyperf
-
-  * [Nano](id/nano.md)
+  * [Nano](https://github.com/hyperf/nano)
   * [GoTask](https://github.com/hyperf/gotask)
   * [Box](id/eco/box.md)
 
 * Microservice
-
-  * [Konsep](id/microservice.md)
+  * [Arsitektur](id/microservice.md)
   * [JSON RPC](id/json-rpc.md)
   * [gRPC](id/grpc.md)
   * [Multiplex RPC](id/rpc-multiplex.md)
-  * [Registrasi Layanan](id/service-register.md)
+  * [Service Registration](id/service-register.md)
   * [Retry](id/retry.md)
-  * [Service Circuit Breaker](id/circuit-breaker.md)
-  * [Rate Limit](id/rate-limit.md)
+  * [Circuit Breaker](id/circuit-breaker.md)
+  * [Rate Limiting](id/rate-limit.md)
   * [Configuration Center](id/config-center.md)
   * [Tracing](id/tracer.md)
-  * [Metric](id/metric.md)
+  * [Metrics](id/metric.md)
   * [Distributed Transaction](id/distributed-transaction.md)
   * [Snowflake](id/snowflake.md)
 
-* Server
-
-  * [Tcp Server](id/tcp-server.md)
+* Layanan Jaringan
+  * [TCP/UDP Server](id/tcp-server.md)
   * [WebSocket Server](id/websocket-server.md)
-  * [Socket.io](id/socketio-server.md)
-  * [Coroutine Style Server](id/coroutine-server.md)
+  * [Socket.io Server](id/socketio-server.md)
+  * [Coroutine-style Server](id/coroutine-server.md)
 
 * Message Queue
-
-  * [Redis Queue](id/async-queue.md)
+  * [Redis Async Queue](id/async-queue.md)
   * [AMQP](id/amqp.md)
   * [Nats](id/nats.md)
   * [NSQ](id/nsq.md)
   * [Kafka](id/kafka.md)
 
-* Clients
-
-  * [Redis Client](id/redis.md)
-  * [Guzzle HTTP Client](id/guzzle.md)
-  * [Elasticsearch Client](id/elasticsearch.md)
-  * [Consul Client](id/consul.md)
-  * [ETCD Client](id/etcd.md)
-  * [WebSocket Client](id/websocket-client.md)
+* Client
+  * [Redis Coroutine Client](id/redis.md)
+  * [Guzzle Coroutine Client](id/guzzle.md)
+  * [Elasticsearch Coroutine Client](id/elasticsearch.md)
+  * [Consul Coroutine Client](id/consul.md)
+  * [ETCD Coroutine Client](id/etcd.md)
+  * [WebSocket Coroutine Client](id/websocket-client.md)
   * [Nacos](id/nacos.md)
   * [Jet](id/jet.md)
 
 * Komponen Lainnya
-
   * [Connection Pool](id/pool.md)
   * [Custom Process](id/process.md)
-  * [Support](id/support.md)
+  * [Support Classes](id/support.md)
   * [Crontab](id/crontab.md)
-  * [Task](id/task.md)
-  * [Enum](id/constants.md)
-  * [Signal Manager](id/signal.md)
+  * [Mekanisme Task](id/task.md)
+  * [Constants](id/constants.md)
+  * [Signal Handler](id/signal.md)
   * [ReactiveX](id/reactive-x.md)
   * [Watcher](id/watcher.md)
-  * [Dev Tool](id/devtool.md)
-  * [Phar](id/phar.md)
+  * [Developer Tools](id/devtool.md)
+  * [Phar Packer](id/phar.md)
   * [DAG](id/dag.md)
   * [RPN](id/rpn.md)
   * [Swagger](id/swagger.md)
-  * [GraphQL](id/graphql.md)
 
 * Deployment
-
-  * [Membangun Kluster Docker Swarm](id/tutorial/docker-swarm.md)
-  * [Membangun DaoCloud DevOps](id/tutorial/daocloud.md)
-  * [Deploy Menggunakan Supervisor](id/tutorial/supervisor.md)
+  * [Docker Swarm Deployment](id/tutorial/docker-swarm.md)
+  * [DaoCloud DevOps](id/tutorial/daocloud.md)
+  * [Supervisor Deployment](id/tutorial/supervisor.md)
   * [Nginx Reverse Proxy](id/tutorial/nginx.md)
-  * [Aliyun Logger Service](id/tutorial/aliyun-logger.md)
+  * [Aliyun Log Service](id/tutorial/aliyun-logger.md)
 
 * Awesome Hyperf
-
-  * [Awesome Components](id/awesome-components.md)
+  * [Pustaka Komponen Coroutine](id/awesome-components.md)
 
 * Panduan Pengembangan Komponen
-
   * [Pendahuluan](id/component-guide/intro.md)
-  * [Membuat Komponen Baru](id/component-guide/create.md)
-  * [ConfigProvider](id/component-guide/configprovider.md)
+  * [Membuat Komponen](id/component-guide/create.md)
+  * [Mekanisme ConfigProvider](id/component-guide/configprovider.md)
 
-* Changelog Lama
-
-  * [v3.0](id/changelog/3.0.md)
-  * [v2.2](id/changelog/2.2.md)
-  * [v2.1](id/changelog/2.1.md)
-  * [v2.0](id/changelog/2.0.md)
-  * [v1.1](id/changelog/1.1.md)
-  * [v1.0](id/changelog/1.0.md)
+* Riwayat Perubahan
+  * [Perubahan 3.0](id/changelog/3.0.md)
+  * [Perubahan 2.2](id/changelog/2.2.md)
+  * [Perubahan 2.1](id/changelog/2.1.md)
+  * [Perubahan 2.0](id/changelog/2.0.md)
+  * [Perubahan 1.1](id/changelog/1.1.md)
+  * [Perubahan 1.0](id/changelog/1.0.md)
 
 * Panduan Upgrade
-
   * [Panduan Upgrade 1.1](id/upgrade/1.1.md)
   * [Panduan Upgrade 2.0](id/upgrade/2.0.md)
   * [Panduan Upgrade 2.1](id/upgrade/2.1.md)

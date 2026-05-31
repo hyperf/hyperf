@@ -1,7 +1,6 @@
 # Signal Handler
 
-Signal handler akan mendengarkan proses `Worker` dan proses `custom` serta
-mendaftar secara otomatis ke signal manager setelah dimulai.
+Signal handler secara otomatis mendaftar ke signal manager setelah process `Worker` dan process `Custom` dimulai.
 
 ## Instalasi
 
@@ -9,10 +8,9 @@ mendaftar secara otomatis ke signal manager setelah dimulai.
 composer require hyperf/signal
 ```
 
-## Publikasikan Konfigurasi
+## Publikasi Konfigurasi
 
-Anda dapat mempublikasikan file konfigurasi default ke proyek Anda dengan
-perintah berikut:
+Anda dapat mempublikasikan file konfigurasi default ke proyek Anda menggunakan perintah berikut:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/signal
@@ -20,8 +18,7 @@ php bin/hyperf.php vendor:publish hyperf/signal
 
 ## Menambahkan Handler
 
-Berikut ini kita mendengarkan signal `SIGTERM` dari proses `Worker`, dan
-mencetak nilai signal saat signal tersebut diterima.
+Di bawah ini, kita mendengarkan sinyal `SIGTERM` dari process `Worker`. Ketika sinyal diterima, kita mencetak nilai sinyal tersebut.
 
 ```php
 <?php
@@ -48,16 +45,11 @@ class TermSignalHandler implements SignalHandlerInterface
         var_dump($signal);
     }
 }
-
 ```
 
-Karena signal SIGTERM yang diterima oleh proses Worker ditangkap, ia tidak dapat
-keluar secara normal. Oleh karena itu, pengguna dapat langsung menekan
-`Ctrl + C` untuk keluar, atau mengubah konfigurasi `config/autoload/signal.php`
-sebagai berikut:
+Karena sinyal `SIGTERM` yang diterima oleh process Worker tidak dapat keluar secara normal setelah ditangkap, pengguna dapat langsung `Ctrl + C` untuk keluar, atau memodifikasi konfigurasi `config/autoload/signal.php` sebagai berikut:
 
-> WorkerStopHandler tidak cocok untuk CoroutineServer, silakan implementasikan
-> sendiri jika diperlukan
+> WorkerStopHandler tidak cocok untuk CoroutineServer. Jika diperlukan, silakan implementasikan sendiri.
 
 ```php
 <?php
@@ -72,16 +64,11 @@ return [
 ];
 ```
 
-Setelah `WorkerStopHandler` dipicu, ia akan menutup proses saat ini setelah
-waktu konfigurasi
-[max_wait_time](https://wiki.swoole.com/#/server/setting?id=max_wait_time) yang
-telah ditentukan.
+Setelah `WorkerStopHandler` terpicu, process saat ini akan ditutup setelah melebihi waktu konfigurasi [max_wait_time](https://wiki.swoole.com/#/server/setting?id=max_wait_time).
 
-## Contoh Konfigurasi Listener Layanan Bergaya Coroutine
+## Contoh Konfigurasi Listener untuk Coroutine-style Server
 
-> Listener default di atas semuanya disesuaikan untuk layanan bergaya asinkron.
-> Jika Anda perlu menggunakannya dalam layanan bergaya coroutine, Anda dapat
-> menyesuaikan konfigurasinya sebagai berikut
+> Listener default di atas diadaptasi untuk layanan gaya asynchronous. Jika Anda perlu menggunakannya di layanan gaya coroutine, Anda dapat mengikuti konfigurasi kustom di bawah ini:
 
 ```php
 <?php
@@ -111,7 +98,7 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
 
     public function listen(): array
     {
-        // There is only one Worker process in the coroutine style, so you only need to monitor the WORKER here.
+        // Gaya coroutine hanya akan memiliki satu process Worker, jadi kita hanya perlu mendengarkan WORKER di sini.
         return [
             [self::WORKER, SIGTERM],
             [self::WORKER, SIGINT],
@@ -123,10 +110,9 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
         ProcessManager::setRunning(false);
 
         foreach (ServerManager::list() as [$type, $server]) {
-            // Cyclically close open services
+            // Loop melalui dan matikan server yang sudah dimulai
             $server->shutdown();
         }
     }
 }
-
 ```

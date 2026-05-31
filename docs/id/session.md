@@ -1,15 +1,6 @@
-# Manajemen Session
+# Session Management
 
-HTTP adalah protokol stateless, yang berarti server tidak menyimpan state apa
-pun selama transaksi dengan klien. Namun, saat mengembangkan aplikasi web,
-sering kali ada kebutuhan untuk berbagi informasi di antara beberapa request,
-yang biasanya dilakukan melalui session storage. Anda dapat mengimplementasikan
-fungsi session dengan [hyperf/session](https://github.com/hyperf/session).
-Komponen session saat ini hanya mengimplementasikan dua storage driver, yaitu
-`file` dan `Redis`. Standarnya adalah driver `file`. Di lingkungan produksi,
-kami sangat menyarankan Anda menggunakan `Redis` karena memiliki performa yang
-jauh lebih baik dibandingkan dengan alternatif `file` dan juga lebih cocok untuk
-arsitektur cluster.
+HTTP itu protokol stateless, artinya server gak nyimpen state apapun selama transaksi dengan client. Makanya, pas ngembangin aplikasi HTTP Server, kita biasanya pake Session buat sharing data user antar request. Anda bisa pake [hyperf/session](https://github.com/hyperf/session) buat implementasi Session. Komponen Session saat ini cuma support dua storage driver: `File` dan `Redis`. Defaultnya `File`. Di production, kami sangat rekomen `Redis` sebagai storage driver, soalnya performanya lebih baik dan cocok buat arsitektur cluster.
 
 # Instalasi
 
@@ -19,63 +10,42 @@ composer require hyperf/session
 
 # Konfigurasi
 
-Konfigurasi komponen session disimpan di dalam file
-`config/autoload/session.php`. Jika file tersebut tidak ada, Anda dapat
-menggunakan perintah `php bin/hyperf.php vendor:publish hyperf/session` untuk
-menerbitkan (publish) file konfigurasi dari komponen session.
+Konfigurasi Session component disimpan di `config/autoload/session.php`. Kalo filenya gak ada, tinggal publish ke Skeleton lewat `php bin/hyperf.php vendor:publish hyperf/session`.
 
-## Konfigurasi session middleware
+## Mengonfigurasi Session Middleware
 
-Sebelum menggunakan session, Anda perlu mengonfigurasi middleware
-`Hyperf\Session\Middleware\SessionMiddleware` sebagai middleware global dari
-HTTP Server agar komponen tersebut dapat mengintersepsi request untuk diproses.
-Anda dapat menentukan middleware di file konfigurasi
-`config/autoload/middlewares.php`. Contoh konfigurasi:
+Sebelum pake Session, Anda perlu konfigurasi middleware `Hyperf\Session\Middleware\SessionMiddleware` sebagai global middleware di HTTP Server, biar komponen bisa nyusup ke proses request. Contoh konfigurasi `config/autoload/middlewares.php`:
 
 ```php
 <?php
 
 return [
-    // Here http corresponds to the default server name. If you need to use session on other servers, you need to configure the corresponding global middleware
+    // 'http' di sini sesuai dengan nama server default. Jika Anda perlu menggunakan Session di server lain, Anda memerlukan konfigurasi global middleware yang sesuai
     'http' => [
         \Hyperf\Session\Middleware\SessionMiddleware::class,
     ],
 ];
 ```
 
-## Konfigurasi storage driver
+## Mengonfigurasi Storage Driver
 
-Ubah storage driver session yang berbeda dengan mengganti konfigurasi
-`handler` pada file konfigurasi, dan item konfigurasi spesifik dari handler
-yang sesuai ditentukan oleh item konfigurasi yang berbeda di dalam `options`.
+Ganti konfigurasi `handler` di file konfigurasi buat milih storage driver Session yang beda. Item konfigurasi spesifik tiap Handler diatur lewat `options`.
 
-### Menggunakan file storage driver
+### Menggunakan File Storage Driver
 
-> File storage driver adalah driver penyimpanan default, tetapi disarankan
-> untuk menggunakan driver Redis di lingkungan produksi
+> File storage driver adalah default, tapi disarankan pake Redis di production.
 
-Ketika nilai `handler` adalah `Hyperf\Session\Handler\FileHandler`, ini
-menunjukkan bahwa file storage driver digunakan dan semua file data session akan
-dihasilkan dan disimpan di folder yang sesuai dengan nilai konfigurasi
-`options.path`. Folder konfigurasi default berada di folder `runtime/session`
-di bawah direktori root.
+Kalo nilai `handler` adalah `Hyperf\Session\Handler\FileHandler`, berarti pake driver `File`. Semua file data Session bakal dibuat dan disimpan di folder sesuai `options.path`. Defaultnya di folder `runtime/session`.
 
-### Menggunakan driver Redis
+### Menggunakan Redis Driver
 
-Sebelum menggunakan `Redis` storage driver, Anda perlu menginstal komponen
-[hyperf/redis](https://github.com/hyperf/redis). Untuk menggunakan storage
-driver ini, atur nilai `handler` ke `Hyperf\Session\Handler\RedisHandler`.
-Anda dapat menyesuaikan koneksi `Redis` yang digunakan oleh driver dengan
-mengonfigurasi nilai `options.connection`. Koneksi didefinisikan dalam
-`config/autoload/redis.php` dari komponen
-[hyperf/redis](https://github.com/hyperf/redis).
+Sebelum pake `Redis` storage driver, perlu install komponen [hyperf/redis](https://github.com/hyperf/redis). Kalo nilai `handler` adalah `Hyperf\Session\Handler\RedisHandler`, berarti pake driver `Redis`. Anda bisa atur koneksi `Redis` lewat `options.connection`. Koneksi ini cocok sama penamaan key di `config/autoload/redis.php` dari komponen [hyperf/redis](https://github.com/hyperf/redis).
 
 # Penggunaan
 
-## Mendapatkan objek session
+## Mendapatkan Session Object
 
-Objek session dapat diakses dengan menginjeksikan
-`Hyperf\Contract\SessionInterface`:
+Anda bisa dapetin Session object dengan inject `Hyperf\Contract\SessionInterface`, lalu panggil method dari interface-nya:
 
 ```php
 <?php
@@ -92,26 +62,24 @@ class IndexController
 
     public function index()
     {
-        // Use directly via $this->session
-    }
+        // Gunakan langsung melalui $this->session
+    } 
 }
 ```
 
-## Menyimpan data
+## Menyimpan Data
 
-Saat Anda ingin menyimpan data di dalam session, Anda dapat melakukannya dengan
-memanggil metode `set(string $name, $value): void`:
+Kalo mau nyimpen data ke Session, panggil aja method `set(string $name, $value): void`:
 
 ```php
 <?php
 
-$this->session->set('foo','bar');
+$this->session->set('foo', 'bar');
 ```
 
-## Mengambil data
+## Mendapatkan Data
 
-Saat Anda ingin mendapatkan data dari session, Anda dapat melakukannya dengan
-memanggil metode `get(string $name, $default = null)`:
+Kalo mau dapetin data dari Session, panggil aja method `get(string $name, $default = null)`:
 
 ```php
 <?php
@@ -119,10 +87,9 @@ memanggil metode `get(string $name, $default = null)`:
 $this->session->get('foo', $default = null);
 ```
 
-### Mendapatkan semua data
+### Mendapatkan Semua Data
 
-Anda dapat mengambil semua data yang tersimpan dari session sekaligus dengan
-memanggil metode `all(): array`:
+Bisa juga dapetin semua data Session sekaligus pake method `all(): array`:
 
 ```php
 <?php
@@ -130,11 +97,9 @@ memanggil metode `all(): array`:
 $data = $this->session->all();
 ```
 
-## Menentukan apakah suatu nilai ada di dalam session
+## Menentukan Apakah Suatu Nilai Ada di Session
 
-Untuk menentukan apakah suatu nilai ada di dalam session, Anda dapat menggunakan
-metode `has(string $name): bool`. Jika nilai tersebut ada dan tidak bernilai
-null, metode `has` akan mengembalikan `true`:
+Buat ngecek apakah suatu nilai ada di Session, pake method `has(string $name): bool`. Kalo nilainya ada dan gak null, method `has` ngembaliin `true`:
 
 ```php
 <?php
@@ -144,42 +109,43 @@ if ($this->session->has('foo')) {
 }
 ```
 
-## Mengambil dan menghapus data
+## Mendapatkan dan Menghapus Satu Data
 
-Dengan memanggil metode `remove(string $name)`, Anda dapat mengambil dan
-menghapus suatu data dari session hanya dengan menggunakan satu metode:
+Panggil method `remove(string $name)` buat dapetin sekaligus hapus satu data dari Session cuma pake satu method:
 
 ```php
+<?php
+
 $data = $this->session->remove('foo');
 ```
 
-## Menghapus satu atau beberapa data
+## Menghapus Satu atau Beberapa Data
 
-Dengan memanggil metode `forget(string|array $name): void`, satu atau beberapa
-data dapat dihapus dari session hanya dengan menggunakan satu metode. Ketika
-sebuah string diberikan, itu berarti hanya satu data yang dihapus. Ketika sebuah
-array string kunci diberikan, itu berarti menghapus beberapa data sekaligus:
+Panggil method `forget(string|array $name): void` buat hapus satu atau beberapa data dari Session pake satu method. Kalo dikasih string, hapus satu data. Kalo dikasih array of strings, hapus beberapa data:
 
 ```php
+<?php
+
 $this->session->forget('foo');
-$this->session->forget(['foo','bar']);
+$this->session->forget(['foo', 'bar']);
 ```
 
-## Membersihkan data session saat ini
+## Membersihkan Data Session Saat Ini
 
-Anda dapat membersihkan semua data di dalam session saat ini dengan memanggil
-metode `clear(): void`:
+Kalo mau bersihin semua data Session saat ini, panggil method `clear(): void`:
 
 ```php
+<?php
+
 $this->session->clear();
 ```
 
-## Mendapatkan ID session saat ini
+## Mendapatkan Session ID Saat Ini
 
-Saat Anda ingin mendapatkan ID session saat ini untuk menangani beberapa logika
-sendiri, Anda dapat mengambil ID session saat ini dengan memanggil metode
-`getId(): string`:
+Kalo mau dapetin Session ID saat ini buat keperluan logika sendiri, panggil method `getId(): string`:
 
 ```php
+<?php
+
 $sessionId = $this->session->getId();
 ```

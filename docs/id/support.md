@@ -1,47 +1,32 @@
-# Support
+# Helper Classes
 
-Hyperf menyediakan banyak utilitas (utils) yang memudahkan. Beberapa yang
-sering digunakan dan berguna, tetapi tidak semuanya, dicantumkan dalam bagian
-ini. Untuk detail selengkapnya, silakan merujuk ke
-[hyperf/support](https://github.com/hyperf/support).
+Hyperf menyediakan banyak kelas pembantu (helper) yang memudahkan pekerjaan. Beberapa yang umum dan berguna dicantumkan di sini. Ini bukan daftar lengkap; Anda bisa memeriksa langsung kode komponen [hyperf/support](https://github.com/hyperf/support) untuk informasi lebih lanjut.
 
-## Coroutine Util
+## Coroutine Helper Classes
 
 ### Hyperf\Coroutine\Coroutine
 
-Util ini digunakan untuk membantu penilaian atau pengoperasian coroutine.
+Kelas pembantu ini digunakan untuk membantu operasi atau pengecekan terkait coroutine.
 
 #### id(): int
 
-Dapatkan `coroutine ID` saat ini dengan menggunakan metode statis `id()`. Jika
-tidak berada di bawah lingkungan coroutine, metode ini mengembalikan `-1`.
+Gunakan static method `id()` untuk mendapatkan `Coroutine ID` dari coroutine saat ini. Jika tidak sedang dalam lingkungan coroutine, maka `-1` akan dikembalikan.
 
 #### create(callable $callable): int
 
-Metode statis `create(callable $callable)` dapat digunakan untuk membuat sebuah
-coroutine. Hal ini juga dapat dilakukan dengan menggunakan metode global
-`co(callable $callable)` dan `go(callable $callable)`. Metode
-`create(callable $callable)` merupakan enkapsulasi dari metode pembuatan di
-`Swoole`. Perbedaannya adalah metode ini tidak akan melempar exception yang
-tidak ditangkap, yang mana exception tersebut akan dilempar oleh
-`Hyperf\Contract\StdoutLoggerInterface` sebagai exception `warning`.
+Gunakan static method `create(callable $callable)` untuk membuat sebuah coroutine. Anda juga bisa menggunakan global functions `co(callable $callable)` atau `go(callable $callable)` untuk tujuan yang sama. Method ini merupakan wrapper untuk method pembuatan coroutine `Swoole`. Perbedaannya adalah method ini tidak akan melemparkan uncaught exception. Exception yang tidak tertangkap akan dikeluarkan di level `warning` melalui `Hyperf\Contract\StdoutLoggerInterface`.
 
 #### inCoroutine(): bool
 
-`inCoroutine()` adalah metode statis untuk menentukan apakah saat ini sedang
-berada dalam lingkungan coroutine.
+Gunakan static method `inCoroutine()` untuk menentukan apakah lingkungan saat ini adalah lingkungan coroutine.
 
 ### Hyperf\Context\Context
 
-`Context` digunakan untuk menangani context coroutine. Pada dasarnya ini adalah
-enkapsulasi dari `Swoole\Coroutine::getContext()`. Namun,
-`Hyperf\Context\Context` kompatibel untuk dijalankan di lingkungan
-non-coroutine.
+Digunakan untuk menangani konteks coroutine. Pada dasarnya, ini adalah wrapper untuk method `Swoole\Coroutine::getContext()`, tetapi perbedaannya adalah ini kompatibel dengan eksekusi di lingkungan non-coroutine.
 
 ### Hyperf\Coordinator\CoordinatorManager
 
-`CoordinatorManager` digunakan untuk menjadwalkan coroutine ketika event
-terjadi.
+Kelas pembantu ini digunakan untuk memerintahkan coroutine menunggu hingga suatu event terjadi.
 
 ```php
 <?php
@@ -50,13 +35,13 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coroutine\Coroutine;
 
 Coroutine::create(function() {
-    // Invoked after all OnWorkerStart event callbacks are completed
+    // Bangunkan setelah semua callback event OnWorkerStart selesai
     CoordinatorManager::until(Constants::WORKER_START)->yield();
     echo 'worker started';
-    // Assigning resources
-    // Invoked after all OnWorkerStart event callbacks are completed
+    // Alokasikan resource
+    // Bangunkan setelah semua callback event OnWorkerExit selesai
     CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
     echo 'worker exited';
-    // Recycling resources
+    // Bebaskan resource
 });
 ```

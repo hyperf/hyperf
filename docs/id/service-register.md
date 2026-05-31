@@ -1,18 +1,18 @@
-# Registrasi Layanan
+# Service Registration
 
-Setelah membagi layanan, jumlah layanan akan menjadi sangat besar, dan setiap layanan mungkin memiliki banyak node kluster untuk menyediakannya. Maka untuk memastikan jalannya sistem secara normal, pasti diperlukan komponen terpusat untuk mengintegrasikan berbagai layanan, yaitu mengumpulkan informasi layanan yang tersebar di mana-mana. Informasi yang dikumpulkan dapat berupa nama, alamat, jumlah, dll dari komponen penyedia layanan. Setiap komponen memiliki perangkat pemantau, ketika status suatu layanan di komponen ini berubah, hal itu dilaporkan ke komponen terpusat untuk memperbarui statusnya. Saat pemanggil (caller) layanan meminta suatu layanan, ia pertama-tama akan pergi ke komponen terpusat untuk mendapatkan informasi komponen yang dapat menyediakan layanan tersebut (IP, port, dll), dan melalui strategi default atau custom, memilih salah satu penyedia layanan untuk diakses, sehingga mewujudkan pemanggilan layanan. Komponen terpusat ini umumnya kita sebut sebagai `Service Center`. Di dalam Hyperf, kami telah mengimplementasikan dukungan komponen dengan `Consul` dan `Nacos` sebagai Service Center, dan di masa mendatang akan mendukung lebih banyak Service Center.
+Setelah pemecahan layanan, jumlah layanan menjadi sangat banyak, dan setiap layanan mungkin memiliki sejumlah besar cluster nodes untuk menyediakan layanan. Untuk memastikan operasi normal sistem, pasti harus ada komponen terpusat untuk menyelesaikan integrasi berbagai layanan, yaitu mengagregasi layanan-layanan yang tersebar di berbagai tempat. Informasi yang diagregasi dapat berupa nama komponen, alamat, jumlah, dll., yang menyediakan layanan. Setiap komponen memiliki perangkat monitoring yang melapor ke komponen terpusat untuk pembaruan status ketika status sebuah layanan dalam komponen ini berubah. Ketika meminta sebuah layanan, pemanggil layanan pertama-tama pergi ke komponen terpusat untuk mendapatkan informasi komponen (IP, port, dll.) yang dapat menyediakan layanan tersebut, dan mengakses salah satu provider dari layanan tersebut melalui strategi default atau kustom untuk mencapai service invocation. Komponen terpusat ini umumnya disebut `Service Center`. Di Hyperf, kami telah mengimplementasikan dukungan untuk komponen dengan `Consul` dan `Nacos` sebagai service center, dan akan mengadaptasi lebih banyak service center di kemudian hari.
 
 # Instalasi
 
-## Instalasi Unified Access Layer (Lapisan Akses Terpadu)
+## Menginstal Unified Access Layer
 
 ```bash
 composer require hyperf/service-governance
 ```
 
-## Memilih dan Menginstal Adapter yang Sesuai
+## Memilih untuk Menginstal Adapter yang Sesuai
 
-Registrasi layanan mendukung `Consul` dan `Nacos`. Silakan mengimpor komponen adapter yang sesuai dengan kebutuhan.
+Service registration mendukung `Consul` dan `Nacos`. Perkenalkan komponen adapter yang sesuai sesuai kebutuhan
 
 - Consul
 
@@ -28,21 +28,21 @@ composer require hyperf/service-governance-nacos
 
 # File Konfigurasi
 
-Komponen ini dikendalikan oleh file konfigurasi `config/autoload/services.php`. File konfigurasinya adalah sebagai berikut:
+Komponen ini digerakkan oleh file konfigurasi `config/autoload/services.php`. File konfigurasinya adalah sebagai berikut:
 
 ```php
 return [
     'enable' => [
         // Mengaktifkan service discovery
         'discovery' => true,
-        // Mengaktifkan registrasi layanan
+        // Mengaktifkan service registration
         'register' => true,
     ],
-    // Konfigurasi terkait consumer layanan
+    // Konfigurasi terkait service consumer
     'consumers' => [],
-    // Konfigurasi terkait provider layanan
+    // Konfigurasi terkait service provider
     'providers' => [],
-    // Konfigurasi terkait driver layanan
+    // Konfigurasi terkait service driver
     'drivers' => [
         'consul' => [
             'uri' => 'http://127.0.0.1:8500',
@@ -53,12 +53,12 @@ return [
             ],
         ],
         'nacos' => [
-            // url server nacos seperti https://nacos.hyperf.io, Prioritasnya lebih tinggi daripada host:port
+            // url server nacos seperti https://nacos.hyperf.io, Prioritas lebih tinggi dari host:port
             // 'url' => '',
-            // Info host nacos
+            // Informasi host nacos
             'host' => '127.0.0.1',
             'port' => 8848,
-            // Info akun nacos
+            // Informasi akun nacos
             'username' => null,
             'password' => null,
             'guzzle' => [
@@ -67,15 +67,15 @@ return [
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
-            'ephemeral' => false, // Apakah akan mendaftarkan instance sementara (ephemeral)
+            'ephemeral' => false, // Apakah akan mendaftarkan instance ephemeral
         ],
     ],
 ];
 ```
 
-# Registrasi Layanan
+# Mendaftarkan Layanan
 
-Registrasi layanan dapat mendefinisikan sebuah class melalui annotation `#[RpcService]`, yang berarti mempublikasikan layanan ini. Saat ini Hyperf hanya mengadaptasi protokol JSON RPC. Detail spesifiknya dapat dilihat pada bab [Layanan JSON RPC](id/json-rpc.md).
+Mendaftarkan layanan dapat dilakukan dengan mendefinisikan sebuah kelas menggunakan annotation `#[RpcService]`, yang mempublikasikan layanan tersebut. Saat ini, Hyperf hanya mengadaptasi protokol JSON-RPC. Untuk detail lebih lanjut, silakan merujuk ke bab [JSON-RPC Service](id/json-rpc.md).
 
 ```php
 <?php
@@ -87,28 +87,28 @@ use Hyperf\RpcServer\Annotation\RpcService;
 #[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
-    // Mengimplementasikan method penambahan, di sini secara sederhana dianggap bahwa parameter bertipe int
+    // Implementasi method penjumlahan, sederhananya parameter diasumsikan bertipe int
     public function calculate(int $a, int $b): int
     {
-        // Di sini adalah implementasi spesifik dari method layanan
+        // Implementasi method layanan
         return $a + $b;
     }
 }
 ```
 
-Terdapat `4` parameter pada `#[RpcService]`:   
-Atribut `name` mendefinisikan nama dari layanan ini. Cukup tentukan nama unik secara global di sini, Hyperf akan membuat ID yang sesuai berdasarkan atribut ini untuk didaftarkan ke Service Center;   
-Atribut `protocol` mendefinisikan protokol yang terekspos dari layanan tersebut. Saat ini hanya mendukung `jsonrpc` dan `jsonrpc-http`, yang masing-masing sesuai dengan protokol di bawah protokol TCP dan protokol HTTP. Nilai default-nya adalah `jsonrpc-http`, dan nilainya di sini sesuai dengan `key` dari protokol yang terdaftar dalam `Hyperf\Rpc\ProtocolManager`. Keduanya secara esensial adalah protokol JSON RPC, perbedaannya terletak pada pemformatan data, pengemasan data, pengiriman data, dll.   
-Atribut `server` mengikat layanan ini untuk dipublikasikan pada `Server` yang dituju. Nilai default-nya adalah `jsonrpc-http`, dan atribut ini sesuai dengan `name` di bawah `servers` dalam file `config/autoload/server.php`, yang berarti kita perlu mendefinisikan `Server` yang sesuai;   
-Atribut `publishTo` mendefinisikan Service Center tujuan layanan ini akan dipublikasikan. Saat ini hanya mendukung `consul`, `nacos`, atau kosong. Bila kosong, layanan tidak akan dipublikasikan ke Service Center, yang berarti Anda perlu menangani masalah service discovery secara manual. Untuk menggunakan fitur ini, Anda perlu menginstal komponen [hyperf/service-governance](https://github.com/hyperf/service-governance) dan dependensi driver yang sesuai;
+`#[RpcService]` memiliki `4` parameter:
+`name`: Mendefinisikan nama layanan. Cukup definisikan nama yang unik secara global di sini, dan Hyperf akan menghasilkan ID yang sesuai berdasarkan atribut ini untuk didaftarkan ke service center.
+`protocol`: Mendefinisikan protokol yang diekspos oleh layanan. Saat ini hanya mendukung `jsonrpc` dan `jsonrpc-http`, yang masing-masing sesuai dengan dua protokol di bawah protokol TCP dan protokol HTTP. Nilai default adalah `jsonrpc-http`. Nilai-nilai di sini sesuai dengan `key` dari protokol yang terdaftar di `Hyperf\Rpc\ProtocolManager`. Keduanya pada dasarnya adalah protokol JSON-RPC, perbedaannya terletak pada format data, pengemasan data, transporter data, dll.
+`server`: Mengikat `Server` yang akan menampung kelas layanan yang dipublikasikan. Nilai default adalah `jsonrpc-http`. Atribut ini sesuai dengan `name` di bawah `servers` dalam file `config/autoload/server.php`, yang berarti kita perlu mendefinisikan `Server` yang sesuai.
+`publishTo`: Mendefinisikan service center ke mana layanan akan dipublikasikan. Saat ini hanya mendukung `consul`, `nacos` atau kosong. Kosong berarti layanan tidak dipublikasikan ke service center, yang berarti Anda perlu menangani service discovery secara manual. Untuk menggunakan fitur ini, Anda perlu menginstal komponen [hyperf/service-governance](https://github.com/hyperf/service-governance) dan dependensi driver yang sesuai.
 
-> Penggunaan annotation `#[RpcService]` memerlukan namespace `use Hyperf\RpcServer\Annotation\RpcService;`.
+> Untuk menggunakan annotation `#[RpcService]`, Anda perlu `use Hyperf\RpcServer\Annotation\RpcService;`.
 
-## Adapter Service Governance Kustom
+## Kustom Adapter Service Governance
 
-Selain secara default mendukung `Consul` dan `Nacos`, pengguna juga dapat mendaftarkan adapter kustom (custom adapter) sesuai dengan kebutuhannya.
+Selain dukungan default untuk `Consul` dan `Nacos`, pengguna juga dapat mendaftarkan adapter kustom sesuai dengan kebutuhan mereka sendiri.
 
-Kita dapat membuat `FooService` yang mengimplementasikan `Hyperf\ServiceGovernance\DriverInterface`
+Kita dapat membuat FooService yang mengimplementasikan `Hyperf\ServiceGovernance\DriverInterface`
 
 ```php
 <?php
@@ -137,14 +137,14 @@ class FooDriver implements DriverInterface
 }
 ```
 
-Kemudian buat sebuah listener (pendengar) dan daftarkan ke `DriverManager`.
+Kemudian buat listener dan daftarkan ke `DriverManager`.
 
 ```php
 <?php
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * File ini adalah bagian dari Hyperf.
  *
  * @link     https://www.hyperf.io
  * @document https://hyperf.wiki
@@ -181,5 +181,4 @@ class RegisterDriverListener implements ListenerInterface
         $this->driverManager->register('foo', make(FooDriver::class));
     }
 }
-
 ```

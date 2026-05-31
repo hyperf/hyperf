@@ -1,29 +1,29 @@
-# Full-Text Search pada Model
+# Model Full-text Search
 
-## Pendahuluan
+## Preface
 
-> [hyperf/scout](https://github.com/hyperf/scout) diturunkan dari [laravel/scout](https://github.com/laravel/scout), dengan beberapa modifikasi untuk mendukung coroutine namun tetap mempertahankan API yang sama. Terima kasih kepada tim Laravel yang telah mengimplementasikan komponen yang sangat powerful ini. Sebagian dokumentasi ini diadaptasi dari dokumentasi resmi Laravel yang diterjemahkan oleh komunitas Laravel China.
+> [hyperf/scout](https://github.com/hyperf/scout) berasal dari [laravel/scout](https://github.com/laravel/scout). Kami melakukan beberapa adaptasi coroutine dengan API yang tetap sama. Terima kasih kepada tim Laravel untuk komponen yang powerful dan mudah digunakan ini. Sebagian dokumentasi dikutip dari dokumentasi resmi Laravel yang diterjemahkan oleh komunitas Laravel Mandarin.
 
-Hyperf/Scout menyediakan solusi sederhana berbasis driver untuk full-text search pada model. Menggunakan model observer, Scout akan secara otomatis menyinkronkan search index Anda dengan record model.
+Hyperf/Scout menyediakan solusi berbasis driver yang sederhana untuk pencarian full-text pada model. Menggunakan model observers, Scout secara otomatis menyinkronkan search index Anda dengan model records Anda.
 
-Saat ini, Scout dilengkapi dengan driver Elasticsearch; namun menulis driver kustom sangat mudah, dan Anda bebas mengembangkan Scout dengan implementasi pencarian Anda sendiri.
+Saat ini, Scout hadir dengan Elasticsearch driver; menulis custom drivers sangat sederhana, dan Anda bebas untuk memperluas Scout dengan implementasi pencarian Anda sendiri.
 
-## Instalasi
+## Installation
 
-### Menginstal Paket Komponen dan Driver Elasticsearch
+### Mengenalkan Component Package dan Elasticsearch Driver
 
 ```bash
 composer require hyperf/scout
 composer require hyperf/elasticsearch
 ```
 
-Setelah Scout terinstal, gunakan perintah `vendor:publish` untuk menghasilkan file konfigurasi Scout. Perintah ini akan menghasilkan file konfigurasi `scout.php` di direktori `config` Anda.
+Setelah Scout diinstal, gunakan perintah `vendor:publish` untuk menghasilkan file konfigurasi Scout. Perintah ini akan menghasilkan file konfigurasi `scout.php` di direktori `config` Anda.
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/scout
 ```
 
-Terakhir, tambahkan trait `Hyperf\Scout\Searchable` ke model yang ingin Anda buat searchable. Trait ini akan mendaftarkan model observer untuk menjaga model tetap sinkron dengan semua driver:
+Terakhir, tambahkan trait `Hyperf\Scout\Searchable` ke model yang ingin Anda cari. Trait ini mendaftarkan model observer untuk menjaga model dan semua driver tetap sinkron:
 
 ```php
 <?php
@@ -39,17 +39,17 @@ class Post extends Model
 }
 ```
 
-## Konfigurasi
+## Configuration
 
-### File Konfigurasi
+### Configuration File
 
-Buat file konfigurasi:
+Hasilkan file konfigurasi:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/scout
 ```
 
-Isi file konfigurasi:
+File konfigurasi:
 
 ```php
 <?php
@@ -68,8 +68,7 @@ return [
     'engine' => [
         'elasticsearch' => [
             'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
-            // Jika index diset null, setiap model akan memiliki index tersendiri,
-            // sebaliknya setiap model akan memiliki type tersendiri
+            // Jika index diatur ke null, setiap model akan sesuai dengan satu index; jika tidak, setiap model sesuai dengan satu type.
             'index' => null,
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'http://127.0.0.1:9200'),
@@ -79,9 +78,9 @@ return [
 ];
 ```
 
-### Konfigurasi Index Model
+### Configuring Model Indexes
 
-Setiap model disinkronkan dengan "index" pencarian tertentu, yang berisi semua record searchable untuk model tersebut. Dengan kata lain, Anda dapat menganggap setiap "index" seperti tabel MySQL. Secara default, setiap model akan dipersistensikan ke index yang cocok dengan nama "tabel" model (biasanya bentuk jamak dari nama model). Anda juga dapat mengkustomisasi index model dengan meng-override method `searchableAs` pada model:
+Setiap model disinkronkan dengan "search index" yang diberikan, yang berisi semua searchable records untuk model tersebut. Dengan kata lain, Anda dapat menganggap setiap "index" sebagai tabel MySQL. Secara default, setiap model disimpan ke index yang cocok dengan nama "table" model (biasanya bentuk plural dari nama model). Anda juga dapat menyesuaikan index model dengan menimpa method `searchableAs` pada model:
 
 ```php
 <?php
@@ -96,7 +95,7 @@ class Post extends Model
     use Searchable;
 
     /**
-     * Get the index name for the model.
+     * Dapatkan nama index untuk model.
      *
      * @return string
      */
@@ -107,9 +106,9 @@ class Post extends Model
 }
 ```
 
-### Konfigurasi Data yang Dapat Dicari
+### Configuring Searchable Data
 
-Secara default, "index" akan membaca data dari method `toArray` model untuk dipersistensikan. Jika Anda ingin mengkustomisasi data yang disinkronkan ke search index, Anda dapat meng-override method `toSearchableArray` pada model:
+Secara default, "index" membaca data dari method `toArray` model untuk penyimpanan. Jika Anda ingin menyesuaikan data yang disinkronkan ke search index, Anda dapat menimpa method `toSearchableArray` pada model:
 
 ```php
 <?php
@@ -124,7 +123,7 @@ class Post extends Model
     use Searchable;
 
     /**
-     * Get the indexable data array for the model.
+     * Dapatkan array data yang dapat diindeks untuk model.
      *
      * @return array
      */
@@ -132,7 +131,7 @@ class Post extends Model
     {
         $array = $this->toArray();
 
-        // Customize array...
+        // Sesuaikan array...
 
         return $array;
     }
@@ -141,17 +140,17 @@ class Post extends Model
 
 ## Indexing
 
-### Import Massal
+### Batch Import
 
-Jika Anda ingin menginstal Scout ke proyek yang sudah ada, Anda mungkin sudah memiliki record database yang ingin Anda impor ke search driver. Gunakan perintah `import` yang disediakan Scout untuk mengimpor semua record yang ada ke search index:
+Jika Anda ingin menginstal Scout ke proyek yang sudah ada, Anda mungkin sudah memiliki database records yang ingin Anda impor ke search driver Anda. Gunakan perintah `import` yang disediakan oleh Scout untuk mengimpor semua records yang ada ke search index:
 
 ```bash
 php bin/hyperf.php scout:import "App\Post"
 ```
 
-### Menambahkan Record
+### Adding Records
 
-Setelah Anda menambahkan trait `Hyperf\Scout\Searchable` ke model, yang perlu Anda lakukan hanyalah `save` sebuah instance model dan ia akan otomatis ditambahkan ke search index Anda. Operasi update index akan dilakukan di akhir coroutine, tidak akan memblokir request.
+Ketika Anda menambahkan trait `Hyperf\Scout\Searchable` ke model, yang perlu Anda lakukan hanyalah `save` instance model, dan itu akan secara otomatis ditambahkan ke search index Anda. Operasi pembaruan index akan dilakukan di akhir coroutine dan tidak akan memblokir request.
 
 ```php
 $order = new App\Order;
@@ -161,51 +160,51 @@ $order = new App\Order;
 $order->save();
 ```
 
-#### Penambahan Massal
+#### Batch Adding
 
-Jika Anda ingin menambahkan koleksi model ke search index melalui query builder model, Anda juga dapat merantai method `searchable` pada query builder model. `searchable` akan membagi hasil query builder menjadi beberapa bagian dan menambahkan record ke search index Anda.
+Jika Anda ingin menambahkan koleksi model ke search index melalui model query builder, Anda juga dapat merantai method `searchable` pada model query builder. `searchable` akan memotong hasil query menjadi beberapa bagian (chunk) dan menambahkan records ke search index Anda.
 
 ```php
-// Menambahkan menggunakan query builder model...
+// Tambahkan menggunakan model query builder...
 App\Order::where('price', '>', 100)->searchable();
 
-// Menambahkan record menggunakan relasi model...
+// Tambahkan menggunakan model relationship...
 $user->orders()->searchable();
 
-// Menambahkan menggunakan koleksi...
+// Tambahkan menggunakan collection...
 $orders->searchable();
 ```
 
-Method `searchable` dapat dianggap sebagai operasi "upsert". Dengan kata lain, jika record model sudah ada di index Anda, ia akan diperbarui. Jika tidak ada di search index, ia akan ditambahkan ke index.
+Method `searchable` dapat dilihat sebagai operasi "update or insert". Dengan kata lain, jika model record sudah ada di index Anda, maka akan diperbarui. Jika belum ada di search index, maka akan ditambahkan ke index.
 
-### Memperbarui Record
+### Updating Records
 
-Untuk memperbarui model yang dapat dicari, Anda hanya perlu memperbarui properti instance model dan `save` model ke database. Scout akan secara otomatis menyinkronkan pembaruan ke search index Anda:
+Untuk memperbarui model yang dapat dicari, perbarui properti instance model dan `save` model ke database. Scout akan secara otomatis menyinkronkan pembaruan ke search index Anda:
 
 ```php
 $order = App\Order::find(1);
 
-// Update order...
+// Perbarui order...
 
 $order->save();
 ```
 
-Anda juga dapat menggunakan method `searchable` pada query model untuk memperbarui koleksi model. Jika model tidak ada di index yang Anda cari, ia akan dibuat:
+Anda juga dapat menggunakan method `searchable` pada model queries untuk memperbarui koleksi model. Jika model ini tidak ada di index yang Anda ambil, maka akan dibuat:
 
 ```php
-// Memperbarui menggunakan query model...
+// Perbarui menggunakan model query...
 App\Order::where('price', '>', 100)->searchable();
 
-// Anda juga dapat memperbarui menggunakan relasi model...
+// Anda juga dapat menggunakan model relationship untuk memperbarui...
 $user->orders()->searchable();
 
-// Anda juga dapat memperbarui menggunakan koleksi...
+// Anda juga dapat menggunakan collection untuk memperbarui...
 $orders->searchable();
 ```
 
-### Menghapus Record
+### Removing Records
 
-Cukup gunakan `delete` untuk menghapus model dari database untuk menghapus record dari index. Bentuk penghapusan ini bahkan kompatibel dengan model soft delete:
+Cukup gunakan `delete` untuk menghapus model dari database, dan record di index juga akan dihapus. Bentuk penghapusan ini bahkan kompatibel dengan model yang menggunakan soft-delete:
 
 ```php
 $order = App\Order::find(1);
@@ -213,38 +212,38 @@ $order = App\Order::find(1);
 $order->delete();
 ```
 
-Jika Anda tidak ingin mengambil model sebelum menghapus record, Anda dapat menggunakan method `unsearchable` pada instance query model atau koleksi:
+Jika Anda tidak ingin mengambil model sebelum menghapus record, Anda dapat menggunakan method `unsearchable` pada model query instance atau collection:
 
 ```php
-// Menghapus melalui query model...
+// Hapus melalui model query...
 App\Order::where('price', '>', 100)->unsearchable();
 
-// Menghapus melalui relasi model...
+// Hapus melalui model relationship...
 $user->orders()->unsearchable();
 
-// Menghapus melalui koleksi...
+// Hapus melalui collection...
 $orders->unsearchable();
 ```
 
-### Menjeda Indexing
+### Pausing Indexing
 
-Terkadang Anda perlu melakukan serangkaian operasi model tanpa menyinkronkan data model ke search index. Anda dapat melakukan ini menggunakan method `withoutSyncingToSearch` yang aman untuk coroutine. Method ini menerima satu callback yang akan segera dieksekusi. Semua operasi model yang terjadi dalam callback tidak akan disinkronkan ke index model:
+Anda mungkin perlu melakukan sekumpulan operasi model tanpa menyinkronkan data model ke search index. Pada saat ini, Anda dapat menggunakan method `withoutSyncingToSearch` yang aman untuk coroutine untuk melakukan operasi ini. Method ini menerima callback yang dieksekusi segera. Semua operasi dalam callback ini tidak akan disinkronkan ke index model:
 
 ```php
 App\Order::withoutSyncingToSearch(function () {
-    // Lakukan operasi model...
+    // Lakukan tindakan model...
 });
 ```
 
-## Pencarian
+## Searching
 
-Anda dapat menggunakan method `search` untuk mencari model. Method `search` menerima string yang digunakan untuk mencari model. Anda juga perlu merantai method `get` pada query pencarian untuk mengambil model yang cocok dengan query pencarian yang diberikan:
+Anda dapat menggunakan method `search` untuk mencari model. Method `search` menerima string yang digunakan untuk mencari model. Anda juga perlu merantai method `get` pada search query untuk melakukan query pada model yang cocok dengan statement pencarian yang diberikan:
 
 ```php
 $orders = App\Order::search('Star Trek')->get();
 ```
 
-Pencarian Scout mengembalikan koleksi model Eloquent, sehingga Anda dapat langsung mengembalikan hasil dari route atau controller dan hasilnya akan otomatis dikonversi ke format JSON:
+Scout search mengembalikan koleksi model, sehingga Anda dapat langsung mengembalikan hasil dari routes atau controllers, dan mereka akan secara otomatis dikonversi ke format JSON:
 
 ```php
 Route::get('/search', function () {
@@ -252,13 +251,13 @@ Route::get('/search', function () {
 });
 ```
 
-Jika Anda ingin mendapatkan hasil mentah sebelum dikonversi ke model, Anda harus menggunakan method `raw`:
+Jika Anda ingin mendapatkan hasil mentah sebelum dikembalikan sebagai model, Anda harus menggunakan method `raw`:
 
 ```php
 $orders = App\Order::search('Star Trek')->raw();
 ```
 
-Query pencarian biasanya akan dieksekusi pada index yang ditentukan oleh method [`searchableAs`](#konfigurasi-index-model) model. Tentu saja, Anda juga dapat menggunakan method `within` untuk menentukan index kustom yang harus dicari:
+Search queries biasanya dijalankan pada index yang ditentukan oleh method [`searchableAs`](#configuring-model-indexes) model. Tentu saja, Anda juga dapat menggunakan method `within` untuk menentukan index kustom yang harus dicari:
 
 ```php
 $orders = App\Order::search('Star Trek')
@@ -266,29 +265,29 @@ $orders = App\Order::search('Star Trek')
     ->get();
 ```
 
-### Klausa Where
+### Where Clauses
 
-Scout memungkinkan Anda menambahkan klausa "where" sederhana ke query pencarian Anda. Saat ini, klausa ini hanya mendukung pemeriksaan kesetaraan numerik dasar, dan terutama berguna untuk membatasi query pencarian berdasarkan ID pemilik. Karena search index bukan database relasional, klausa "where" yang lebih canggih saat ini tidak didukung:
+Scout memungkinkan Anda untuk menambahkan "where" statements sederhana ke search queries. Saat ini, statements ini hanya mendukung pemeriksaan kesamaan numerik dasar dan terutama digunakan untuk query rentang pencarian berdasarkan owner ID. Karena search index bukan database relasional, "where" statements yang lebih lanjut tidak didukung saat ini:
 
 ```php
 $orders = App\Order::search('Star Trek')->where('user_id', 1)->get();
 ```
 
-### Paginasi
+### Pagination
 
-Selain mengambil koleksi model, Anda dapat melakukan paginasi hasil pencarian menggunakan method `paginate`. Method ini akan mengembalikan instance `Paginator` seperti [paginasi query model tradisional](/id/db/paginator):
+Selain mengambil koleksi model, Anda juga dapat menggunakan method `paginate` untuk melakukan paginasi hasil pencarian. Method ini mengembalikan instance `Paginator` yang mirip dengan [paginasi query model tradisional](/id/db/paginator):
 
 ```php
 $orders = App\Order::search('Star Trek')->paginate();
 ```
 
-Anda dapat menentukan berapa banyak model yang diambil per halaman dengan meneruskan jumlah sebagai argumen pertama ke method `paginate`:
+Anda dapat menentukan berapa banyak model yang akan diambil per halaman dengan memberikan angka sebagai argumen pertama ke method `paginate`:
 
 ```php
-$orders = App\Order::search('Star Trek')->paginate(15);
+$orders = App::search('Star Trek')->paginate(15);
 ```
 
-Setelah Anda mengambil hasil, Anda dapat menampilkan hasil dan merender link paginasi menggunakan template engine favorit Anda, seperti paginasi query model tradisional:
+Setelah mendapatkan hasil pencarian, Anda dapat menggunakan template engine favorit Anda untuk merender pagination links guna menampilkan hasil, seperti halnya paginasi query model tradisional:
 
 ```html
 <div class="container">
@@ -300,11 +299,11 @@ Setelah Anda mengambil hasil, Anda dapat menampilkan hasil dan merender link pag
 {{ $orders->links() }}
 ```
 
-## Engine Kustom
+## Custom Engines
 
-### Menulis Engine
+#### Writing Engines
 
-Jika engine pencarian Scout bawaan tidak memenuhi kebutuhan Anda, Anda dapat menulis engine kustom dan mendaftarkannya ke Scout. Engine Anda harus meng-extend abstract class `Hyperf\Scout\Engine\Engine`, yang berisi lima method yang harus diimplementasikan oleh engine kustom Anda:
+Jika search engine bawaan Scout tidak memenuhi kebutuhan Anda, Anda dapat menulis custom engine dan mendaftarkannya ke Scout. Engine Anda perlu mewarisi dari kelas abstrak `Hyperf\Scout\Engine\Engine`, yang berisi lima method yang harus diimplementasikan oleh custom engine Anda:
 
 ```php
 use Hyperf\Scout\Builder;
@@ -316,11 +315,11 @@ abstract public function paginate(Builder $builder, $perPage, $page);
 abstract public function map($results, $model);
 ```
 
-Melihat implementasi method ini di class `Hyperf\Scout\Engine\ElasticsearchEngine` akan sangat membantu. Class ini akan memberi Anda titik awal yang baik untuk mempelajari cara mengimplementasikan method ini di engine kustom Anda.
+Memeriksa method-method ini di class `Hyperf\Scout\Engine\ElasticsearchEngine` akan sangat membantu Anda. Class ini menyediakan titik awal yang baik untuk mempelajari cara mengimplementasikan method-method ini di custom engine.
 
-### Mendaftarkan Engine
+#### Registering Engines
 
-Setelah Anda menulis engine kustom, Anda dapat menentukan engine di file konfigurasi. Misalnya, jika Anda telah menulis `MySqlSearchEngine`, Anda dapat menulisnya di file konfigurasi seperti ini:
+Setelah Anda menulis custom engine, Anda dapat menentukan engine tersebut di file konfigurasi. Misalnya, jika Anda telah menulis `MySqlSearchEngine`, Anda dapat menulisnya seperti ini di file konfigurasi:
 
 ```php
 <?php
@@ -337,7 +336,7 @@ return [
 ];
 ```
 
-## Perbedaan dengan laravel/scout
+## Perbedaan dari laravel/scout
 
-- Hyperf/Scout menggunakan coroutine untuk menyinkronkan search index dan record model secara efisien, tanpa bergantung pada mekanisme queue.
-- Hyperf/Scout secara default menyediakan engine Elasticsearch open-source, bukan Algolia yang closed-source.
+- Hyperf/Scout menggunakan coroutine untuk menyinkronkan search index dan model records secara efisien, tanpa bergantung pada mekanisme queue.
+- Hyperf/Scout menyediakan Elasticsearch engine open-source secara default, bukan Algolia yang bersifat closed-source.
