@@ -1,10 +1,8 @@
-# Jet, oleh Hyperf
+# Jet
 
-Jet adalah RPC Client dengan model penyatuan (unification model), dilengkapi
-dengan protokol JSONRPC bawaan, dan dapat dijalankan di SEMUA lingkungan PHP,
-termasuk lingkungan PHP-FPM dan Swoole/Hyperf.
+Jet adalah RPC client model terpadu dengan adaptasi protokol JSONRPC bawaan. Komponen ini berlaku untuk semua lingkungan PHP, termasuk PHP-FPM, Swoole, atau Hyperf. (Di lingkungan Hyperf, saat ini masih direkomendasikan untuk langsung menggunakan komponen `hyperf/json-rpc` sebagai client).
 
-> Protokol gRPC dan Tars bawaan juga akan didukung di masa mendatang.
+> Ke depannya, protokol gRPC dan Tars juga akan tersedia secara bawaan.
 
 # Instalasi
 
@@ -12,16 +10,13 @@ termasuk lingkungan PHP-FPM dan Swoole/Hyperf.
 composer require hyperf/jet
 ```
 
-# Mulai Cepat
+# Memulai Cepat
 
-## Registrasi protokol
+## Mendaftarkan Protokol
 
-> Mendaftarkan protokol tidak wajib dilakukan, tetapi Anda dapat mengelola
-> protokol dengan lebih mudah menggunakan ProtocolManager.
+> Mendaftarkan protokol bukanlah langkah wajib, tetapi Anda dapat mengelola semua protokol melalui ProtocolManager.
 
-Anda dapat mendaftarkan protokol apa pun melalui `Hyperf\Jet\ProtocolManager`.
-Setiap protokol pada dasarnya mencakup Transporter, Packer, DataFormatter, dan
-PathGenerator. Anda dapat mendaftarkan protokol JSONRPC seperti di bawah ini:
+Anda dapat menggunakan kelas `Hyperf\Jet\ProtocolManager` untuk mendaftarkan dan mengelola protokol apa pun. Setiap protokol akan berisi beberapa komponen dasar seperti Transporter, Packer, DataFormatter, dan PathGenerator. Anda dapat mendaftarkan protokol JSONRPC sebagai berikut:
 
 ```php
 <?php
@@ -40,20 +35,17 @@ ProtocolManager::register($protocol = 'jsonrpc', [
 ]);
 ```
 
-## Registrasi layanan
+## Mendaftarkan Service
 
-> Mendaftarkan layanan tidak wajib dilakukan, tetapi Anda dapat mengelola
-> layanan dengan lebih mudah menggunakan ServiceManager.
+> Mendaftarkan service bukanlah langkah wajib, tetapi Anda dapat mengelola semua service melalui ServiceManager.
 
-Setelah mendaftarkan protokol ke `Hyperf\Jet\ProtocolManager`, Anda dapat
-menghubungkan protokol tersebut dengan layanan apa pun menggunakan
-`Hyperf\Jet\ServiceManager` seperti di bawah ini:
+Setelah Anda mendaftarkan protokol ke `Hyperf\Jet\ProtocolManager`, Anda dapat mengikat protokol tersebut ke service mana pun melalui `Hyperf\Jet\ServiceManager`, sebagai berikut:
 
 ```php
 <?php
 use Hyperf\Jet\ServiceManager;
 
-// Bind CalculatorService with jsonrpc protocol, and set the static nodes info.
+// Bind CalculatorService dengan protokol jsonrpc dan set informasi node statis
 ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', [
     ServiceManager::NODES => [
         [$host = '127.0.0.1', $port = 9503],
@@ -61,12 +53,11 @@ ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', 
 ]);
 ```
 
-## Memanggil metode RPC
+## Memanggil Method RPC
 
-### Memanggil via ClientFactory
+### Memanggil melalui ClientFactory
 
-Setelah mendaftarkan protokol dan layanan, Anda dapat mendapatkan client
-layanan Anda melalui `Hyperf\Jet\ClientFactory` seperti di bawah ini:
+Setelah Anda mendaftarkan protokol dan service, Anda dapat memperoleh client untuk service Anda melalui `Hyperf/Jet/ClientFactory`, seperti yang ditunjukkan di bawah ini:
 
 ```php
 <?php
@@ -76,26 +67,19 @@ $clientFactory = new ClientFactory();
 $client = $clientFactory->create($service = 'CalculatorService', $protocol = 'jsonrpc');
 ```
 
-Setelah memiliki objek client, Anda dapat memanggil metode remote apa pun
-melalui objek tersebut seperti di bawah ini:
+Setelah Anda memiliki objek client, Anda dapat menggunakannya untuk memanggil method remote apa pun, sebagai berikut:
 
 ```php
-// Call the remote method `add` with arguments `1` and `2`.
-// The $result is the result of the remote method.
+// Panggil method remote `add` dengan argumen `1` dan `2`
+// $result akan menjadi nilai kembalian dari method remote
 $result = $client->add(1, 2);
 ```
 
-Jika Anda memanggil metode remote yang tidak ada, client akan melemparkan
-exception `Hyperf\Jet\Exception\ServerException`.
+Saat Anda memanggil method remote yang tidak ada, client akan melemparkan exception `Hyperf\Jet\Exception\ServerException`.
 
-### Memanggil via custom client
+### Memanggil melalui Custom Client
 
-Anda juga dapat membuat class client sendiri (custom client) yang mewarisi
-(extends) `Hyperf\Jet\AbstractClient` untuk memanggil metode remote
-melalui objek client tersebut.
-Sebagai contoh, jika Anda ingin mendefinisikan RPC client untuk
-`CalculatorService` dengan protokol `jsonrpc`, Anda dapat membuat class
-`CalculatorService` terlebih dahulu seperti di bawah ini:
+Anda dapat membuat subclass dari `Hyperf\Jet\AbstractClient` sebagai kelas client kustom untuk menyelesaikan pemanggilan method remote. Sebagai contoh, jika Anda ingin mendefinisikan kelas client untuk protokol `jsonrpc` dari service `CalculatorService`, Anda dapat terlebih dahulu mendefinisikan kelas `CalculatorService`, seperti yang ditunjukkan di bawah ini:
 
 ```php
 <?php
@@ -113,7 +97,7 @@ use Hyperf\Rpc\Contract\TransporterInterface;
  */
 class CalculatorService extends AbstractClient
 {
-    // Define `CalculatorService` as the default value of $service.
+    // Definisikan `CalculatorService` sebagai nilai default untuk parameter $service
     public function __construct(
         string $service = 'CalculatorService',
         TransporterInterface $transporter = null,
@@ -121,21 +105,20 @@ class CalculatorService extends AbstractClient
         ?DataFormatterInterface $dataFormatter = null,
         ?PathGeneratorInterface $pathGenerator = null
     ) {
-        // Specific the transporter here, you could also retrieve the transporter from ProtocolManager or passing by constructor.
+        // Tentukan transporter di sini; Anda masih bisa mendapatkan transporter melalui ProtocolManager atau melewatinya dari konstruktor
         $transporter = new StreamSocketTransporter('127.0.0.1', 9503);
-        // Specific the packer here, you could also retrieve the packer from ProtocolManager or passing by constructor.
+        // Tentukan packer di sini; Anda masih bisa mendapatkan packer melalui ProtocolManager atau melewatinya dari konstruktor
         $packer = new JsonEofPacker();
         parent::__construct($service, $transporter, $packer, $dataFormatter, $pathGenerator);
     }
 }
 ```
 
-Sekarang, Anda dapat menggunakan class ini untuk memanggil metode remote
-secara langsung seperti di bawah ini:
+Sekarang, Anda dapat menggunakan kelas ini untuk langsung memanggil method remote, seperti yang ditunjukkan di bawah ini:
 
 ```php
-// Call the remote method `add` with arguments `1` and `2`.
-// The $result is the result of the remote method.
+// Panggil method remote `add` dengan argumen `1` dan `2`
+// $result akan menjadi nilai kembalian dari method remote
 $client = new CalculatorService();
 $result = $client->add(1, 2);
 ```

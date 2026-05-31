@@ -1,53 +1,35 @@
-# Layanan JSON RPC
+# JSON-RPC Service
 
-JSON RPC adalah standar protokol RPC ringan berbasis format JSON, yang mudah
-digunakan dan dibaca. Di Hyperf, hal ini diimplementasikan oleh komponen
-[hyperf/json-rpc](https://github.com/hyperf/json-rpc), yang dapat disesuaikan
-untuk transmisi berbasis protokol HTTP, atau langsung berbasis protokol TCP
-untuk transmisi.
+JSON-RPC adalah protokol RPC ringan berbasis JSON yang mudah digunakan dan dibaca. Di Hyperf, ini diimplementasikan oleh komponen [hyperf/json-rpc](https://github.com/hyperf/json-rpc), yang memungkinkan transmisi kustom berdasarkan protokol HTTP atau langsung berdasarkan protokol TCP.
 
 ## Instalasi
 
 ```bash
 composer require hyperf/json-rpc
 ```
-  
-Ini hanyalah komponen pemrosesan protokol untuk JSON RPC, umumnya, Anda masih
-memerlukan komponen [hyperf/rpc-server](https://github.com/hyperf/rpc-server)
-atau [hyperf/rpc-client](https://github.com/hyperf/rpc-client) untuk memenuhi
-skenario client dan server. Keduanya perlu diinstal jika digunakan secara
-bersamaan: 
 
-Untuk server JSON RPC:
+Komponen ini hanya untuk penanganan protokol dalam JSON-RPC. Umumnya, Anda tetap perlu mengkombinasikannya dengan [hyperf/rpc-server](https://github.com/hyperf/rpc-server) atau [hyperf/rpc-client](https://github.com/hyperf/rpc-client) untuk memenuhi skenario server-side dan client-side. Jika menggunakan keduanya, keduanya harus diinstal:
+
+Untuk menggunakan JSON-RPC server:
 
 ```bash
 composer require hyperf/rpc-server
 ```
 
-Untuk client JSON RPC:
+Untuk menggunakan JSON-RPC client:
 
 ```bash
 composer require hyperf/rpc-client
 ```
 
-## Petunjuk Penggunaan
+## Penggunaan
 
-Layanan memiliki dua peran, salah satunya adalah `ServiceProvider`, yaitu
-layanan yang menyediakan layanan untuk layanan lain, dan yang lainnya adalah
-`ServiceConsumer`, yaitu layanan yang bergantung pada layanan lain. Sebuah
-layanan dapat memainkan peran `ServiceProvider` dan `ServiceConsumer` secara
-bersamaan. Kedua peran ini dapat secara langsung mendefinisikan dan membatasi
-pemanggilan interface melalui `Service Contract`. Di Hyperf, ini dapat langsung
-dipahami sebagai interface class `Interface`. Secara umum, interface class ini
-akan ada di sisi provider maupun consumer.
+Ada dua peran untuk layanan: `Service Provider`, yang menyediakan layanan ke layanan lain, dan `Service Consumer`, yang bergantung pada layanan lain. Sebuah layanan dapat menjadi `Service Provider` dan `Service Consumer` secara bersamaan. Keduanya dapat mendefinisikan dan membatasi pemanggilan antarmuka melalui `Service Contract`. Di Hyperf, ini dapat langsung dipahami sebagai sebuah `Interface`. Umumnya, kelas interface ini akan muncul di sisi provider maupun consumer.
 
-### Mendefinisikan service provider
+### Mendefinisikan Service Provider
 
-Sejauh ini, hanya bentuk annotation yang didukung untuk mendefinisikan
-`ServiceProvider`, dan edisi berikutnya akan menambahkan lebih banyak bentuk
-konfigurasi.
-Kita dapat langsung mendefinisikan class melalui annotation `#[RpcService]` dan
-mempublikasikan layanan ini:
+Saat ini, mendefinisikan `Service Provider` hanya didukung melalui annotation; dukungan untuk definisi berbasis konfigurasi akan ditambahkan di iterasi mendatang.
+Kita dapat langsung mendefinisikan sebuah kelas menggunakan annotation `#[RpcService]` untuk mempublikasikan layanan ini:
 
 ```php
 <?php
@@ -57,50 +39,31 @@ namespace App\JsonRpc;
 use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
- * Note that if you want to manage the service through the service center, you need to add the publishTo attribute in the annotation
+ * Catatan: Jika Anda ingin mengelola layanan melalui service center, Anda perlu menambahkan atribut publishTo di dalam annotation.
  */
 #[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
-    // Implement an addition method, simply consider that the parameters are int type
+    // Implementasi method penjumlahan, sederhananya parameter diasumsikan bertipe int
     public function add(int $a, int $b): int
     {
-        // The specific implementation of the service method
+        // Implementasi method layanan
         return $a + $b;
     }
 }
 ```
- 
-`#[RpcService]` memiliki `4` parameter:  
-Atribut `name` adalah nama yang mendefinisikan layanan. Cukup definisikan nama
-yang unik secara global di sini. Hyperf akan menghasilkan ID yang sesuai
-berdasarkan atribut ini dan mendaftarkannya ke service center;
-Atribut `protocol` mendefinisikan protokol yang diekspos oleh layanan. Saat ini,
-hanya `jsonrpc-http`, `jsonrpc`, dan `jsonrpc-tcp-length-check` yang didukung,
-yang masing-masing sesuai dengan protokol HTTP dan dua protokol di bawah
-protokol TCP. Nilai default-nya adalah `jsonrpc-http`, nilai di sini sesuai
-dengan `key` dari protokol yang terdaftar di `Hyperf\Rpc\ProtocolManager`. Mereka
-pada dasarnya adalah protokol JSON RPC, perbedaannya terletak pada format data,
-pengemasan data, dan pengirim data.
-Atribut `server` adalah `Server` yang dibawa oleh class layanan penerbitan yang
-terikat, nilai default-nya adalah `jsonrpc-http`. Atribut ini sesuai dengan
-`name` di bawah `servers` dalam file `config/autoload/server.php`, yang juga
-berarti bahwa kita perlu mendefinisikan `Server` yang sesuai, kita akan
-membahas cara menanganinya di bab berikutnya;
-Atribut `publishTo` mendefinisikan service center tempat layanan akan
-dipublikasikan. Saat ini hanya mendukung `consul` atau null. Jika bernilai null,
-artinya layanan tidak akan dipublikasikan ke service center, yang juga berarti
-Anda harus menangani service discovery secara manual. Jika bernilai `consul`,
-Anda perlu mengonfigurasi konfigurasi terkait dari komponen
-[hyperf/consul](zh-cn/consul.md). Untuk menggunakan fungsi ini, Anda perlu
-menginstal komponen [hyperf/service-governance](https://github.com/hyperf/service-governance),
-silakan lihat bagian [Pendaftaran Layanan](zh-cn/service-register.md) untuk detailnya.
 
-> Untuk menggunakan annotation `#[RpcService]`, diperlukan namespace `use Hyperf\RpcServer\Annotation\RpcService;`."
+`#[RpcService]` memiliki `4` parameter:
+`name`: Mendefinisikan nama layanan. Cukup definisikan nama yang unik secara global di sini, dan Hyperf akan menghasilkan ID yang sesuai berdasarkan atribut ini untuk didaftarkan ke service center.
+`protocol`: Mendefinisikan protokol yang diekspos oleh layanan. Saat ini hanya mendukung `jsonrpc-http`, `jsonrpc`, dan `jsonrpc-tcp-length-check`, yang masing-masing sesuai dengan dua protokol di bawah protokol HTTP dan protokol TCP. Nilai default adalah `jsonrpc-http`. Nilai-nilai di sini sesuai dengan `key` dari protokol yang terdaftar di `Hyperf\Rpc\ProtocolManager`. Pada dasarnya semuanya adalah protokol JSON-RPC, perbedaannya terletak pada format data, pengemasan data, transporter data, dll.
+`server`: Mengikat `Server` yang akan menampung kelas layanan yang dipublikasikan. Nilai default adalah `jsonrpc-http`. Atribut ini sesuai dengan `name` di bawah `servers` dalam file `config/autoload/server.php`, yang berarti kita perlu mendefinisikan `Server` yang sesuai.
+`publishTo`: Mendefinisikan service center ke mana layanan akan dipublikasikan. Saat ini hanya mendukung `consul`, `nacos` atau kosong. Kosong berarti layanan tidak dipublikasikan ke service center, yang berarti Anda perlu menangani service discovery secara manual. Untuk menggunakan fitur ini, Anda perlu menginstal komponen [hyperf/service-governance](https://github.com/hyperf/service-governance) dan dependensi driver yang sesuai. Untuk detailnya, silakan merujuk ke bab [Service Registration](id/service-register.md).
 
-#### Mendefinisikan JSON RPC Server
+> Untuk menggunakan annotation `#[RpcService]`, Anda perlu `use Hyperf\RpcServer\Annotation\RpcService;`.
 
-HTTP Server (protokol `jsonrpc-http` disesuaikan)
+#### Mendefinisikan JSON-RPC Server
+
+HTTP Server (kompatibel dengan protokol `jsonrpc-http`)
 
 ```php
 <?php
@@ -109,7 +72,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Konfigurasi lain dari file ini diabaikan
     'servers' => [
         [
             'name' => 'jsonrpc-http',
@@ -125,7 +88,7 @@ return [
 ];
 ```
 
-TCP Server (protokol `jsonrpc` disesuaikan)
+TCP Server (kompatibel dengan protokol `jsonrpc`)
 
 ```php
 <?php
@@ -134,7 +97,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Konfigurasi lain dari file ini diabaikan
     'servers' => [
         [
             'name' => 'jsonrpc',
@@ -155,11 +118,9 @@ return [
 ];
 ```
 
-TCP Server (protokol `jsonrpc-tcp-length-check` disesuaikan)
+TCP Server (kompatibel dengan protokol `jsonrpc-tcp-length-check`)
 
-Protokol saat ini adalah protokol ekstensi dari `jsonrpc`, dan pengguna dapat
-dengan mudah memodifikasi `settings` yang sesuai untuk menggunakan protokol ini.
-Contohnya adalah sebagai berikut:
+Protokol saat ini adalah ekstensi dari `jsonrpc`. Pengguna dapat dengan mudah memodifikasi `settings` yang sesuai untuk menggunakan protokol ini. Contohnya sebagai berikut.
 
 ```php
 <?php
@@ -168,7 +129,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Konfigurasi lain dari file ini diabaikan
     'servers' => [
         [
             'name' => 'jsonrpc',
@@ -191,74 +152,90 @@ return [
 ];
 ```
 
-### Publikasikan ke service center
-   
-Saat ini, hanya mendukung publikasi layanan ke `consul`, dan service center
-lainnya akan ditambahkan di masa mendatang.
-Mempublikasikan layanan ke `consul` juga sangat mudah di Hyperf. Muat komponen
-Consul melalui `composer require hyperf/consul` (jika sudah terinstal, Anda dapat
-mengabaikan langkah ini), lalu konfigurasikan konfigurasi `Consul` Anda di file
-konfigurasi `config/autoload/consul.php`, contohnya adalah sebagai berikut:
+### Mempublikasikan ke Service Center
+
+Saat ini, hanya mendukung publikasi layanan ke `consul` dan `nacos`. Lainnya akan ditambahkan kemudian.
+Mempublikasikan layanan ke `consul` di Hyperf juga sangat mudah. Referensi komponen melalui `composer require hyperf/service-governance-consul` (lewati langkah ini jika sudah terinstal), kemudian konfigurasikan `drivers.consul` di file konfigurasi `config/autoload/services.php`.
+Mempublikasikan layanan ke `nacos` serupa. Referensi komponen melalui `composer require hyperf/service-governance-nacos` (lewati langkah ini jika sudah terinstal), kemudian konfigurasikan `drivers.nacos` di file konfigurasi `config/autoload/services.php`. Contohnya sebagai berikut:
 
 ```php
 <?php
-
 return [
-    'uri' => 'http://127.0.0.1:8500',
+    'enable' => [
+        'discovery' => true,
+        'register' => true,
+    ],
+    'consumers' => [],
+    'providers' => [],
+    'drivers' => [
+        'consul' => [
+            'uri' => 'http://127.0.0.1:8500',
+            'token' => '',
+        ],
+        'nacos' => [
+            // url server nacos seperti https://nacos.hyperf.io, Prioritas lebih tinggi dari host:port
+            // 'url' => '',
+            // Informasi host nacos
+            'host' => '127.0.0.1',
+            'port' => 8848,
+            // Informasi akun nacos
+            'username' => null,
+            'password' => null,
+            'guzzle' => [
+                'config' => null,
+            ],
+            'group_name' => 'api',
+            'namespace_id' => 'namespace_id',
+            'heartbeat' => 5,
+        ],
+    ],
 ];
 ```
 
-Setelah konfigurasi selesai, saat layanan dijalankan, Hyperf akan secara
-otomatis mendaftarkan layanan tersebut (yang didefinisikan dengan atribut
-`publishTo` bernilai `consul` oleh `#[RpcService]`) ke service center.
+Setelah konfigurasi, ketika layanan dimulai, Hyperf akan secara otomatis mendaftarkan layanan dengan atribut `publishTo` yang didefinisikan sebagai `consul` atau `nacos` di `#[RpcService]` ke service center yang sesuai.
 
-> Saat ini, hanya protokol `jsonrpc` dan `jsonrpc-http` yang didukung untuk
-dipublikasikan ke service center, protokol lain belum mengimplementasikan
-pendaftaran layanan.
+> Saat ini, hanya protokol `jsonrpc` dan `jsonrpc-http` yang didukung untuk dipublikasikan ke service center. Protokol lain belum mengimplementasikan service registration.
 
-### Mendefinisikan service consumer
+### Mendefinisikan Service Consumer
 
-Sebuah `ServiceConsumer` dapat dianggap sebagai client class. Di Hyperf, Anda
-tidak perlu berurusan dengan hal-hal yang berkaitan dengan koneksi dan request,
-Anda hanya perlu melakukan beberapa konfigurasi autentikasi.
+`Service Consumer` dapat dipahami sebagai kelas client, tetapi di Hyperf, Anda tidak perlu menangani masalah koneksi dan request. Anda hanya perlu melakukan beberapa konfigurasi identifikasi.
 
-#### Membuat proxy consumer class secara otomatis
+#### Membuat Proxy Consumer Classes Secara Otomatis
 
-Anda dapat secara otomatis membuat consumer class melalui dynamic proxy dengan
-melakukan beberapa konfigurasi sederhana di file konfigurasi
-`config/autoload/services.php`.
+Anda dapat secara otomatis membuat consumer classes melalui dynamic proxy dengan melakukan beberapa konfigurasi sederhana di file konfigurasi `config/autoload/services.php`.
 
 ```php
 <?php
 return [
+    // Konfigurasi lain di level yang sama diabaikan
     'consumers' => [
         [
-            // name must be the same as the name attribute of the service provider
+            // name harus sama dengan atribut name dari service provider
             'name' => 'CalculatorService',
-            // Service interface name. It's optional and the default value is equal to the value configured by name. If name is directly defined as an interface class, you can ignore this configuration. If name is a string, you need to configure service to correspond to the interface class
+            // Nama interface layanan, opsional. Nilai default sama dengan nilai yang dikonfigurasi dari name. Jika name didefinisikan langsung sebagai kelas interface, baris konfigurasi ini dapat diabaikan. Jika name adalah string, maka service perlu dikonfigurasi untuk sesuai dengan kelas interface.
             'service' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // Corresponding container object. It's optional and the default value is equal to the value of the service configuration. To define the key of dependency injection.
+            // ID objek container yang sesuai, opsional. Nilai default sama dengan nilai yang dikonfigurasi dari service, digunakan untuk mendefinisikan key untuk dependency injection.
             'id' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // The service agreement of the service provider. It's optional and the default value is jsonrpc-http
-            // jsonrpc-http, jsonrpc, and jsonrpc-tcp-length-check are available
+            // Protokol layanan dari service provider, opsional. Nilai default adalah jsonrpc-http
+            // Opsional: jsonrpc-http jsonrpc jsonrpc-tcp-length-check
             'protocol' => 'jsonrpc-http',
-            // Load balancing algorithm, optional, the default value is random
+            // Algoritma load balancing, opsional. Nilai default adalah random
             'load_balancer' => 'random',
-            // From which service center the consumer will obtain node information, if it is not configured, the node information will not be obtained from the service center
+            // Dari service center mana consumer ini mendapatkan node information? Jika tidak dikonfigurasi, node information tidak akan diambil dari service center.
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
             ],
-            // If the registry configuration above is not specified, it means to directly consume the specified node. Configure the node information of the service provider through the nodes parameter below
+            // Jika konfigurasi registry di atas tidak ditentukan, itu berarti konsumsi langsung ke node yang ditentukan. Konfigurasikan node information service provider melalui parameter nodes di bawah.
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9504],
             ],
-            // Configuration, this may affect Packer and Transporter
+            // Item konfigurasi, akan mempengaruhi Packer dan Transporter
             'options' => [
                 'connect_timeout' => 5.0,
                 'recv_timeout' => 5.0,
                 'settings' => [
-                    // Different protocol, different configuration
+                    // Konfigurasikan berbeda sesuai dengan protokol
                     'open_eof_split' => true,
                     'package_eof' => "\r\n",
                     // 'open_length_check' => true,
@@ -266,11 +243,13 @@ return [
                     // 'package_length_offset' => 0,
                     // 'package_body_offset' => 4,
                 ],
-                // Retrie count, the default value is 2, no retry will be performed when the packet is received over time. Only supports JsonRpcPoolTransporter, currently.
+                // Jumlah retry, nilai default adalah 2. Tidak ada retry untuk packet timeout. Sementara hanya mendukung JsonRpcPoolTransporter
                 'retry_count' => 2,
-                // Retry interval, in milliseconds
+                // Interval retry, milidetik
                 'retry_interval' => 100,
-                // The following configuration will be used when using JsonRpcPoolTransporter
+                // Interval heartbeat saat menggunakan multiplexed RPC, null berarti tidak ada heartbeat yang dipicu
+                'heartbeat' => 30,
+                // Konfigurasi berikut digunakan saat menggunakan JsonRpcPoolTransporter
                 'pool' => [
                     'min_connections' => 1,
                     'max_connections' => 32,
@@ -285,23 +264,13 @@ return [
 ];
 ```
 
-Proxy object dari client class dibuat secara otomatis saat aplikasi dimulai,
-dan nilai dari item konfigurasi `id` digunakan di dalam container (jika tidak
-diatur, nilai dari item konfigurasi `service` yang akan digunakan sebagai
-gantinya) untuk menambahkan hubungan binding. Seperti client class yang ditulis
-secara manual, client dapat digunakan secara langsung dengan menginjeksikan
-interface `CalculatorServiceInterface`.
+Ketika aplikasi dimulai, ia akan secara otomatis membuat proxy object untuk kelas client dan menambahkan hubungan binding di dalam container menggunakan nilai dari item konfigurasi `id` (jika tidak disetel, nilai dari item konfigurasi `service` akan digunakan sebagai gantinya). Ini sama seperti kelas client yang ditulis secara manual: Anda dapat langsung menggunakan client dengan menginjeksi interface `CalculatorServiceInterface`.
 
-> Ketika service provider menggunakan nama interface class untuk
-mempublikasikan nama layanan, hanya item konfigurasi `name` yang perlu diatur
-sebagai nama interface class pada service consumer, dan tidak perlu mengatur
-item konfigurasi `id` dan `service` berulang kali.
+> Ketika service provider menggunakan nama kelas interface untuk mempublikasikan nama layanan, di sisi service consumer, Anda hanya perlu mengatur item konfigurasi `name` ke nama kelas interface, tanpa perlu mengatur item konfigurasi `id` dan `service` secara berulang.
 
-#### Membuat consumer class secara manual
+#### Membuat Consumer Classes Secara Manual
 
-Jika Anda memiliki lebih banyak kebutuhan untuk consumer class, Anda dapat
-membuat consumer class secara manual untuk mencapainya. Anda hanya perlu
-mendefinisikan class dan atribut terkait.
+Jika Anda memiliki lebih banyak kebutuhan untuk consumer class, Anda dapat mengimplementasikannya dengan membuat consumer class secara manual, cukup dengan mendefinisikan sebuah kelas dan atribut-atribut terkaitnya.
 
 ```php
 <?php
@@ -313,16 +282,14 @@ use Hyperf\RpcClient\AbstractServiceClient;
 class CalculatorServiceConsumer extends AbstractServiceClient implements CalculatorServiceInterface
 {
     /**
-     * Define the service name of the corresponding service provider
-     * @var string 
+     * Mendefinisikan nama layanan yang sesuai dengan service provider
      */
-    protected $serviceName = 'CalculatorService';
+    protected string $serviceName = 'CalculatorService';
     
     /**
-     * Define the protocol of the corresponding service provider
-     * @var string 
+     * Mendefinisikan protokol layanan yang sesuai dengan service provider
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {
@@ -331,23 +298,22 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 }
 ```
 
-Kemudian Anda perlu mendefinisikan tag di file konfigurasi untuk mendapatkan
-informasi node dari service center mana. File tersebut berada di
-`config/autoload/services.php` (jika belum ada, Anda dapat membuatnya sendiri)
+Kemudian Anda juga perlu mendefinisikan konfigurasi di file konfigurasi untuk menandai dari service center mana mendapatkan node information, terletak di `config/autoload/services.php` (buat sendiri jika belum ada)
 
 ```php
 <?php
 return [
+    // Konfigurasi lain di level yang sama diabaikan
     'consumers' => [
         [
-            // $serviceName corresponding to the consumer class
+            // Sesuai dengan $serviceName dari consumer class
             'name' => 'CalculatorService',
-            // From which service center the consumer will obtain node information. If it is not configured, the node information will not be obtained from the service center
+            // Dari service center mana consumer ini mendapatkan node information? Jika tidak dikonfigurasi, node information tidak akan diambil dari service center.
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
             ],
-            // If the registry configuration above is not specified, it means to directly consume the specified node. Configure the node information of the service provider through the nodes parameter below
+            // Jika konfigurasi registry di atas tidak ditentukan, itu berarti konsumsi langsung ke node yang ditentukan. Konfigurasikan node information service provider melalui parameter nodes di bawah.
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9504],
             ],
@@ -356,12 +322,7 @@ return [
 ];
 ```
 
-
-Dengan cara ini, kita dapat menggunakan class `CalculatorService` untuk
-mencapai konsumsi layanan. Agar logika hubungan di sini lebih masuk akal,
-hubungan antara `CalculatorServiceInterface` dan `CalculatorServiceConsumer`
-juga harus didefinisikan dalam `config/autoload/dependencies.php`. Contohnya
-adalah sebagai berikut:
+Dengan cara ini, kita dapat merealisasikan konsumsi layanan melalui kelas `CalculatorService`. Untuk membuat hubungan logika di sini lebih masuk akal, hubungan antara `CalculatorServiceInterface` dan `CalculatorServiceConsumer` juga harus didefinisikan di `config/autoload/dependencies.php`. Contohnya sebagai berikut:
 
 ```php
 return [
@@ -369,20 +330,13 @@ return [
 ];
 ```
 
-Dengan cara ini, client dapat digunakan dengan menginjeksikan interface
-`CalculatorServiceInterface`.
+Ini memungkinkan Anda menggunakan client dengan menginjeksi interface `CalculatorServiceInterface`.
 
-#### Penggunaan kembali konfigurasi
+#### Menggunakan Kembali Konfigurasi
 
-Umumnya, sebuah service consumer akan mengonsumsi beberapa service provider
-secara bersamaan. Ketika kita menemukan service provider melalui service center,
-konfigurasi `registry` di file `config/autoload/services.php` mungkin dikonfigurasi
-berulang kali. Namun, service center kita mungkin disatukan, yang berarti beberapa
-service consumer dikonfigurasi untuk menarik informasi node dari service center
-yang sama. Pada saat ini, kita dapat mengimplementasikannya melalui kode PHP
-seperti `variabel PHP` atau `loop` untuk menghasilkan file konfigurasi.
+Biasanya, sebuah service consumer akan mengonsumsi beberapa service provider secara bersamaan. Ketika kita menemukan service provider melalui service center, konfigurasi `registry` mungkin akan diulang berkali-kali di file konfigurasi `config/autoload/services.php`. Namun biasanya, service center kita mungkin terpusat, yang berarti beberapa konfigurasi service consumer mengambil node information dari service center yang sama. Pada saat ini, kita dapat merealisasikan pembuatan file konfigurasi melalui `PHP variables` atau `loops` dan kode PHP lainnya.
 
-##### Menghasilkan konfigurasi dengan variabel PHP
+##### Membuat konfigurasi melalui PHP variables
 
 ```php
 <?php
@@ -391,7 +345,7 @@ $registry = [
    'address' => 'http://127.0.0.1:8500',
 ];
 return [
-    // The following FooService and BarService are only examples of multi-services, and they do not actually exist in the document examples
+    // FooService dan BarService di bawah ini hanya contoh beberapa layanan, dan sebenarnya tidak ada dalam contoh dokumentasi.
     'consumers' => [
         [
             'name' => 'FooService',
@@ -405,15 +359,16 @@ return [
 ];
 ```
 
-##### Menghasilkan konfigurasi dengan loop
+##### Membuat konfigurasi melalui loops
 
 ```php
 <?php
 return [
+    // Konfigurasi lain di level yang sama diabaikan
     'consumers' => value(function () {
         $consumers = [];
-        // This example automatically creates the configuration form of the proxy consumer class. There are two configuration items - name and service. This is not the only method. Just to explain that the configuration can be generated through PHP code
-        // The following FooServiceInterface and BarServiceInterface are only examples of multi-services, and they do not actually exist in the document examples
+        // Di sini mengilustrasikan bentuk konfigurasi untuk membuat proxy consumer classes secara otomatis. Oleh karena itu, ada dua item konfigurasi: name dan service. Pendekatan di sini tidak unik, hanya mengilustrasikan bahwa konfigurasi dapat dibuat melalui kode PHP.
+        // FooServiceInterface dan BarServiceInterface di bawah ini hanya contoh beberapa layanan, dan sebenarnya tidak ada dalam contoh dokumentasi.
         $services = [
             'FooService' => App\JsonRpc\FooServiceInterface::class,
             'BarService' => App\JsonRpc\BarServiceInterface::class,
@@ -433,11 +388,9 @@ return [
 ];
 ```
 
-### Mengembalikan object PHP
+### Mengembalikan PHP Objects
 
-Ketika framework mengimpor `symfony/serializer (^5.0)` dan
-`symfony/property-access (^5.0)`, konfigurasikan hubungan pemetaan di
-`dependencies.php`
+Ketika framework mengimpor `symfony/serializer (^5.0)` dan `symfony/property-access (^5.0)`, serta mengonfigurasi hubungan mapping di `dependencies.php`
 
 ```php
 use Hyperf\Serializer\SerializerFactory;
@@ -448,10 +401,9 @@ return [
 ];
 ```
 
-`NormalizerInterface` akan mendukung serialisasi dan deserialisasi object. Array
-object tipe `MathValue[]` seperti ini belum didukung saat ini.
+`NormalizerInterface` akan mendukung serialization dan deserialization objek. Array objek seperti `MathValue[]` sementara tidak didukung.
 
-Mendefinisikan object kembalian (return object)
+Mendefinisikan return object
 
 ```php
 <?php
@@ -486,7 +438,7 @@ interface CalculatorServiceInterface
 }
 ```
 
-Memanggil di controller
+Pemanggilan di controller
 
 ```php
 <?php
@@ -505,12 +457,9 @@ var_dump($result->value);
 
 ### Menggunakan JsonRpcPoolTransporter
 
-Framework menyediakan `Transporter` berbasis connection pool, yang secara efektif
-dapat menghindari masalah pembuatan terlalu banyak koneksi selama konkurensi tinggi.
-Di sini Anda dapat menggunakan `JsonRpcPoolTransporter` untuk menggantikan
-`JsonRpcTransporter`.
+Framework menyediakan `Transporter` berbasis connection pool, yang dapat secara efektif menghindari masalah pembuatan terlalu banyak koneksi saat konkurensi tinggi. Di sini, Anda dapat mengganti `JsonRpcTransporter` dengan `JsonRpcPoolTransporter`.
 
-Modifikasi file `dependencies.php`
+Memodifikasi file `dependencies.php`
 
 ```php
 <?php
@@ -523,5 +472,4 @@ use Hyperf\JsonRpc\JsonRpcTransporter;
 return [
     JsonRpcTransporter::class => JsonRpcPoolTransporter::class,
 ];
-
 ```
