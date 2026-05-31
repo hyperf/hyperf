@@ -1,11 +1,6 @@
-# Filesystem
+# File System
 
-Komponen filesystem mengintegrasikan library populer `League\Flysystem` dalam
-ekosistem PHP (ini juga merupakan library dasar dari banyak framework terkenal
-seperti Laravel). Melalui abstraksi yang tepat, program tidak perlu mendeteksi
-apakah mesin penyimpanan berupa hard disk lokal atau server cloud, sehingga
-mencapai decoupling. Komponen ini menyediakan dukungan coroutine untuk layanan
-cloud storage yang umum.
+Komponen filesystem mengintegrasikan `League\Flysystem` yang terkenal di ekosistem PHP (yang juga merupakan library dasar untuk banyak framework terkenal seperti Laravel). Melalui abstraksi yang tepat, program tidak perlu mengetahui apakah storage engine adalah hard disk lokal atau server cloud, sehingga mencapai decoupling. Komponen ini menyediakan dukungan coroutine untuk layanan cloud storage yang umum digunakan.
 
 ## Instalasi
 
@@ -13,115 +8,109 @@ cloud storage yang umum.
 composer require hyperf/filesystem
 ```
 
-Versi komponen `League\Flysystem` `v1.0`, `v2.0`, dan `v3.0` telah mengalami
-perubahan besar, sehingga Anda perlu menginstal adapter yang sesuai berdasarkan
-versi yang berbeda.
+Perubahan versi dari komponen `League\Flysystem` `v1.0`, `v2.0`, dan `v3.0` cukup besar, jadi Anda perlu menginstal adapter yang sesuai berdasarkan versi yang berbeda.
 
-- Adapter Alibaba Cloud OSS
+- Aliyun OSS Adapter
 
-Versi `Flysystem v1.0`
+`Flysystem v1.0` version
 
 ```shell
 composer require xxtime/flysystem-aliyun-oss
 ```
 
-Versi `Flysystem v2.0` dan `Flysystem v3.0`
+`Flysystem v2.0` dan `Flysystem v3.0` version
 
 ```shell
 composer require hyperf/flysystem-oss
 ```
 
-- Adapter S3
+- S3 Adapter
 
-Versi `Flysystem v1.0`
+`Flysystem v1.0` version
 
 ```shell
 composer require "league/flysystem-aws-s3-v3:^1.0"
 composer require hyperf/guzzle
 ```
 
-Versi `Flysystem v2.0`
+`Flysystem v2.0` version
 
 ```shell
 composer require "league/flysystem-aws-s3-v3:^2.0"
 composer require hyperf/guzzle
 ```
 
-- Adapter Qiniu
+- Qiniu Adapter
 
-Versi `Flysystem v1.0`
+`Flysystem v1.0` version
 
 ```shell
 composer require "overtrue/flysystem-qiniu:^1.0"
 ```
 
-Versi `Flysystem v2.0`
+`Flysystem v2.0` version
 
 ```shell
 composer require "overtrue/flysystem-qiniu:^2.0"
 ```
 
-Versi `Flysystem v3.0`
+`Flysystem v3.0` version
 
 ```shell
 composer require "overtrue/flysystem-qiniu:^3.0"
 ```
 
-- Adapter Memory
+- Memory Adapter
 
-Versi `Flysystem v1.0`
+`Flysystem v1.0` version
 
 ```shell
 composer require "league/flysystem-memory:^1.0"
 ```
 
-Versi `Flysystem v2.0`
+`Flysystem v2.0` version
 
 ```shell
 composer require "league/flysystem-memory:^2.0"
 ```
 
-- Adapter Tencent Cloud COS
+- Tencent Cloud COS Adapter
 
-Versi `Flysystem v1.0`
+`Flysystem v1.0` version
 
-> flysystem-cos versi v2.0 telah usang (deprecated), silakan ubah ke versi 3.0
-> sesuai dengan dokumentasi terbaru
+> flysystem-cos v2.0 tidak lagi direkomendasikan, silakan ubah ke versi 3.0 sesuai dokumentasi terbaru.
 
 ```shell
 composer require "overtrue/flysystem-cos:^3.0"
 ```
 
-Versi `Flysystem v2.0`
+`Flysystem v2.0` version
 
 ```shell
 composer require "overtrue/flysystem-cos:^4.0"
 ```
 
-Versi `Flysystem v3.0`
+`Flysystem v3.0` version
 
 ```shell
 composer require "overtrue/flysystem-cos:^5.0"
 ```
 
-Setelah instalasi selesai, jalankan
+Setelah instalasi selesai, jalankan:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/filesystem
 ```
 
-File `config/autoload/file.php` akan dibuat. Atur driver default di file ini,
-dan konfigurasikan access key, access secret, serta informasi lainnya dari
-driver yang sesuai, lalu Anda dapat menggunakannya.
+Ini akan menghasilkan file `config/autoload/file.php`. Di file ini, atur driver default dan konfigurasikan access key, access secret, dll., dari driver yang sesuai untuk menggunakannya.
 
 ## Penggunaan
 
-Ini dapat digunakan dengan menginjeksikan `League\Flysystem\Filesystem` melalui DI.
+Anda dapat menggunakannya dengan menginjeksi `League\Flysystem\Filesystem` melalui DI.
 
 API-nya adalah sebagai berikut:
 
-> Contoh berikut adalah untuk Flysystem versi v1.0, silakan merujuk ke
-> dokumentasi resmi untuk versi v2.0
+> Contoh berikut untuk Flysystem v1.0. Untuk v2.0, silakan merujuk ke dokumentasi resmi.
 
 ```php
 <?php
@@ -134,7 +123,7 @@ class IndexController extends AbstractController
 {
     public function example(\League\Flysystem\Filesystem $filesystem)
     {
-        // Process Upload
+        // Memproses Upload
         $file = $this->request->file('upload');
         $stream = fopen($file->getRealPath(), 'r+');
         $filesystem->writeStream(
@@ -143,44 +132,41 @@ class IndexController extends AbstractController
         );
         fclose($stream);
         
-        // Write Files
+        // Menulis Files
         $filesystem->write('path/to/file.txt', 'contents');
 
-        // Add local file
+        // Menambahkan file lokal
         $stream = fopen('local/path/to/file.txt', 'r+');
         $result = $filesystem->writeStream('path/to/file.txt', $stream);
         if (is_resource($stream)) {
             fclose($stream);
         }
 
-        // Update Files
+        // Memperbarui Files
         $filesystem->update('path/to/file.txt', 'new contents');
 
-        // Check if a file exists
+        // Memeriksa apakah file ada
         $exists = $filesystem->has('path/to/file.txt');
 
-        // Read Files
+        // Membaca Files
         $contents = $filesystem->read('path/to/file.txt');
 
-        // Delete Files
+        // Menghapus Files
         $filesystem->delete('path/to/file.txt');
 
-        // Rename Files
+        // Mengganti Nama Files
         $filesystem->rename('filename.txt', 'newname.txt');
 
-        // Copy Files
+        // Menyalin Files
         $filesystem->copy('filename.txt', 'duplicate.txt');
 
-        // list the contents
+        // Mendaftar konten
         $filesystem->listContents('path', false);
     }
 }
 ```
 
-Pada beberapa kasus, Anda mungkin perlu menggunakan beberapa media penyimpanan
-sekaligus. Untuk melakukannya, Anda dapat menginjeksikan
-`Hyperf\Filesystem\FilesystemFactory` untuk memilih driver yang akan digunakan
-secara dinamis.
+Terkadang, Anda perlu menggunakan beberapa media penyimpanan secara bersamaan. Dalam kasus ini, Anda dapat menginjeksi `Hyperf\Filesystem\FilesystemFactory` untuk secara dinamis memilih driver mana yang akan digunakan.
 
 ```php
 <?php
@@ -194,7 +180,7 @@ class IndexController
     public function example(\Hyperf\Filesystem\FilesystemFactory $factory)
     {
     	$local = $factory->get('local');
-        // Write Files
+        // Menulis Files
         $local->write('path/to/file.txt', 'contents');
 
         $s3 = $factory->get('s3');
@@ -204,45 +190,33 @@ class IndexController
 }
 ```
 
-### Mengonfigurasi Resource Statis
+### Mengonfigurasi Static Resources
 
-Jika Anda ingin mengakses file yang diunggah secara lokal melalui HTTP, silakan
-tambahkan konfigurasi berikut ke konfigurasi `config/autoload/server.php`.
+Jika Anda ingin mengakses file yang diunggah ke disk lokal melalui http, harap tambahkan konfigurasi berikut ke dalam konfigurasi `config/autoload/server.php` Anda.
 
 ```php
 return [
     'settings' => [
         ...
-        // Replace public with the upload directory
+        // Ganti public dengan direktori upload Anda
         'document_root' => BASE_PATH . '/public',
         'enable_static_handler' => true,
     ],
 ];
-
 ```
 
-## Catatan Penting
+## Catatan
 
-1. Pastikan untuk menginstal komponen `hyperf/guzzle` untuk penyimpanan S3 guna
-   menyediakan dukungan coroutine. Untuk Alibaba Cloud, Qiniu Cloud, dan Tencent
-   Cloud, silakan [Aktifkan Curl Hook](/id/coroutine?id=swoole-runtime-hook-level)
-   untuk menggunakan coroutine. Karena dukungan parameter dari Curl Hook,
-   silakan gunakan Swoole 4.4.13 atau versi yang lebih baru.
-2. Solusi private object storage seperti minIO dan ceph radosgw semuanya
-   mendukung protokol S3 dan dapat menggunakan adapter S3.
-3. Saat menggunakan driver Local, direktori root-nya adalah alamat yang
-   dikonfigurasi, bukan direktori root dari sistem operasi. Sebagai contoh, jika
-   driver local `root` diatur ke `/var/www`, maka `/var/www/public/file.txt` pada
-   disk lokal harus diakses melalui API flysystem menggunakan
-   `/public/file.txt` atau `public/file.txt`.
-4. Mengambil Alibaba Cloud OSS sebagai contoh, perbandingan performa operasi
-   pembacaan pada 1 core dan 1 proses:
+1. Untuk S3 storage, pastikan untuk menginstal komponen `hyperf/guzzle` untuk menyediakan dukungan coroutine. Untuk Aliyun OSS, Qiniu Cloud, dan Tencent Cloud storage, harap [aktifkan Curl Hook](/id/coroutine?id=swoole-runtime-hook-level) untuk menggunakan coroutine. Karena masalah dukungan parameter Curl Hook, gunakan Swoole versi 4.4.13 atau lebih tinggi.
+2. Solusi object storage privat seperti minIO dan ceph radosgw semuanya mendukung protokol S3 dan dapat menggunakan S3 adapter.
+3. Saat menggunakan Local driver, root directory adalah alamat yang dikonfigurasi, bukan root directory sistem operasi. Misalnya, jika Local driver `root` diatur ke `/var/www`, maka `/var/www/public/file.txt` di disk lokal harus diakses melalui `/public/file.txt` atau `public/file.txt` saat diakses melalui flysystem API.
+4. Mengambil Aliyun OSS sebagai contoh, perbandingan performa baca untuk 1 core 1 process:
 
 ```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
 
-CURL HOOK tidak aktif:
+Sebelum mengaktifkan CURL HOOK:
 
 ```
 Concurrency Level:      10
@@ -274,11 +248,11 @@ Time per request:       9.252 [ms] (mean, across all concurrent requests)
 Transfer rate:          15.41 [Kbytes/sec] received
 ```
 
-## Detail Konfigurasi
+## Konfigurasi Detail
 
 ```php
 return [
-    // Select the key corresponding to the driver under storage.
+    // Pilih key yang sesuai dengan driver di bawah storage.
     'default' => 'local',
     'storage' => [
         'local' => [
@@ -291,7 +265,7 @@ return [
             'username' => 'username',
             'password' => 'password',
 
-            /* optional config settings */
+            /* pengaturan konfigurasi opsional */
             'port' => 21,
             'root' => '/path/to/root',
             'passive' => true,
@@ -349,17 +323,17 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
-            // overtrue/flysystem-cos ^2.0 The configuration is as follows
+            // overtrue/flysystem-cos ^2.0 configuration as follows
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
-            // overtrue/flysystem-cos ^3.0 The configuration is as follows
+            // overtrue/flysystem-cos ^3.0 configuration as follows
             'app_id' => env('COS_APPID'),
             'secret_id' => env('COS_SECRET_ID'),
             'secret_key' => env('COS_SECRET_KEY'),
-            // Optional, please turn this on if the bucket has private access
+            // Opsional, harap aktifkan jika bucket untuk akses privat
             // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,
