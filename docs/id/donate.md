@@ -1,36 +1,22 @@
-# Donasi
+# Donasi dan Sponsor
 
-Hyperf adalah proyek open source berlisensi MIT dan sepenuhnya gratis untuk
-digunakan. Namun, jumlah upaya yang diperlukan untuk memelihara dan
-mengembangkan fitur baru bagi proyek ini tidak berkelanjutan tanpa dukungan
-finansial yang memadai. Anda dapat mendukung pengembangan Hyperf melalui
-metode berikut:
+Hyperf adalah proyek open-source berlisensi MIT dan gratis digunakan. Namun, seiring berkembangnya proyek, diperlukan dana untuk memelihara dan mengembangkannya. Anda dapat mendukung pengembangan Hyperf melalui cara-cara berikut.
 
-## Sponsori Pengembangan Hyperf
+## Mensponsori Riset & Pengembangan Hyperf
 
-Jika Anda menjalankan bisnis dan menggunakan Hyperf dalam produk yang menghasilkan
-pendapatan, sangat masuk akal secara bisnis untuk mensponsori pengembangan
-Hyperf: hal ini memastikan proyek yang diandalkan oleh produk Anda tetap sehat
-dan dipelihara secara aktif. Ini juga dapat membantu eksposur Anda di komunitas
-Hyperf, sehingga memudahkan untuk menarik developer Hyperf.
+### Sponsor Sekali
 
-Jika Anda adalah pengguna individu dan menikmati produktivitas dalam menggunakan
-Hyperf, pertimbangkan untuk berdonasi sebagai tanda apresiasi - seperti
-membelikan kami kopi sesekali :)
+Jika Anda adalah pengembang individu dan menikmati efisiensi pengembangan tinggi yang diberikan Hyperf, Anda dapat menyampaikan apresiasi dengan donasi(donate) sesekali, misalnya seperti membelikan kami secangkir kopi :)
 
-### Donasi Sekali Cukup (One-time Donations)
+Kami menerima sponsor melalui metode berikut:
 
-Kami menerima donasi melalui saluran berikut:
+![alipay](imgs/alipay.jpg ':size=375x562')
+![wechat](imgs/wechatpay.jpg ':size=375x562')
 
-![alipay](imgs/alipay.jpg ':size=375')
-![wechat](imgs/wechatpay.jpg ':size=375')
+### Sponsor Berkala
 
-### Dukungan Rutin (Recurring Pledges)
+Jika Anda adalah pemilik bisnis dan menggunakan Hyperf dalam produk komersial, maka mensponsori Hyperf memiliki manfaat bisnis: menjaga framework yang menjadi andalan produk Anda tetap sehat dan terawat/ter-upgrade secara aktif, serta membantu Anda mendapatkan visibilitas lebih tinggi di komunitas Hyperf, sehingga lebih mudah menarik pengembang Hyperf.
 
-Dukungan rutin hadir dengan keuntungan eksklusif, misalnya nama Anda
-tercantum dalam repositori GitHub Hyperf, atau logo perusahaan Anda
-ditampilkan di situs web ini.
+Sponsor berkala bisa mendapatkan imbalan tambahan, seperti nama atau logo organisasi/perusahaan Anda beserta tautan yang muncul di repositori GitHub Hyperf.
 
-> Jika Anda ingin memberikan sponsor rutin untuk tim Hyperf, Anda dapat
-> bergabung dengan grup WeChat atau QQ resmi dan menghubungi pemilik grup,
-> atau mengirim email ke h@hyperf.io
+> Jika Anda ingin memberikan sponsor berkala kepada tim Hyperf, silakan bergabung dengan grup WeChat resmi atau grup QQ dan hubungi pemilik grup, atau kirim email ke h@hyperf.io

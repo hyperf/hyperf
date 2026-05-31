@@ -1,21 +1,16 @@
 # DAG
 
-`hyperf/dag` adalah library orkestrasi task directed acyclic graph
-(**D**irected **A**cyclic **G**raph) yang ringan.
+`hyperf/dag` adalah pustaka orkestrasi tugas Directed Acyclic Graph (**DAG**) yang ringan.
 
-## Skenario Penggunaan
+## Skenario
 
-Misalkan kita memiliki serangkaian task yang harus dijalankan.
+Misalkan kita punya serangkaian tugas yang perlu dijalankan:
 
-- Jika terdapat dependensi di antara task tersebut, mereka dapat dieksekusi
-  secara sekuensial.
-- Jika mereka tidak saling bergantung satu sama lain, kita dapat memilih untuk
-  mengekskusinya secara konkuren untuk mempercepat proses eksekusi.
-- Ada juga kondisi perantara di antara keduanya: beberapa task memiliki
-  dependensi, sementara task lainnya dapat dieksekusi secara konkuren.
+- Jika ada dependensi antar tugas, jalankan secara berurutan.
+- Jika tidak saling bergantung, kita bisa menjalankannya secara konkuren untuk mempercepat proses.
+- Ada juga kondisi campuran: beberapa tugas punya dependensi, sementara lainnya bisa jalan bersamaan.
 
-Kita dapat menyelesaikan skenario kompleks ketiga dengan mengabstraksikannya
-menjadi sebuah `DAG`.
+Kita dapat mengabstraksi skenario kompleks ketiga ini ke dalam `DAG` untuk menyelesaikannya.
 
 ## Instalasi
 
@@ -69,39 +64,33 @@ $dag->addVertex($a)
     ->addEdge($f, $i)
     ->addEdge($g, $i);
     
-// need to be executed in a coroutine environment
+// Perlu dijalankan di lingkungan coroutine
 $dag->run(); 
-
 ```
 
 Output:
 
 ```php
-// 1s afterwards
+// setelah 1s
 A
-// 2s afterwards
+// setelah 2s
 D
 C
 B
-// 3s afterwards
+// setelah 3s
 G
 F
 E
 H
-// 4s afterwards
+// setelah 4s
 I
 ```
 
-> DAG akan menjadwalkan task sesegera mungkin. Coba ubah waktu pada titik B
-> menjadi 2 detik, dan Anda akan melihat bahwa B dan G selesai secara
-> bersamaan.
+> DAG akan menjadwalkan tugas seawal mungkin. Coba ubah waktu eksekusi B jadi 2 detik, maka B dan G akan selesai bersamaan.
 
-## Mengakses Hasil Langkah Sebelumnya
+## Mengakses Hasil Sebelumnya
 
-Setiap task dapat menerima parameter berupa array yang berisi hasil dari semua
-dependensi sebelumnya (pre-dependencies). Setelah `DAG` dieksekusi, ia juga
-akan mengembalikan array dengan struktur yang sama, termasuk hasil eksekusi dari
-setiap langkah.
+Setiap tugas bisa menerima parameter array yang berisi hasil dari semua dependensi sebelumnya. Setelah `DAG` selesai dijalankan, ia juga mengembalikan array dengan struktur yang sama, berisi hasil eksekusi setiap langkah.
 
 ```php
 <?php
@@ -117,17 +106,14 @@ assert($results[$b->key] === 2);
 
 ## Mendefinisikan Task
 
-Pada dokumen di atas, kita menggunakan closure untuk mendefinisikan sebuah task.
-Formatnya adalah sebagai berikut.
+Dalam dokumen di atas, kita menggunakan closure untuk mendefinisikan task. Formatnya sebagai berikut:
 
 ```php
-// The second parameter of Vertex::make is an optional parameter, which is the key of vertex, that is, the key value of the result array.
+// Parameter kedua dari Vertex::make adalah parameter opsional, berfungsi sebagai key dari vertex, yang merupakan key dari array hasil.
 \Hyperf\Dag\Vertex::make(function() { return 'hello'; }, "greeting");
 ```
 
-Selain menggunakan fungsi closure untuk mendefinisikan task, Anda juga dapat
-menggunakan class yang mengimplementasikan interface `\Hyperf\Dag\Runner` dan
-mengubahnya menjadi vertex melalui `Vertex::of`.
+Selain closure, Anda juga bisa menggunakan kelas yang mengimplementasikan interface `\Hyperf\Dag\Runner` dan mengonversinya menjadi vertex dengan `Vertex::of`.
 
 ```php
 class MyJob implements \Hyperf\Dag\Runner {
@@ -139,12 +125,11 @@ class MyJob implements \Hyperf\Dag\Runner {
 \Hyperf\Dag\Vertex::of(new MyJob(), "greeting");
 ```
 
-`\Hyperf\Dag\Dag` sendiri juga mengimplementasikan interface
-`\Hyperf\Dag\Runner`, sehingga dapat disarangkan (nested).
+`\Hyperf\Dag\Dag` sendiri juga mengimplementasikan interface `\Hyperf\Dag\Runner`, sehingga dapat di-nested.
 
 ```php
 <?php
-// namespace omitted
+// Namespace dihilangkan
 $a = Vertex::make(function () { return 1;});
 $b = Vertex::make(function () { return 2;});
 $c = Vertex::make(function () { return 3;});
@@ -158,6 +143,6 @@ $superDag->addVertex($c)->addVertex($d)->addEdge($c, $d);
 $superDag->run();
 ```
 
-## Mengontrol Jumlah Konkurensi
-Class `\Hyperf\Dag\Dag` menyediakan method `setConcurrency(int n)` untuk
-mengontrol jumlah maksimum konkurensi. Default-nya adalah 10.
+## Mengontrol Konkurensi
+
+Kelas `\Hyperf\Dag\Dag` menyediakan method `setConcurrency(int n)` untuk mengontrol konkurensi maksimum. Defaultnya adalah 10.
