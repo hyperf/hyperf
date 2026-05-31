@@ -6,7 +6,7 @@ Biar lebih cepet paham `Hyperf`, bagian ini bakal pake studi kasus `Membuat HTTP
 
 Hyperf pake [nikic/fast-route](https://github.com/nikic/FastRoute) sebagai default routing component. Anda bisa dengan gampang define route di `config/routes.php`.
 
-Gak cuma itu, framework juga nyediain `Annotation Routing` yang powerful, praktis, dan fleksibel. Detailnya liat di bagian [Routing](../router.md).
+Gak cuma itu, framework juga nyediain `Annotation Routing` yang powerful, praktis, dan fleksibel. Detailnya liat di bagian [Routing](id/router.md).
 
 ### Mendefinisikan Route melalui File Konfigurasi
 
@@ -36,7 +36,7 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### Mendefinisikan Route melalui Annotation
 
-`Hyperf` nyediain [Annotation](../annotation.md) yang powerful, praktis, dan fleksibel, yang jelas nyediain cara berbasis annotation buat define route. Hyperf punya dua jenis annotation: `#[Controller]` dan `#[AutoController]` buat mendefinisikan `Controller`. Ini cuma pengantar; detail lebih lanjut ada di bagian [Routing](../router.md).
+`Hyperf` nyediain [Annotation](id/annotation.md) yang powerful, praktis, dan fleksibel, yang jelas nyediain cara berbasis annotation buat define route. Hyperf punya dua jenis annotation: `#[Controller]` dan `#[AutoController]` buat mendefinisikan `Controller`. Ini cuma pengantar; detail lebih lanjut ada di bagian [Routing](id/router.md).
 
 ### Mendefinisikan Route melalui Annotation `#[AutoController]`
 
@@ -235,7 +235,7 @@ Karena `Hyperf` adalah aplikasi `CLI` yang persisten, begitu proses jalan, kode 
 > Tips: Anda juga bisa konfigurasi perintah start Server di IDE, biar tinggal pake tombol `start/stop` buat `start service` atau `restart service`.
 > Selain itu, pas development non-view, Anda bisa pake [TDD (Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369). Ini gak cuma ngilangin repot restart service dan pindah-pindah jendela, tapi juga ngejamin kebenaran data interface.
 
-> Selain itu, bab [Hot Reload/Hot Update](../awesome-components.md?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%bd%e8%bd%bd) dalam dokumentasi menyediakan berbagai solusi yang didukung oleh developer komunitas. Jika Anda masih ingin menggunakan solusi Hot Reload/Hot Update, Anda bisa mempelajarinya lebih lanjut.
+> Selain itu, bab [Hot Reload/Hot Update](id/awesome-components.md?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%bd%e8%bd%bd) dalam dokumentasi menyediakan berbagai solusi yang didukung oleh developer komunitas. Jika Anda masih ingin menggunakan solusi Hot Reload/Hot Update, Anda bisa mempelajarinya lebih lanjut.
 
 ## Multi-port Listening
 

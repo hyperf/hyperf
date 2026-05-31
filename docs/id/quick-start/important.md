@@ -8,7 +8,7 @@ Di `PHP-FPM`, Anda bisa dapetin parameter request lewat global variables, server
 
 ## Class yang Diperoleh melalui Container Bersifat Singleton
 
-Lewat dependency injection container, semua objek yang persist di dalam proses dibagi ke multiple coroutines, jadi gak boleh nyimpen data spesifik request atau spesifik coroutine tertentu. Data kayak gitu diproses lewat coroutine context. Baca bagian [Dependency Injection](./di.md) dan [Coroutine](./coroutine.md) baik-baik.
+Lewat dependency injection container, semua objek yang persist di dalam proses dibagi ke multiple coroutines, jadi gak boleh nyimpen data spesifik request atau spesifik coroutine tertentu. Data kayak gitu diproses lewat coroutine context. Baca bagian [Dependency Injection](id/di.md) dan [Coroutine](id/coroutine.md) baik-baik.
 
 ## Deployment
 

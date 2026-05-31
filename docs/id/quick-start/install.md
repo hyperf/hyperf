@@ -6,7 +6,7 @@ Hyperf punya beberapa syarat lingkungan sistem. Kalo pake Swoole network engine,
 
 Project [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) udah nyiapin berbagai versi Dockerfile, atau Anda bisa langsung pake image [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) yang udah dibangun.
 
-Kalo gak mau pake Docker sebagai basis lingkungan runtime, bisa pake [Box](../eco/box.md). Kalo mau setup sendiri, pastiin lingkungan runtime-nya memenuhi syarat berikut:
+Kalo gak mau pake Docker sebagai basis lingkungan runtime, bisa pake [Box](id/eco/box.md). Kalo mau setup sendiri, pastiin lingkungan runtime-nya memenuhi syarat berikut:
 
  - PHP >= 8.1
  - Salah satu dari network engine berikut:
