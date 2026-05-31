@@ -1,41 +1,32 @@
 # Model Cache
 
-Dalam skenario frekuensi tinggi, kita akan sering melakukan kueri ke database.
-Meskipun ada keunggulan primary key, hal tersebut juga akan mempengaruhi performa
-database. Dengan metode kueri kv ini, kita dapat dengan mudah menggunakan
-`model cache` untuk mengurangi tekanan pada database. Modul ini
-mengimplementasikan caching otomatis. Saat menghapus dan mengubah model, cache
-akan dihapus secara otomatis. Saat melakukan akumulasi (penjumlahan dan
-pengurangan), operasi langsung dilakukan pada cache untuk melakukan akumulasi
-yang sesuai.
+Dalam skenario bisnis dengan konkurensi tinggi, query ke database untuk mengambil data bisnis sering terjadi. Walaupun primary key index membantu, tekanan pada performa database tetaplah besar. Untuk pola query key-value (KV) seperti ini, `Model Cache` bisa meringankan beban database. Komponen ini mengimplementasikan caching otomatis untuk data Model, cache akan otomatis dihapus atau diperbarui saat data model berubah. Operasi increment/decrement juga otomatis memperbarui cache.
 
-> Model cache saat ini hanya mendukung penyimpanan `Redis`, mesin penyimpanan
-> lain akan ditambahkan secara bertahap.
+> Model cache saat ini hanya mendukung storage driver `Redis`. Kontribusi untuk engine lain sangat diterima.
 
-## Instalasi
+## Installation
 
 ```bash
 composer require hyperf/model-cache
 ```
 
-## Konfigurasi
+## Configuration
 
-Model caching dikonfigurasi di dalam `databases`. Contohnya adalah sebagai berikut:
+Konfigurasi model cache disimpan di `config/autoload/databases.php`. Propertinya sebagai berikut:
 
-| Konfigurasi | Tipe | Default | Keterangan |
-|:---:|:---:|:---:|:---:|
-| handler | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class | tidak ada |
-| cache_key | string | `mc:%s:m:%s:%s:%s` | `mc:prefix cache:m:nama tabel:KEY primary key:nilai primary key` |
-| prefix | string | nama koneksi db | prefix cache |
-| pool | string | default | pool cache |
-| ttl | int | 3600 | timeout |
-| empty_model_ttl | int | 60 | Timeout saat tidak ada data yang ditemukan |
-| load_script | bool | true | Apakah menggunakan evalSha alih-alih eval pada engine Redis |
-| use_default_value | bool | false | Apakah menggunakan nilai default database |
+| Konfigurasi | Type | Nilai Default | Keterangan |
+|:-----------------:|:------:|:---------------------------------------------:|:---------------------------------------:|
+| handler | string | Hyperf\ModelCache\Handler\RedisHandler::class | N/A |
+| cache_key | string | `mc:%s:m:%s:%s:%s` | `mc:prefix:m:nama_tabel:primary_key:nilai` |
+| prefix | string | nama koneksi db | Cache prefix |
+| pool | string | default | Cache pool |
+| ttl | int | 3600 | Durasi timeout |
+| empty_model_ttl | int | 60 | Durasi timeout saat tidak ada data ditemukan |
+| load_script | bool | true | Gunakan evalSha sebagai pengganti eval untuk Redis |
+| use_default_value | bool | false | Gunakan nilai default dari database |
 
 ```php
 <?php
-
 return [
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
@@ -55,7 +46,7 @@ return [
             'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
         ],
         'cache' => [
-            'handler' => \Hyperf\DbConnection\Cache\Handler\RedisHandler::class,
+            'handler' => \Hyperf\ModelCache\Handler\RedisHandler::class,
             'cache_key' => 'mc:%s:m:%s:%s:%s',
             'prefix' => 'default',
             'ttl' => 3600 * 24,
@@ -67,16 +58,12 @@ return [
 ];
 ```
 
-## Penggunaan
+## Usage
 
-Penggunaan model cache sangatlah sederhana. Anda hanya perlu mengimplementasikan
-interface `Hyperf\ModelCache\CacheableInterface` pada Model yang bersangkutan.
-Tentu saja, framework telah menyediakan implementasinya, Anda hanya perlu
-menggunakan Trait `Hyperf\ModelCache\Cacheable`.
+Menggunakan model cache sangat mudah. Tinggal implementasikan interface `Hyperf\ModelCache\CacheableInterface` di Model. Framework sudah menyediakan implementasinya, Anda cukup gunakan Trait `Hyperf\ModelCache\Cacheable`.
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -97,14 +84,14 @@ class User extends Model implements CacheableInterface
     use Cacheable;
 
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model ini.
      *
      * @var string
      */
     protected $table = 'user';
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang dapat diisi secara massal.
      *
      * @var array
      */
@@ -113,17 +100,17 @@ class User extends Model implements CacheableInterface
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
-// Query a single cache
+// Query cache tunggal
+/** @var int|string $id */
 $model = User::findFromCache($id);
 
-// Batch query cache, return Hyperf\Database\Model\Collection
+// Batch query cache, mengembalikan Hyperf\Database\Model\Collection
+/** @var array $ids */
 $models = User::findManyFromCache($ids);
-
 ```
 
-Data Redis yang sesuai adalah sebagai berikut, di mana `HF-DATA:DEFAULT` ada
-sebagai placeholder di dalam `HASH`, *sehingga pengguna tidak boleh menggunakan
-`HF-DATA` sebagai nama kolom database*.
+Data Redis yang sesuai adalah sebagai berikut. `HF-DATA:DEFAULT` ada sebagai placeholder di `HASH`, *jadi pengguna tidak boleh menggunakan `HF-DATA` sebagai nama field database*.
+
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
@@ -140,44 +127,28 @@ sebagai placeholder di dalam `HASH`, *sehingga pengguna tidak boleh menggunakan
 12) "DEFAULT"
 ```
 
-Hal lain yang perlu diperhatikan adalah mekanisme pembaruan cache
-mengimplementasikan listener `Hyperf\ModelCache\Listener\DeleteCacheListener`
-yang sesuai di dalam framework. Setiap kali data diubah, cache akan dihapus
-secara aktif. Jika pengguna tidak ingin framework menghapus cache, ia dapat
-secara aktif melakukan override pada metode `deleteCache`, kemudian
-mengimplementasikan monitoring yang sesuai sendiri.
+Perlu diperhatikan mekanisme pembaruan cache-nya. Framework menyediakan listener `Hyperf\ModelCache\Listener\DeleteCacheListener`. Setiap kali data dimodifikasi, framework otomatis menghapus cache yang sesuai.
+Jika tidak ingin otomatis, Anda bisa override method `deleteCache` di Model dan implementasi logic sendiri.
 
-### Mengedit atau menghapus secara massal
+### Batch Modification atau Deletion
 
-`Hyperf\ModelCache\Cacheable` akan secara otomatis mengambil alih metode
-`Model::query`. Pengguna hanya perlu menghapus data dengan cara berikut untuk
-secara otomatis menghapus data cache yang sesuai.
+`Hyperf\ModelCache\Cacheable` otomatis mengambil alih method `Model::query`. Jika Anda menghapus data seperti berikut, cache akan ikut terhapus.
 
 ```php
 <?php
-// Delete user data from the database and the framework will automatically delete the corresponding cached data.
+// Hapus data user dari database, framework akan secara otomatis menghapus data cache yang sesuai
 User::query(true)->where('gender', '>', 1)->delete();
 ```
 
-### Menggunakan nilai default
+### Menggunakan Default Values
 
-Ketika model cache digunakan di lingkungan production, jika data cache yang
-sesuai telah dibuat, namun pada saat ini kolom baru ditambahkan karena perubahan
-logika, dan nilai default-nya bukan `0`, `string kosong`, `null` atau data sejenis
-lainnya, maka ketika data dikueri, data yang diambil dari cache akan tidak
-konsisten dengan data yang ada di database.
+Di production, jika cache sudah ada tapi ada field baru ditambahkan karena perubahan logic, dan nilai default-nya bukan `0`, `empty string`, atau `null`, ini bisa menyebabkan inkonsistensi antara data cache dan database.
 
-Untuk mengatasi situasi ini, kita dapat mengubah nilai `use_default_value`
-menjadi `true` dan menambahkan `Hyperf\DbConnection\Listener\InitTableCollectorListener`
-ke konfigurasi `listener.php` agar aplikasi Hyperf dapat secara aktif
-memperoleh informasi kolom dari database saat dijalankan, lalu membandingkannya
-dengan data cache saat diambil dan mengoreksi data cache tersebut.
+Untuk mengatasinya, set `use_default_value` ke `true` dan tambahkan `Hyperf\DbConnection\Listener\InitTableCollectorListener` ke `listener.php`. Hyperf akan mengambil informasi field database saat startup, membandingkannya saat mengambil cache, dan memperbaiki cache jika diperlukan.
 
-### Mengatur durasi cache pada model
+### Mengontrol Cache Time di Model
 
-Selain durasi cache default `ttl` yang dikonfigurasi di `database.php`,
-`Hyperf\ModelCache\Cacheable` mendukung konfigurasi durasi cache yang lebih
-detail untuk model:
+Selain `ttl` default di `database.php`, `Hyperf\ModelCache\Cacheable` mendukung konfigurasi waktu cache per model yang lebih granular:
 
 ```php
 class User extends Model implements CacheableInterface
@@ -185,7 +156,7 @@ class User extends Model implements CacheableInterface
     use Cacheable;
     
     /**
-     * Cache for 10 minutes. If null is returned, the timeout set in the configuration file will be used.
+     * Cache selama 10 menit. Jika null, akan pakai ttl dari konfigurasi.
      * @return int|null
      */
     public function getCacheTTL(): ?int
@@ -197,19 +168,15 @@ class User extends Model implements CacheableInterface
 
 ### EagerLoad
 
-Ketika kita menggunakan relasi model, kita dapat menyelesaikan masalah `N+1`
-melalui `load`, tetapi kita masih perlu memeriksa database satu kali. Model
-cache menulis ulang `ModelBuilder` untuk memungkinkan pengguna mendapatkan model
-yang sesuai dari cache sebanyak mungkin.
+Saat menggunakan model relationships, `load` bisa menyelesaikan masalah `N+1`, tapi tetap butuh query database. Dengan rewrite `ModelBuilder`, Model Cache memungkinkan pengambilan model dari cache sebanyak mungkin.
 
-> Fitur ini tidak mendapat dukungan untuk relasi `morphTo` dan model relasi yang
-> tidak hanya menggunakan kueri `whereIn`.
+> Fitur ini tidak mendukung `morphTo` dan relationship models yang tidak hanya menggunakan query `whereIn`.
 
-Dua metode disediakan di bawah ini:
+Dua cara tersedia:
 
-1. Konfigurasikan EagerLoadListener dan gunakan metode `loadCache` secara langsung.
+1. Konfigurasi `EagerLoadListener` dan gunakan method `loadCache`.
 
-Ubah konfigurasi `listeners.php`
+Ubah konfigurasi `listeners.php`:
 
 ```php
 return [
@@ -217,7 +184,7 @@ return [
 ];
 ```
 
-Muat relasi model yang sesuai melalui metode `loadCache`.
+Muat model relationships yang sesuai melalui method `loadCache`:
 
 ```php
 $books = Book::findManyFromCache([1,2,3]);
@@ -228,7 +195,7 @@ foreach ($books as $book){
 }
 ```
 
-2. Menggunakan EagerLoader
+2. Gunakan `EagerLoader`
 
 ```php
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
@@ -243,23 +210,16 @@ foreach ($books as $book){
 }
 ```
 
-### Adapter cache
+### Cache Adapter
 
-Anda dapat mengimplementasikan adapter cache sesuai dengan situasi aktual Anda,
-dan Anda hanya perlu mengimplementasikan interface
-`Hyperf\ModelCache\Handler\HandlerInterface`.
+Anda bisa membuat cache adapter sendiri dengan mengimplementasikan interface `Hyperf\ModelCache\Handler\HandlerInterface`.
 
-Framework menyediakan dua Handler yang dapat dipilih:
+Framework menyediakan dua Handler untuk dipilih:
 
-- Hyperf\ModelCache\Handler\RedisHandler
+- `Hyperf\ModelCache\Handler\RedisHandler`
 
-Menggunakan `HASH` untuk menyimpan cache dapat menangani `Model::increment()`
-secara efektif. Kekurangannya adalah karena tipe datanya hanya berupa `String`,
-dukungan terhadap `null` kurang baik.
+Menggunakan `HASH` untuk menyimpan cache, yang dapat menangani `Model::increment()` secara efektif. Kekurangannya adalah karena tipe data hanya `String`, dukungan terhadap `null` kurang baik.
 
-- Hyperf\ModelCache\Handler\RedisStringHandler
+- `Hyperf\ModelCache\Handler\RedisStringHandler`
 
-Menggunakan `String` untuk menyimpan cache. Karena merupakan data yang
-diserialisasi, ia mendukung semua tipe data. Kekurangannya adalah tidak dapat
-menangani `Model::increment()` secara efektif. Ketika model memanggil akumulasi,
-masalah konsistensi diselesaikan dengan menghapus cache.
+Menggunakan `String` untuk menyimpan cache. Karena berupa data serialized, ini mendukung semua tipe data. Kekurangannya adalah tidak dapat menangani `Model::increment()` secara efektif. Ketika model memanggil increment, masalah konsistensi diselesaikan dengan menghapus cache.

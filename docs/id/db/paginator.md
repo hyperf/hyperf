@@ -1,51 +1,39 @@
-# Paginasi Query
+# Database Pagination
 
-Ketika menggunakan [hyperf/database](https://github.com/hyperf/database) untuk
-melakukan query data, sangat mudah menggunakan komponen
-[hyperf/paginator](https://github.com/hyperf/paginator) untuk mempaginasi hasil
-query dengan mudah.
+Saat menggunakan [hyperf/database](https://github.com/hyperf/database) untuk query data, Anda bisa dengan mudah melakukan pagination dengan component [hyperf/paginator](https://github.com/hyperf/paginator).
 
-# Petunjuk Penggunaan
+# Cara Penggunaan
 
-Ketika Anda melakukan query data melalui [Query Builder](id/db/querybuilder.md)
-atau [Model](id/db/model.md), paginasi dapat ditangani melalui metode
-`paginate`, yang secara otomatis menggunakan halaman yang sedang dilihat untuk
-mengatur limit dan offset. Secara default, jumlah halaman saat ini dideteksi
-dari nilai parameter `page` yang dibawa oleh HTTP request saat ini:
+Ketika query data melalui [Query Builder](/db/querybuilder.md) atau [Model](/db/model.md), gunakan method `paginate` untuk pagination. Method ini otomatis mengatur limit dan offset berdasarkan halaman yang dilihat user. Secara default, nomor halaman dideteksi dari nilai parameter `page` di HTTP request:
 
-> Karena Hyperf saat ini tidak mendukung view, komponen paginasi belum
-> mendukung perenderan view, dan hasil paginasi yang dikembalikan secara
-> langsung akan secara default di-output dalam format application/json.
+> Karena Hyperf belum mendukung views, pagination component belum bisa me-render view. Mengembalikan hasil pagination langsung akan menghasilkan output `application/json` secara default.
 
-## Paginasi Query Builder
+## Query Builder Pagination
 
 ```php
 <?php
-// Show all users in the app, 10 pieces of data per page
+// Tampilkan semua user di aplikasi, menampilkan 10 item per halaman
 return Db::table('users')->paginate(10);
 ```
 
-## Paginasi Model
+## Model Pagination
 
-Anda dapat melakukan paginasi dengan memanggil metode `paginate` secara langsung
-dari static method:
+Anda bisa memanggil method `paginate` langsung melalui static method untuk melakukan pagination:
 
 ```php
 <?php
-// Show all users in the app, 10 pieces of data per page
+// Tampilkan semua user di aplikasi, menampilkan 10 item per halaman
 return User::paginate(10);
 ```
 
-Anda juga dapat mengatur kondisi query atau pengaturan query lainnya:
+Tentu saja, Anda juga bisa mengatur query conditions atau pengaturan query lainnya:
 
 ```php
 <?php 
-// Show all users in the app, 10 pieces of data per page
+// Tampilkan semua user di aplikasi, menampilkan 10 item per halaman
 return User::where('gender', 1)->paginate(10);
 ```
 
-## Metode Instance Paginator
+## Paginator Instance Methods
 
-Hanya penggunaan paginator dalam query database yang dijelaskan di sini.
-Untuk detail lebih lanjut tentang paginator, silakan baca bab
-[Paginasi](id/paginator.md).
+Bagian ini hanya menjelaskan penggunaan paginator dalam database queries. Untuk detail lebih lanjut tentang paginator, silakan baca bab [Pagination](id/paginator.md).

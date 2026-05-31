@@ -1,43 +1,36 @@
 # Model
 
-Komponen model diturunkan dari [Eloquent ORM](https://laravel.com/docs/5.8/eloquent), dan semua operasi terkait dapat merujuk ke dokumentasi Eloquent ORM.
+Model component berasal dari [Eloquent ORM](https://laravel.com/docs/5.8/eloquent). Untuk operasi terkait, silakan lihat dokumentasi Eloquent ORM.
 
 ## Membuat Model
 
-Hyperf menyediakan perintah untuk membuat model, memungkinkan Anda membuat model
-yang sesuai dengan mudah berdasarkan tabel database Anda. Perintah ini
-menghasilkan model menggunakan `AST`, yang berarti Anda dapat dengan mudah mengatur
-ulang (reset) model dengan sebuah skrip bahkan setelah menambahkan metode tertentu.
+Hyperf menyediakan command untuk membuat model, yang memungkinkan Anda dengan mudah membuat model yang sesuai berdasarkan tabel database. Command ini menghasilkan model melalui `AST`, jadi ketika Anda menambahkan beberapa method, Anda juga bisa menggunakan script untuk mereset model dengan mudah.
 
 ```
 php bin/hyperf.php gen:model table_name
 ```
 
-Parameter opsional adalah sebagai berikut:
+Parameter opsionalnya adalah sebagai berikut:
 
-| Parameter | Tipe | Nilai Default | Catatan |
-| :----------------: | :----: | :-------------------------------: | :-----------------------------------------------: |
-| --pool | string | `default` | Connection pool, skrip akan membuat berdasarkan konfigurasi pool saat ini |
+| Parameter | Tipe | Nilai Default | Keterangan |
+| :---: | :---: | :---: | :---: |
+| --pool | string | `default` | Connection pool, script akan membuat berdasarkan konfigurasi pool saat ini |
 | --path | string | `app/Model` | Path model |
-| --force-casts | bool | `false` | Apakah akan mengatur ulang atribut `casts` secara paksa |
-| --prefix | string | '' | Prefiks tabel |
-| --inheritance | string | `Model` | Class induk |
+| --force-casts | bool | `false` | Apakah memaksa reset parameter `casts` |
+| --prefix | string | String Kosong | Table prefix |
+| --inheritance | string | `Model` | Parent class |
 | --uses | string | `Hyperf\DbConnection\Model\Model` | Digunakan bersama dengan `inheritance` |
-| --refresh-fillable | bool | `false` | Apakah akan me-refresh atribut `fillable` |
-| --table-mapping | array | `[]` | Pemetaan nama tabel ke model, misal, ['users:Account'] |
-| --ignore-tables | array | `[]` | Tabel yang diabaikan untuk pembuatan model, misal, ['users'] |
-| --with-comments | bool | `false` | Apakah akan menambahkan komentar field |
-| --property-case | int | `0` | Tipe field: 0 snake, 1 hump |
+| --refresh-fillable | bool | `false` | Apakah me-refresh parameter `fillable` |
+| --table-mapping | array | `[]` | Mapping nama tabel ke model, misalnya ['users:Account'] |
+| --ignore-tables | array | `[]` | Tabel yang tidak perlu dibuatkan model, misalnya ['users'] |
+| --with-comments | bool | `false` | Apakah menambahkan field comments |
+| --property-case | int | `0` | Tipe field: 0 snake_case, 1 camelCase |
 
+Saat mengonversi tipe field ke camelCase menggunakan `--property-case`, Anda juga perlu menambahkan `Hyperf\Database\Model\Concerns\CamelCase` secara manual ke model.
 
-Ketika menggunakan opsi `--property-case` untuk mengubah nama field menjadi
-camelCase, Anda juga perlu menyertakan trait
-`Hyperf\Database\Model\Concerns\CamelCase` secara manual di dalam model Anda.
+Konfigurasi yang sesuai juga bisa dikonfigurasi di `databases.{pool}.commands.gen:model`, sebagai berikut:
 
-Konfigurasi yang sesuai juga dapat diatur di dalam
-`databases.{pool}.commands.gen:model` sebagai berikut:
-
-> Semua tanda hubung (dash) harus diubah menjadi garis bawah (underscore)
+> Semua hyphens perlu dikonversi menjadi underscores.
 
 ```php
 <?php
@@ -48,7 +41,7 @@ use Hyperf\Database\Commands\ModelOption;
 
 return [
     'default' => [
-        // Ignore other configurations.
+        // Abaikan konfigurasi lainnya
         'commands' => [
             'gen:model' => [
                 'path' => 'app/Model',
@@ -86,21 +79,21 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model.
      *
      * @var string
      */
     protected ?string $table = 'user';
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang bisa diisi secara massal.
      *
      * @var array
      */
     protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
-     * The attributes that should be cast to native types.
+     * Atribut yang harus di-cast ke tipe native.
      *
      * @var array
      */
@@ -108,26 +101,22 @@ class User extends Model
 }
 ```
 
-## Variabel Anggota Model
+## Model Member Variables
 
 | Parameter | Tipe | Nilai Default | Keterangan |
-| :----------: | :----: | :-----: | :------------------: |
-| connection | string | default | koneksi database |
-| table | string | Tidak ada | Nama tabel data |
-| primaryKey | string | id | primary key model |
-| keyType | string | int | tipe primary key |
-| fillable | array | [] | Properti yang mengizinkan batch assignment |
-| casts | string | Tidak ada | Konfigurasi pemformatan data |
-| timestamps | bool | true | Apakah otomatis memelihara timestamps |
+| :---: | :---: | :---: | :---: |
+| connection | string | default | Koneksi database |
+| table | string | Tidak ada | Nama tabel |
+| primaryKey | string | id | Model primary key |
+| keyType | string | int | Tipe primary key |
+| fillable | array | [] | Atribut yang diizinkan untuk mass-assign |
+| casts | string | Tidak ada | Konfigurasi formatting data |
+| timestamps | bool | true | Apakah otomatis mempertahankan timestamps |
 | incrementing | bool | true | Apakah primary key auto-increment |
 
-### Nama Tabel
+### Table Name
 
-Jika kita tidak menentukan tabel yang sesuai untuk model, ia akan menggunakan
-bentuk jamak dari nama class dalam format 'snake case' sebagai nama tabel. Oleh
-karena itu, dalam kasus ini, Hyperf akan mengasumsikan bahwa model User
-menyimpan data dalam tabel 'users'. Anda dapat menentukan tabel kustom dengan
-mendefinisikan properti table pada model:
+Jika tidak menentukan tabel yang sesuai dengan model, Hyperf akan menggunakan bentuk plural "snake_case" dari nama class sebagai nama tabel. Jadi, model User akan menyimpan data di tabel `users`. Anda bisa menentukan nama tabel kustom dengan mendefinisikan property `table`:
 
 ```php
 <?php
@@ -146,23 +135,13 @@ class User extends Model
 
 ### Primary Key
 
-Hyperf akan mengasumsikan bahwa setiap tabel data memiliki kolom primary key
-bernama id. Anda dapat mendefinisikan properti protected `$primaryKey` untuk
-mengesampingkan konvensi tersebut.
+Hyperf mengasumsikan setiap tabel punya kolom primary key bernama `id`. Anda bisa override konvensi ini dengan protected property `$primaryKey`.
 
-Selain itu, Hyperf mengasumsikan bahwa primary key adalah nilai integer yang
-auto-increment, yang berarti secara default primary key akan otomatis dikonversi
-ke tipe int. Jika Anda ingin menggunakan primary key yang non-incrementing atau
-non-numerik, Anda perlu mengatur properti public `$incrementing` menjadi false.
-Jika primary key Anda bukan integer, Anda perlu mengatur properti protected
-`$keyType` pada model ke string.
-
+Selain itu, Hyperf mengasumsikan primary key adalah auto-increment integer, secara default akan dikonversi ke tipe integer. Jika ingin primary key non-incrementing atau non-numeric, set public property `$incrementing` ke `false`. Jika primary key bukan integer, set protected property `$keyType` ke `string`.
 
 ### Timestamps
 
-Secara default, Hyperf mengharapkan tabel Anda memiliki kolom `created_at` dan
-`updated_at`. Jika Anda tidak ingin Hyperf mengelola kedua kolom ini secara
-otomatis, atur properti `$timestamps` di dalam model Anda menjadi `false`:
+Secara default, Hyperf mengharapkan `created_at` dan `updated_at` ada di tabel Anda. Jika Anda tidak ingin Hyperf secara otomatis mengelola kedua kolom ini, set property `$timestamps` di model menjadi `false`:
 
 ```php
 <?php
@@ -179,10 +158,7 @@ class User extends Model
 }
 ```
 
-Jika Anda perlu menyesuaikan format timestamp, atur properti `$dateFormat` di
-dalam model Anda. Properti ini menentukan bagaimana atribut tanggal disimpan di
-dalam database, dan bagaimana model diserialisasikan ke dalam format array atau
-JSON:
+Jika perlu menyesuaikan format timestamp, set property `$dateFormat` di model. Property ini menentukan bagaimana date attributes disimpan di database dan formatnya saat di-serialize ke array atau JSON:
 
 ```php
 <?php
@@ -199,14 +175,9 @@ class User extends Model
 }
 ```
 
-Jika Anda membutuhkan penyimpanan yang tidak ingin mempertahankan format
-`datetime`, atau ingin melakukan pemrosesan lebih lanjut pada waktu, Anda dapat
-melakukannya dengan meng-override metode `fromDateTime($value)` di dalam model.
+Jika tidak ingin menyimpan dalam format `datetime` atau ingin pemrosesan waktu khusus, override method `fromDateTime($value)` di model.
 
-Jika Anda perlu menyesuaikan nama field untuk menyimpan timestamp, Anda dapat
-mengatur nilai konstanta `CREATED_AT` dan `UPDATED_AT` di dalam model. Jika salah
-satunya bernilai `null`, itu menunjukkan bahwa Anda tidak ingin ORM memproses
-field tersebut:
+Untuk menyesuaikan nama field timestamps, atur konstanta `CREATED_AT` dan `UPDATED_AT` di model. Set salah satu ke `null` berarti ORM tidak akan memproses field tersebut:
 
 ```php
 <?php
@@ -225,13 +196,9 @@ class User extends Model
 }
 ```
 
-### Konektivitas Database
+### Database Connection
 
-Secara default, model Hyperf akan menggunakan koneksi database default
-`default` yang dikonfigurasi oleh aplikasi Anda. Jika Anda ingin menentukan
-koneksi yang berbeda untuk model tersebut, atur properti `$connection`. Tentu
-saja, `connection-name` sebagai `key` harus ada di dalam file konfigurasi
-`databases.php`.
+Secara default, model Hyperf menggunakan koneksi `default`. Untuk koneksi yang berbeda, set property `$connection`, pastikan `connection-name` sebagai `key` sudah ada di `databases.php`.
 
 ```php
 <?php
@@ -248,10 +215,9 @@ class User extends Model
 }
 ```
 
-### Nilai default atribut
+### Default Attribute Values
 
-Jika Anda ingin mendefinisikan nilai default untuk beberapa atribut model, Anda
-dapat mendefinisikan atribut `$attributes` pada model:
+Untuk mendefinisikan nilai default atribut model, gunakan property `$attributes`:
 
 ```php
 <?php
@@ -270,7 +236,7 @@ class User extends Model
 }
 ```
 
-## Query Model
+## Model Queries
 
 ```php
 <?php
@@ -280,14 +246,11 @@ use App\Model\User;
 $user = User::query()->where('id', 1)->first();
 $user->name = 'Hyperf';
 $user->save();
-
 ```
 
-### Memuat Ulang Model
+### Reloading Models
 
-Anda dapat memuat ulang model menggunakan metode `fresh` dan `refresh`. Metode
-`fresh` akan mengambil kembali model dari database. Instans model yang sudah ada
-tidak akan terpengaruh:
+Gunakan method `fresh` dan `refresh` untuk me-reload model. `fresh` mengambil ulang model dari database tanpa mengubah instance yang ada:
 
 ```php
 <?php
@@ -299,8 +262,7 @@ $user = User::query()->find(1);
 $freshUser = $user->fresh();
 ```
 
-Metode `refresh` memperbarui instans model yang ada dengan data baru dari
-database. Selain itu, relasi yang sudah dimuat akan dimuat ulang:
+Method `refresh` memperbarui instance yang ada dengan data baru dari database, termasuk relationships yang sudah dimuat:
 
 ```php
 <?php
@@ -316,24 +278,20 @@ $user->refresh();
 echo $user->name; // Hyperf
 ```
 
-### Collection
+### Collections
 
-Untuk metode `all` dan `get` di dalam model, Anda dapat mengkueri beberapa hasil
-dan mengembalikan instans `Hyperf\Database\Model\Collection`. Class `Collection`
-menyediakan banyak fungsi pembantu (helper) untuk memproses hasil query:
+Method `all` dan `get` mengembalikan instance `Hyperf\Database\Model\Collection`. Class `Collection` menyediakan banyak metode pembantu untuk memproses hasil query:
 
 ```php
 $users = $users->reject(function ($user) {
-    // Exclude all deleted users
+    // Kecualikan semua user yang dihapus
     return $user->deleted;
 });
 ```
 
-### Mengambil satu model
+### Mengambil Satu Model
 
-Selain mengambil semua record dari tabel data yang ditentukan, Anda dapat
-menggunakan metode `find` atau `first` untuk mengambil satu record. Metode-metode
-ini mengembalikan satu instans model, bukan koleksi model:
+Selain mengambil semua records dari tabel yang ditentukan, Anda bisa menggunakan method `find` atau `first` untuk mengambil satu record. Method ini mengembalikan instance model tunggal, bukan collection of models:
 
 ```php
 <?php
@@ -344,9 +302,9 @@ $user = User::query()->where('id', 1)->first();
 $user = User::query()->find(1);
 ```
 
-### Mengambil beberapa model
+### Mengambil Banyak Model
 
-Tentu saja metode `find` mendukung lebih dari sekadar satu model.
+Tentu saja, method `find` tidak hanya mendukung satu model.
 
 ```php
 <?php
@@ -355,14 +313,9 @@ use App\Model\User;
 $users = User::query()->find([1, 2, 3]);
 ```
 
-### Pengecualian "Not found" (Tidak Ditemukan)
+### Exception "Not Found"
 
-Terkadang Anda ingin melemparkan exception ketika model tidak ditemukan, hal ini
-sangat berguna di dalam controller dan router.
-
-Metode `findOrFail` dan `firstOrFail` akan mengambil hasil pertama dari query,
-dan jika tidak ditemukan, exception
-`Hyperf\Database\Model\ModelNotFoundException` akan dilemparkan:
+Terkadang Anda ingin melempar exception saat model tidak ditemukan, ini berguna di controller dan route. Method `findOrFail` dan `firstOrFail` mengambil hasil pertama, dan jika tidak ditemukan akan melempar `Hyperf\Database\Model\ModelNotFoundException`:
 
 ```php
 <?php
@@ -372,11 +325,9 @@ $model = User::findOrFail(1);
 $model = User::where('age', '>', 18)->firstOrFail();
 ```
 
-### Fungsi Agregasi
+### Aggregate Functions
 
-Anda juga dapat menggunakan `count`, `sum`, `max`, dan fungsi agregasi lainnya
-yang disediakan oleh query builder. Metode-metode ini hanya akan mengembalikan
-nilai skalar yang sesuai, bukan instans model:
+Anda juga bisa menggunakan aggregate functions (`count`, `sum`, `max`, dll.) dari query builder. Method ini mengembalikan scalar value, bukan instance model:
 
 ```php
 <?php
@@ -385,12 +336,11 @@ use App\Model\User;
 $count = User::query()->where('gender', 1)->count();
 ```
 
-## Menyisipkan & memperbarui model
+## Inserting & Updating Models
 
-### Menyisipkan (Insert)
+### Inserting
 
-Untuk menambahkan record baru ke database, pertama buat instans model baru,
-atur properti untuk instans tersebut, lalu panggil metode `save`:
+Untuk menambahkan record baru ke database, buat instance model baru, set atribut untuk instance tersebut, lalu panggil method `save`:
 
 ```php
 use App\Model\User;
@@ -403,18 +353,11 @@ $user->name = 'Hyperf';
 $user->save();
 ```
 
-Dalam contoh ini, kita menetapkan nilai ke properti `name` dari instans model
-`App\Model\User`. Ketika metode `save` dipanggil, record baru akan disisipkan.
-Timestamp `created_at` dan `updated_at` akan diatur secara otomatis dan tidak
-memerlukan pengisian manual.
+Dalam contoh ini, kita menetapkan nilai ke atribut `name` dari instance model `App\Model\User`. Ketika method `save` dipanggil, record baru akan di-insert. Timestamps `created_at` dan `updated_at` akan diatur secara otomatis dan tidak perlu ditetapkan secara manual.
 
-### Memperbarui (Update)
+### Updating
 
-Metode `save` juga dapat digunakan untuk memperbarui model yang sudah ada di
-dalam database. Untuk memperbarui model, Anda perlu mengambilnya terlebih dahulu,
-mengatur properti yang ingin diperbarui, lalu panggil metode `save`. Begitu juga,
-timestamp `updated_at` diperbarui secara otomatis, sehingga tidak perlu diisi
-secara manual:
+Method `save` juga bisa digunakan untuk memperbarui model yang sudah ada di database. Untuk memperbarui model, Anda perlu mengambilnya terlebih dahulu, set atribut yang akan diperbarui, lalu panggil method `save`. Demikian pula, timestamp `updated_at` akan diperbarui secara otomatis, jadi tidak perlu ditetapkan secara manual:
 
 ```php
 use App\Model\User;
@@ -427,38 +370,25 @@ $user->name = 'Hi Hyperf';
 $user->save();
 ```
 
-### Pembaruan massal (Batch update)
+### Batch Updates
 
-Anda juga dapat memperbarui beberapa model yang cocok dengan kriteria query.
-Dalam contoh ini, untuk semua pengguna yang memiliki `gender` bernilai `1`, ubah
-`gender_show` menjadi male:
+Anda juga bisa memperbarui beberapa model yang cocok dengan query conditions. Dalam contoh ini, untuk semua user yang `gender`-nya `1`, kita mengubah `gender_show` menjadi "Male":
 
 ```php
 use App\Model\User;
 
-User::query()->where('gender', 1)->update(['gender_show' => 'male']);
+User::query()->where('gender', 1)->update(['gender_show' => 'Male']);
 ```
 
-> Selama pembaruan massal (batch update), model yang diperbarui tidak akan memicu event `saved` dan `updated`. Karena selama pembaruan massal, model tidak diinstansiasi. Di saat yang sama, `casts` yang sesuai juga tidak akan dijalankan. Sebagai contoh, untuk format `json` di database, field `casts` di class Model ditandai sebagai `array`. Jika pembaruan massal digunakan, `array` tidak akan otomatis dikonversi saat penyisipan ke dalam format string `json`.
+> Batch updates tidak memicu event `saved` dan `updated` karena model tidak diinstansiasi. Juga, `casts` tidak akan dieksekusi, misalnya, jika `json` di database diketik `array` di `casts`, batch update tidak akan otomatis mengonversi `array` ke format string `json`.
 
-### Pengisian massal (Batch assignment)
+### Mass Assignment
 
-Anda juga dapat menyimpan model baru menggunakan metode `create`, yang
-mengembalikan instans model. Namun, sebelum menggunakannya, Anda perlu
-menentukan atribut `fillable` or `guarded` pada model tersebut, karena secara
-default semua model tidak dapat diisi secara massal (batch assignment).
+Anda juga bisa menggunakan method `create` untuk menyimpan model baru, dan method ini akan mengembalikan instance model. Namun, sebelum menggunakannya, Anda perlu menentukan atribut `fillable` atau `guarded` pada model, karena semua model secara default tidak mengizinkan mass assignment.
 
-Hal ini untuk mencegah ketika pengguna mengirimkan parameter yang tidak
-diharapkan melalui HTTP request, dan parameter tersebut mengubah field di
-database yang tidak ingin Anda ubah. Sebagai contoh: pengguna berbahaya mungkin
-mengirimkan parameter `is_admin` melalui HTTP request dan kemudian meneruskannya
-ke metode `create`. Operasi ini memungkinkan pengguna tersebut untuk menaikkan
-level dirinya menjadi administrator.
+Ketika seorang pengguna memberikan parameter yang tidak terduga melalui HTTP request, dan parameter tersebut mengubah field di database yang tidak ingin Anda ubah. Contohnya: pengguna jahat mungkin memberikan parameter `is_admin` melalui HTTP request, dan kemudian meneruskannya ke method `create`, operasi ini bisa memungkinkan pengguna untuk meningkatkan diri mereka menjadi administrator.
 
-Oleh karena itu, sebelum memulai, Anda harus menentukan atribut apa saja pada
-model yang dapat diisi secara massal. Anda dapat melakukannya melalui atribut
-`$fillable` pada model. Sebagai contoh: biarkan atribut `name` dari model `User`
-diisi secara massal:
+Oleh karena itu, sebelum memulai, Anda harus mendefinisikan atribut mana pada model yang bisa di-mass-assign. Anda bisa melakukannya melalui atribut `$fillable` pada model. Contohnya: mengizinkan atribut `name` dari model `User` untuk di-mass-assign:
 
 ```php
 <?php
@@ -475,9 +405,7 @@ class User extends Model
 }
 ```
 
-Setelah kita mengatur properti yang dapat diisi secara massal, kita dapat
-menyisipkan data baru ke database melalui metode `create`. Metode `create` akan
-mengembalikan instans model yang disimpan:
+Setelah kita mengatur atribut yang bisa di-mass-assign, kita bisa memasukkan data baru ke database melalui method `create`. Method `create` akan mengembalikan instance model yang disimpan:
 
 ```php
 use App\Model\User;
@@ -485,22 +413,15 @@ use App\Model\User;
 $user = User::create(['name' => 'Hyperf']);
 ```
 
-Jika Anda sudah memiliki instans model, Anda dapat meneruskan sebuah array ke
-metode fill untuk mengisi nilainya:
+Jika Anda sudah memiliki instance model, Anda bisa memberikan array ke method `fill` untuk menetapkan nilai:
 
 ```php
 $user->fill(['name' => 'Hyperf']);
 ```
 
-### Atribut yang dilindungi (Protected attributes)
+### Guarded Attributes
 
-`$fillable` dapat dianggap sebagai "whitelist" untuk pengisian massal, dan
-Anda juga dapat menggunakan atribut `$guarded` untuk mencapai hal ini. Atribut
-`$guarded` berisi array yang tidak diperbolehkan untuk pengisian massal. Dengan
-kata lain, `$guarded` akan berfungsi lebih seperti "blacklist". Catatan: Anda
-hanya dapat menggunakan salah satu dari `$fillable` atau `$guarded`, tidak
-keduanya secara bersamaan. Pada contoh berikut, kecuali untuk atribut
-`gender_show`, semua atribut lainnya dapat diisi secara massal:
+`$fillable` adalah "whitelist" untuk mass assignment. Alternatifnya, gunakan `$guarded` sebagai "blacklist", berisi atribut yang tidak boleh di-mass-assign. Catatan: hanya bisa memakai salah satu, tidak keduanya. Contoh berikut, semua atribut bisa di-mass-assign kecuali `gender_show`:
 
 ```php
 <?php
@@ -517,49 +438,42 @@ class User extends Model
 }
 ```
 
-### Metode pembuatan lainnya
+### Method Pembuatan Lainnya
 
 `firstOrCreate` / `firstOrNew`
 
-Metode `firstOrCreate` akan mencocokkan data di database dengan kolom/nilai yang
-diberikan. Jika model yang sesuai tidak dapat ditemukan di database, sebuah
-record akan dibuat dari atribut parameter pertama dan juga atribut parameter kedua
-kemudian disisipkan ke dalam database.
+Ada dua method untuk mass assignment: `firstOrCreate` dan `firstOrNew`.
 
-Metode `firstOrNew`, seperti metode `firstOrCreate`, mencoba mencari record di
-database dengan atribut yang diberikan. Perbedaannya adalah jika metode
-`firstOrNew` tidak dapat menemukan model yang cocok, metode ini akan
-mengembalikan instans model baru. Perhatikan bahwa instans model yang
-dikembalikan oleh `firstOrNew` belum disimpan ke database. Anda perlu memanggil
-metode `save` secara manual untuk menyimpannya:
+`firstOrCreate` mencari data di database berdasarkan kolom/nilai. Jika tidak ditemukan, ia membuat dan menyimpan record baru dari argumen pertama (dan argumen kedua jika ada).
+
+`firstOrNew` juga mencari record dengan atribut yang diberikan, tapi jika tidak ditemukan, ia mengembalikan instance model baru (belum disimpan ke database). Anda perlu memanggil `save` secara manual:
 
 ```php
 <?php
 use App\Model\User;
 
-// Find the user by name, create it if it does not exist...
+// Cari user berdasarkan name, buat jika tidak ada...
 $user = User::firstOrCreate(['name' => 'Hyperf']);
 
-// Find the user by name. If it does not exist, use the name and gender, age attributes to create...
+// Cari user berdasarkan name, jika tidak ada, buat menggunakan atribut name, gender, dan age...
 $user = User::firstOrCreate(
     ['name' => 'Hyperf'],
     ['gender' => 1, 'age' => 20]
 );
 
-// Find the user by name, create an instance if it does not exist...
+// Cari user berdasarkan name, buat instance jika tidak ada...
 $user = User::firstOrNew(['name' => 'Hyperf']);
 
-// Find the user by name. If it does not exist, use the name and gender, age attributes to create an instance...
+// Cari user berdasarkan name, buat instance menggunakan atribut name, gender, dan age jika tidak ada...
 $user = User::firstOrNew(
     ['name' => 'Hyperf'],
     ['gender' => 1, 'age' => 20]
 );
 ```
 
-### Menghapus model
+### Menghapus Model
 
-Metode `delete` dapat dipanggil pada instans model untuk menghapus instans
-tersebut:
+Anda bisa memanggil method `delete` pada instance model untuk menghapus instance tersebut:
 
 ```php
 use App\Model\User;
@@ -569,29 +483,20 @@ $user = User::query()->find(1);
 $user->delete();
 ```
 
-### Menghapus model melalui query
+### Menghapus Model via Query
 
-Anda dapat menghapus data model dengan memanggil metode `delete` pada query,
-dalam contoh ini kita akan menghapus semua pengguna yang memiliki `gender`
-bernilai `1`. Seperti halnya pembaruan massal (batch update), penghapusan massal
-(batch delete) tidak akan memicu event model apa pun untuk model yang dihapus:
+Anda bisa menghapus data model dengan memanggil method `delete` pada query. Dalam contoh ini, kita akan menghapus semua user yang `gender`-nya `1`. Seperti batch updates, batch deletes tidak memicu event model apapun untuk model yang dihapus:
 
 ```php
 use App\Model\User;
 
-// Note that when using the delete method, certain query conditions must be established to safely delete data. If there is no where condition, the entire data table will be deleted.
+// Catatan: Saat menggunakan method delete, harus didasarkan pada beberapa query conditions untuk menghapus data dengan aman. Jika tidak ada where condition, akan menyebabkan penghapusan seluruh tabel.
 User::query()->where('gender', 1)->delete(); 
 ```
 
-### Menghapus data langsung dengan primary key
+### Menghapus Data Langsung Berdasarkan Primary Key
 
-Pada contoh di atas, Anda perlu menemukan model yang sesuai di database sebelum
-memanggil `delete`. Faktanya, jika Anda mengetahui primary key dari model
-tersebut, Anda dapat menghapus data model secara langsung melalui metode statis
-`destroy` tanpa harus mencarinya di database terlebih dahulu. Selain menerima
-satu primary key sebagai parameter, metode `destroy` juga menerima beberapa
-primary key, atau menggunakan array atau collection untuk menyimpan beberapa
-primary key:
+Dalam contoh di atas, Anda perlu mencari model yang sesuai di database sebelum memanggil `delete`. Sebenarnya, jika Anda mengetahui primary key model, Anda bisa menghapus data model langsung melalui static method `destroy` tanpa mencari di database terlebih dahulu. Method `destroy`, selain menerima satu primary key sebagai argumen, juga menerima beberapa primary key, atau menggunakan array atau collections untuk menampung beberapa primary key:
 
 ```php
 use App\Model\User;
@@ -601,16 +506,11 @@ User::destroy(1);
 User::destroy([1,2,3]);
 ```
 
-### Soft delete
+### Soft Deletes
 
-Selain menghapus record database secara nyata, `Hyperf` juga dapat melakukan
-"soft delete" pada model. Model yang di-soft delete tidak benar-benar dihapus
-dari database. Sebaliknya, atribut `deleted_at` akan diatur pada model dan
-nilainya ditulis ke database. Jika nilai `deleted_at` tidak kosong, itu berarti
-model telah di-soft delete. Jika Anda ingin mengaktifkan soft delete pada model,
-Anda perlu menggunakan trait `Hyperf\Database\Model\SoftDeletes` pada model.
+Selain menghapus records secara permanen, `Hyperf` juga mendukung "soft delete". Model yang di-soft-delete tidak benar-benar dihapus, atribut `deleted_at` diisi dan disimpan. Jika `deleted_at` tidak null, berarti model sudah di-soft-delete. Untuk mengaktifkannya, gunakan trait `Hyperf\Database\Model\SoftDeletes` di model.
 
-> Trait `SoftDeletes` akan secara otomatis mengubah atribut `deleted_at` menjadi instans `DateTime / Carbon`
+> Trait `SoftDeletes` akan secara otomatis mengonversi atribut `deleted_at` menjadi instance `DateTime / Carbon`.
 
 ```php
 <?php
@@ -626,27 +526,19 @@ class User extends Model
 }
 ```
 
-Metode `restoreOrCreate` akan mencocokkan data di database dengan kolom/nilai yang
-diberikan. Jika model yang sesuai ditemukan di database, metode `restore` akan
-dijalankan untuk memulihkan model tersebut, jika tidak, record baru akan dibuat
-dari atribut parameter pertama dan bahkan atribut parameter kedua lalu disisipkan
-ke dalam database.
+Method `restoreOrCreate` mencari data berdasarkan kolom/nilai. Jika ditemukan, model di-restore; jika tidak, record baru dibuat dari atribut argumen pertama dan argumen kedua.
 
 ```php
-// Look up users by name, create them with name and gender, age attributes if they don't exist...
+// Cari user berdasarkan name, jika tidak ada, buat menggunakan atribut name, gender, dan age...
 $user = User::restoreOrCreate(
     ['name' => 'Hyperf'],
     ['gender' => 1, 'age' => 20]
 );
 ```
 
-## Tipe Bit
+## Bit Type
 
-Secara default, saat mengonversi model database di Hyperf menjadi SQL, nilai
-parameter akan dikonversi secara seragam ke tipe String untuk menyelesaikan
-masalah int pada angka besar dan memudahkan pencocokan indeks tipe nilai. Jika
-Anda ingin membuat `ORM` mendukung tipe `bit`, cukup tambahkan kode event
-listener berikut.
+Secara default, dalam proses konversi model database ke SQL di Hyperf, nilai parameter secara seragam dikonversi ke tipe String untuk mengatasi masalah large numbers di `int` dan membuat tipe nilai lebih mudah mencocokkan index. Jika Anda ingin `ORM` mendukung tipe `bit`, Anda hanya perlu menambahkan kode event listener berikut.
 
 ```php
 <?php
@@ -678,5 +570,4 @@ class SupportMySQLBitListener implements ListenerInterface
         });
     }
 }
-
 ```

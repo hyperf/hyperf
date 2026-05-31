@@ -1,21 +1,15 @@
-# Query builder
+# Query Builder
 
 ## Pendahuluan
 
-Query builder database milik Hyperf menyediakan antarmuka yang nyaman untuk
-membuat dan menjalankan query database. Ini dapat digunakan untuk melakukan
-sebagian besar operasi database dalam aplikasi dan berjalan di semua sistem
-database yang didukung.
+Query builder database Hyperf menyediakan interface yang nyaman untuk membuat dan menjalankan query. Bisa digunakan untuk sebagian besar operasi database dan kompatibel dengan semua sistem database yang didukung.
 
-Query builder Hyperf menggunakan parameter binding PDO untuk melindungi aplikasi
-Anda dari serangan SQL injection. Jadi tidak perlu melakukan sanitasi string yang
-dilewatkan sebagai binding.
+Query builder Hyperf menggunakan PDO parameter binding untuk melindungi dari SQL injection. Jadi, tidak perlu membersihkan string yang dilewatkan sebagai binding.
 
-Hanya beberapa tutorial yang umum digunakan yang disediakan di sini, dan tutorial
-spesifik dapat dilihat di situs web resmi Laravel.
+Berikut hanya tutorial umum. Untuk tutorial spesifik, kunjungi website resmi Laravel.
 [Laravel Query Builder](https://laravel.com/docs/5.8/queries)
 
-## Mendapatkan hasil (Get results)
+## Mengambil Results
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -25,9 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-Metode `Db::select()` mengembalikan array, dan metode `get` mengembalikan
-`Hyperf\Collection\Collection`. Elemennya adalah `stdClass`, sehingga data dari
-setiap elemen dapat dikembalikan dengan kode berikut:
+Method `Db::select()` akan mengembalikan array, dan method `get` akan mengembalikan `Hyperf\Collection\Collection`. Elemen-elemennya berupa `stdClass`, jadi Anda bisa mengakses data setiap elemen menggunakan kode berikut:
 
 ```php
 <?php
@@ -37,13 +29,9 @@ foreach ($users as $user) {
 }
 ```
 
-### Mengubah hasil ke format array
+### Mengonversi Results ke Format Array
 
-Dalam beberapa skenario, Anda mungkin ingin menggunakan struktur `Array` alih-alih
-objek `stdClass` pada hasil query. Karena `Eloquent` menghapus konfigurasi
-default `FetchMode` yang dikonfigurasi lewat file config, pada titik ini Anda
-dapat mengubah konfigurasi tersebut dengan mendengarkan event
-`Hyperf\Database\Events\StatementPrepared` melalui listener:
+Di beberapa skenario, Anda mungkin ingin hasil query menggunakan `Array` daripada struktur objek `stdClass`. Karena `Eloquent` telah menghapus kemampuan untuk mengkonfigurasi `FetchMode` default melalui konfigurasi, Anda bisa mendengarkan event `Hyperf\Database\Events\StatementPrepared` untuk mengubah konfigurasi ini:
 
 ```php
 <?php
@@ -75,22 +63,21 @@ class FetchModeListener implements ListenerInterface
 }
 ```
 
-### Mendapatkan nilai dari satu baris
+### Mengambil Satu Baris
 
-Jika ingin mendapatkan nilai dari satu baris, Anda dapat menggunakan method
-`first`.
+Jika Anda ingin mendapatkan satu baris, Anda bisa menggunakan method `first`:
 
 ```php
 <?php
 use Hyperf\DbConnection\Db;
 
-$row = Db::table('user')->first(); // sql akan otomatis menambahkan limit 1
+$row = Db::table('user')->first(); // SQL akan otomatis menyertakan limit 1
 var_dump($row);
 ```
 
-### Mendapatkan satu nilai
+### Mengambil Satu Nilai
 
-Jika ingin mendapatkan satu nilai, Anda dapat menggunakan method `value`.
+Jika Anda ingin mendapatkan satu nilai, Anda bisa menggunakan method `value`:
 
 ```php
 <?php
@@ -100,11 +87,9 @@ $id = Db::table('user')->value('id');
 var_dump($id);
 ```
 
-### Mendapatkan nilai dari satu kolom
+### Mengambil Satu Kolom Nilai
 
-Jika Anda ingin mendapatkan collection yang berisi nilai dari satu kolom saja,
-Anda dapat menggunakan metode `pluck`. Pada contoh berikut, kita akan mengambil
-kumpulan title pada tabel roles:
+Jika Anda ingin mendapatkan collection yang berisi nilai dari satu kolom, Anda bisa menggunakan method `pluck`. Pada contoh di bawah, kita akan mendapatkan collection dari title dari tabel roles:
 
 ```php
 <?php
@@ -115,10 +100,9 @@ $names = Db::table('user')->pluck('name');
 foreach ($names as $name) {
     echo $name;
 }
-
 ```
 
-Anda juga dapat menentukan key kustom untuk field dalam collection yang dikembalikan:
+Anda juga bisa menentukan custom key untuk collection yang dikembalikan:
 
 ```php
 <?php
@@ -129,17 +113,11 @@ $roles = Db::table('roles')->pluck('title', 'name');
 foreach ($roles as $name => $title) {
     echo $title;
 }
-
 ```
 
-### Hasil ber-chunk (Chunked results)
+### Chunking Results
 
-Jika Anda perlu memproses ribuan data database, Anda dapat mempertimbangkan untuk
-menggunakan metode `chunk`. Metode ini mengambil sebagian kecil dari hasil query
-pada satu waktu dan meneruskannya ke fungsi `closure` untuk diproses. Metode ini
-sangat berguna ketika `Command` menulis ribuan data pemrosesan. Sebagai contoh,
-kita dapat memotong seluruh data tabel user menjadi bagian-bagian kecil yang
-memproses 100 data sekaligus:
+Jika perlu memproses ribuan records, gunakan method `chunk`. Method ini mengambil potongan kecil result set dan meneruskannya ke `Closure`. Sangat berguna saat menulis `Command` untuk memproses ribuan data. Contoh, kita membagi data tabel user per 100 record:
 
 ```php
 <?php
@@ -152,8 +130,7 @@ Db::table('user')->orderBy('id')->chunk(100, function ($users) {
 });
 ```
 
-Anda dapat menghentikan pengambilan hasil chunk dengan mengembalikan `false` di
-dalam closure:
+Anda bisa menghentikan pengambilan chunked results lebih lanjut dengan mengembalikan `false` di dalam `Closure`:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -164,10 +141,7 @@ Db::table('user')->orderBy('id')->chunk(100, function ($users) {
 });
 ```
 
-Jika Anda memperbarui record database saat melakukan chunk pada hasil query, hasil
-chunk mungkin tidak sesuai dengan yang diharapkan. Oleh karena itu, saat memperbarui
-record secara ber-chunk, lebih baik menggunakan metode `chunkById`. Metode ini akan
-secara otomatis melakukan paginasi hasil berdasarkan primary key record tersebut:
+Jika Anda mengupdate records saat chunking, hasilnya mungkin tidak konsisten. Untuk update, gunakan `chunkById`. Method ini otomatis melakukan pagination berdasarkan primary key:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -181,14 +155,11 @@ Db::table('user')->where('gender', 1)->chunkById(100, function ($users) {
 });
 ```
 
-> Setiap perubahan pada primary key atau foreign key dapat memengaruhi query blok
-> saat memperbarui atau menghapus record di dalam callback blok. Hal ini dapat
-> menyebabkan record tidak disertakan dalam hasil chunk.
+> Saat mengupdate atau menghapus records di chunk callback, perubahan apapun pada primary key atau foreign key bisa mempengaruhi chunk query. Ini bisa mengakibatkan records tidak termasuk dalam chunked results.
 
-### Query agregat
+### Aggregations
 
-Framework ini juga menyediakan metode kelas agregat seperti `count`, `max`,
-`min`, `avg`, `sum`.
+Framework juga menyediakan method aggregate, seperti `count`, `max`, `min`, `avg`, `sum`.
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -196,10 +167,9 @@ use Hyperf\DbConnection\Db;
 $count = Db::table('user')->count();
 ```
 
-#### Menentukan apakah record ada
+#### Menentukan Apakah Records Ada
 
-Selain menggunakan metode `count` untuk menentukan apakah hasil dari kondisi
-query ada, Anda juga dapat menggunakan metode `exists` dan `doesntExist`:
+Selain menggunakan method `count` untuk menentukan apakah hasil dari suatu query condition ada, Anda juga bisa menggunakan method `exists` dan `doesntExist`:
 
 ```php
 return Db::table('orders')->where('finalized', 1)->exists();
@@ -207,26 +177,23 @@ return Db::table('orders')->where('finalized', 1)->exists();
 return Db::table('orders')->where('finalized', 1)->doesntExist();
 ```
 
-## Query
+## Queries
 
-### Menentukan pernyataan Select
+### Menentukan Select Statement
 
-Tentu saja Anda mungkin tidak selalu ingin mengambil semua kolom dari tabel database.
-Menggunakan metode select, Anda dapat menyesuaikan pernyataan query select untuk
-mengambil field tertentu:
+Tentu saja, Anda mungkin tidak selalu ingin mengambil semua kolom dari tabel database. Menggunakan method `select`, Anda bisa menyesuaikan `select` query statement untuk query field tertentu:
 
 ```php
 $users = Db::table('user')->select('name', 'email as user_email')->get();
 ```
 
-Metode `distinct` memaksa query untuk mengembalikan hasil yang unik:
+Method `distinct` memaksa query untuk mengembalikan hasil yang distinct:
 
 ```php
 $users = Db::table('user')->distinct()->get();
 ```
 
-Jika Anda sudah memiliki instance query builder dan ingin menambahkan field ke
-query yang sudah ada, Anda dapat menggunakan metode `addSelect`:
+Jika Anda sudah memiliki query builder instance dan ingin menambahkan field ke query statement yang ada, Anda bisa menggunakan method `addSelect`:
 
 ```php
 $query = Db::table('users')->select('name');
@@ -234,10 +201,9 @@ $query = Db::table('users')->select('name');
 $users = $query->addSelect('age')->get();
 ```
 
-## Ekspresi mentah (Raw expression)
+## Raw Expressions
 
-Terkadang Anda perlu menggunakan ekspresi mentah dalam query, misalnya untuk
-mengimplementasikan `COUNT(0) AS count`, yang membutuhkan penggunaan metode `raw`.
+Terkadang Anda perlu raw expressions dalam query, misalnya `COUNT(0) AS count`. Gunakan method `raw` untuk ini.
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -245,24 +211,19 @@ use Hyperf\DbConnection\Db;
 $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->groupBy('gender')->get();
 ```
 
-### Force Index
+### Forcing Indexes
 
-Masalah slow query database lebih dari 90% disebabkan oleh index yang tidak
-tepat. Sebagian query lambat terjadi karena `query optimizer` database server
-tidak menggunakan index terbaik. Pada kondisi ini, force index perlu digunakan:
+Lebih dari 90% masalah slow query database disebabkan oleh index yang salah. Beberapa query terjadi karena `query optimizer` server database tidak menggunakan index terbaik. Dalam kasus ini, Anda perlu menggunakan forced index:
 
 ```php
 Db::table(Db::raw("{$table} FORCE INDEX({$index})"));
 ```
 
-### Metode native
+### Raw Methods
 
-Metode berikut dapat digunakan sebagai pengganti `Db::raw` untuk memasukkan
-ekspresi mentah ke dalam berbagai bagian query.
+Anda bisa menggunakan method berikut sebagai pengganti `Db::raw` untuk memasukkan raw expressions ke berbagai bagian query.
 
-Metode `selectRaw` dapat digunakan sebagai pengganti `select(Db::raw(...))`.
-Parameter kedua dari metode ini bersifat opsional, dan nilainya berupa array dari
-parameter yang di-binding:
+Method `selectRaw` bisa digunakan sebagai pengganti `select(Db::raw(...))`. Argumen kedua dari method ini bersifat opsional dan berupa array binding parameters:
 
 ```php
 $orders = Db::table('order')
@@ -270,9 +231,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-Metode `whereRaw` dan `orWhereRaw` menyisipkan `where` native ke dalam query Anda.
-Parameter kedua dari kedua metode ini tetap opsional, dan nilainya tetap berupa
-array parameter yang di-binding:
+Method `whereRaw` dan `orWhereRaw` memasukkan raw `where` clauses ke dalam query Anda. Argumen kedua dari kedua method ini juga opsional dan berupa array binding parameters:
 
 ```php
 $orders = Db::table('order')
@@ -280,8 +239,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-Metode `havingRaw` and `orHavingRaw` dapat digunakan untuk menetapkan string mentah
-sebagai nilai dari pernyataan `having`:
+Method `havingRaw` dan `orHavingRaw` bisa digunakan untuk mengatur raw strings sebagai nilai dari statement `having`:
 
 ```php
 $orders = Db::table('order')
@@ -291,8 +249,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-Metode `orderByRaw` dapat digunakan untuk menetapkan string mentah sebagai nilai dari
-klausa `order by`:
+Method `orderByRaw` bisa digunakan untuk mengatur raw strings sebagai nilai dari clause `order by`:
 
 ```php
 $orders = Db::table('order')
@@ -300,15 +257,11 @@ $orders = Db::table('order')
     ->get();
 ```
 
-## Join table
+## Table Joins
 
-### Klausa Inner Join
+### Inner Join Clause
 
-Query builder juga dapat menulis metode `join`. Untuk melakukan `"inner join"` dasar,
-Anda dapat menggunakan metode `join` pada instance query builder. Argumen pertama yang
-dilewatkan ke metode `join` adalah nama tabel yang ingin Anda join, sedangkan argumen
-lainnya menggunakan batasan field yang menentukan join tersebut. Anda juga dapat
-melakukan join ke beberapa tabel dalam satu query:
+Query builder juga bisa menulis method `join`. Untuk melakukan "inner join" dasar, Anda bisa menggunakan method `join` pada query builder instance. Argumen pertama yang diteruskan ke method `join` adalah nama tabel yang perlu Anda join, sementara argumen lainnya menentukan field constraints untuk join. Anda juga bisa melakukan join beberapa tabel dalam satu query:
 
 ```php
 $users = Db::table('users')
@@ -318,11 +271,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-### Left Join / Right Join
+### Left Join
 
-Jika Anda ingin menggunakan `"left join"` atau `"right join"` alih-alih
-`"inner join"`, gunakan metode `leftJoin` atau `rightJoin`. Kedua metode ini digunakan
-dengan cara yang sama seperti metode `join`:
+Jika Anda ingin menggunakan "left join" atau "right join" daripada "inner join", Anda bisa menggunakan method `leftJoin` atau `rightJoin`. Kedua method ini digunakan dengan cara yang sama seperti method `join`:
 
 ```php
 $users = Db::table('users')
@@ -333,11 +284,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-### Pernyataan Cross Join
+### Cross Join Clause
 
-Gunakan metode `crossJoin` untuk melakukan `"cross join"` dengan nama tabel yang
-ingin Anda gabungkan. Cross join menghasilkan produk Cartesian antara tabel pertama
-dan tabel yang digabungkan:
+Gunakan method `crossJoin` dengan nama tabel yang ingin Anda join untuk melakukan "cross join". Cross join menghasilkan Cartesian product antara tabel pertama dan tabel yang di-join:
 
 ```php
 $users = Db::table('sizes')
@@ -345,11 +294,9 @@ $users = Db::table('sizes')
     ->get();
 ```
 
-### Pernyataan Join Lanjutan
+### Advanced Join Clauses
 
-Anda dapat menentukan pernyataan `join` yang lebih kompleks. Misalnya dengan melewatkan
-`closure` sebagai parameter kedua dari metode `join`. `closure` ini menerima objek
-`JoinClause`, yang menentukan batasan-batasan dalam pernyataan `join`:
+Anda bisa menentukan statement `join` yang lebih advanced. Misalnya, berikan `Closure` sebagai argumen kedua ke method `join`. `Closure` ini menerima objek `JoinClause` untuk menentukan constraints dalam statement `join`:
 
 ```php
 Db::table('users')
@@ -359,9 +306,7 @@ Db::table('users')
     ->get();
 ```
 
-Jika Anda ingin menggunakan pernyataan bergaya `"where"` pada join, Anda dapat
-menggunakan metode `where` dan `orWhere` pada join tersebut. Metode ini membandingkan
-kolom dengan nilai alih-alih kolom dengan kolom:
+Jika Anda ingin menggunakan clause bergaya "where" pada joins, Anda bisa menggunakan method `where` dan `orWhere` pada join. Method ini membandingkan kolom dan nilai, bukan membandingkan kolom dengan kolom:
 
 ```php
 Db::table('users')
@@ -372,11 +317,9 @@ Db::table('users')
     ->get();
 ```
 
-### Query Subjoin
+### Subquery Joins
 
-Anda dapat menggunakan metode `joinSub`, `leftJoinSub` dan `rightJoinSub` untuk
-menggabungkan query sebagai subquery. Masing-masing metode menerima tiga parameter:
-subquery, alias tabel, dan closure yang mendefinisikan field terkait:
+Anda bisa menggunakan method `joinSub`, `leftJoinSub`, dan `rightJoinSub` untuk melakukan join query sebagai subquery. Masing-masing method ini menerima tiga argumen: subquery, alias tabel, dan Closure yang mendefinisikan field yang di-join:
 
 ```php
 $latestPosts = Db::table('posts')
@@ -390,11 +333,9 @@ $users = Db::table('users')
     })->get();
 ```
 
-## Combined query (Query Gabungan)
+## Unions
 
-Query builder juga menyediakan jalan pintas untuk "menggabungkan" dua query.
-Sebagai contoh, Anda dapat membuat query terlebih dahulu, lalu menggunakan metode
-`union` untuk menggabungkannya dengan query kedua:
+Query builder juga menyediakan shortcut untuk "union" dua query. Misalnya, Anda bisa membuat query terlebih dahulu dan kemudian menggunakan method `union` untuk menggabungkannya dengan query kedua:
 
 ```php
 $first = Db::table('users')->whereNull('first_name');
@@ -405,32 +346,25 @@ $users = Db::table('users')
     ->get();
 ```
 
-## Pernyataan Where
+## Where Clauses
 
-### Pernyataan Where Sederhana
+### Simple Where Clauses
 
-Dalam membuat instance query `where`, Anda dapat menggunakan metode `where`. Cara
-paling dasar untuk memanggil `where` adalah dengan melewatkan tiga parameter:
-parameter pertama adalah nama kolom, parameter kedua adalah operator apa pun yang
-didukung oleh sistem database, dan parameter ketiga adalah nilai yang akan
-dibandingkan dengan kolom tersebut.
+Saat membangun query `where`, gunakan method `where`. Cara paling dasar: tiga argumen, nama kolom, operator, dan nilai pembanding.
 
-Sebagai contoh, berikut adalah query untuk memverifikasi bahwa nilai dari field
-gender sama dengan 1:
+Contohnya, berikut adalah query untuk memverifikasi bahwa nilai field `gender` sama dengan 1:
 
 ```php
 $users = Db::table('user')->where('gender', '=', 1)->get();
 ```
 
-Untuk kemudahan, jika Anda hanya membandingkan nilai kolom dengan nilai tertentu,
-Anda dapat langsung melewatkan nilai tersebut sebagai parameter kedua dari
-metode `where`:
+Untuk kemudahan, jika hanya membandingkan kesamaan nilai, Anda bisa memberikan nilai langsung sebagai argumen kedua:
 
 ```php
 $users = Db::table('user')->where('gender', 1)->get();
 ```
 
-Tentu saja, Anda juga dapat menggunakan operator lain untuk menulis klausa where:
+Tentu saja, Anda juga bisa menggunakan operator lain untuk menulis `where` clauses:
 
 ```php
 $users = Db::table('users')->where('gender', '>=', 0)->get();
@@ -440,7 +374,7 @@ $users = Db::table('users')->where('gender', '<>', 1)->get();
 $users = Db::table('users')->where('name', 'like', 'T%')->get();
 ```
 
-Anda juga dapat melewatkan array kondisi ke fungsi where:
+Anda juga bisa memberikan array kondisi ke fungsi `where`:
 
 ```php
 $users = Db::table('user')->where([
@@ -449,10 +383,21 @@ $users = Db::table('user')->where([
 ])->get();
 ```
 
-### Pernyataan Or
+Anda juga bisa menggunakan Closure untuk membuat array query:
 
-Anda dapat merantai batasan `where` bersama-sama atau menambahkan klausa `or` ke
-dalam query. Metode `orWhere` menerima parameter yang sama dengan metode `where`:
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
+])->get();
+```
+
+### Or Clauses
+
+Anda bisa merangkai `where` constraints bersama-sama, atau menambahkan `or` clauses ke query Anda. Method `orWhere` menerima argumen yang sama dengan method `where`:
 
 ```php
 $users = Db::table('user')
@@ -461,12 +406,11 @@ $users = Db::table('user')
     ->get();
 ```
 
-### Pernyataan Where Lainnya
+### Other Where Clauses
 
 #### whereBetween
 
-Metode `whereBetween` memverifikasi bahwa nilai field berada di antara dua nilai
-yang diberikan:
+Method `whereBetween` memverifikasi bahwa nilai suatu field berada di antara dua nilai yang diberikan:
 
 ```php
 $users = Db::table('users')->whereBetween('votes', [1, 100])->get();
@@ -474,8 +418,7 @@ $users = Db::table('users')->whereBetween('votes', [1, 100])->get();
 
 #### whereNotBetween
 
-Metode `whereNotBetween` memverifikasi bahwa nilai field berada di luar dua nilai
-yang diberikan:
+Method `whereNotBetween` memverifikasi bahwa nilai suatu field berada di luar dua nilai yang diberikan:
 
 ```php
 $users = Db::table('users')->whereNotBetween('votes', [1, 100])->get();
@@ -483,26 +426,21 @@ $users = Db::table('users')->whereNotBetween('votes', [1, 100])->get();
 
 #### whereIn / whereNotIn
 
-Metode `whereIn` memvalidasi bahwa nilai field harus ada di dalam array yang
-ditentukan:
+Method `whereIn` memverifikasi bahwa nilai suatu field ada dalam array yang diberikan:
 
 ```php
 $users = Db::table('users')->whereIn('id', [1, 2, 3])->get();
 ```
 
-Metode `whereNotIn` memverifikasi bahwa nilai field tidak boleh ada di dalam array
-yang ditentukan:
+Method `whereNotIn` memverifikasi bahwa nilai suatu field tidak ada dalam array yang diberikan:
 
 ```php
 $users = Db::table('users')->whereNotIn('id', [1, 2, 3])->get();
 ```
 
-### Pengelompokan parameter
+### Parameter Grouping
 
-Terkadang Anda perlu membuat klausa `where` yang lebih kompleks, seperti
-`"where exists"` atau pengelompokan parameter bersarang. Query builder juga dapat
-menangani hal ini. Di bawah ini, mari kita lihat contoh pengelompokan batasan
-dalam tanda kurung:
+Terkadang Anda perlu `where` clauses yang lebih advanced, seperti "where exists" atau nested groups. Query builder juga bisa menanganinya. Contoh nested constraint grouping:
 
 ```php
 Db::table('users')->where('name', '=', 'John')
@@ -513,24 +451,17 @@ Db::table('users')->where('name', '=', 'John')
     ->get();
 ```
 
-Seperti yang Anda lihat, sebuah `Closure` ditulis ke metode `where` untuk membuat
-query builder guna membatasi pengelompokan. `Closure` menerima instance query yang
-dapat Anda gunakan untuk mengatur batasan yang harus disertakan. Contoh di atas
-akan menghasilkan SQL berikut:
+Seperti yang Anda lihat, dengan memberikan `Closure` ke dalam method `where`, Anda membangun grouping constraint. `Closure` menerima query builder instance, yang bisa Anda gunakan untuk mengatur constraints yang harus disertakan. Contoh di atas akan menghasilkan SQL berikut:
 
 ```sql
 select * from users where name = 'John' and (votes > 100 or title = 'Admin')
 ```
 
-> Anda harus memanggil pengelompokan ini dengan `orWhere` untuk menghindari
-> penerapan efek global yang tidak disengaja.
+> Anda harus mengelompokkan constraints ini dengan panggilan `orWhere` untuk menghindari perilaku yang tidak diharapkan saat global scopes diterapkan.
 
-#### Pernyataan Where Exists
+#### Where Exists Clauses
 
-Metode `whereExists` memungkinkan Anda untuk menggunakan pernyataan SQL
-`where exists`. Metode `whereExists` menerima parameter `Closure` yang menerima
-instance query builder untuk mendefinisikan query yang ditempatkan di dalam klausa
-`exists`:
+Method `whereExists` memungkinkan Anda menulis `where exists SQL` statements. Method `whereExists` menerima `Closure`, yang menerima query builder instance, memungkinkan Anda mendefinisikan query yang akan ditempatkan di dalam clause `exists`:
 
 ```php
 Db::table('users')->whereExists(function ($query) {
@@ -541,7 +472,7 @@ Db::table('users')->whereExists(function ($query) {
 ->get();
 ```
 
-Query di atas akan menghasilkan pernyataan SQL berikut:
+Query di atas akan menghasilkan SQL statement berikut:
 
 ```sql
 select * from users
@@ -550,10 +481,9 @@ where exists (
 )
 ```
 
-#### Pernyataan Where JSON
+#### JSON Where Clauses
 
-`Hyperf` juga mendukung query field dengan tipe `JSON` (hanya pada database yang
-mendukung tipe `JSON`).
+Hyperf juga mendukung query tipe field `JSON` (hanya pada database yang mendukung tipe `JSON`).
 
 ```php
 $users = Db::table('users')
@@ -565,7 +495,7 @@ $users = Db::table('users')
     ->get();
 ```
 
-Anda juga dapat menggunakan `whereJsonContains` untuk melakukan query array `JSON`:
+Anda juga bisa menggunakan `whereJsonContains` untuk query `JSON` arrays:
 
 ```php
 $users = Db::table('users')
@@ -573,7 +503,7 @@ $users = Db::table('users')
     ->get();
 ```
 
-Anda dapat menggunakan `whereJsonLength` untuk melakukan query panjang array `JSON`:
+Anda bisa menggunakan `whereJsonLength` untuk query panjang dari `JSON` array:
 
 ```php
 $users = Db::table('users')
@@ -585,13 +515,11 @@ $users = Db::table('users')
     ->get();
 ```
 
-## Pengurutan, Pengelompokan, Batas (Limit), & Offset
+## Ordering, Grouping, Limit, & Offset
 
 ### orderBy
 
-Metode `orderBy` memungkinkan Anda mengurutkan hasil query berdasarkan field
-tertentu. Parameter pertama dari `orderBy` harus berupa field yang ingin diurutkan,
-dan parameter kedua mengontrol arah pengurutan, yang dapat berupa `asc` atau `desc`:
+Method `orderBy` memungkinkan Anda mengurutkan result set berdasarkan field tertentu. Argumen pertama `orderBy` harus berupa field yang ingin Anda urutkan, dan argumen kedua mengontrol arah pengurutan, bisa `asc` atau `desc`:
 
 ```php
 $users = Db::table('users')
@@ -601,9 +529,7 @@ $users = Db::table('users')
 
 ### latest / oldest
 
-Metode `latest` dan `oldest` memungkinkan Anda mengurutkan hasil berdasarkan tanggal
-dengan mudah. Secara default, metode ini menggunakan kolom `created_at` sebagai acuan
-pengurutan. Tentu saja, Anda juga dapat melewatkan nama kolom kustom:
+Method `latest` dan `oldest` memungkinkan Anda dengan mudah mengurutkan results berdasarkan tanggal. Secara default, method ini menggunakan `created_at` sebagai kolom untuk diurutkan. Tentu saja, Anda juga bisa memberikan nama kolom kustom:
 
 ```php
 $user = Db::table('users')->latest()->first();
@@ -611,8 +537,7 @@ $user = Db::table('users')->latest()->first();
 
 ### inRandomOrder
 
-Metode `inRandomOrder` digunakan untuk mengurutkan hasil secara acak. Misalnya,
-Anda dapat menggunakan metode ini untuk menemukan user acak.
+Method `inRandomOrder` bisa digunakan untuk mengurutkan results secara acak. Misalnya, Anda bisa menggunakan method ini untuk mengambil user secara acak:
 
 ```php
 $randomUser = Db::table('users')->inRandomOrder()->first();
@@ -620,8 +545,7 @@ $randomUser = Db::table('users')->inRandomOrder()->first();
 
 ### groupBy / having
 
-Metode `groupBy` dan `having` dapat digunakan untuk mengelompokkan hasil query.
-Penggunaan metode `having` sangat mirip dengan metode `where`:
+Method `groupBy` dan `having` bisa digunakan untuk mengelompokkan results. Penggunaan method `having` sangat mirip dengan method `where`:
 
 ```php
 $users = Db::table('users')
@@ -630,7 +554,7 @@ $users = Db::table('users')
     ->get();
 ```
 
-Anda dapat meneruskan beberapa argumen ke metode `groupBy`:
+Anda bisa memberikan beberapa argumen ke method `groupBy`:
 
 ```php
 $users = Db::table('users')
@@ -639,29 +563,25 @@ $users = Db::table('users')
     ->get();
 ```
 
-> Untuk sintaks having yang lebih kompleks, lihat metode `havingRaw`.
+> Untuk sintaks `having` yang lebih advanced, lihat method `havingRaw`.
 
 ### skip / take
 
-Untuk membatasi jumlah hasil yang dikembalikan, atau untuk melewati sejumlah hasil
-tertentu, Anda dapat menggunakan metode `skip` dan `take`:
+Untuk membatasi jumlah hasil yang dikembalikan atau untuk melewati sejumlah hasil, Anda bisa menggunakan method `skip` dan `take`:
 
 ```php
 $users = Db::table('users')->skip(10)->take(5)->get();
 ```
 
-Atau Anda juga dapat menggunakan metode `limit` dan `offset`:
+Atau, Anda bisa menggunakan method `limit` dan `offset`:
 
 ```php
 $users = Db::table('users')->offset(10)->limit(5)->get();
 ```
 
-## Pernyataan Kondisional
+## Conditional Clauses
 
-Terkadang Anda mungkin ingin mengeksekusi bagian query tertentu hanya jika kondisi
-tertentu bernilai true. Misalnya, Anda mungkin hanya ingin menerapkan pernyataan
-`where` jika nilai yang diberikan tersedia dalam request. Anda dapat melakukan ini
-dengan menggunakan metode `when`:
+Terkadang Anda mungkin ingin clauses hanya diterapkan ketika sesuatu bernilai true. Misalnya, Anda mungkin hanya ingin menerapkan statement `where` jika nilai tertentu ada dalam request. Anda bisa melakukannya dengan menggunakan method `when`:
 
 ```php
 $role = $request->input('role');
@@ -673,14 +593,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-Metode `when` mengeksekusi closure yang diberikan hanya jika parameter pertama
-bernilai `true`. Jika parameter pertama bernilai `false`, closure tersebut tidak
-akan dieksekusi.
+Method `when` hanya mengeksekusi closure yang diberikan ketika argumen pertama bernilai `true`. Jika argumen pertama bernilai `false`, closure tidak akan dieksekusi.
 
-Anda dapat meneruskan closure lain sebagai parameter ketiga dari metode `when`.
-Closure tersebut akan dieksekusi jika parameter pertama bernilai `false`. Untuk
-mengilustrasikan cara menggunakan fitur ini, mari kita konfigurasikan pengurutan
-default dari suatu query:
+Anda bisa memberikan closure lain sebagai argumen ketiga ke method `when`. Closure ini akan dieksekusi jika argumen pertama bernilai `false`. Untuk mengilustrasikan cara menggunakan fitur ini, mari konfigurasi default sorting untuk query:
 
 ```php
 $sortBy = null;
@@ -694,11 +609,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-## Insert (Memasukkan Data)
+## Inserts
 
-Query builder juga menyediakan metode `insert` untuk memasukkan data ke dalam
-database. Metode `insert` menerima array berisi nama field dan nilainya untuk
-proses penyimpanan:
+Query builder juga menyediakan method `insert` untuk memasukkan records ke database. Method `insert` menerima array nama field dan nilai yang akan di-insert:
 
 ```php
 Db::table('users')->insert(
@@ -706,8 +619,7 @@ Db::table('users')->insert(
 );
 ```
 
-Anda bahkan dapat melewatkan array multidimensi ke metode `insert` untuk memasukkan
-beberapa record sekaligus ke dalam tabel:
+Anda bahkan bisa memberikan array of arrays ke method `insert` untuk memasukkan beberapa records ke dalam tabel:
 
 ```php
 Db::table('users')->insert([
@@ -716,10 +628,9 @@ Db::table('users')->insert([
 ]);
 ```
 
-### Auto Increment ID
+### Auto-incrementing IDs
 
-Jika tabel memiliki `ID` auto-incrementing, gunakan metode `insertGetId` untuk
-memasukkan data dan mengembalikan nilai `ID` tersebut:
+Jika tabel memiliki `ID` auto-increment, gunakan method `insertGetId` untuk memasukkan record dan mengembalikan nilai `ID`:
 
 ```php
 $id = Db::table('users')->insertGetId(
@@ -727,29 +638,19 @@ $id = Db::table('users')->insertGetId(
 );
 ```
 
-## Update (Memperbarui Data)
+## Updates
 
-Tentu saja, selain memasukkan record ke database, query builder juga dapat
-memperbarui record yang sudah ada melalui metode `update`. Metode `update`, seperti
-halnya metode `insert`, menerima array yang berisi field dan nilai yang akan
-diperbarui. Anda dapat membatasi query `update` dengan klausa `where`:
+Selain memasukkan records ke database, query builder juga bisa memperbarui records yang ada menggunakan method `update`. Method `update`, seperti method `insert`, menerima array kolom dan nilai untuk diperbarui. Anda bisa membatasi `update` queries menggunakan `where` clause:
 
 ```php
 Db::table('users')->where('id', 1)->update(['votes' => 1]);
 ```
 
-### Update atau Insert (Upsert)
+### Update or Insert
 
-Terkadang Anda mungkin ingin memperbarui record yang sudah ada di database, atau
-membuat record baru jika data tersebut belum ada. Dalam hal ini, metode
-`updateOrInsert` dapat digunakan. Metode `updateOrInsert` menerima dua parameter:
-array kondisi untuk mencari record, dan array pasangan key-value yang berisi data
-untuk diperbarui.
+Terkadang Anda mungkin ingin memperbarui record yang ada di database, atau membuatnya jika tidak ada record yang cocok. Dalam kasus ini, Anda bisa menggunakan method `updateOrInsert`. Method `updateOrInsert` menerima dua argumen: array kondisi untuk menemukan record, dan array key-value pairs yang berisi perubahan pada record.
 
-Metode `updateOrInsert` pertama-tama akan mencoba mencari record database yang cocok
-menggunakan key dan value pada parameter pertama. Jika record ditemukan, record
-tersebut diperbarui menggunakan nilai pada parameter kedua. Jika tidak ditemukan,
-record baru akan dimasukkan yang merupakan gabungan dari kedua array tersebut:
+Method `updateOrInsert` pertama-tama akan mencoba mencari database record yang cocok menggunakan key-value pairs dari argumen pertama. Jika record ada, maka akan memperbarui record dengan nilai dari argumen kedua. Jika record tidak ditemukan, record baru akan di-insert dengan data gabungan dari kedua array:
 
 ```php
 Db::table('users')->updateOrInsert(
@@ -758,24 +659,19 @@ Db::table('users')->updateOrInsert(
 );
 ```
 
-### Memperbarui field JSON
+### Memperbarui JSON Fields
 
-Saat memperbarui field JSON, Anda dapat menggunakan sintaks `->` untuk mengakses
-nilai yang sesuai di dalam objek JSON. Fitur ini hanya didukung pada MySQL 5.7+:
+Saat memperbarui `JSON` fields, Anda bisa menggunakan sintaks `->` untuk mengakses nilai yang sesuai dalam objek `JSON`. Operasi ini hanya didukung di MySQL 5.7+:
 
 ```php
 Db::table('users')->where('id', 1)->update(['options->enabled' => true]);
 ```
 
-### Increment dan Decrement Otomatis
+### Increments & Decrements
 
-Query builder juga menyediakan metode praktis untuk menambah (increment) atau
-mengurangi (decrement) nilai dari field tertentu. Metode ini memberikan antarmuka
-yang lebih ekspresif dan ringkas daripada menulis pernyataan `update` secara manual.
+Query builder juga menyediakan method yang nyaman untuk menambah atau mengurangi nilai dari kolom tertentu. Method ini menyediakan interface yang lebih ekspresif dan ringkas daripada menulis `update` statements secara manual.
 
-Kedua metode tersebut menerima setidaknya satu parameter: kolom yang ingin diubah.
-Parameter kedua bersifat opsional dan mengontrol jumlah nilai yang akan ditambah
-atau dikurangi:
+Kedua method menerima setidaknya satu argumen: kolom yang akan dimodifikasi. Argumen kedua bersifat opsional, digunakan untuk mengontrol jumlah kenaikan atau penurunan kolom:
 
 ```php
 Db::table('users')->increment('votes');
@@ -787,17 +683,15 @@ Db::table('users')->decrement('votes');
 Db::table('users')->decrement('votes', 5);
 ```
 
-Anda juga dapat menentukan field tambahan untuk diperbarui selama operasi tersebut:
+Anda juga bisa menentukan kolom tambahan untuk diperbarui selama operasi:
 
 ```php
 Db::table('users')->increment('votes', 1, ['name' => 'John']);
 ```
 
-## Delete (Menghapus Data)
+## Deletes
 
-Query builder juga dapat menghapus record dari tabel menggunakan metode `delete`.
-Sebelum menggunakan `delete`, Anda dapat menambahkan klausa `where` untuk membatasi
-proses penghapusan:
+Query builder juga bisa menggunakan method `delete` untuk menghapus records dari tabel. Sebelum menggunakan `delete`, Anda bisa menambahkan `where` clauses untuk membatasi statement `delete`:
 
 ```php
 Db::table('users')->delete();
@@ -805,27 +699,21 @@ Db::table('users')->delete();
 Db::table('users')->where('votes', '>', 100)->delete();
 ```
 
-Jika Anda perlu mengosongkan seluruh tabel, Anda dapat menggunakan metode `truncate`,
-yang akan menghapus semua baris dan mereset nilai auto-incrementing `ID` kembali
-ke nol:
+Jika Anda perlu mengosongkan tabel, Anda bisa menggunakan method `truncate`, yang akan menghapus semua baris dan mereset auto-increment `ID` ke nol:
 
 ```php
 Db::table('users')->truncate();
 ```
 
-## Pessimistic lock (Lock Pesimis)
+## Pessimistic Locking
 
-Query builder juga menyediakan beberapa fungsi untuk membantu Anda menerapkan
-`pessimistic locking` pada sintaks `select`. Untuk menerapkan `"shared lock"` pada
-query, Anda dapat menggunakan metode `sharedLock`. Shared lock mencegah kolom data
-yang dipilih untuk diubah sampai transaksi di-commit:
+Query builder juga menyertakan beberapa fungsi untuk membantu Anda mencapai "pessimistic locking" pada `select` statements. Jika Anda ingin menempatkan "shared lock" pada query Anda, Anda bisa menggunakan method `sharedLock`. Shared lock mencegah baris data yang dipilih dari modifikasi sampai transaction di-commit:
 
 ```php
 Db::table('users')->where('votes', '>', 100)->sharedLock()->get();
 ```
 
-Alternatif lain, Anda dapat menggunakan metode `lockForUpdate`. Gunakan lock
-`"update"` untuk mencegah baris dimodifikasi atau dipilih oleh shared lock lainnya:
+Atau, Anda bisa menggunakan method `lockForUpdate`. Menggunakan "update" lock mencegah baris dari modifikasi atau dipilih dengan shared lock lain:
 
 ```php
 Db::table('users')->where('votes', '>', 100)->lockForUpdate()->get();

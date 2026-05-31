@@ -1,42 +1,31 @@
 # Database Migration
 
-Migration database dapat dipahami sebagai manajemen versi dari struktur database,
-yang secara efektif dapat menyelesaikan pengelolaan struktur database di antara
-anggota tim.
+Database migration adalah version control untuk struktur database, solusi efektif untuk mengelola perubahan struktur database di antara anggota tim.
 
-# Menghasilkan Migration
+> Lokasi deklarasi script terkait sudah dipindahkan dari komponen `database` ke `devtool`. Jadi di lingkungan online `--no-dev`, Anda perlu menulis manual perintah yang dapat dijalankan ke konfigurasi `autoload/commands.php`.
 
-Hasilkan file migration melalui `gen:migration`. Perintah ini diikuti dengan
-parameter nama file, yang biasanya menggambarkan apa tujuan dari migration
-tersebut.
+## Generate Migration
+
+Hasilkan file migration dengan `gen:migration`. Parameter nama file mengikuti perintah, biasanya mendeskripsikan tujuan migration.
 
 ```bash
 php bin/hyperf.php gen:migration create_users_table
 ```
 
-File migration yang dihasilkan terletak di dalam folder `migrations` di direktori
-root, dan setiap file migration menyertakan timestamp agar program migration
-dapat menentukan urutan migration.
+File migration yang dihasilkan berada di folder `migrations` di root direktori. Setiap file berisi timestamp sehingga program migration tahu urutannya.
 
-Opsi `--table` dapat digunakan untuk menentukan nama tabel data. Nama tabel yang
-ditentukan akan dibuat di dalam file migration secara default.
-Opsi `--create` juga digunakan untuk menentukan nama tabel data, tetapi
-perbedaannya dengan `--table` adalah opsi ini menghasilkan file migration untuk
-membuat tabel baru, sedangkan `--table` menghasilkan file migration untuk
-memodifikasi tabel.
+Opsi `--table` digunakan untuk menentukan nama tabel, nama tersebut akan otomatis muncul di file migration.
+Opsi `--create` juga untuk menentukan nama tabel, bedanya opsi ini menghasilkan file migration untuk membuat tabel baru, sementara `--table` untuk memodifikasi tabel yang sudah ada.
 
 ```bash
 php bin/hyperf.php gen:migration create_users_table --table=users
 php bin/hyperf.php gen:migration create_users_table --create=users
 ```
 
-# Struktur Migration
+## Migration Structure
 
-Class migration secara default akan berisi `2` method: `up` dan `down`.
-Method `up` digunakan untuk menambahkan tabel data, field, atau index baru ke
-database, sedangkan method `down` adalah kebalikan dari method `up` (berisi
-operasi yang berlawanan dengan `up`) sehingga dapat dieksekusi saat melakukan
-rollback.
+Class migration berisi `2` method bawaan: `up` dan `down`.
+Method `up` digunakan untuk menambahkan tabel, kolom, atau index baru ke database. Method `down` adalah kebalikannya, membatalkan apa yang dilakukan `up` agar bisa dijalankan saat rollback.
 
 ```php
 <?php
@@ -48,117 +37,97 @@ use Hyperf\Database\Migrations\Migration;
 class CreateUsersTable extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasinya.
      */
     public function up(): void
     {
-        Schema::create('true', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Balikkan migrasinya.
      */
     public function down(): void
     {
-        Schema::dropIfExists('true');
+        Schema::dropIfExists('users');
     }
 }
 ```
 
-# Menjalankan Migration
+## Running Migrations
 
-Jalankan semua file migration yang tertunda dengan mengeksekusi perintah
-`migrate`:
+Jalankan semua file migration yang tertunda dengan mengeksekusi perintah `migrate`:
 
 ```bash
 php bin/hyperf.php migrate
 ```
 
-## Memaksa Migration
+### Force Migration Execution
 
-Beberapa operasi migration bersifat destruktif, yang berarti dapat mengakibatkan
-hilangnya data. Untuk mencegah seseorang menjalankan perintah ini di lingkungan
-production, sistem akan meminta konfirmasi sebelum perintah dijalankan. Namun,
-jika Anda ingin mengabaikan konfirmasi ini dan memaksa menjalankan perintah,
-Anda dapat menggunakan flag `--force`:
+Beberapa operasi migration bersifat destruktif dan berpotensi menghilangkan data. Untuk mencegah eksekusi di production, sistem akan meminta konfirmasi. Jika Anda yakin dan ingin memaksakan perintahnya, gunakan flag `--force`:
 
 ```bash
 php bin/hyperf.php migrate --force
 ```
 
-## Rollback Migration
+### Rollback Migrations
 
-Jika Anda ingin membatalkan (roll back) migration terakhir, Anda dapat menggunakan
-perintah `migrate:rollback`. Perlu dicatat bahwa satu batch migration dapat
-berisi beberapa file migration:
+Untuk rollback migrasi terakhir, gunakan `migrate:rollback`. Perhatikan bahwa satu migrasi bisa berisi beberapa file:
 
 ```bash
 php bin/hyperf.php migrate:rollback
 ```
 
-Anda juga dapat menentukan jumlah rollback migration dengan menambahkan parameter
-`step` pada perintah `migrate:rollback`. Sebagai contoh, perintah berikut akan
-melakukan rollback pada 5 migration terakhir:
+Juga bisa menambahkan parameter `step` untuk mengatur jumlah rollback. Misalnya, perintah berikut rollback 5 migrasi terakhir:
 
 ```bash
 php bin/hyperf.php migrate:rollback --step=5
 ```
 
-Jika Anda ingin melakukan rollback pada semua migration, Anda dapat melakukannya
-dengan perintah `migrate:reset`:
+Untuk rollback semua migrasi, gunakan `migrate:reset`:
 
 ```bash
 php bin/hyperf.php migrate:reset
 ```
 
-## Rollback & Migrate
+### Rollback dan Migrate
 
-Perintah `migrate:refresh` tidak hanya melakukan rollback pada migration, tetapi
-juga menjalankan kembali perintah `migrate`, yang membangun kembali beberapa
-migration secara efisien:
+Perintah `migrate:refresh` melakukan rollback lalu menjalankan `migrate` kembali, cocok untuk membangun ulang migrasi tertentu secara efisien:
 
 ```bash
 php bin/hyperf.php migrate:refresh
 
-// Membangun kembali struktur database dan melakukan pengisian data (seeding)
+// Bangun ulang struktur database dan jalankan data seeding
 php bin/hyperf.php migrate:refresh --seed
 ```
 
-Tentukan jumlah rollback dan rebuild dengan parameter `--step`. Sebagai contoh,
-perintah berikut akan melakukan rollback dan mengeksekusi kembali 5 migration
-terakhir:
+Atur jumlah rollback dan rebuild dengan `--step`. Contoh berikut rollback dan menjalankan ulang 5 migrasi terakhir:
 
 ```bash
 php bin/hyperf.php migrate:refresh --step=5
 ```
 
-## Membangun Kembali Database
+### Rebuild Database
 
-Seluruh database dapat dibangun kembali secara efisien dengan perintah
-`migrate:fresh`, yang akan menghapus semua tabel dalam database sebelum
-mengeksekusi perintah `migrate`:
+Bangun ulang seluruh database dengan `migrate:fresh`. Perintah ini akan menghapus semua tabel lalu menjalankan `migrate`:
 
 ```bash
 php bin/hyperf.php migrate:fresh
 
-// Membangun kembali struktur database dan melakukan pengisian data (seeding)
+// Bangun ulang struktur database dan jalankan data seeding
 php bin/hyperf.php migrate:fresh --seed
 ```
 
-# Schema
+## Tables
 
-Di dalam file migration, class `Hyperf\Database\Schema\Schema` terutama digunakan
-untuk mendefinisikan tabel data dan mengelola proses migration.
+Di file migration, class `Hyperf\Database\Schema\Schema` digunakan untuk mendefinisikan tabel dan mengelola proses migration.
 
-## Membuat Tabel
+### Creating Tables
 
-Buat tabel database baru dengan method `create`. Method `create` menerima dua
-parameter: parameter pertama adalah nama tabel data, dan parameter kedua adalah
-`Closure` yang akan menerima object `Hyperf\Database\Schema\Blueprint` untuk
-mendefinisikan tabel data baru:
+Buat tabel baru dengan method `create`. Method ini menerima dua argumen: nama tabel dan `Closure` yang menerima objek `Hyperf\Database\Schema\Blueprint` untuk mendefinisikan tabel:
 
 ```php
 <?php
@@ -179,40 +148,34 @@ class CreateUsersTable extends Migration
 }
 ```
 
-Anda dapat menggunakan perintah berikut pada generator struktur database untuk
-mendefinisikan opsi tabel:
+Gunakan perintah berikut pada schema builder untuk mendefinisikan opsi tabel:
 
 ```php
-// Menentukan storage engine tabel
+// Tentukan storage engine tabel
 $table->engine = 'InnoDB';
-// Menentukan default character set untuk tabel data
+// Tentukan default character set untuk tabel
 $table->charset = 'utf8';
-// Menentukan default collation untuk tabel data
+// Tentukan default collation untuk tabel
 $table->collation = 'utf8_unicode_ci';
-// Membuat tabel temporer
+// Buat temporary table
 $table->temporary();
 ```
 
-## Mengubah Nama Tabel
+### Renaming Tables
 
-Jika Anda ingin mengubah nama tabel data, Anda dapat menggunakan method
-`rename`:
+Untuk mengganti nama tabel, gunakan method `rename`:
 
 ```php
 Schema::rename($from, $to);
 ```
 
-### Mengubah Nama Tabel dengan Foreign Key
+#### Renaming Tables dengan Foreign Keys
 
-Sebelum mengubah nama tabel, Anda harus memastikan bahwa semua constraint foreign
-key pada tabel tersebut memiliki nama eksplisit di dalam file migration,
-alih-alih membiarkan program migration menetapkan nama berdasarkan konvensi.
-Jika tidak, nama constraint foreign key akan tetap merujuk pada nama tabel yang
-lama.
+Sebelum rename tabel, pastikan semua foreign key constraint memiliki nama eksplisit di file migration, jangan biarkan program migration mengaturnya secara otomatis. Jika tidak, nama constraint akan tetap mereferensikan nama tabel lama.
 
-## Menghapus Tabel
+### Deleting Tables
 
-Untuk menghapus tabel yang ada, gunakan method `drop` atau `dropIfExists`:
+Untuk menghapus tabel, gunakan method `drop` atau `dropIfExists`:
 
 ```php
 Schema::drop('users');
@@ -220,27 +183,23 @@ Schema::drop('users');
 Schema::dropIfExists('users');
 ```
 
-## Memeriksa Keberadaan Tabel atau Field
+### Checking for Table atau Column Existence
 
-Method `hasTable` dan `hasColumn` dapat digunakan untuk memeriksa apakah tabel
-data atau field tertentu ada:
+Cek apakah tabel atau kolom ada dengan method `hasTable` dan `hasColumn`:
 
 ```php
 if (Schema::hasTable('users')) {
     //
 }
 
-if (Schema::hasColumn('name', 'email')) {
+if (Schema::hasColumn('users', 'email')) {
     //
 }
 ```
 
-## Opsi Koneksi Database
+### Database Connection Options
 
-Jika beberapa database dikelola secara bersamaan di mana migration yang berbeda
-akan merujuk pada koneksi database yang berbeda pula, kita dapat mendefinisikan
-koneksi database yang berbeda di dalam file migration dengan meng-override
-attribute class `$connection` dari parent class:
+Jika Anda mengelola beberapa database sekaligus dengan koneksi berbeda untuk tiap migration, Anda bisa mendefinisikan koneksi di file migration dengan override atribut class `$connection`:
 
 ```php
 <?php
@@ -251,7 +210,7 @@ use Hyperf\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
 {
-    // Ini sesuai dengan key koneksi di config/autoload/databases.php
+    // Ini merujuk pada connection key di config/autoload/databases.php
     protected $connection = 'foo';
     
     public function up(): void
@@ -264,14 +223,11 @@ class CreateUsersTable extends Migration
 }
 ```
 
-# Field
+## Columns
 
-## Membuat Field
+### Creating Columns
 
-Definisikan pembuatan atau perubahan field yang akan dilakukan oleh file migration
-di dalam `Closure` pada parameter kedua dari method `table` atau `create`.
-Sebagai contoh, kode berikut mendefinisikan sebuah field bertipe string dengan
-nama `name`:
+Tulis definisi atau perubahan yang akan dijalankan di dalam `Closure` pada argumen kedua method `table` atau `create`. Misalnya:
 
 ```php
 <?php
@@ -291,15 +247,15 @@ class CreateUsersTable extends Migration
 }
 ```
 
-## Method Definisi Field yang Tersedia
+### Available Column Definitions
 
-| Command | Deskripsi |
-| ------------------------------------------ | ------------------------------------------------------------------------------- |
-| $table->bigIncrements('id'); | Increment ID (primary key), setara dengan "UNSIGNED BIG INTEGER" |
+| Perintah | Deskripsi |
+| ---------------------------------------- | ------------------------------------------------------- |
+| $table->bigIncrements('id'); | Increment ID (primary key), setara dengan UNSIGNED BIG INTEGER |
 | $table->bigInteger('votes'); | Setara dengan BIGINT |
 | $table->binary('data'); | Setara dengan BLOB |
 | $table->boolean('confirmed'); | Setara dengan BOOLEAN |
-| $table->char('name', 100); | Setara dengan CHAR dengan panjang tertentu |
+| $table->char('name', 100); | Setara dengan CHAR dengan panjang |
 | $table->date('created_at'); | Setara dengan DATE |
 | $table->dateTime('created_at'); | Setara dengan DATETIME |
 | $table->dateTimeTz('created_at'); | Setara dengan DATETIME dengan timezone |
@@ -309,186 +265,178 @@ class CreateUsersTable extends Migration
 | $table->float('amount', 8, 2); | Setara dengan FLOAT dengan presisi dan skala |
 | $table->geometry('positions'); | Setara dengan GEOMETRY |
 | $table->geometryCollection('positions'); | Setara dengan GEOMETRYCOLLECTION |
-| $table->increments('id'); | Auto-incrementing ID (primary key), setara dengan "UNSIGNED INTEGER" |
+| $table->increments('id'); | Increment ID (primary key), setara dengan UNSIGNED INTEGER |
 | $table->integer('votes'); | Setara dengan INTEGER |
-| $table->ipAddress('visitor'); | Setara dengan alamat IP |
+| $table->ipAddress('visitor'); | Setara dengan IP address |
 | $table->json('options'); | Setara dengan JSON |
 | $table->jsonb('options'); | Setara dengan JSONB |
 | $table->lineString('positions'); | Setara dengan LINESTRING |
 | $table->longText('description'); | Setara dengan LONGTEXT |
-| $table->macAddress('device'); | Setara dengan alamat MAC |
-| $table->mediumIncrements('id'); | Increment ID (primary key), setara dengan "UNSIGNED MEDIUM INTEGER" |
+| $table->macAddress('device'); | Setara dengan MAC address |
+| $table->mediumIncrements('id'); | Increment ID (primary key), setara dengan UNSIGNED MEDIUM INTEGER |
 | $table->mediumInteger('votes'); | Setara dengan MEDIUMINT |
 | $table->mediumText('description'); | Setara dengan MEDIUMTEXT |
-| $table->morphs('taggable'); | Setara dengan menambahkan field bigInteger `taggable_id` dan string `taggable_type` |
+| $table->morphs('taggable'); | Menambahkan taggable_id incrementing dan taggable_type string |
 | $table->multiLineString('positions'); | Setara dengan MULTILINESTRING |
 | $table->multiPoint('positions'); | Setara dengan MULTIPOINT |
 | $table->multiPolygon('positions'); | Setara dengan MULTIPOLYGON |
-| $table->nullableMorphs('taggable'); | Setara dengan versi nullable dari field morphs() |
-| $table->nullableTimestamps(); | Setara dengan versi nullable dari field timestamps() |
+| $table->nullableMorphs('taggable'); | Versi nullable dari kolom morphs() |
+| $table->nullableTimestamps(); | Versi nullable dari kolom timestamps() |
 | $table->point('position'); | Setara dengan POINT |
 | $table->polygon('positions'); | Setara dengan POLYGON |
-| $table->rememberToken(); | Setara dengan field `remember_token` sebagai VARCHAR(100) nullable |
-| $table->smallIncrements('id'); | Increment ID (primary key), setara dengan "UNSIGNED SMALL INTEGER" |
+| $table->rememberToken(); | Menambahkan kolom remember_token VARCHAR(100) nullable |
+| $table->smallIncrements('id'); | Increment ID (primary key), setara dengan UNSIGNED SMALL INTEGER |
 | $table->smallInteger('votes'); | Setara dengan SMALLINT |
-| $table->softDeletes(); | Setara dengan menambahkan field `deleted_at` nullable untuk soft delete |
-| $table->softDeletesTz(); | Setara dengan menambahkan field `deleted_at` nullable dengan timezone untuk soft delete |
-| $table->string('name', 100); | Setara dengan VARCHAR dengan panjang tertentu |
+| $table->softDeletes(); | Menambahkan kolom deleted_at nullable untuk soft deletes |
+| $table->softDeletesTz(); | Menambahkan kolom deleted_at nullable dengan timezone untuk soft deletes |
+| $table->string('name', 100); | Setara dengan VARCHAR dengan panjang |
 | $table->text('description'); | Setara dengan TEXT |
 | $table->time('sunrise'); | Setara dengan TIME |
 | $table->timeTz('sunrise'); | Setara dengan TIME dengan timezone |
 | $table->timestamp('added_on'); | Setara dengan TIMESTAMP |
 | $table->timestampTz('added_on'); | Setara dengan TIMESTAMP dengan timezone |
-| $table->timestamps(); | Setara dengan TIMESTAMP `created_at` dan `updated_at` yang nullable |
-| $table->timestampsTz(); | Setara dengan TIMESTAMP `created_at` dan `updated_at` nullable dengan timezone |
-| $table->tinyIncrements('id'); | Setara dengan auto-increment UNSIGNED TINYINT |
+| $table->timestamps(); | Kolom created_at dan updated_at TIMESTAMP nullable |
+| $table->timestampsTz(); | Kolom created_at dan updated_at TIMESTAMP nullable dengan timezone |
+| $table->tinyIncrements('id'); | Setara dengan auto-incrementing UNSIGNED TINYINT |
 | $table->tinyInteger('votes'); | Setara dengan TINYINT |
-| $table->unsignedBigInteger('votes'); | Setara dengan UNSIGNED BIGINT |
+| $table->unsignedBigInteger('votes'); | Setara dengan Unsigned BIGINT |
 | $table->unsignedDecimal('amount', 8, 2); | Setara dengan UNSIGNED DECIMAL dengan presisi dan skala |
-| $table->unsignedInteger('votes'); | Setara dengan UNSIGNED INT |
-| $table->unsignedMediumInteger('votes'); | Setara dengan UNSIGNED MEDIUMINT |
-| $table->unsignedSmallInteger('votes'); | Setara dengan UNSIGNED SMALLINT |
-| $table->unsignedTinyInteger('votes'); | Setara dengan UNSIGNED TINYINT |
+| $table->unsignedInteger('votes'); | Setara dengan Unsigned INT |
+| $table->unsignedMediumInteger('votes'); | Setara dengan Unsigned MEDIUMINT |
+| $table->unsignedSmallInteger('votes'); | Setara dengan Unsigned SMALLINT |
+| $table->unsignedTinyInteger('votes'); | Setara dengan Unsigned TINYINT |
 | $table->uuid('id'); | Setara dengan UUID |
 | $table->year('birth_year'); | Setara dengan YEAR |
-| $table->comment('Table Comment'); | Menetapkan komentar tabel, setara dengan COMMENT |
+| $table->comment('Table Comment'); | Mengatur komentar tabel, setara dengan COMMENT |
 
-## Memodifikasi Field
+## Modifying Columns
 
-### Prasyarat
+### Prerequisites
 
-Pastikan untuk menambahkan dependency `doctrine/dbal` ke file `composer.json`
-sebelum memodifikasi field. Library Doctrine DBAL digunakan untuk menentukan
-status saat ini dari suatu field dan membuat query SQL yang diperlukan untuk
-melakukan penyesuaian yang ditentukan pada field tersebut:
+Sebelum memodifikasi kolom, pastikan dependensi `doctrine/dbal` sudah ditambahkan ke `composer.json`. Library Doctrine DBAL digunakan untuk menentukan status kolom saat ini dan membuat query SQL yang diperlukan:
 
 ```bash
 composer require "doctrine/dbal:^3.0"
 ```
 
-### Memperbarui Properti Field
+### Updating Column Attributes
 
-Method `change` dapat memodifikasi tipe field yang ada menjadi tipe baru atau
-memodifikasi properti lainnya.
+Method `change` bisa mengubah tipe kolom yang ada atau memodifikasi atribut lainnya.
 
 ```php
 <?php
 
-Schema::create('users', function (Blueprint $table) {
-    // Memodifikasi panjang field menjadi 50
+Schema::table('users', function (Blueprint $table) {
+    // Ubah panjang kolom menjadi 50
     $table->string('name', 50)->change();
 });
 ```
 
-Atau memodifikasi field agar bernilai `nullable`:
+Atau memodifikasi kolom menjadi `nullable`:
 
 ```php
 <?php
 
 Schema::table('users', function (Blueprint $table) {
-    // Memodifikasi panjang field menjadi 50 dan mengizinkan null
+    // Ubah panjang menjadi 50 dan izinkan null
     $table->string('name', 50)->nullable()->change();
 });
 ```
 
-> Hanya tipe field berikut yang dapat "dimodifikasi": bigInteger, binary,
-> boolean, date, dateTime, dateTimeTz, decimal, integer, json, longText,
-> mediumText, smallInteger, string, text, time, unsignedBigInteger,
-> unsignedInteger, dan unsignedSmallInteger.
+> Hanya tipe kolom berikut yang dapat "diubah": bigInteger, binary, boolean, date, dateTime, dateTimeTz, decimal, integer, json, longText, mediumText, smallInteger, string, text, time, unsignedBigInteger, unsignedInteger, dan unsignedSmallInteger.
 
-### Mengubah Nama Field
+### Renaming Columns
 
-Field dapat diubah namanya melalui method `renameColumn`:
+Ganti nama kolom melalui method `renameColumn`:
 
 ```php
 <?php
 
 Schema::table('users', function (Blueprint $table) {
-    // Mengubah nama field dari from ke to
-    $table->renameColumn('from', 'to')->change();
+    // Ganti nama kolom dari 'from' menjadi 'to'
+    $table->renameColumn('from', 'to');
 });
 ```
 
-> Mengubah nama field dengan tipe enum saat ini tidak didukung.
+> Mengganti nama kolom dengan tipe enum saat ini tidak didukung.
 
-### Menghapus Field
+### Deleting Columns
 
-Field dapat dihapus melalui method `dropColumn`:
+Hapus kolom melalui method `dropColumn`:
 
 ```php
 <?php
 
 Schema::table('users', function (Blueprint $table) {
-    // Menghapus field name
+    // Hapus kolom 'name'
     $table->dropColumn('name');
-    // Menghapus beberapa field sekaligus
+    // Hapus beberapa kolom
     $table->dropColumn(['name', 'age']);
 });
 ```
 
-#### Alias Perintah yang Tersedia
+#### Available Command Aliases
 
-| Command | Deskripsi |
-| ---------------------------- | ---------------------------------------------- |
-| $table->dropRememberToken(); | Menghapus field remember_token. |
-| $table->dropSoftDeletes(); | Menghapus field deleted_at. |
-| $table->dropSoftDeletesTz(); | Alias untuk method dropSoftDeletes(). |
-| $table->dropTimestamps(); | Menghapus field created_at dan updated_at. |
-| $table->dropTimestampsTz(); | Alias untuk method dropTimestamps(). |
+| Perintah | Deskripsi |
+| ---------------------------- | ------------------------------------- |
+| $table->dropRememberToken(); | Hapus kolom remember_token. |
+| $table->dropSoftDeletes(); | Hapus kolom deleted_at. |
+| $table->dropSoftDeletesTz(); | Alias dari method dropSoftDeletes(). |
+| $table->dropTimestamps(); | Hapus kolom created_at dan updated_at. |
+| $table->dropTimestampsTz(); | Alias dari method dropTimestamps(). |
 
-## Index
+## Indexes
 
-### Membuat Index
+### Creating Indexes
 
-### Unique Index
+#### Unique Index
 
-Gunakan method `unique` untuk membuat index unik (unique index):
+Buat unique index dengan method `unique`:
 
 ```php
 <?php
 
-// Membuat index pada saat pendefinisian field
+// Buat index saat definisi
 $table->string('name')->unique();
-// Membuat index setelah field didefinisikan
+// Buat index setelah mendefinisikan kolom
 $table->unique('name');
 ```
 
-#### Compound Index
+#### Composite Index
 
 ```php
 <?php
 
-// Membuat compound index
+// Buat composite index
 $table->index(['account_id', 'created_at'], 'index_account_id_and_created_at');
 ```
 
-#### Menentukan Nama Index
+#### Defining Index Names
 
-Migrator secara otomatis akan menghasilkan nama index yang sesuai, dan setiap
-method index menerima argumen kedua opsional untuk menentukan nama index tersebut:
+Program migration otomatis menghasilkan nama index yang masuk akal. Setiap method index menerima argumen kedua opsional untuk nama kustom:
 
 ```php
 <?php
 
-// Menentukan nama unique index sebagai unique_name
+// Tentukan nama unique index sebagai 'unique_name'
 $table->unique('name', 'unique_name');
-// Menentukan compound index bernama index_account_id_and_created_at
-$table->index(['account_id', 'created_at'], '');
+// Tentukan nama composite index sebagai 'index_account_id_and_created_at'
+$table->index(['account_id', 'created_at'], 'index_account_id_and_created_at');
 ```
 
-##### Tipe Index yang Tersedia
+##### Available Index Types
 
-| Command | Deskripsi |
-| ------------------------------------- | ----------------- |
-| $table->primary('id'); | Menambahkan primary key |
-| $table->primary(['id', 'parent_id']); | Menambahkan composite key |
-| $table->unique('email'); | Menambahkan unique index |
-| $table->index('state'); | Menambahkan index biasa |
-| $table->spatialIndex('location'); | Menambahkan spatial index |
+| Perintah | Deskripsi |
+| ------------------------------------- | ------------ |
+| $table->primary('id'); | Tambahkan primary key |
+| $table->primary(['id', 'parent_id']); | Tambahkan composite key |
+| $table->unique('email'); | Tambahkan unique index |
+| $table->index('state'); | Tambahkan plain index |
+| $table->spatialIndex('location'); | Tambahkan spatial index |
 
-### Mengubah Nama Index
+### Renaming Indexes
 
-Anda dapat mengubah nama index dengan method `renameIndex`:
+Ganti nama index dengan method `renameIndex`:
 
 ```php
 <?php
@@ -496,21 +444,18 @@ Anda dapat mengubah nama index dengan method `renameIndex`:
 $table->renameIndex('from', 'to');
 ```
 
-### Menghapus Index
+### Deleting Indexes
 
-Anda dapat menghapus index dengan cara berikut. Secara default, program
-migration akan secara otomatis menggabungkan nama tabel, nama field index, dan
-tipe index sebagai namanya. Contohnya adalah sebagai berikut:
+Hapus index dengan method berikut. Secara default, program migration otomatis menggabungkan nama tabel, nama kolom, dan tipe index sebagai nama. Contoh:
 
-| Command | Deskripsi |
-| ------------------------------------------------------ | ----------------------------------------- |
-| $table->dropPrimary('users_id_primary'); | Menghapus primary key dari tabel users |
-| $table->dropUnique('users_email_unique'); | Menghapus unique index dari tabel users |
-| $table->dropIndex('geo_state_index'); | Menghapus index dasar dari tabel geo |
-| $table->dropSpatialIndex('geo_location_spatialindex'); | Menghapus spatial index dari tabel geo |
+| Perintah | Deskripsi |
+| ------------------------------------------------------ | ------------------------- |
+| $table->dropPrimary('users_id_primary'); | Hapus primary key dari tabel users |
+| $table->dropUnique('users_email_unique'); | Hapus unique index dari tabel users |
+| $table->dropIndex('geo_state_index'); | Hapus basic index dari tabel geo |
+| $table->dropSpatialIndex('geo_location_spatialindex'); | Hapus spatial index dari tabel geo |
 
-Anda juga dapat meneruskan array field ke method `dropIndex`, dan migrator akan
-menghasilkan nama index berdasarkan nama tabel, field, dan tipe key:
+Anda juga bisa memberikan array kolom ke `dropIndex`, dan program migration akan menghasilkan nama index secara otomatis:
 
 ```php
 <?php
@@ -520,12 +465,9 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-### Constraint Foreign Key
+### Foreign Key Constraints
 
-Kita juga dapat membuat constraint foreign key pada lapisan database melalui
-method `foreign`, `references`, dan `on`. Sebagai contoh, mari kita definisikan
-field `user_id` pada tabel `posts` yang merujuk pada field `id` di tabel
-`users`:
+Kita juga bisa membuat foreign key constraint di level database melalui method `foreign`, `references`, dan `on`. Misalnya, tabel `posts` dengan kolom `user_id` yang mereferensikan `id` dari tabel `users`:
 
 ```php
 Schema::table('posts', function (Blueprint $table) {
@@ -535,8 +477,7 @@ Schema::table('posts', function (Blueprint $table) {
 });
 ```
 
-Anda juga dapat menentukan aksi yang diinginkan untuk properti `on delete` dan
-`on update`:
+Anda juga bisa menentukan perilaku `on delete` dan `on update`:
 
 ```php
 $table->foreign('user_id')
@@ -544,27 +485,23 @@ $table->foreign('user_id')
       ->onDelete('cascade');
 ```
 
-Anda dapat menghapus foreign key menggunakan method `dropForeign`. Constraint
-foreign key dinamai dengan cara yang sama seperti index, diikuti oleh akhiran
-`_foreign`:
+Hapus foreign key dengan method `dropForeign`. Foreign key constraint menggunakan konvensi penamaan yang sama dengan index, ditambah suffix `_foreign`:
 
 ```php
 $table->dropForeign('posts_user_id_foreign');
 ```
 
-Atau teruskan array berisi field dan biarkan migrator menghasilkan nama sesuai
-dengan aturan yang disepakati:
+Atau berikan array kolom, biarkan program migration menghasilkan nama sesuai konvensi:
 
 ```php
-$table->dropForeign(['user_id'']);
+$table->dropForeign(['user_id']);
 ```
 
-Anda dapat mengaktifkan atau menonaktifkan constraint foreign key menggunakan
-method berikut di dalam file migration:
+Gunakan method berikut di file migration untuk mengaktifkan atau menonaktifkan foreign key constraint:
 
 ```php
-// Mengaktifkan constraint foreign key
+// Aktifkan foreign key constraints
 Schema::enableForeignKeyConstraints();
-// Menonaktifkan constraint foreign key
+// Nonaktifkan foreign key constraints
 Schema::disableForeignKeyConstraints();
 ```

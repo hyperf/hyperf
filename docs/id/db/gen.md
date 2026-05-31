@@ -1,39 +1,34 @@
-# Skrip Pembuatan Model
+# Script Pembuatan Model
 
-Hyperf menyediakan perintah untuk membuat model, dan Anda dapat dengan mudah
-membuat model yang sesuai berdasarkan tabel data. Perintah ini menghasilkan
-model melalui `AST`, sehingga ketika Anda menambahkan metode tertentu, Anda
-juga dapat dengan mudah mereset model dengan skrip tersebut.
+Hyperf menyediakan command untuk membuat model berdasarkan tabel database. Command ini menghasilkan model lewat `AST`, jadi saat Anda menambahkan method, Anda juga bisa memakai script ini untuk mereset model dengan mudah.
 
 ```bash
 php bin/hyperf.php gen:model table_name
 ```
 
-## Membuat model
+## Membuat Model
 
-Parameter opsional adalah sebagai berikut:
+Parameter opsionalnya adalah sebagai berikut:
 
-|     Parameter      |  Tipe  |             Default               |                                            Keterangan                                          |
-|:------------------:|:------:|:---------------------------------:|:----------------------------------------------------------------------------------------------:|
-|       --pool       | string |             `default`             | Connection pool, skrip akan dibuat berdasarkan konfigurasi connection pool saat ini            |
-|       --path       | string |            `app/Model`            | path model                                                                                     |
-|   --force-casts    |  bool  |              `false`              | Apakah akan memaksa reset parameter `casts`                                                    |
-|      --prefix      | string |           string kosong           | prefix tabel                                                                                   |
-|   --inheritance    | string |              `Model`              | Parent class                                                                                   |
-|       --uses       | string | `Hyperf\DbConnection\Model\Model` | Gunakan bersama dengan `inheritance`                                                           |
-| --refresh-fillable |  bool  |              `false`              | Apakah akan me-refresh parameter `fillable`                                                    |
-|  --table-mapping   | array  |               `[]`                | Tambahkan hubungan mapping untuk nama tabel -> model seperti ['users:Account']                 |
-|  --ignore-tables   | array  |               `[]`                | Tidak perlu menghasilkan model untuk nama tabel tertentu, misal ['users']                      |
-|  --with-comments   |  bool  |              `false`              | Apakah akan menambahkan komentar field                                                         |
-|  --property-case   |  int   |                `0`                | Tipe Field: 0 Snakecase, 1 CamelCase                                                           |
+| Parameter | Tipe | Nilai Default | Keterangan |
+| :---: | :---: | :---: | :---: |
+| --pool | string | `default` | Connection pool, script akan membuat berdasarkan konfigurasi pool saat ini |
+| --path | string | `app/Model` | Path model |
+| --force-casts | bool | `false` | Apakah memaksa reset parameter `casts` |
+| --prefix | string | String Kosong | Table prefix |
+| --inheritance | string | `Model` | Parent class |
+| --uses | string | `Hyperf\DbConnection\Model\Model` | Digunakan bersama dengan `inheritance` |
+| --refresh-fillable | bool | `false` | Apakah me-refresh parameter `fillable` |
+| --table-mapping | array | `[]` | Mapping nama tabel ke model, misalnya ['users:Account'] |
+| --ignore-tables | array | `[]` | Tabel yang tidak perlu dibuatkan model, misalnya ['users'] |
+| --with-comments | bool | `false` | Apakah menambahkan field comments |
+| --property-case | int | `0` | Tipe field: 0 snake_case, 1 camelCase |
 
-Ketika menggunakan `--property-case` untuk mengubah tipe field menjadi camel
-case, Anda juga perlu menambahkan `Hyperf\Database\Model\Concerns\CamelCase` ke
-model secara manual.
-Konfigurasi yang sesuai juga dapat diatur dalam
-`databases.{pool}.commands.gen:model`, sebagai berikut:
+Saat mengonversi tipe field ke camelCase dengan `--property-case`, Anda juga perlu menambahkan `Hyperf\Database\Model\Concerns\CamelCase` secara manual ke model.
 
-> Semua tanda hubung harus diubah menjadi underscore
+Konfigurasi yang sama juga bisa diatur di `databases.{pool}.commands.gen:model`:
+
+> Semua tanda hubung perlu dikonversi menjadi garis bawah.
 
 ```php
 <?php
@@ -44,7 +39,7 @@ use Hyperf\Database\Commands\ModelOption;
 
 return [
     'default' => [
-        // Ignore other configurations
+        // Abaikan konfigurasi lainnya
         'commands' => [
             'gen:model' => [
                 'path' => 'app/Model',
@@ -82,27 +77,25 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model.
      */
     protected ?string $table = 'user';
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang bisa diisi secara massal.
      */
     protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
-     * The attributes that should be cast to native types.
+     * Atribut yang harus di-cast ke tipe native.
      */
     protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 
-## Visitor
+## Visitors
 
-Framework ini menyediakan beberapa `Visitor` bagi pengguna untuk memperluas
-kemampuan skrip. Penggunaannya sangat sederhana, cukup tambahkan `Visitor` yang
-sesuai dalam konfigurasi `visitors`.
+Framework menyediakan beberapa `Visitors` untuk memperluas kemampuan script. Cara pakainya mudah, tinggal tambahkan `Visitor` yang diinginkan ke konfigurasi `visitors`.
 
 ```php
 <?php
@@ -111,7 +104,7 @@ declare(strict_types=1);
 
 return [
     'default' => [
-        // Ignore other configurations
+        // Abaikan konfigurasi lainnya
         'commands' => [
             'gen:model' => [
                 'visitors' => [
@@ -123,37 +116,27 @@ return [
 ];
 ```
 
-### Visitor Opsional
+### Visitors Opsional
 
 - Hyperf\Database\Commands\Ast\ModelRewriteKeyInfoVisitor
 
-`Visitor` ini dapat menghasilkan `$incrementing`, `$primaryKey`, dan `$keyType`
-yang sesuai berdasarkan primary key di database.
+Visitor ini menghasilkan `$incrementing`, `$primaryKey`, dan `$keyType` sesuai primary key di database.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor
 
-`Visitor` ini dapat menilai apakah model berisi field soft delete berdasarkan
-konstanta `DELETED_AT`, dan jika ya, menambahkan Trait `SoftDeletes` yang
-sesuai.
+Visitor ini mengecek apakah model memiliki soft delete fields berdasarkan konstanta `DELETED_AT`. Jika ada, ia menambahkan Trait `SoftDeletes`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
 
-`Visitor` ini dapat secara otomatis menentukan, berdasarkan `created_at` dan
-`updated_at`, apakah akan mengaktifkan pencatatan default untuk
-`waktu pembuatan dan modifikasi` (created and modified times).
+Visitor ini otomatis menentukan apakah perlu mengaktifkan pencatatan `created and modified time` berdasarkan `created_at` dan `updated_at`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
 
-`Visitor` ini dapat menghasilkan `getter` dan `setter` yang sesuai berdasarkan
-field database.
+Visitor ini menghasilkan `getter` dan `setter` berdasarkan field database.
 
-## Override Visitor
+## Overriding Visitor
 
-Dalam framework Hyperf, saat `gen:model` digunakan, secara default hanya tipe
-`tinyint, smallint, mediumint, int, bigint` yang dideklarasikan sebagai tipe
-int, `bool, boolean` dideklarasikan sebagai tipe boolean, sedangkan tipe data
-lainnya secara default menjadi `string`. Anda dapat melakukan override untuk
-menyesuaikannya.
+Di Hyperf, saat menggunakan `gen:model`, secara default hanya `tinyint`, `smallint`, `mediumint`, `int`, dan `bigint` yang dideklarasikan sebagai `int`; `bool` dan `boolean` sebagai `boolean`; sisanya sebagai `string`. Ini bisa disesuaikan dengan override.
 
 Sebagai berikut:
 
@@ -176,25 +159,23 @@ namespace App\Model;
 class UserExt extends Model
 {
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model.
      */
     protected ?string $table = 'user_ext';
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang bisa diisi secara massal.
      */
     protected array $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
 
     /**
-     * The attributes that should be cast to native types.
+     * Atribut yang harus di-cast ke tipe native.
      */
     protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'string', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
-
 ```
 
-Pada titik ini, kita dapat memodifikasi fitur ini dengan meng-override
-`ModelUpdateVisitor`.
+Kita bisa memodifikasi perilaku ini dengan override `ModelUpdateVisitor`.
 
 ```php
 <?php
@@ -215,6 +196,9 @@ use Hyperf\Stringable\Str;
 
 class ModelUpdateVisitor extends Visitor
 {
+    /**
+     * Digunakan oleh atribut `casts`.
+     */
     protected function formatDatabaseType(string $type): ?string
     {
         switch ($type) {
@@ -225,7 +209,7 @@ class ModelUpdateVisitor extends Visitor
             case 'bigint':
                 return 'integer';
             case 'decimal':
-                // Set to decimal, and set the corresponding precision
+                // Set ke decimal dan set presisi yang sesuai
                 return 'decimal:2';
             case 'float':
             case 'double':
@@ -239,6 +223,9 @@ class ModelUpdateVisitor extends Visitor
         }
     }
 
+    /**
+     * Digunakan oleh @property docs.
+     */
     protected function formatPropertyType(string $type, ?string $cast): ?string
     {
         if (! isset($cast)) {
@@ -256,7 +243,7 @@ class ModelUpdateVisitor extends Visitor
         }
 
         if (Str::startsWith($cast, 'decimal')) {
-            // If cast is decimal, @property is changed to string
+            // Jika cast adalah decimal, @property berubah menjadi string
             return 'string';
         }
 
@@ -265,7 +252,7 @@ class ModelUpdateVisitor extends Visitor
 }
 ```
 
-Konfigurasikan hubungan pemetaan (mapping) pada `dependencies.php`
+Konfigurasikan mapping relationship di `dependencies.php`:
 
 ```php
 <?php
@@ -273,11 +260,9 @@ Konfigurasikan hubungan pemetaan (mapping) pada `dependencies.php`
 return [
     Hyperf\Database\Commands\Ast\ModelUpdateVisitor::class => App\Kernel\Visitor\ModelUpdateVisitor::class,
 ];
-
 ```
 
-Setelah menjalankan kembali `gen:model`, model yang sesuai adalah sebagai
-berikut:
+Setelah menjalankan ulang `gen:model`, model yang sesuai adalah sebagai berikut:
 
 ```php
 <?php
@@ -298,15 +283,15 @@ namespace App\Model;
 class UserExt extends Model
 {
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model.
      */
     protected ?string $table = 'user_ext';
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang bisa diisi secara massal.
      */
     protected array $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
     /**
-     * The attributes that should be cast to native types.
+     * Atribut yang harus di-cast ke tipe native.
      */
     protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }

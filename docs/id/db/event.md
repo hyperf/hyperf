@@ -1,30 +1,30 @@
-# Event
+# Events
 
-Model event diimplementasikan pada interface
-[psr/event-dispatcher](https://github.com/php-fig/event-dispatcher).
+Model events mengimplementasikan interface [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) dan didukung bawaan oleh komponen [hyperf/event](https://github.com/hyperf/event).
 
-## Custom listener
+## Operation Events
 
-Berkat dukungan komponen [hyperf/event](https://github.com/hyperf/event),
-pengguna dapat dengan mudah memantau event berikut:
-Misalnya `QueryExecuted`, `StatementPrepared`, `TransactionBeginning`,
-`TransactionCommitted`, `TransactionRolledBack`.
+ORM akan memicu event berikut selama operasinya. Anda bisa listen event ini sesuai kebutuhan.
 
-Selanjutnya, kita akan mengimplementasikan sebuah listener yang merekam SQL dan
-membahas cara menggunakannya.
+| Event | Deskripsi |
+| :--------: | :----: |
+| Hyperf\Database\Events\QueryExecuted | Setelah query dijalankan |
+| Hyperf\Database\Events\StatementPrepared | Setelah statement SQL siap |
+| Hyperf\Database\Events\TransactionBeginning | Setelah transaksi dimulai |
+| Hyperf\Database\Events\TransactionCommitted | Setelah transaksi di-commit |
+| Hyperf\Database\Events\TransactionRolledBack | Setelah transaksi di-rollback |
 
-Pertama, kita mendefinisikan `DbQueryExecutedListener`, mengimplementasikan
-interface `Hyperf\Event\Contract\ListenerInterface` dan mendefinisikan anotasi
-`Hyperf\Event\Annotation\Listener` pada kelas tersebut, sehingga Hyperf akan
-secara otomatis mendaftarkan listener ke event scheduler tanpa konfigurasi
-manual apa pun. Contoh kodenya adalah sebagai berikut:
+### SQL Execution Listener
+
+Berdasarkan operation events ORM di atas, mari buat listener untuk mencatat statement SQL. Dengan ini, kita bisa mencatat SQL setiap kali dijalankan.
+Pertama, definisikan `DbQueryExecutedListener`, implementasikan `Hyperf\Event\Contract\ListenerInterface`, dan beri annotation `Hyperf\Event\Annotation\Listener` pada class-nya. Hyperf otomatis akan mendaftarkan listener ini ke event dispatcher saat aplikasi jalan, lalu mengeksekusi logikanya ketika event dipicu. Contohnya:
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace App\Listeners;
+namespace App\Listener;
 
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Annotation\Listener;
@@ -38,14 +38,13 @@ use Psr\Log\LoggerInterface;
 #[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    public function __construct(LoggerFactory $loggerFactory)
+    public function __construct(ContainerInterface $container)
     {
-        $this->logger = $loggerFactory->get('sql');
+        // Output ke log bernama 'sql'. Jika belum ada, Anda perlu menambahkan konfigurasi sendiri.
+        // Nama log 'sql' tidak wajib; hanya digunakan di sini untuk membedakan log eksekusi SQL dari log biasa.
+        $this->logger = $container->get(LoggerFactory::class)->get('sql');
     }
 
     public function listen(): array
@@ -72,40 +71,33 @@ class DbQueryExecutedListener implements ListenerInterface
         }
     }
 }
-
 ```
 
-## Event Model
+## Model Events
 
-Event model tidak sama dengan `EloquentORM`, yang menggunakan `Observer` untuk
-mendengarkan event model. `Hyperf` secara langsung menggunakan `hooks` untuk
-menangani event yang sesuai. Jika Anda masih menyukai cara `Observer`, Anda
-dapat mengimplementasikan `event listener` sendiri. Tentu saja, Anda juga dapat
-memberi tahu kami di [issue#2](https://github.com/hyperf/hyperf/issues/2).
+Model events di Hyperf sedikit berbeda dari `Eloquent ORM`. `Eloquent ORM` memakai `Observer` untuk listen pada model events, sementara `Hyperf` menyediakan `hook functions` dan `event listeners`.
 
-### Fungsi Hook
+### Hook Functions
 
-| Nama Event | Waktu Pemicuan | Apakah blocking? | Catatan |
-|:------------:|:-----------------------------------------------:|:----------------:|:----------------------------------------------------------:|
-| booting | Sebelum model dimuat untuk pertama kalinya | tidak | Hanya dipicu sekali dalam siklus hidup proses |
-| booted | Setelah model dimuat untuk pertama kalinya | tidak | Hanya dipicu sekali dalam siklus hidup proses |
-| retrieved | Setelah mengisi data | tidak | Dipicu setiap kali model dikueri dari DB atau cache |
-| creating | Saat data dibuat | ya | |
-| created | Setelah data dibuat | tidak | |
-| updating | Saat data diperbarui | ya | |
-| updated | Setelah data diperbarui | tidak | |
-| saving | Saat data dibuat atau diperbarui | ya | |
-| saved | Setelah data dibuat atau diperbarui | tidak | |
-| restoring | Saat data soft-deleted dipulihkan | ya | |
-| restored | Setelah data soft-deleted dipulihkan | tidak | |
-| deleting | Saat data dihapus | ya | |
-| deleted | Setelah data dihapus | tidak | |
-| forceDeleting | Saat data dihapus secara paksa | ya | |
-| forceDeleted | Setelah data dihapus secara paksa | tidak | |
+| Nama Event | Waktu Trigger | Dapat Diblokir | Keterangan |
+| :------------: | :----------------: | :--------: | :--------------------------: |
+| booting | Sebelum model pertama dimuat | Tidak | Hanya sekali dalam siklus proses |
+| booted | Setelah model pertama dimuat | Tidak | Hanya sekali dalam siklus proses |
+| retrieved | Setelah data diisi (populate) | Tidak | Setiap kali model di-query dari DB atau cache |
+| creating | Saat data sedang dibuat | Ya | |
+| created | Setelah data dibuat | Tidak | |
+| updating | Saat data sedang diperbarui | Ya | |
+| updated | Setelah data diperbarui | Tidak | |
+| saving | Saat data sedang dibuat atau diperbarui | Ya | |
+| saved | Setelah data dibuat atau diperbarui | Tidak | |
+| restoring | Saat data soft-deleted sedang direstore | Ya | |
+| restored | Setelah data soft-deleted di-restore | Tidak | |
+| deleting | Saat data sedang dihapus | Ya | |
+| deleted | Setelah data dihapus | Tidak | |
+| forceDeleting | Saat data sedang di-force-delete | Ya | |
+| forceDeleted | Setelah data di-force-delete | Tidak | |
 
-Penggunaan event pada model sangatlah sederhana, cukup tambahkan method yang
-sesuai pada model. Sebagai contoh, ketika data disimpan di bawah ini, event
-`saving` akan dipicu, dan field `created_at` akan ditulis ulang secara aktif.
+Memakai event untuk model tertentu tentunya sangat mudah, tinggal tambahkan method yang sesuai ke model. Misalnya, trigger event `saving` untuk menimpa field `created_at` saat menyimpan data:
 
 ```php
 <?php
@@ -126,14 +118,14 @@ use Hyperf\Database\Model\Events\Saving;
 class User extends Model
 {
     /**
-     * The table associated with the model.
+     * Tabel yang terkait dengan model ini.
      *
      * @var string
      */
     protected $table = 'user';
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang dapat diisi secara massal.
      *
      * @var array
      */
@@ -146,14 +138,11 @@ class User extends Model
         $this->setCreatedAt('2019-01-01');
     }
 }
-
 ```
 
-### Event listener
+### Event Listener
 
-Ketika Anda perlu memantau semua event model, Anda dapat dengan mudah
-menyesuaikan `Listener` yang sesuai, seperti listener cache model di bawah ini.
-Ketika model diubah atau dihapus, cache yang sesuai akan dihapus.
+Kalau perlu mendengarkan semua model events, Anda tinggal mendefinisikan `Listener` yang sesuai. Contoh berikut, model cache listener menghapus cache setelah model dimodifikasi atau dihapus.
 
 ```php
 <?php
@@ -190,5 +179,40 @@ class DeleteCacheListener implements ListenerInterface
         }
     }
 }
+```
 
+### Observer
+
+Berterimakasih sekali dengan komponen [hyperf/model-listener](https://github.com/hyperf/blob/master/src/model-listener/), karenanya kita juga bisa memakai `Observer` untuk mendengarkan model events.
+Cukup gunakan annotation [ModelListener](https://github.com/hyperf/hyperf/blob/master/src/model-listener/src/Annotation/ModelListener.php) untuk mendefinisikan observer. Contohnya:
+
+```php
+<?php
+use Hyperf\ModelListener\Annotation\ModelListener;
+use App\Model\User;
+use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Created;
+
+/**
+ * Mendefinisikan UserObserver untuk mendengarkan event model User.
+ * Anda juga bisa mendengarkan beberapa model dengan mengisi parameter models.
+ * Class ini otomatis didaftarkan di container sebagai singleton.
+ */
+#[ModelListener(models: [ User::class ])]
+class UserObserver
+{
+    public function creating(Creating $event)
+    {
+        $user = $event->getModel();
+        // Dipicu saat membuat user
+    }
+    
+    public function created(Created $event)
+    {
+        $user = $event->getModel();
+        // Di-trigger setelah user dibuat
+    }
+    
+    //... Event lainnya dihilangkan
+}
 ```

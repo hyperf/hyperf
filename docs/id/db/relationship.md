@@ -1,23 +1,16 @@
-# Model Association
+# Model Relationships
 
-## Mendefinisikan Asosiasi
+## Mendefinisikan Relationships
 
-Asosiasi disajikan sebagai method dalam class model `Hyperf`. Seperti halnya
-model `Hyperf` itu sendiri, asosiasi juga dapat digunakan sebagai `query
-builder` yang kuat, menyediakan kemampuan chaining dan query yang andal.
-Sebagai contoh, kita dapat menambahkan batasan pada pemanggilan berantai yang
-berasosiasi dengan role:
+Relationships disajikan sebagai method di class model `Hyperf`. Seperti model itu sendiri, relationships juga bisa dipakai sebagai `query builders` yang powerful dengan method chaining. Misalnya, kita bisa menambahkan constraint ke method chaining dari role relationship:
 
 ```php
 $user->role()->where('level', 1)->get();
 ```
 
-### One-to-One
+### One To One
 
-One-to-one adalah relasi yang paling dasar. Sebagai contoh, model `User`
-mungkin berasosiasi dengan model `Role`. Untuk mendefinisikan asosiasi ini,
-kita perlu menulis method `role` di dalam model `User`. Panggil method `hasOne`
-di dalam method `role` tersebut dan kembalikan hasilnya:
+One-to-one relationship adalah asosiasi yang paling dasar. Misalnya, model `User` mungkin terkait dengan model `Role`. Untuk mendefinisikan relationship ini, kita perlu menulis method `role` di model `User`. Di dalam method `role`, panggil method `hasOne` dan kembalikan hasilnya:
 
 ```php
 <?php
@@ -37,23 +30,15 @@ class User extends Model
 }
 ```
 
-Parameter pertama dari method `hasOne` adalah nama class dari model yang
-diasosiasikan. Setelah asosiasi model didefinisikan, kita dapat menggunakan
-`dynamic properties` dari `Hyperf` untuk mendapatkan data terkait. Dynamic
-properties memungkinkan Anda mengakses method relasi layaknya property yang
-didefinisikan di dalam model:
+Argumen pertama dari method `hasOne` adalah class name dari associated model. Setelah model relationship didefinisikan, kita bisa menggunakan `Hyperf` dynamic attribute untuk mendapatkan related records. Dynamic attributes memungkinkan Anda mengakses relationship methods seolah-olah itu adalah property yang didefinisikan pada model:
 
 ```php
 $role = User::query()->find(1)->role;
 ```
 
-### One-to-Many
+### One To Many
 
-Asosiasi "one-to-many" digunakan untuk mendefinisikan model tunggal yang
-terkait dengan sejumlah model lain. Sebagai contoh, seorang penulis (author)
-mungkin telah menulis banyak buku (books). Sama seperti relasi `Hyperf`
-lainnya, definisi relasi one-to-many dilakukan dengan menulis method di dalam
-model `Hyperf`:
+Relationship "one-to-many" digunakan untuk mendefinisikan bahwa satu model memiliki sejumlah model terkait lainnya. Misalnya, seorang penulis bisa menulis banyak buku. Seperti semua `Hyperf` relationships lainnya, one-to-many relationship juga didefinisikan dengan menulis method di model `Hyperf`:
 
 ```php
 <?php
@@ -73,16 +58,9 @@ class User extends Model
 }
 ```
 
-Ingatlah bahwa `Hyperf` akan secara otomatis menentukan property foreign key
-dari model `Book`. Secara konvensi, `Hyperf` akan menggunakan bentuk "snake
-case" dari nama model pemilik, ditambah akhiran `_id` sebagai field foreign
-key. Oleh karena itu, pada contoh di atas, `Hyperf` akan mengasumsikan bahwa
-foreign key yang sesuai untuk `User` pada model `Book` adalah `user_id`.
+`Hyperf` otomatis menentukan foreign key attribute untuk model `Book`. Berdasarkan konvensi, `Hyperf` menggunakan bentuk "snake_case" dari nama model pemilik, ditambah suffix `_id`. Jadi dalam contoh di atas, foreign key dari `User` ke `Book` adalah `user_id`.
 
-Setelah relasi didefinisikan, koleksi buku dapat diperoleh dengan mengakses
-property `books` pada model `User`. Ingat, karena Hyperf menyediakan "dynamic
-properties", kita dapat mengakses method asosiasi layaknya property pada
-model:
+Setelah relationship didefinisikan, Anda bisa mendapatkan collection of books dengan mengakses property `books` dari model `User`. Ingat, karena Hyperf menyediakan "dynamic attributes", kita bisa mengakses relationship methods seolah-olah itu adalah property dari model:
 
 ```php
 $books = User::query()->find(1)->books;
@@ -92,20 +70,15 @@ foreach ($books as $book) {
 }
 ```
 
-Tentu saja, karena semua asosiasi juga dapat digunakan sebagai query builder,
-Anda dapat menggunakan pemanggilan berantai untuk menambahkan batasan
-tambahan ke method `books`:
+Tentu saja, karena semua relationships juga bisa digunakan sebagai query builders, Anda bisa menggunakan method chaining untuk menambahkan constraint tambahan ke method `books`:
 
 ```php
-$book = User::query()->find(1)->books()->where('title', 'Mastering the Hyperf framework in one month')->first();
+$book = User::query()->find(1)->books()->where('title', 'Mastering Hyperf Framework in One Month')->first();
 ```
 
-### One-to-Many (Sebaliknya)
+### One To Many (Inverse)
 
-Sekarang setelah kita bisa mendapatkan semua karya dari seorang penulis, mari
-kita definisikan asosiasi untuk mendapatkan penulisnya melalui buku. Asosiasi
-ini adalah kebalikan dari asosiasi `hasMany` dan perlu didefinisikan pada child
-model menggunakan method `belongsTo`:
+Sekarang kita bisa mendapatkan semua karya dari seorang penulis, mari kita definisikan asosiasi untuk mendapatkan penulis dari buku. Relationship ini adalah kebalikan dari relationship `hasMany` dan perlu didefinisikan menggunakan method `belongsTo` di child model:
 
 ```php
 <?php
@@ -125,8 +98,7 @@ class Book extends Model
 }
 ```
 
-Setelah relasi ini didefinisikan, kita dapat memperoleh model `User` terkait
-dengan mengakses "dynamic property" `author` pada model `Book`:
+Setelah relationship ini didefinisikan, kita bisa mengambil model `User` yang terkait dengan mengakses "dynamic attribute" `author` dari model `Book`:
 
 ```php
 $book = Book::find(1);
@@ -134,19 +106,11 @@ $book = Book::find(1);
 echo $book->author->name;
 ```
 
-### Many-to-Many
+### Many To Many
 
-Asosiasi many-to-many sedikit lebih rumit daripada asosiasi `hasOne` dan
-`hasMany`. Sebagai contoh, seorang user dapat memiliki banyak role, dan
-role tersebut juga dapat dimiliki oleh user lain. Contohnya, banyak user
-mungkin memiliki role "Administrator". Untuk mendefinisikan asosiasi ini,
-diperlukan tiga tabel database: `users`, `roles`, dan `role_user`. Tabel
-`role_user` dinamai secara alfabetis berdasarkan kedua model yang
-diasosiasikan, dan berisi field `user_id` dan `role_id`.
+Many-to-many relationships sedikit lebih kompleks daripada relationship `hasOne` dan `hasMany`. Misalnya, seorang user bisa memiliki banyak roles, dan roles ini juga digunakan bersama oleh user lain. Misalnya, banyak user mungkin memiliki role "Administrator". Untuk mendefinisikan relationship ini, diperlukan tiga tabel database: `users`, `roles`, dan `role_user`. Penamaan tabel `role_user` didasarkan pada dua model yang terkait dalam urutan alfabet, dan berisi field `user_id` dan `role_id`.
 
-Asosiasi many-to-many didefinisikan dengan mengembalikan hasil dari method
-internal `belongsToMany`. Sebagai contoh, kita definisikan method `roles` pada
-model `User`:
+Many-to-many relationship didefinisikan oleh hasil yang dikembalikan dari pemanggilan method internal `belongsToMany`. Misalnya, kita mendefinisikan method `roles` di model `User`:
 
 ```php
 <?php
@@ -164,8 +128,7 @@ class User extends Model
 }
 ```
 
-Setelah relasi didefinisikan, Anda dapat mendapatkan role dari user melalui
-dynamic property `roles`:
+Setelah relationship didefinisikan, Anda bisa mendapatkan user roles melalui dynamic attribute `roles`:
 
 ```php
 $user = User::query()->find(1);
@@ -175,40 +138,27 @@ foreach ($user->roles as $role) {
 }
 ```
 
-Tentu saja, seperti model relasi lainnya, Anda dapat menggunakan method
-`roles` untuk menambahkan batasan ke query menggunakan pemanggilan berantai:
+Tentu saja, seperti semua associated models lainnya, Anda bisa menggunakan method `roles` dan menggunakan method chaining untuk menambahkan constraint ke query statement:
 
 ```php
 $roles = User::find(1)->roles()->orderBy('name')->get();
 ```
 
-Seperti yang disebutkan sebelumnya, untuk menentukan nama tabel penghubung
-(join table) relasi, `Hyperf` akan menggabungkan nama kedua model relasi dalam
-urutan alfabetis. Tentu saja, Anda juga dapat mengabaikan konvensi ini dan
-meneruskan parameter kedua ke method `belongsToMany`:
+Seperti yang disebutkan sebelumnya, untuk menentukan nama tabel untuk relationship's join table, `Hyperf` akan menggabungkan nama dua model yang terkait dalam urutan alfabet. Tentu saja, Anda juga bisa tidak menggunakan konvensi ini dengan memberikan argumen kedua ke method `belongsToMany`:
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user');
 ```
 
-Selain menyesuaikan nama tabel penghubung, Anda juga dapat mendefinisikan nama
-kunci (key) dari field di dalam tabel dengan meneruskan parameter tambahan ke
-method `belongsToMany`. Parameter ketiga adalah nama foreign key dari model
-yang mendefinisikan asosiasi ini di dalam tabel penghubung, dan parameter
-keempat adalah nama foreign key dari model lain di dalam tabel penghubung:
+Selain menyesuaikan nama join table, Anda juga bisa mendefinisikan key names dari field di tabel tersebut dengan memberikan argumen tambahan ke method `belongsToMany`. Argumen ketiga adalah foreign key name dari model yang mendefinisikan relationship di join table, dan argumen keempat adalah foreign key name dari model lainnya di join table:
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
 ```
 
-#### Mendapatkan Field Tabel Perantara (Intermediate Table)
+#### Mengakses Intermediate Table Fields
 
-Seperti yang baru saja Anda pelajari, relasi many-to-many memerlukan tabel
-perantara sebagai pendukung, dan `Hyperf` menyediakan beberapa method yang
-berguna untuk berinteraksi dengan tabel ini. Sebagai contoh, katakanlah objek
-`User` kita memiliki beberapa objek `Role` yang berasosiasi dengannya. Setelah
-mendapatkan objek asosiasi ini, data dalam tabel perantara dapat diakses
-menggunakan atribut `pivot` pada model:
+Seperti yang baru Anda pelajari, many-to-many relationship memerlukan intermediate table sebagai pendukung. `Hyperf` menyediakan beberapa method yang berguna untuk berinteraksi dengan tabel ini. Misalnya, asumsikan objek `User` kita terkait dengan banyak objek `Role`. Setelah mengambil objek terkait ini, Anda bisa mengakses data intermediate table menggunakan atribut `pivot` dari model:
 
 ```php
 $user = User::find(1);
@@ -218,21 +168,15 @@ foreach ($user->roles as $role) {
 }
 ```
 
-Perlu diperhatikan bahwa setiap objek model `Role` yang kita dapatkan secara
-otomatis diberikan atribut `pivot`, yang mewakili objek model dari tabel
-perantara dan dapat digunakan seperti model `Hyperf` lainnya.
+Perlu dicatat bahwa setiap objek model `Role` yang kita ambil secara otomatis diberikan atribut `pivot`, yang merepresentasikan model object dari intermediate table dan bisa digunakan seperti model `Hyperf` lainnya.
 
-Secara default, objek `pivot` hanya berisi primary key dari kedua model
-relasi. Jika Anda memiliki field tambahan di tabel perantara, Anda harus
-menentukannya saat mendefinisikan relasi:
+Secara default, objek `pivot` hanya berisi primary keys dari dua model yang terkait. Jika intermediate table Anda memiliki field tambahan lainnya, Anda harus secara eksplisit menentukannya saat mendefinisikan relationship:
 
 ```php
 return $this->belongsToMany(Role::class)->withPivot('column1', 'column2');
 ```
 
-Jika Anda ingin tabel perantara secara otomatis mengelola timestamp
-`created_at` dan `updated_at`, tambahkan method `withTimestamps` saat
-mendefinisikan asosiasi:
+Jika Anda ingin intermediate table secara otomatis mempertahankan timestamps `created_at` dan `updated_at`, cukup lampirkan method `withTimestamps` saat mendefinisikan relationship:
 
 ```php
 return $this->belongsToMany(Role::class)->withTimestamps();
@@ -240,21 +184,15 @@ return $this->belongsToMany(Role::class)->withTimestamps();
 
 #### Menyesuaikan Nama Atribut `pivot`
 
-Seperti yang disebutkan sebelumnya, property dari tabel perantara dapat diakses
-menggunakan atribut `pivot`. Namun, Anda bebas menyesuaikan nama atribut ini
-agar lebih mencerminkan penggunaannya di aplikasi Anda.
+Seperti yang telah disebutkan sebelumnya, attributes dari intermediate table bisa diakses menggunakan atribut `pivot`. Namun, Anda bebas menyesuaikan nama atribut ini agar lebih mencerminkan tujuannya di aplikasi.
 
-Sebagai contoh, jika aplikasi Anda menyertakan user yang dapat berlangganan
-(subscribe), mungkin terdapat relasi many-to-many antara user dan blog. Jika
-demikian, Anda mungkin ingin menamai aksesor tabel perantara sebagai
-`subscription` alih-alih `pivot`. Hal ini dapat dilakukan menggunakan method
-`as` saat mendefinisikan relasi:
+Misalnya, jika aplikasi Anda mengandung user yang mungkin berlangganan, mungkin ada many-to-many relationship antara user dan podcasts. Jika ini masalahnya, Anda mungkin ingin mengganti nama intermediate table accessor dari `pivot` menjadi `subscription`. Ini bisa dilakukan dengan menggunakan method `as` saat mendefinisikan relationship:
 
 ```php
 return $this->belongsToMany(Podcast::class)->as('subscription')->withTimestamps();
 ```
 
-Setelah didefinisikan, Anda dapat mengakses data tabel perantara dengan nama kustom:
+Setelah didefinisikan, Anda bisa mengakses data intermediate table menggunakan nama kustom:
 
 ```php
 $users = User::with('podcasts')->get();
@@ -264,11 +202,9 @@ foreach ($users->flatMap->podcasts as $podcast) {
 }
 ```
 
-#### Memfilter Relasi Berdasarkan Tabel Perantara
+#### Memfilter Relationships melalui Intermediate Table
 
-Saat mendefinisikan relasi, Anda juga dapat menggunakan method `wherePivot`
-dan `wherePivotIn` untuk memfilter hasil yang dikembalikan oleh
-`belongsToMany`:
+Saat mendefinisikan relationships, Anda juga bisa menggunakan method `wherePivot` dan `wherePivotIn` untuk memfilter hasil yang dikembalikan oleh `belongsToMany`:
 
 ```php
 return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
@@ -276,14 +212,9 @@ return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
 return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
 ```
 
-## Preloading
+## Eager Loading
 
-Saat mengakses relasi `Hyperf` sebagai atribut, data terkait akan di-load secara
-"lazy loaded". Ini berarti data terkait tidak benar-benar dimuat sampai property
-tersebut diakses untuk pertama kalinya. Namun, `Hyperf` dapat melakukan
-"preload" pada asosiasi anak saat melakukan query pada model induk. Eager
-loading dapat meredakan masalah query N+1. Untuk menggambarkan masalah query
-N+1, perhatikan model `User` yang berasosiasi dengan `Role`:
+Saat mengakses `Hyperf` relationships sebagai property, data relationship di-"lazy load". Ini berarti data relationship tidak benar-benar dimuat sampai pertama kali property tersebut diakses. Namun, `Hyperf` bisa "eager load" child relationships saat melakukan query pada parent model. Eager loading dapat mengurangi masalah N + 1 query. Untuk mengilustrasikan masalah N + 1 query, pertimbangkan kasus di mana model `User` terkait dengan `Role`:
 
 ```php
 <?php
@@ -303,7 +234,7 @@ class User extends Model
 }
 ```
 
-Sekarang, mari kita dapatkan semua user dan role yang sesuai untuk mereka:
+Sekarang, mari kita ambil semua user dan role mereka yang sesuai:
 
 ```php
 $users = User::query()->get();
@@ -313,14 +244,9 @@ foreach ($users as $user){
 }
 ```
 
-Loop ini akan menjalankan query untuk mendapatkan semua user, lalu menjalankan
-query untuk mendapatkan role bagi setiap user. Jika kita memiliki 10 orang,
-loop ini akan menjalankan 11 query: 1 untuk user dan 10 query tambahan untuk
-role.
+Loop ini akan mengeksekusi satu query untuk mengambil semua user, dan kemudian mengeksekusi query untuk setiap user untuk mengambil role mereka. Jika kita memiliki 10 orang, loop ini akan menjalankan 11 queries: 1 untuk query user, dan 10 query tambahan yang sesuai dengan role mereka.
 
-Untungnya, kita dapat meminimalkan operasi tersebut menjadi hanya 2 query saja
-menggunakan eager loading. Pada saat melakukan query, Anda dapat menggunakan
-method `with` untuk menentukan asosiasi mana yang ingin Anda preload:
+Untungnya, kita bisa menggunakan eager loading untuk memampatkan operasi menjadi hanya 2 queries. Saat melakukan query, Anda bisa menggunakan method `with` untuk menentukan relationships yang ingin Anda eager load:
 
 ```php
 $users = User::query()->with('role')->get();
@@ -330,7 +256,7 @@ foreach ($users as $user){
 }
 ```
 
-Dalam contoh ini, hanya dua query yang dijalankan:
+Dalam contoh ini, hanya dua query yang dieksekusi:
 
 ```
 SELECT * FROM `user`;
@@ -338,21 +264,16 @@ SELECT * FROM `user`;
 SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
 ```
 
-## Polymorphic Association
+## Polymorphic Relationships
 
-Polymorphic association memungkinkan model target untuk berasosiasi dengan
-beberapa model menggunakan bantuan hubungan asosiasi.
+Polymorphic relationships memungkinkan target model untuk dimiliki oleh lebih dari satu tipe model lainnya menggunakan satu asosiasi.
 
-### One-to-One (Polymorphic)
+### One To One (Polymorphic)
 
-#### Struktur Tabel
+#### Table Structure
 
-Asosiasi satu-ke-satu polimorfik (one-to-one polymorphic association) mirip
-dengan asosiasi one-to-one biasa, namun model target dapat dimiliki oleh
-beberapa model dalam satu asosiasi saja. Sebagai contoh, `Book` dan `User` mungkin
-berbagi relasi ke model `Image`. Menggunakan one-to-one polymorphic
-association memungkinkan penggunaan daftar gambar yang unik baik untuk `Book`
-maupun `User`. Mari kita lihat struktur tabelnya terlebih dahulu:
+One-to-one polymorphic relationship mirip dengan simple one-to-one relationship; namun, target model bisa dimiliki oleh lebih dari satu tipe model pada satu asosiasi.
+Sebagai contoh, `Book` dan `User` mungkin berbagi relationship dengan model `Image`. Menggunakan one-to-one polymorphic relationship memungkinkan satu daftar gambar digunakan untuk `Book` dan `User`. Mari kita lihat struktur tabelnya:
 
 ```
 book
@@ -370,11 +291,9 @@ image
   imageable_type - string
 ```
 
-Field `imageable_id` pada tabel `image` akan memiliki arti berbeda tergantung
-pada `imageable_type`. Secara default, `imageable_type` adalah nama class model
-terkait secara langsung.
+Field `imageable_id` di tabel `image` merepresentasikan makna yang berbeda berdasarkan `imageable_type` yang berbeda. Secara default, `imageable_type` langsung berupa class name dari associated model.
 
-#### Contoh Model
+#### Model Example
 
 ```php
 <?php
@@ -405,12 +324,11 @@ class User extends Model
 }
 ```
 
-#### Mendapatkan Asosiasi
+#### Mengambil Relationships
 
-Setelah mendefinisikan model seperti di atas, kita dapat memperoleh model yang
-sesuai melalui relasi model tersebut.
+Setelah mendefinisikan model seperti di atas, kita bisa mengambil model yang sesuai melalui model relationships.
 
-Sebagai contoh, kita mengambil gambar milik seorang user.
+Misalnya, kita mengambil gambar dari seorang user.
 
 ```php
 use App\Model\User;
@@ -420,9 +338,7 @@ $user = User::find(1);
 $image = $user->image;
 ```
 
-Atau kita bisa mendapatkan data model yang sesuai dengan gambar tersebut.
-`imageable` akan mendapatkan `User` atau `Book` yang sesuai berdasarkan
-`imageable_type`.
+Atau kita mengambil user atau buku yang sesuai dengan gambar tertentu. `imageable` akan mengambil `User` atau `Book` yang sesuai berdasarkan `imageable_type`.
 
 ```php
 use App\Model\Image;
@@ -432,9 +348,9 @@ $image = Image::find(1);
 $imageable = $image->imageable;
 ```
 
-### One-to-Many (Polymorphic)
+### One To Many (Polymorphic)
 
-#### Contoh Model
+#### Model Example
 
 ```php
 <?php
@@ -465,9 +381,9 @@ class User extends Model
 }
 ```
 
-#### Mendapatkan Asosiasi
+#### Mengambil Relationships
 
-Mendapatkan semua gambar milik user:
+Mengambil semua gambar dari seorang user:
 
 ```php
 use App\Model\User;
@@ -478,13 +394,9 @@ foreach ($user->images as $image) {
 }
 ```
 
-### Pemetaan Polimorfik Kustom (Custom Polymorphic Mapping)
+### Custom Polymorphic Mapping
 
-Secara default, framework mengharuskan `type` menyimpan nama class model yang
-sesuai. Sebagai contoh, `imageable_type` di atas harus berupa `User::class` dan
-`Book::class`, namun dalam aplikasi nyata hal ini sering kali kurang praktis.
-Oleh karena itu, kita dapat menyesuaikan relasi pemetaan (mapping) untuk
-memisahkan (decouple) database dengan struktur internal aplikasi.
+Secara default, framework memerlukan `type` untuk menyimpan class name model yang sesuai, misalnya `imageable_type` yang disebutkan sebelumnya harus berupa `User::class` dan `Book::class` yang sesuai, tetapi jelas, ini sangat tidak nyaman dalam aplikasi praktis. Oleh karena itu, kita bisa menyesuaikan mapping relationship untuk memisahkan database dari struktur internal aplikasi.
 
 ```php
 use App\Model;
@@ -495,9 +407,7 @@ Relation::morphMap([
 ]);
 ```
 
-Karena `Relation::morphMap` akan menetap di dalam memori setelah dimodifikasi,
-kita dapat membuat pemetaan relasi yang sesuai saat project dimulai. Kita dapat
-membuat listener berikut:
+Karena `Relation::morphMap` akan tetap berada di memory setelah dimodifikasi, kita bisa membuat mapping relationship yang sesuai saat project dimulai. Kita bisa membuat listener berikut:
 
 ```php
 <?php
@@ -539,14 +449,11 @@ class MorphMapRelationListener implements ListenerInterface
 }
 ```
 
-### Melakukan Nested Preloading pada Asosiasi `morphTo`
+### Nested Eager Loading `morphTo` Relationships
 
-Jika Anda ingin memuat relasi `morphTo`, bersama dengan relasi bersarang
-(nested relationship) dari berbagai entitas yang mungkin dikembalikan oleh
-relasi tersebut, Anda dapat menggunakan method `with` yang digabungkan dengan
-method `morphWith` dari relasi `morphTo`.
+Jika Anda ingin memuat relationship `morphTo`, dan nested relationships dari berbagai entitas yang mungkin dikembalikan oleh relationship tersebut, Anda bisa menggabungkan method `with` dengan method `morphWith` dari relationship `morphTo`.
 
-Sebagai contoh, kita berencana melakukan preload relasi `book.user` dari `image`:
+Misalnya, kita ingin eager load relationship `book.user` dari sebuah gambar.
 
 ```php
 
@@ -556,33 +463,31 @@ use Hyperf\Database\Model\Relations\MorphTo;
 
 $images = Image::query()->with([
     'imageable' => function (MorphTo $morphTo) {
-        $morphTo->morphWith([
+        $morphWith->morphWith([
             Book::class => ['user'],
         ]);
     },
 ])->get();
 ```
 
-Query SQL yang sesuai adalah sebagai berikut:
+SQL query yang sesuai adalah sebagai berikut:
 
 ```sql
-// Search all pictures
+-- Query semua images
 select * from `images`;
-// Query the user list corresponding to the image
+-- Query daftar user yang sesuai dengan images
 select * from `user` where `user`.`id` in (1, 2);
-// Query the list of books corresponding to the image
+-- Query daftar buku yang sesuai dengan images
 select * from `book` where `book`.`id` in (1, 2, 3);
-// Query the user list corresponding to the book list
+-- Query daftar user yang sesuai dengan daftar buku
 select * from `user` where `user`.`id` in (1, 2);
 ```
 
-### Query Relasi Polimorfik
+### Polymorphic Relationship Query
 
-Untuk memeriksa keberadaan asosiasi `MorphTo`, Anda dapat menggunakan method
-`whereHasMorph` beserta method padanannya:
+Untuk melakukan query keberadaan relationship `MorphTo`, Anda bisa menggunakan method `whereHasMorph` dan method yang sesuai:
 
-Contoh berikut akan melakukan query pada daftar gambar yang memiliki ID user atau
-buku bernilai 1.
+Contoh berikut akan melakukan query daftar images di mana buku atau user `ID`-nya adalah 1.
 
 ```php
 use App\Model\Book;

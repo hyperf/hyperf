@@ -1,19 +1,14 @@
-# Modifier
+# Mutators
 
-> Dokumen ini banyak meminjam dari [LearnKu](https://learnku.com). Terima kasih banyak kepada LearnKu atas kontribusinya kepada komunitas PHP.
+> Dokumentasi ini banyak mengambil referensi dari [LearnKu](https://learnku.com). Terima kasih kepada LearnKu atas kontribusinya ke komunitas PHP.
 
-Accessor dan modifier memungkinkan Anda memformat nilai properti model saat
-mengambil atau mengatur nilai properti tertentu pada instance model.
+Accessors dan mutators memungkinkan Anda untuk memformat nilai atribut model ketika Anda mendapatkan atau mengatur atribut pada instance model.
 
-## Accessor & Modifier
+## Accessors & Mutators
 
 ### Mendefinisikan Accessor
 
-Untuk mendefinisikan accessor, Anda perlu membuat metode `getFooAttribute`
-pada model, dan field `Foo` yang akan diakses harus dinamai dengan format
-"camelCase". Dalam contoh ini, kita akan mendefinisikan sebuah accessor untuk
-properti `first_name`. Accessor ini akan dipanggil secara otomatis saat model
-mencoba mengambil properti `first_name`:
+Untuk mendefinisikan accessor, buat method `getFooAttribute` pada model Anda, di mana `Foo` adalah nama "camel-cased" dari kolom yang ingin Anda akses. Dalam contoh ini, kita akan mendefinisikan accessor untuk atribut `first_name`. Ketika model mencoba mengambil atribut `first_name`, accessor ini akan secara otomatis dipanggil:
 
 ```php
 <?php
@@ -25,7 +20,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Get the user's name.
+     * Dapatkan nama depan pengguna.
      *
      * @param  string  $value
      * @return string
@@ -37,10 +32,7 @@ class User extends Model
 }
 ```
 
-Seperti yang Anda lihat, nilai asli dari field tersebut diteruskan ke dalam
-accessor, memungkinkan Anda untuk memprosesnya dan mengembalikan hasilnya.
-Untuk mendapatkan nilai yang telah dimodifikasi, Anda dapat mengakses properti
-`first_name` pada instance model:
+Seperti yang Anda lihat, nilai asli dari kolom diteruskan ke accessor, memungkinkan Anda untuk memprosesnya dan mengembalikan hasilnya. Untuk mengambil nilai yang telah dimodifikasi, Anda dapat mengakses atribut `first_name` pada instance model:
 
 ```php
 $user = App\User::find(1);
@@ -48,8 +40,7 @@ $user = App\User::find(1);
 $firstName = $user->first_name;
 ```
 
-Tentu saja, Anda juga dapat menggunakan nilai properti yang ada dan
-menggunakan accessor untuk mengembalikan nilai baru hasil kalkulasi:
+Tentu saja, Anda juga dapat menggunakan nilai atribut yang sudah ada untuk mengembalikan nilai kalkulasi baru melalui accessor:
 
 ```php
 namespace App;
@@ -59,7 +50,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Get the user's name.
+     * Dapatkan nama lengkap pengguna.
      *
      * @return string
      */
@@ -70,13 +61,9 @@ class User extends Model
 }
 ```
 
-### Mendefinisikan Modifier
+### Mendefinisikan Mutator
 
-Untuk mendefinisikan modifier, definisikan metode `setFooAttribute` pada
-model. Field `Foo` yang akan diakses dinamai menggunakan format "camelCase".
-Mari kita definisikan modifier untuk properti `first_name` lagi. Modifier ini
-akan dipanggil secara otomatis saat kita mencoba mengatur nilai dari properti
-`first_name` pada skema:
+Untuk mendefinisikan mutator, definisikan method `setFooAttribute` pada model Anda. Field `Foo` yang akan diakses harus menggunakan penamaan "camel-cased". Mari kita definisikan mutator untuk atribut `first_name`. Ketika kita mencoba mengatur nilai atribut `first_name` pada model, mutator ini akan secara otomatis dipanggil:
 
 ```php
 <?php
@@ -88,7 +75,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Set the user's name.
+     * Mengatur nama depan pengguna.
      *
      * @param  string  $value
      * @return void
@@ -100,10 +87,7 @@ class User extends Model
 }
 ```
 
-Modifier menerima nilai dari atribut yang sedang diatur, memungkinkan Anda
-untuk mengubah dan menetapkan nilainya ke properti `$attributes` di dalam model.
-Sebagai contoh, jika kita mencoba mengatur nilai properti `first_name` menjadi
-`Sally`:
+Mutator akan menerima nilai yang sedang diatur pada atribut, memungkinkan Anda untuk memodifikasinya dan mengatur nilai tersebut ke atribut internal `$attributes` model. Misalnya, jika kita mencoba mengatur nilai atribut `first_name` menjadi `Sally`:
 
 ```php
 $user = App\User::find(1);
@@ -111,16 +95,11 @@ $user = App\User::find(1);
 $user->first_name = 'Sally';
 ```
 
-Dalam contoh ini, metode `setFirstNameAttribute` dipanggil dengan nilai
-`Sally` sebagai parameternya. Modifier kemudian menerapkan fungsi `strtolower`
-dan menyimpan hasil pemrosesan tersebut ke array internal `$attributes`.
+Dalam contoh ini, method `setFirstNameAttribute` dipanggil dengan `Sally` sebagai argumen. Mutator kemudian menerapkan fungsi `strtolower` dan mengatur hasil yang telah diproses ke dalam array internal `$attributes`.
 
-## Konverter Tanggal
+## Date Mutators
 
-Secara default, model mengonversi field `created_at` dan `updated_at` menjadi
-instance `Carbon`, yang mewarisi kelas bawaan `DateTime` dari PHP dan
-menyediakan berbagai metode yang berguna. Anda dapat menambahkan properti
-tanggal lainnya dengan mengatur properti `$dates` pada model:
+Secara default, model akan mengonversi kolom `created_at` dan `updated_at` menjadi instance `Carbon`, yang memperluas class native PHP `DateTime` dan menyediakan berbagai method yang berguna. Anda dapat menambahkan atribut tanggal lainnya dengan mengatur properti `$dates` pada model:
 
 ```php
 <?php
@@ -132,7 +111,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be converted to date format.
+     * Atribut yang harus dikonversi ke format tanggal.
      *
      * @var array
      */
@@ -140,22 +119,13 @@ class User extends Model
         'seen_at',
     ];
 }
-
 ```
 
-> Tip: Anda dapat menonaktifkan timestamp default `created_at` dan
-> `updated_at` dengan mengatur nilai publik `$timestamps` pada model menjadi
-> `false`.
+> Tip: Anda dapat menonaktifkan timestamp default `created_at` dan `updated_at` dengan mengatur properti public `$timestamps` model menjadi `false`.
 
-Saat sebuah field berada dalam format tanggal, Anda dapat mengatur nilainya ke
-timestamp `UNIX`, string datetime `(Y-m-d)`, atau instance `DateTime` / `Carbon`.
-Nilai tanggal tersebut akan diformat dengan benar dan disimpan ke dalam database
-Anda.
+Ketika suatu kolom berformat tanggal, Anda dapat mengatur nilainya menjadi timestamp `UNIX`, string date-time `(Y-m-d)`, atau instance `DateTime` / `Carbon`. Nilai tanggal akan diformat dengan benar dan disimpan ke database Anda.
 
-Seperti yang disebutkan di atas, saat properti yang diambil tercantum dalam
-properti `$dates`, properti tersebut secara otomatis dikonversi menjadi instance
-`Carbon`, memungkinkan Anda untuk menggunakan metode `Carbon` apa pun pada
-properti tersebut:
+Seperti disebutkan di atas, ketika atribut yang diambil termasuk dalam properti `$dates`, mereka secara otomatis dikonversi menjadi instance `Carbon`, memungkinkan Anda untuk menggunakan method `Carbon` apa pun pada atribut tersebut:
 
 ```php
 $user = App\User::find(1);
@@ -163,12 +133,9 @@ $user = App\User::find(1);
 return $user->deleted_at->getTimestamp();
 ```
 
-### Format Waktu
+### Date Format
 
-Semua timestamp akan diformat sebagai `Y-m-d H:i:s`. Jika Anda memerlukan
-format timestamp kustom, atur properti `$dateFormat` di dalam model. Properti
-ini menentukan bagaimana properti tanggal akan disimpan di database, serta
-formatnya saat model diserialisasi ke dalam array atau `JSON`:
+Timestamp diformat sebagai `Y-m-d H:i:s`. Jika Anda perlu menyesuaikan format timestamp, Anda dapat mengatur properti `$dateFormat` di model. Properti ini menentukan bagaimana atribut tanggal disimpan di database, serta formatnya ketika model di-serialize menjadi array atau `JSON`:
 
 ```php
 <?php
@@ -180,7 +147,7 @@ use Hyperf\DbConnection\Model\Model;
 class Flight extends Model
 {
     /**
-     * This property should be cast to the native type.
+     * Format penyimpanan kolom tanggal model.
      *
      * @var string
      */
@@ -188,19 +155,12 @@ class Flight extends Model
 }
 ```
 
-## Konversi Tipe Atribut
+## Attribute Casting
 
-Properti `$casts` pada model menyediakan metode yang memudahkan untuk
-mengonversi properti ke tipe data umum. Properti `$casts` harus berupa array
-yang kuncinya adalah nama properti yang akan dikonversi, dan nilainya adalah
-tipe data tujuan konversi yang Anda inginkan.
-Tipe data yang didukung adalah: `integer`, `real`, `float`, `double`,
-`decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection`,
-`date`, `datetime`, dan `timestamp`. Saat mengonversi ke tipe `decimal`, Anda
-perlu menentukan jumlah digit desimalnya, seperti: `decimal:2`.
+Properti `$casts` pada model menyediakan method yang mudah untuk me-cast atribut ke tipe data umum. Properti `$casts` harus berupa array di mana key adalah nama atribut yang akan di-cast, dan value adalah tipe data yang Anda inginkan.
+Tipe data yang didukung untuk casting adalah: `integer`, `real`, `float`, `double`, `decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection`, `date`, `datetime`, dan `timestamp`. Saat melakukan casting ke tipe `decimal`, Anda perlu menentukan jumlah digit desimal, misalnya `decimal:2`.
 
-Sebagai contoh, mari kita konversi properti `is_admin` yang disimpan di
-database sebagai integer (`0` atau `1`) menjadi nilai boolean:
+Sebagai contoh, mari kita cast atribut `is_admin`, yang disimpan di database sebagai integer (`0` atau `1`), menjadi boolean:
 
 ```php
 <?php
@@ -212,7 +172,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * The attributes that should be cast.
+     * Atribut yang harus di-cast.
      *
      * @var array
      */
@@ -222,9 +182,7 @@ class User extends Model
 }
 ```
 
-Kini saat Anda mengakses properti `is_admin`, meskipun nilai yang disimpan
-di database bertipe integer, nilai kembaliannya akan selalu dikonversi menjadi
-tipe boolean:
+Sekarang, ketika Anda mengakses atribut `is_admin`, meskipun nilai yang disimpan di database adalah integer, nilai yang dikembalikan akan selalu di-cast ke tipe boolean:
 
 ```php
 $user = App\User::find(1);
@@ -234,19 +192,11 @@ if ($user->is_admin) {
 }
 ```
 
-### Konversi Tipe Kustom
+### Custom Casting
 
-Model telah memiliki beberapa konversi tipe bawaan yang umum. Namun, pengguna
-terkadang perlu mengonversi data ke tipe kustom. Sekarang, kebutuhan ini dapat
-dipenuhi dengan mendefinisikan kelas yang mengimplementasikan interface
-`CastsAttributes`.
+Model memiliki banyak tipe casting bawaan yang umum. Namun, pengguna terkadang perlu melakukan casting data ke tipe kustom. Sekarang, kebutuhan ini dapat dipenuhi dengan mendefinisikan class yang mengimplementasikan interface `CastsAttributes`.
 
-Kelas yang mengimplementasikan interface ini harus mendefinisikan metode `get`
-dan `set`. Metode `get` bertanggung jawab untuk mengonversi data mentah yang
-diperoleh dari database ke tipe yang sesuai, sedangkan metode `set`
-mengonversi data ke tipe database yang sesuai untuk disimpan di database.
-Sebagai contoh, mari kita implementasikan kembali konversi tipe `json` bawaan
-sebagai konversi tipe kustom:
+Class yang mengimplementasikan interface ini harus mendefinisikan method `get` dan `set`. Method `get` bertanggung jawab untuk mengonversi data mentah yang diambil dari database ke tipe yang sesuai, sedangkan method `set` mengonversi data ke tipe database yang sesuai untuk disimpan. Sebagai contoh, mari kita implementasikan ulang casting built-in `json` sebagai custom type casting:
 
 ```php
 <?php
@@ -258,7 +208,7 @@ use Hyperf\Contract\CastsAttributes;
 class Json implements CastsAttributes
 {
     /**
-     * Convert the extracted data
+     * Transformasi data yang diambil dari database.
      */
     public function get($model, $key, $value, $attributes)
     {
@@ -266,7 +216,7 @@ class Json implements CastsAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transformasi nilai untuk disimpan di database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -275,8 +225,7 @@ class Json implements CastsAttributes
 }
 ```
 
-Setelah konversi tipe kustom didefinisikan, ia dapat dipasang ke properti
-model menggunakan nama kelasnya:
+Setelah mendefinisikan custom type casting, Anda dapat menempelkannya ke atribut model menggunakan nama class-nya:
 
 ```php
 <?php
@@ -289,7 +238,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * Atribut yang harus di-cast.
      *
      * @var array
      */
@@ -299,18 +248,11 @@ class User extends Model
 }
 ```
 
-#### Konversi Tipe Value Object
+#### Value Object Casting
 
-Tidak hanya dapat mengonversi data ke tipe data asli (native), tetapi Anda juga
-dapat mengonversi data ke objek. Kedua konversi tipe kustom ini didefinisikan
-dengan cara yang sangat mirip. Namun, metode `set` pada kelas konversi kustom
-yang mengonversi data menjadi objek harus mengembalikan array pasangan key-value,
-yang digunakan untuk menetapkan nilai asli yang dapat disimpan ke dalam model
-yang sesuai.
+Anda tidak hanya dapat melakukan casting data ke tipe data native, tetapi juga ke objek. Cara pendefinisian untuk kedua jenis custom casting sangat mirip. Namun, method `set` pada class custom casting yang mengonversi data ke objek perlu mengembalikan array key-value pairs, yang digunakan untuk mengatur nilai mentah yang dapat disimpan ke model yang sesuai.
 
-Sebagai contoh, mari definisikan kelas konversi tipe kustom untuk mengonversi
-beberapa nilai properti model menjadi satu value object `Address`, dengan asumsi
-bahwa objek `Address` memiliki dua properti publik `lineOne` dan `lineTwo`:
+Sebagai contoh, definisikan class custom casting untuk mengonversi beberapa atribut model menjadi satu objek nilai `Address`. Asumsikan objek `Address` memiliki dua properti public, `lineOne` dan `lineTwo`:
 
 ```php
 <?php
@@ -323,7 +265,7 @@ use Hyperf\Contract\CastsAttributes;
 class AddressCaster implements CastsAttributes
 {
     /**
-     * Convert the extracted data
+     * Transformasi data yang diambil dari database.
      */
     public function get($model, $key, $value, $attributes): Address
     {
@@ -334,7 +276,7 @@ class AddressCaster implements CastsAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transformasi nilai untuk disimpan di database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -346,8 +288,7 @@ class AddressCaster implements CastsAttributes
 }
 ```
 
-Setelah konversi tipe value object, perubahan data apa pun pada value object
-akan disinkronkan kembali secara otomatis ke model sebelum model disimpan:
+Setelah melakukan value object casting, setiap perubahan data pada value object akan secara otomatis disinkronkan kembali ke model sebelum disimpan:
 
 ```php
 <?php
@@ -365,7 +306,7 @@ var_dump($user->getAttributes());
 //];
 ```
 
-**Implementasi di sini berbeda dengan Laravel, jika terjadi penggunaan berikut, mohon perhatian khusus**
+**Implementasi di sini berbeda dengan Laravel. Perhatikan jika terjadi penggunaan berikut:**
 
 ```php
 $user = App\User::find(1);
@@ -379,14 +320,14 @@ var_dump($user->getAttributes());
 $user->address->lineOne = 'Updated Address Value';
 $user->address->lineTwo = '#20000';
 
-// Setelah memodifikasi field address secara langsung, perubahan tidak akan langsung berpengaruh pada attributes, tetapi Anda dapat mengambil data yang telah dimodifikasi secara langsung melalui $user->address.
+// Setelah memodifikasi field 'address' secara langsung, perubahan belum langsung terlihat di 'attributes', tapi Anda bisa mengakses data yang sudah dimodifikasi melalui $user->address.
 var_dump($user->getAttributes());
 //[
 //    'address_line_one' => 'Address Value',
 //    'address_line_two' => '#10000'
 //];
 
-// Saat kita menyimpan data atau menghapus data, attributes akan diubah menjadi data yang telah dimodifikasi.
+// Ketika kita menyimpan atau menghapus data, 'attributes' akan berubah menjadi data yang telah dimodifikasi.
 $user->save();
 var_dump($user->getAttributes());
 //[
@@ -395,9 +336,7 @@ var_dump($user->getAttributes());
 //];
 ```
 
-Jika setelah mengubah `address`, Anda tidak ingin menyimpannya atau mengambil
-data dari `address_line_one` melalui `address->lineOne`, Anda juga dapat
-menggunakan metode berikut:
+Jika Anda memodifikasi `address` tetapi tidak ingin menyimpannya, dan tidak ingin mengambil data `address_line_one` melalui `address->lineOne`, Anda juga dapat menggunakan method berikut:
 
 ```php
 $user = App\User::find(1);
@@ -406,9 +345,7 @@ $user->syncAttributes();
 var_dump($user->getAttributes());
 ```
 
-Tentu saja, jika Anda masih perlu memodifikasi fungsi `attributes` secara
-sinkron setelah mengubah `value` yang sesuai, Anda dapat mencoba metode berikut.
-Pertama, kita mengimplementasikan `UserInfo` dan mewarisi `CastsValue`.
+Tentu saja, jika Anda masih membutuhkan fungsionalitas untuk menyinkronkan modifikasi ke `attributes` setelah memodifikasi `value` yang sesuai, Anda dapat mencoba menggunakan method berikut. Pertama, kita implementasikan `UserInfo` dan mewarisi dari `CastsValue`.
 
 ```php
 namespace App\Caster;
@@ -451,11 +388,9 @@ class UserInfoCaster implements CastsAttributes
         ];
     }
 }
-
 ```
 
-Saat kita mengubah UserInfo dengan cara berikut, kita dapat menyinkronkan data
-yang diubah ke attributes.
+Ketika kita memodifikasi `UserInfo` dengan cara berikut, kita dapat menyinkronkan data ke `attributes`.
 
 ```php
 /** @var User $user */
@@ -464,13 +399,9 @@ $user->userInfo->name = 'John1';
 var_dump($user->getAttributes()); // ['name' => 'John1']
 ```
 
-#### Konversi Tipe Inbound
+#### Inbound Casting
 
-Terkadang, Anda mungkin hanya perlu melakukan typecast pada nilai properti
-yang ditulis ke model tanpa melakukan pemrosesan apa pun pada nilai properti
-yang diambil dari model. Contoh umum dari konversi tipe inbound adalah "hashing".
-Kelas konversi tipe inbound harus mengimplementasikan interface
-`CastsInboundAttributes`, dan hanya perlu mengimplementasikan metode `set`.
+Terkadang, Anda mungkin hanya perlu melakukan casting pada nilai yang ditulis ke model tanpa memproses nilai yang diambil dari model. Contoh tipikal dari inbound casting adalah "hashing". Class inbound casting perlu mengimplementasikan interface `CastsInboundAttributes`; Anda hanya perlu mengimplementasikan method `set`.
 
 ```php
 <?php
@@ -482,14 +413,14 @@ use Hyperf\Contract\CastsInboundAttributes;
 class Hash implements CastsInboundAttributes
 {
     /**
-     * hash algorithm
+     * Algoritma hashing.
      *
      * @var string
      */
     protected $algorithm;
 
     /**
-     * Create a new instance of the typecast class
+     * Buat instance class casting baru.
      */
     public function __construct($algorithm = 'md5')
     {
@@ -497,7 +428,7 @@ class Hash implements CastsInboundAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transformasi nilai untuk disimpan di database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -506,25 +437,21 @@ class Hash implements CastsInboundAttributes
 }
 ```
 
-#### Parameter Konversi Tipe
+#### Casting Parameters
 
-Saat memasang custom cast ke model, Anda dapat menentukan parameter cast yang
-diteruskan. Untuk meneruskan parameter konversi tipe, gunakan `:` untuk
-memisahkan parameter dari nama kelas, dan gunakan koma untuk memisahkan
-beberapa parameter. Parameter-parameter ini akan diteruskan ke konstruktor dari
-kelas konversi tipe:
+Ketika menempelkan custom casting ke model, Anda dapat menentukan parameter casting yang masuk. Untuk meneruskan parameter casting, gunakan `:` untuk memisahkan parameter dari nama class, dan gunakan koma untuk memisahkan beberapa parameter. Parameter ini akan diteruskan ke constructor dari class casting:
 
 ```php
 <?php
 namespace App;
 
-use App\Casts\Json;
+use App\Casts\Hash;
 use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * Atribut yang harus di-cast.
      *
      * @var array
      */
@@ -534,13 +461,9 @@ class User extends Model
 }
 ```
 
-### Konversi Array & `JSON`
+### Array & JSON Casting
 
-Konversi tipe `array` sangat berguna saat Anda menyimpan data `JSON` yang
-diserialisasi di database. Sebagai contoh: jika database Anda memiliki tipe
-field `JSON` atau `TEXT` yang diserialisasi ke `JSON`, dan Anda menambahkan
-konversi tipe `array` ke model, field tersebut akan secara otomatis dikonversi
-menjadi array `PHP` saat Anda mengaksesnya:
+Tipe cast `array` sangat berguna ketika Anda menyimpan data `JSON` yang telah di-serialize di database Anda. Misalnya: jika database Anda memiliki tipe kolom `JSON` atau `TEXT` yang di-serialize sebagai `JSON`, dan Anda menambahkan tipe cast `array` ke model Anda, maka secara otomatis akan dikonversi menjadi array `PHP` ketika Anda mengaksesnya:
 
 ```php
 <?php
@@ -552,7 +475,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * Atribut yang harus di-cast.
      *
      * @var array
      */
@@ -562,10 +485,7 @@ class User extends Model
 }
 ```
 
-Setelah konversi didefinisikan, nilai tersebut akan dide-serialisasi secara
-otomatis dari tipe `JSON` ke array `PHP` saat Anda mengaksesnya melalui properti
-`options`. Saat Anda mengatur nilai properti `options`, array yang diberikan
-juga akan diserialisasi secara otomatis ke tipe penyimpanan `JSON`:
+Setelah didefinisikan, ketika Anda mengakses atribut `options`, ia akan secara otomatis di-deserialize dari tipe `JSON` menjadi array `PHP`. Ketika Anda mengatur nilai atribut `options`, array yang diberikan juga akan secara otomatis di-serialize ke tipe `JSON` untuk penyimpanan:
 
 ```php
 $user = App\User::find(1);
@@ -579,11 +499,9 @@ $user->options = $options;
 $user->save();
 ```
 
-### Konversi Tipe Tanggal
+### Date Casting
 
-Saat menggunakan atribut `date` atau `datetime`, Anda dapat menentukan format
-tanggalnya. Format ini akan digunakan saat model diserialisasi sebagai array
-atau `JSON`:
+Ketika menggunakan atribut `date` atau `datetime`, Anda dapat menentukan format tanggal. Format ini digunakan ketika model di-serialize menjadi array atau `JSON`:
 
 ```php
 <?php
@@ -595,7 +513,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * Atribut yang harus di-cast.
      *
      * @var array
      */
@@ -605,11 +523,9 @@ class User extends Model
 }
 ```
 
-### Konversi Tipe Saat Query (Query-time)
+### Casting During Query
 
-Ada kalanya Anda perlu melakukan typecast pada properti tertentu selama eksekusi
-query, misalnya saat Anda perlu mengambil data dari tabel database. Sebagai
-contoh, perhatikan query berikut:
+Terkadang Anda perlu melakukan casting pada atribut tertentu selama proses eksekusi query, seperti ketika Anda perlu mengambil data dari tabel database. Sebagai contoh, lihat query berikut:
 
 ```php
 use App\Post;
@@ -622,10 +538,7 @@ $users = User::select([
 ])->get();
 ```
 
-Dalam kumpulan hasil (result set) yang diperoleh dari query ini, atribut
-`last_posted_at` akan berupa string. Akan lebih mudah jika kita melakukan
-konversi tipe `date` saat mengeksekusi query. Anda dapat melakukannya dengan
-menggunakan metode `withCasts`:
+Dalam kumpulan hasil yang diperoleh dari query ini, atribut `last_posted_at` akan berupa string. Akan lebih nyaman jika kita melakukan casting `date` saat mengeksekusi query. Anda dapat menyelesaikan operasi di atas dengan menggunakan method `withCasts`:
 
 ```php
 $users = User::select([

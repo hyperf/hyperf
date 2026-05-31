@@ -1,43 +1,30 @@
 # API Resource Constructor
 
-> Mendukung ekstensi resource yang mengembalikan response gRPC
+> Mendukung resource extensions yang mengembalikan response Grpc.
 
-## Pendahuluan
+## Introduction
 
-Saat membangun API, Anda sering kali memerlukan translation layer untuk
-menghubungkan Model Anda dengan response JSON aktual yang dikembalikan ke
-pengguna. Class resource memungkinkan Anda mengonversi model dan collection dari
-model ke JSON dengan cara yang lebih intuitif dan mudah.
+Saat membangun API, Anda sering butuh layer transformasi untuk menghubungkan Model dengan response JSON yang dikembalikan ke pengguna. Resource classes memungkinkan Anda mentransformasi model dan koleksi model menjadi JSON secara intuitif dan langsung.
 
-## Instalasi
+## Installation
 
-```
+```bash
 composer require hyperf/resource
 ```
 
-## Membuat Resource
+## Generating Resources
 
-Anda dapat menggunakan command `gen:resource` untuk membuat class resource.
-Secara default, resource yang dibuat akan ditempatkan di dalam folder
-`app/Resource` aplikasi. Resource mewarisi class
-`Hyperf\Resource\Json\JsonResource`:
+Anda dapat menggunakan perintah `gen:resource` untuk menghasilkan resource class. Secara default, resource yang dihasilkan ditempatkan di folder `app/Resource` aplikasi. Resource mewarisi dari class `Hyperf\Resource\Json\JsonResource`:
 
 ```bash
 php bin/hyperf.php gen:resource User
 ```
 
-### Resource Collection
+### Resource Collections
 
-Selain membuat resource untuk mentransformasi satu model, Anda juga dapat
-membuat collection dari resource untuk mentransformasi collection dari model.
-Ini memungkinkan Anda untuk menyertakan link dan informasi meta lainnya yang
-terkait dengan resource yang diberikan dalam response.
+Selain menghasilkan resource untuk mentransformasi satu model, Anda juga dapat menghasilkan resource collection untuk mentransformasi kumpulan model. Ini memungkinkan Anda untuk menyertakan link dan meta-informasi lain yang terkait dengan resource tertentu dalam response.
 
-Anda perlu menambahkan flag `--collection` saat membuat resource untuk
-menghasilkan resource collection. Sebagai alternatif, Anda dapat menyertakan
-kata `Collection` secara langsung pada nama resource untuk menunjukkan bahwa
-resource collection harus dibuat. Resource collection mewarisi class
-`Hyperf\Resource\Json\ResourceCollection`:
+Anda perlu menambahkan flag `--collection` saat menghasilkan resource untuk membuat resource collection. Atau, Anda dapat menyertakan `Collection` langsung di nama resource untuk menunjukkan bahwa resource collection harus dibuat. Resource collection mewarisi dari class `Hyperf\Resource\Json\ResourceCollection`:
 
 ```bash
 php bin/hyperf.php gen:resource Users --collection
@@ -45,11 +32,11 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-## gRPC Resource
+## gRPC Resources
 
-> Memerlukan instalasi tambahan `hyperf/resource-grpc`
+> Membutuhkan `hyperf/resource-grpc` untuk diinstal.
 
-```
+```bash
 composer require hyperf/resource-grpc
 ```
 
@@ -57,11 +44,9 @@ composer require hyperf/resource-grpc
 php bin/hyperf.php gen:resource User --grpc
 ```
 
-gRPC resource perlu menyetel class `message`. Hal ini dicapai dengan me-override
-method `expect()` dari class resource.
+gRPC resources perlu mengatur class `message`, yang diimplementasikan dengan menimpa method `expect()` dari resource class.
 
-Ketika gRPC service mengembalikan nilai, `toMessage()` harus dipanggil. Method
-ini mengembalikan instance dari class `message` yang telah diinisiasi.
+Ketika service gRPC mengembalikan response, Anda harus memanggil `toMessage()`. Method ini akan mengembalikan class `message` yang telah diinstansiasi.
 
 ```php
 <?php
@@ -85,23 +70,15 @@ class HiReplyResource extends GrpcResource
         return HiReply::class;
     }
 }
-
 ```
 
-Resource collection bawaan yang dihasilkan dapat mendukung pengembalian gRPC
-dengan meng-extend interface `Hyperf\ResourceGrpc\GrpcResource`.
+Resource collection yang dihasilkan secara default dapat dibuat mendukung pengembalian gRPC dengan mewarisi interface `Hyperf\ResourceGrpc\GrpcResource`.
 
-## Ikhtisar Konsep
+## Conceptual Overview
 
-> Ini adalah gambaran umum tingkat tinggi (high-level) tentang resource dan
-> resource collection. Sangat disarankan bagi Anda untuk membaca bagian lain
-> dari dokumen ini guna mendapatkan pemahaman mendalam tentang cara menyesuaikan
-> (customizing) dan menggunakan resource dengan lebih baik.
+> Ini adalah gambaran tingkat tinggi tentang resources dan resource collections. Sangat disarankan agar Anda membaca bagian lain dari dokumentasi ini untuk mendapatkan pemahaman yang lebih dalam tentang cara menyesuaikan dan menggunakan resources dengan lebih baik.
 
-Sebelum mempelajari cara menulis resource kustom Anda, mari kita lihat bagaimana
-resource digunakan di dalam framework. Sebuah class resource yang mewakili satu
-model perlu dikonversi ke format JSON. Sebagai contoh, sekarang kita memiliki
-class resource `User` yang sederhana:
+Sebelum mendalami cara menyesuaikan dan menulis resources Anda, mari kita lihat terlebih dahulu cara menggunakan resources di framework. Sebuah resource class mewakili satu model yang perlu ditransformasi ke format JSON. Misalnya, kita memiliki resource class `User` yang sederhana:
 
 ```php
 <?php
@@ -113,7 +90,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -126,15 +103,9 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Setiap class resource mendefinisikan method `toArray` yang mengembalikan array
-properti yang harus dikonversi ke JSON saat mengirimkan response. Perhatikan
-bahwa di sini kita dapat langsung menggunakan variabel `$this` untuk mengakses
-properti model. Ini karena class resource akan secara otomatis memproksi
-(proxy) properti dan method ke model di bawahnya untuk kemudahan akses. Anda
-dapat mengembalikan resource yang telah didefinisikan di dalam controller Anda:
+Setiap resource class mendefinisikan method `toArray`, yang mengembalikan array atribut yang harus ditransformasi menjadi JSON saat mengirim response. Perhatikan bahwa kita dapat langsung menggunakan variabel `$this` untuk mengakses atribut model di sini. Ini karena resource class secara otomatis memproksikan atribut dan method ke model yang mendasarinya untuk memudahkan akses. Anda dapat mengembalikan resource yang telah didefinisikan di controller:
 
 ```php
 <?php
@@ -151,17 +122,13 @@ class IndexController extends AbstractController
         return (new UserResource(User::first()))->toResponse();
     }
 }
-
 ```
 
-### Resource Collection
+### Resource Collections
 
-Anda dapat menggunakan method `collection` di dalam controller untuk membuat
-instance resource guna mengembalikan collection dari beberapa resource atau
-response yang dipaginasi (paginated):
+Anda dapat menggunakan method `collection` di controller untuk membuat instance resource guna mengembalikan kumpulan beberapa resource atau response paginated:
 
 ```php
-
 namespace App\Controller;
 
 use App\Resource\User as UserResource;
@@ -174,20 +141,15 @@ class IndexController extends AbstractController
         return UserResource::collection(User::all())->toResponse();
     }
 }
-
 ```
 
-Tentu saja, menggunakan method di atas membuat Anda tidak dapat menambahkan
-metadata tambahan apa pun untuk dikembalikan bersama collection tersebut. Jika
-Anda memerlukan response resource collection kustom, Anda perlu membuat resource
-khusus untuk mewakili collection tersebut:
+Tentu saja, menggunakan method di atas, Anda tidak akan dapat menambahkan metadata tambahan apa pun untuk dikembalikan bersama koleksi. Jika Anda perlu menyesuaikan response resource collection, Anda perlu membuat resource khusus untuk mewakili koleksi tersebut:
 
 ```bash
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-Anda dapat dengan mudah mendefinisikan metadata apa pun yang ingin Anda
-kembalikan dalam response di dalam class resource collection yang dihasilkan:
+Anda dapat dengan mudah mendefinisikan metadata apa pun yang ingin Anda kembalikan dalam response di class resource collection yang dihasilkan:
 
 ```php
 <?php
@@ -199,7 +161,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -213,11 +175,9 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
-Anda dapat mengembalikan resource collection yang telah didefinisikan di dalam
-controller Anda:
+Anda dapat mengembalikan resource collection yang telah didefinisikan di controller:
 
 ```php
 <?php
@@ -233,15 +193,11 @@ class IndexController extends AbstractController
         return (new UserCollection(User::all()))->toResponse();
     }
 }
-
 ```
 
-### Melindungi Key Collection
+### Preserving Collection Keys
 
-Ketika sebuah resource collection dikembalikan dari sebuah route, key dari
-collection tersebut akan di-reset sehingga berada dalam urutan numerik yang
-sederhana. Namun, atribut `preserveKeys` dapat ditambahkan ke class resource
-untuk menunjukkan apakah key collection harus dipertahankan:
+Ketika mengembalikan resource collection dari route, key dari koleksi akan di-reset sehingga berada dalam urutan numerik sederhana. Namun, Anda dapat menambahkan properti `preserveKeys` ke resource class untuk menunjukkan apakah key koleksi harus dipertahankan:
 
 ```php
 <?php
@@ -253,14 +209,14 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * A collection key indicating whether the resource should be preserved.
+     * Menunjukkan apakah key koleksi harus dipertahankan.
      *
      * @var bool
      */
     public $preserveKeys = true;
 
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -273,11 +229,9 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Ketika properti `preserveKeys` disetel ke `true`, key dari collection akan
-dilindungi (dipertahankan):
+Ketika properti `preserveKeys` diatur ke `true`, key koleksi akan dipertahankan:
 
 ```php
 <?php
@@ -294,19 +248,13 @@ class IndexController extends AbstractController
         return UserResource::collection(User::all()->keyBy->id)->toResponse();
     }
 }
-
 ```
 
-### Menyesuaikan Class Resource Dasar
+### Customizing the Base Resource Class
 
-Biasanya, properti `$this->collection` dari resource collection diisi secara
-otomatis, menghasilkan pemetaan dari setiap item collection ke class resource
-individunya masing-masing. Class resource tunggal diasumsikan sebagai nama class
-dari collection tersebut tanpa string `Collection` di bagian akhir.
+Biasanya, properti `$this->collection` dari resource collection secara otomatis diisi, dan hasilnya adalah setiap item dalam koleksi dipetakan ke resource class individualnya. Diasumsikan bahwa resource class individual adalah nama class dari koleksi, tetapi tanpa string `Collection` di akhir.
 
-Sebagai contoh, `UserCollection` memetakan instance user yang diberikan ke dalam
-resource `User`. Untuk menyesuaikan perilaku ini, Anda dapat me-override
-properti `$collects` dari resource collection tersebut:
+Misalnya, `UserCollection` memetakan instance user yang diberikan ke resource `User`. Untuk menyesuaikan perilaku ini, Anda dapat menimpa properti `$collects` dari resource collection:
 
 ```php
 <?php
@@ -318,14 +266,14 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * collects properties define resource classes.
+     * Properti collects mendefinisikan resource class.
      *
      * @var string
      */
     public $collects = 'App\Resource\Member';
 
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -339,18 +287,13 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
-## Menulis Resource
+## Writing Resources
 
-> Jika Anda belum membaca [Ikhtisar Konsep](#ikhtisar-konsep), sangat disarankan
-> bagi Anda untuk melakukannya sebelum melanjutkan dokumen ini.
+> Jika Anda belum membaca [Conceptual Overview](#conceptual-overview), sangat disarankan untuk membacanya sebelum melanjutkan dengan dokumentasi ini.
 
-Pada dasarnya, peran resource sangatlah sederhana. Mereka hanya perlu
-mengonversi model yang diberikan menjadi array. Jadi setiap resource berisi
-method `toArray` untuk mengonversi properti model Anda menjadi array yang ramah
-API yang dapat dikembalikan ke pengguna:
+Pada intinya, peran resource sederhana. Mereka hanya perlu mentransformasi model yang diberikan menjadi array. Oleh karena itu, setiap resource berisi method `toArray` untuk mentransformasi atribut model Anda menjadi array yang ramah API yang dapat dikembalikan ke pengguna:
 
 ```php
 <?php
@@ -362,7 +305,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -375,10 +318,9 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Anda dapat mengembalikan resource yang sudah didefinisikan di dalam controller:
+Anda dapat mengembalikan resource yang telah didefinisikan di controller:
 
 ```php
 <?php
@@ -395,16 +337,11 @@ class IndexController extends AbstractController
         return (new UserResource(User::find(1)))->toResponse();
     }
 }
-
 ```
 
-### Association (Asosiasi)
+### Relationships
 
-Jika Anda ingin menyertakan resource terkait (associated resources) dalam
-response, Anda hanya perlu menambahkannya ke array yang dikembalikan oleh
-method `toArray`. Dalam contoh berikut, kita akan menggunakan method
-`collection` dari resource `Post` untuk menambahkan post milik user ke dalam
-response resource:
+Jika Anda ingin menyertakan resource terkait dalam response, Anda hanya perlu menambahkannya ke array yang dikembalikan oleh method `toArray`. Dalam contoh di bawah, kita akan menggunakan method `collection` dari resource `Post` untuk menambahkan postingan pengguna ke response resource:
 
 ```php
 <?php
@@ -416,7 +353,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -430,19 +367,13 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-> Jika Anda hanya ingin menambahkan resource terkait ketika association tersebut
-> sudah di-load, lihat dokumentasi terkait.
+> Jika Anda hanya ingin menambahkan resource terkait ketika relationship sudah dimuat, silakan periksa dokumentasi terkait.
 
-### Resource Collection
+### Resource Collections
 
-Sebuah resource mengonversi satu model menjadi array, dan sebuah resource
-collection mengonversi collection dari beberapa model menjadi array. Semua
-resource menyediakan method `collection` untuk menghasilkan collection resource
-"sementara", sehingga Anda tidak perlu menulis class resource collection untuk
-setiap tipe model:
+Sebuah resource mentransformasi satu model menjadi array, sedangkan resource collection mentransformasi kumpulan beberapa model menjadi array. Semua resource menyediakan method `collection` untuk menghasilkan resource collection "sementara", sehingga Anda tidak perlu menulis class resource collection untuk setiap tipe model:
 
 ```php
 <?php
@@ -458,11 +389,9 @@ class IndexController extends AbstractController
         return UserResource::collection(User::all())->toResponse();
     }
 }
-
 ```
 
-Untuk menyesuaikan metadata dari collection yang dikembalikan, Anda masih perlu
-mendefinisikan resource collection:
+Untuk menyesuaikan metadata yang dikembalikan oleh koleksi, Anda tetap perlu mendefinisikan resource collection:
 
 ```php
 <?php
@@ -474,7 +403,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -488,11 +417,9 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
-Sama halnya dengan resource individu, Anda dapat mengembalikan resource
-collection secara langsung di dalam controller Anda:
+Seperti resource tunggal, Anda dapat langsung mengembalikan resource collection di controller:
 
 ```php
 <?php
@@ -508,36 +435,30 @@ class IndexController extends AbstractController
         return (new UserCollection(User::all()))->toResponse();
     }
 }
-
 ```
 
-### Pembungkusan Data (Data Wrapping)
+### Data Wrapping
 
-Secara default, saat response resource dikonversi ke JSON, resource tingkat
-teratas (top-level) akan dibungkus dalam key `data`. Jadi response resource
-collection yang khas akan terlihat seperti ini:
+Secara default, ketika response resource ditransformasi menjadi JSON, resource tingkat atas akan dibungkus dalam key `data`. Oleh karena itu, response resource collection yang tipikal terlihat seperti ini:
 
 ```json
-
-    {
-        "data": [
-            {
-                "id": 1,
-                "name": "Eladio Schroeder Sr.",
-                "email": "therese28@example.com"
-            },
-            {
-                "id": 2,
-                "name": "Liliana Mayert",
-                "email": "evandervort@example.com"
-            }
-        ]
-    }
-
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Eladio Schroeder Sr.",
+            "email": "therese28@example.com"
+        },
+        {
+            "id": 2,
+            "name": "Liliana Mayert",
+            "email": "evandervort@example.com"
+        }
+    ]
+}
 ```
 
-Anda dapat menonaktifkan pembungkusan resource top-level menggunakan method
-`withoutWrapping` dari class dasar resource.
+Anda dapat menggunakan method `withoutWrapping` dari resource class dasar untuk menonaktifkan pembungkusan resource tingkat atas.
 
 ```php
 <?php
@@ -553,26 +474,15 @@ class IndexController extends AbstractController
         return (new UserCollection(User::all()))->withoutWrapping()->toResponse();
     }
 }
-
 ```
 
-> Method `withoutWrapping` hanya akan menonaktifkan pembungkusan resource
-> top-level, ini tidak akan menghapus key `data` yang Anda tambahkan secara
-> manual ke resource collection. Dan ini hanya akan berlaku pada resource atau
-> resource collection saat ini, tanpa memengaruhi global.
+> Method `withoutWrapping` hanya menonaktifkan pembungkusan resource tingkat atas dan tidak akan menghapus key `data` yang Anda tambahkan secara manual ke resource collection. Selain itu, method ini hanya berlaku di resource atau resource collection saat ini dan tidak memengaruhi state global.
 
-#### Membungkus Nested Resource
+#### Wrapping Nested Resources
 
-Anda sepenuhnya bebas menentukan bagaimana association resource dibungkus.
-Jika Anda ingin semua resource collection dibungkus dalam key `data`, tidak
-peduli seberapa nested (bersarang) mereka, maka Anda perlu mendefinisikan class
-resource collection untuk setiap resource dan membungkus collection yang
-dikembalikan dalam key `data`.
+Anda dapat sepenuhnya memutuskan bagaimana resource relationships dibungkus. Jika Anda ingin membungkus semua resource collections dalam key `data` terlepas dari bagaimana mereka ditumpuk, Anda perlu mendefinisikan class resource collection untuk setiap resource dan membungkus koleksi yang dikembalikan dalam key `data`.
 
-Tentu saja, Anda mungkin khawatir bahwa resource top-level kemudian akan
-dibungkus dalam dua key `data`. Tenang saja, komponen tidak akan pernah
-membungkus resource Anda dua kali, sehingga Anda tidak perlu khawatir tentang
-nested berganda dari resource collection yang ditransformasikan:
+Tentu saja, Anda mungkin khawatir bahwa resource tingkat atas akan dibungkus dalam dua key `data`. Tenang saja, komponen ini tidak akan pernah membiarkan resource Anda dibungkus ganda, jadi Anda tidak perlu khawatir tentang resource collection yang ditransformasi menjadi multi-tingkat:
 
 ```php
 <?php
@@ -584,7 +494,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -595,51 +505,45 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
 #### Pagination
 
-Saat mengembalikan collection yang dipaginasi (paginated collection) dalam
-response resource, meskipun Anda memanggil method `withoutWrapping`, komponen
-akan tetap membungkus data resource Anda dalam key `data`. Ini karena key `meta`
-dan `links` dalam response pagination selalu berisi informasi status pagination:
+Ketika mengembalikan koleksi paginated dalam response resource, bahkan jika Anda memanggil method `withoutWrapping`, komponen akan membungkus data resource Anda dalam key `data`. Ini karena response pagination selalu memiliki key `meta` dan `links` yang berisi informasi status pagination:
 
 ```json
-
-    {
-        "data": [
-            {
-                "id": 1,
-                "name": "Eladio Schroeder Sr.",
-                "email": "therese28@example.com"
-            },
-            {
-                "id": 2,
-                "name": "Liliana Mayert",
-                "email": "evandervort@example.com"
-            }
-        ],
-        "links":{
-            "first": "/pagination?page=1",
-            "last": "/pagination?page=1",
-            "prev": null,
-            "next": null
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Eladio Schroeder Sr.",
+            "email": "therese28@example.com"
         },
-        "meta":{
-            "current_page": 1,
-            "from": 1,
-            "last_page": 1,
-            "path": "/pagination",
-            "per_page": 15,
-            "to": 10,
-            "total": 10
+        {
+            "id": 2,
+            "name": "Liliana Mayert",
+            "email": "evandervort@example.com"
         }
+    ],
+    "links":{
+        "first": "/pagination?page=1",
+        "last": "/pagination?page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta":{
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "path": "/pagination",
+        "per_page": 15,
+        "to": 10,
+        "total": 10
     }
+}
 ```
 
-Anda dapat meneruskan instance pagination ke method collection milik resource
-atau ke resource collection kustom:
+Anda dapat meneruskan instance pagination ke method `collection` dari resource atau resource collection kustom:
 
 ```php
 <?php
@@ -696,12 +600,7 @@ informasi status pagination:
 
 ### Properti Bersyarat (Conditional Properties)
 
-Terkadang Anda mungkin ingin menambahkan atribut ke response resource saat kondisi
-tertentu terpenuhi. Sebagai contoh, Anda mungkin ingin menambahkan nilai ke
-response resource jika user saat ini adalah seorang "admin". Dalam hal ini,
-komponen menyediakan beberapa helper method untuk membantu Anda menyelesaikan
-masalah tersebut. Method `when` dapat digunakan untuk menambahkan atribut secara
-bersyarat ke response resource:
+Terkadang, Anda mungkin ingin menambahkan atribut ke response resource hanya ketika kondisi tertentu terpenuhi. Misalnya, Anda mungkin ingin menambahkan nilai ke response resource hanya ketika pengguna saat ini adalah "administrator". Dalam kasus ini, komponen menyediakan beberapa method helper untuk membantu Anda memecahkan masalah. Method `when` dapat digunakan untuk menambahkan atribut secara kondisional ke response resource:
 
 ```php
 <?php
@@ -713,7 +612,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -727,18 +626,11 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Dalam contoh di atas, key `secret` pada akhirnya hanya akan dikembalikan dalam
-response resource jika method `isAdmin` mengembalikan nilai `true`. Jika method
-ini mengembalikan `false`, key `secret` akan dihapus sebelum response resource
-dikirim ke klien. Method `when` memungkinkan Anda menghindari penggabungan array
-(array concatenation) dengan pernyataan kondisional dan menulis resource Anda
-dengan cara yang lebih elegan.
+Dalam contoh di atas, key `secret` hanya akan dikembalikan dalam response resource jika method `isAdmin` mengembalikan `true`. Jika method mengembalikan `false`, key `secret` akan dihapus sebelum response resource dikirim ke klien. Method `when` memungkinkan Anda untuk menghindari penggunaan statement kondisional untuk menggabungkan array, menggunakan cara yang lebih elegan untuk menulis resources Anda.
 
-Method `when` juga menerima closure sebagai argumen keduanya, di mana nilai yang
-dikembalikan hanya dihitung jika kondisi yang diberikan bernilai `true`:
+Method `when` juga menerima closure sebagai argumen kedua, hanya menghitung nilai yang dikembalikan dari closure jika kondisi yang diberikan adalah `true`:
 
 ```php
 <?php
@@ -750,7 +642,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -766,15 +658,11 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-#### Penggabungan Data Bersyarat (Conditional Merge Data)
+#### Conditionally Merging Data
 
-Terkadang, Anda mungkin ingin menambahkan beberapa atribut ke response resource
-saat kondisi tertentu terpenuhi. Dalam hal ini, Anda dapat menggunakan method
-`mergeWhen` untuk menambahkan beberapa properti ke response saat kondisi yang
-diberikan bernilai `true`:
+Terkadang, Anda mungkin ingin menambahkan beberapa atribut ke response resource hanya ketika kondisi tertentu terpenuhi. Dalam kasus ini, Anda dapat menggunakan method `mergeWhen` untuk menambahkan beberapa atribut ke response ketika kondisi yang diberikan adalah `true`:
 
 ```php
 <?php
@@ -786,7 +674,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -803,30 +691,17 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Demikian pula, jika kondisi yang diberikan bernilai `false`, atribut-atribut ini
-akan dihapus sebelum response resource dikirim ke klien.
+Demikian pula, jika kondisi yang diberikan adalah `false`, atribut-atribut ini akan dihapus sebelum response resource dikirim ke klien.
 
-> Method `mergeWhen` sebaiknya tidak digunakan pada array dengan campuran key
-> bertipe string dan numerik. Selain itu, method ini juga sebaiknya tidak
-> digunakan pada array dengan key numerik yang tidak berurutan.
+> Method `mergeWhen` tidak boleh digunakan dalam array yang mencampur key string dan numerik. Selain itu, tidak boleh digunakan dalam array dengan key numerik yang tidak berurutan.
 
-### Association Bersyarat (Conditional Association)
+### Conditional Relationships
 
-Selain menambahkan properti secara bersyarat, Anda juga dapat menyertakan
-association secara bersyarat dalam response resource Anda berdasarkan apakah
-association model tersebut sudah di-load atau belum. Ini memungkinkan Anda
-untuk memutuskan di dalam controller association model mana yang akan di-load,
-sehingga resource Anda dapat menambahkannya setelah association model tersebut
-di-load.
+Selain menambahkan atribut secara kondisional, Anda juga dapat menyertakan relationships secara kondisional dalam response resource berdasarkan apakah model relationship sudah dimuat. Ini memungkinkan Anda untuk memutuskan di controller model relationships mana yang akan dimuat, sehingga resources Anda dapat menambahkannya hanya setelah model relationships dimuat.
 
-Melakukan hal ini akan menghindari masalah query "N+1" di dalam resource Anda.
-Anda harus menggunakan method `whenLoaded` untuk me-load association secara
-bersyarat. Untuk menghindari pemuatan association yang tidak perlu, method ini
-menerima nama dari association tersebut, bukan objek association itu sendiri,
-sebagai parameternya:
+Melakukan hal ini menghindari masalah query "N+1" di resources Anda. Anda harus menggunakan method `whenLoaded` untuk memuat relationships secara kondisional. Untuk menghindari pemuatan relationships yang tidak perlu, method ini menerima nama relationship daripada relationship itu sendiri sebagai argumen:
 
 ```php
 <?php
@@ -838,7 +713,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -852,21 +727,13 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Dalam contoh di atas, jika association tidak di-load, key `posts` akan dihapus
-sebelum response resource dikirim ke klien.
+Dalam contoh di atas, jika relationship belum dimuat, key `posts` akan dihapus sebelum response resource dikirim ke klien.
 
-#### Informasi Tabel Perantara Bersyarat (Conditional Intermediate Table Information)
+#### Conditional Pivot Information
 
-Selain menyertakan association secara bersyarat ke dalam response resource,
-Anda juga dapat menambahkan data secara bersyarat dari tabel perantara
-(intermediate table) dalam relasi many-to-many menggunakan method
-`whenPivotLoaded`. Parameter pertama yang diterima oleh method `whenPivotLoaded`
-adalah nama dari tabel perantara. Parameter kedua adalah closure yang
-mendefinisikan nilai yang akan dikembalikan pada model jika informasi tabel
-perantara tersedia:
+Selain menyertakan relationships secara kondisional dalam response resource, Anda juga dapat menggunakan method `whenPivotLoaded` untuk menambahkan data dari tabel perantara relationship many-to-many secara kondisional. Argumen pertama yang diterima oleh method `whenPivotLoaded` adalah nama tabel perantara. Argumen kedua adalah closure yang mendefinisikan nilai yang akan dikembalikan jika informasi tabel perantara tersedia pada model:
 
 ```php
 <?php
@@ -878,7 +745,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -893,11 +760,9 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-Jika tabel perantara Anda menggunakan accessor selain `pivot`, Anda dapat
-menggunakan method `whenPivotLoadedAs`:
+Jika tabel perantara Anda menggunakan accessor selain `pivot`, Anda dapat menggunakan method `whenPivotLoadedAs`:
 
 ```php
 <?php
@@ -909,7 +774,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transformasi resource menjadi array.
      *
      * @return array
      */
@@ -924,17 +789,11 @@ class User extends JsonResource
         ];
     }
 }
-
 ```
 
-### Menambahkan Metadata
+### Adding Metadata
 
-Beberapa standar JSON API mengharuskan Anda menambahkan metadata ke response
-resource and resource collection. Ini biasanya mencakup `links` untuk resource
-atau resource terkait, atau beberapa metadata tentang resource itu sendiri. Jika
-Anda perlu mengembalikan metadata tambahan tentang resource, cukup sertakan hal
-tersebut di dalam method `toArray`. Sebagai contoh, Anda mungkin perlu
-menambahkan informasi `links` saat mengonversi resource collection:
+Beberapa standar JSON API mengharuskan Anda untuk menambahkan metadata ke response resource dan resource collection. Ini biasanya mencakup `links` ke resource atau resource terkait, atau beberapa metadata tentang resource itu sendiri. Jika Anda perlu mengembalikan metadata lain tentang resource, cukup sertakan dalam method `toArray`. Misalnya, Anda mungkin perlu menambahkan informasi `links` saat mentransformasi resource collection:
 
 ```php
 <?php
@@ -946,7 +805,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -960,22 +819,13 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
-Saat menambahkan metadata ekstra ke resource Anda, Anda tidak perlu khawatir
-akan menimpa key `links` atau `meta` yang ditambahkan secara otomatis saat
-mengembalikan response yang dipaginasi. `links` lain yang Anda tambahkan akan
-digabungkan dengan `links` yang ditambahkan oleh response pagination.
+Saat menambahkan metadata tambahan ke resources Anda, Anda tidak perlu khawatir tentang menimpa key `links` atau `meta` yang secara otomatis ditambahkan saat mengembalikan response pagination. `Links` lain yang Anda tambahkan akan digabungkan dengan `links` yang ditambahkan oleh response pagination.
 
-#### Metadata Tingkat Teratas (Top-level Metadata)
+#### Top-Level Metadata
 
-Terkadang Anda mungkin ingin menambahkan metadata tertentu ke response resource
-saat resource tersebut dikembalikan sebagai resource tingkat teratas (top-level).
-Ini biasanya mencakup informasi meta untuk seluruh response. Anda dapat
-menambahkan method `with` pada class resource Anda untuk mendefinisikan
-metadata. Method ini harus mengembalikan array metadata yang akan disertakan
-dalam response resource saat resource dirender sebagai resource top-level:
+Terkadang Anda mungkin ingin menambahkan metadata tertentu ke response resource ketika resource dikembalikan sebagai resource tingkat atas. Ini biasanya mencakup meta-informasi untuk seluruh response. Anda dapat menambahkan method `with` di resource class untuk mendefinisikan metadata. Method ini harus mengembalikan array metadata, yang akan disertakan dalam response resource ketika resource dirender sebagai resource tingkat atas:
 
 ```php
 <?php
@@ -987,7 +837,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transformasi resource collection menjadi array.
      *
      * @return array
      */
@@ -1010,14 +860,11 @@ class UserCollection extends ResourceCollection
         ];
     }
 }
-
 ```
 
-#### Menambahkan Metadata Saat Mengonstruksi Resource
+#### Adding Metadata Saat Membangun Resources
 
-Anda juga dapat menambahkan data top-level saat membuat instance resource di
-dalam controller. Semua resource dapat menggunakan method `additional` untuk
-menerima array data yang harus ditambahkan ke response resource:
+Anda juga dapat menambahkan data tingkat atas saat membangun instance resource di controller. Semua resources dapat menggunakan method `additional` untuk menerima array data yang harus ditambahkan ke response resource:
 
 ```php
 <?php
@@ -1037,13 +884,11 @@ class IndexController extends AbstractController
             ]])->toResponse();    
     }
 }
-
 ```
 
-## Merespons Resource (Response Resource)
+## Responding to Resources
 
-Seperti yang Anda ketahui, resource dapat dikembalikan secara langsung di dalam
-controller:
+Seperti yang Anda ketahui, resources dapat langsung dikembalikan di controller:
 
 ```php
 <?php
@@ -1065,9 +910,6 @@ class IndexController extends AbstractController
         return new UserResource(User::find(1));
     }
 }
-
 ```
 
-Jika Anda ingin mengatur informasi response header, status code, dll., Anda
-dapat mendapatkan objek response dengan memanggil method `toResponse()` untuk
-menyetelnya.
+Jika Anda ingin mengatur response headers, status codes, dll., Anda dapat memanggil method `toResponse()` untuk mendapatkan objek response dan mengaturnya.
