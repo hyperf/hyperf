@@ -104,7 +104,7 @@ class DemoProducer extends ProducerMessage
 }
 ```
 
-Dapatkan instance `Hyperf\Amqp\Producer` melalui DI Container untuk menghasilkan pesan. Contoh berikut langsung menggunakan `ApplicationContext` untuk mendapatkan `Hyperf\Amqp\Producer`, cara ini sebenarnya kurang ideal. Untuk penggunaan DI Container yang lebih tepat, lihat bab [Dependency Injection](di.md).
+Dapatkan instance `Hyperf\Amqp\Producer` melalui DI Container untuk menghasilkan pesan. Contoh berikut langsung menggunakan `ApplicationContext` untuk mendapatkan `Hyperf\Amqp\Producer`, cara ini sebenarnya kurang ideal. Untuk penggunaan DI Container yang lebih tepat, lihat bab [Dependency Injection](id/di.md).
 
 ```php
 <?php

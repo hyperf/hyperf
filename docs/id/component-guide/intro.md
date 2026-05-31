@@ -1,6 +1,6 @@
 # Pengantar Panduan
 
-Untuk membantu para developer membuat komponen untuk Hyperf dengan lebih baik dan membangun ekosistem bersama, kami menyediakan panduan ini. Sebelum membaca, Anda harus **telah membaca secara menyeluruh** dokumentasi Hyperf, terutama bab [Coroutine](../coroutine.md) dan [Dependency Injection](../di.md). Kurangnya pemahaman yang memadai tentang komponen dasar Hyperf dapat menyebabkan kesalahan selama pengembangan.
+Untuk membantu para developer membuat komponen untuk Hyperf dengan lebih baik dan membangun ekosistem bersama, kami menyediakan panduan ini. Sebelum membaca, Anda harus **telah membaca secara menyeluruh** dokumentasi Hyperf, terutama bab [Coroutine](id/coroutine.md) dan [Dependency Injection](id/di.md). Kurangnya pemahaman yang memadai tentang komponen dasar Hyperf dapat menyebabkan kesalahan selama pengembangan.
 
 # Tujuan Pengembangan Komponen
 
