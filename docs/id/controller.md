@@ -1,16 +1,9 @@
 # Controller
 
-Untuk memproses HTTP request dengan menggunakan Controller, Anda perlu
-menghubungkan routing dan method controller dengan cara `Config` atau
-`Annotation`. Silakan baca bab [Router](id/route.md) untuk detail lebih lanjut.
+Buat nanganin HTTP request lewat controller, Anda perlu ngikat route ke method controller pake `file konfigurasi` atau `annotation`. Detailnya ada di bagian [Router](id/router.md).
+Soal `Request` dan `Response`, Hyperf nyediain `Hyperf\HttpServer\Contract\RequestInterface` dan `Hyperf\HttpServer\Contract\ResponseInterface` buat ngambil input parameters dan balikin data. Buat detail lebih lanjut, liat bagian [Request](id/request.md) dan [Response](id/response.md).
 
-Untuk `Request` dan `Response`, Hyperf menyediakan
-`Hyperf\HttpServer\Contract\RequestInterface` dan
-`Hyperf\HttpServer\Contract\ResponseInterface` bagi Anda untuk mendapatkan
-parameter dan mengembalikan nilai. Silakan baca bab [Request](id/request.md)
-dan [Response](id/response.md) untuk detail lebih lanjut.
-
-## Membuat Controller
+## Menulis Controller
 
 ```php
 <?php
@@ -24,7 +17,8 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class IndexController
 {
-    // Related objects will be automatically injected by the dependency injection container if you obtain such objects by defining RequestInterface and ResponseInterface on the parameters.
+    // Mendefinisikan RequestInterface dan ResponseInterface pada parameter untuk mendapatkan objek terkait,
+    // yang akan secara otomatis diinjeksikan oleh dependency injection container
     public function index(RequestInterface $request, ResponseInterface $response)
     {
         $target = $request->input('target', 'World');
@@ -33,38 +27,17 @@ class IndexController
 }
 ```
 
-> Diasumsikan `Controller` ini telah didefinisikan sebagai route `/` melalui
-> `Config`. (Tentu saja, Anda juga dapat mendefinisikannya melalui `Annotation`)
+> Kita anggap `Controller` ini udah define route `/` lewat file konfigurasi, tapi Anda juga bisa pake annotation routing.
 
-Panggil alamat ini melalui `cURL`, dan Anda dapat melihat konten yang
-dikembalikan.
+Panggil alamat ini melalui `cURL` untuk melihat konten yang dikembalikan.
 
 ```bash
 $ curl 'http://127.0.0.1:9501/?target=Hyperf'
 Hello Hyperf.
 ```
 
-## Menghindari kebingungan data (data confusion) antar coroutine
+## Menghindari Kebingungan Data Antar Coroutine
 
-Dalam framework PHP-FPM tradisional, sebuah `AbstractController` (atau kelas
-induk abstrak dengan nama lain) biasanya disediakan. Kemudian, `Controller`
-lain yang didefinisikan akan melakukan beberapa request atau response
-berdasarkan `AbstractController` tersebut. Namun, di Hyperf, **JANGAN LAKUKAN
-HAL SEPERTI ITU**. Karena sebagian besar objek, termasuk `Controller`, ada
-sebagai `Singleton` (yang juga bertujuan untuk penggunaan kembali objek yang
-lebih baik), dan data request disimpan di `Context` dalam coroutine, maka
-**JANGAN** menyimpan data request apa pun sebagai attribute kelas (termasuk
-properti non-statis).
+Di framework PHP-FPM tradisional, biasanya ada `AbstractController` atau parent class buat Controller. Controller yang dibuat harus mewarisinya biar bisa dapetin data request atau ngelakuin operasi return. Di Hyperf, Anda **gak bisa ngelakuin ini** karena sebagian besar objek di Hyperf, termasuk `Controller`, berupa `Singleton`, demi reuse objek yang lebih baik. Data yang terkait request harus disimpen di `Coroutine Context`. Makanya, pas nulis kode, pastikan **jangan** nyimpen data spesifik request di class attributes, termasuk non-static attributes.
 
-Tentu saja, bukan hal yang tidak mungkin jika Anda benar-benar ingin menyimpan
-data request sebagai attribute kelas. Kami memperhatikan bahwa objek `Request`
-dan `Response` didapatkan dengan menyuntikkan
-`Hyperf\HttpServer\Contract\RequestInterface` dan
-`Hyperf\HttpServer\Contract\ResponseInterface` saat kita mencoba mendapatkan
-`Request` dan `Response`, sehingga objek yang bersangkutan juga merupakan
-sebuah singleton. Bagaimana keamanan coroutine (coroutine safety) terjamin
-di sini? Mengambil `RequestInterface` sebagai contoh, ketika objek
-`Hyperf\HttpServer\Request` yang sesuai mendapatkan `PSR-7 request object` dari
-bagian internalnya, objek tersebut diambil dari `Context`. Jadi kelas aktual
-yang digunakan hanyalah proxy class, dan pemanggilan aktualnya didapatkan dari
-`Context`.
+Sebenernya kalau Anda memang mau nyimpen data request lewat class attributes, ya bisa sih. Coba perhatiin: pas kita dapetin objek `Request` dan `Response`, kita inject `Hyperf\HttpServer\Contract\RequestInterface` dan `Hyperf\HttpServer\Contract\ResponseInterface`. Bukankah objeknya juga singleton? Trus gimana keamanan coroutine-nya? Ambil `RequestInterface` sebagai contoh, objek `Hyperf\HttpServer\Request` di dalemnya ngambil `PSR-7 Request object` dari `Coroutine Context`. Jadi class yang dipake sebenarnya cuma proxy class, dan yang beneran dipanggil itu hasil dari `Coroutine Context`.

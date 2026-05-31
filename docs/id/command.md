@@ -1,47 +1,35 @@
 # Command
 
-Komponen command default pada Hyperf disediakan oleh komponen
-[hyperf/command](https://github.com/hyperf/command), dan komponen ini merupakan
-abstraksi dari [symfony/console](https://github.com/symfony/console).
+Fitur command line Hyperf disediakan oleh komponen [hyperf/command](https://github.com/hyperf/command) secara default, dan komponen ini sendiri didasarkan pada abstraksi dari [symfony/console](https://github.com/symfony/console).
 
 # Instalasi
 
-Komponen ini biasanya sudah ada secara default, tetapi jika Anda ingin
-menggunakannya pada proyek non-Hyperf, Anda juga dapat menggunakan komponen
-[hyperf/command](https://github.com/hyperf/command) dengan command berikut:
+Umumnya, komponen ini sudah ada secara default, tetapi jika Anda ingin menggunakannya untuk project non-Hyperf, Anda juga dapat menambahkan dependency pada komponen [hyperf/command](https://github.com/hyperf/command) dengan perintah berikut:
 
 ```bash
 composer require hyperf/command
 ```
 
-# Daftar Command
+# Melihat Daftar Command
 
-Menjalankan `php bin/hyperf.php` secara langsung tanpa argument apa pun akan
-menampilkan daftar command.
+Jalankan `php bin/hyperf.php` langsung tanpa argumen apa pun untuk menampilkan daftar command.
 
 # Custom Command
 
 ## Membuat Command
 
-Jika Anda telah menginstal komponen
-[hyperf/devtool](https://github.com/hyperf/devtool), Anda dapat membuat custom
-command dengan command `gen:command`:
+Jika Anda telah menginstal komponen [hyperf/devtool](https://github.com/hyperf/devtool), Anda dapat menggunakan perintah `gen:command` untuk membuat custom command:
 
 ```bash
 php bin/hyperf.php gen:command FooCommand
 ```
-Setelah menjalankan command di atas, class `FooCommand` yang telah
-dikonfigurasi akan dibuat di dalam folder `app/Command`.
+Setelah menjalankan perintah di atas, kelas `FooCommand` yang telah dikonfigurasi akan dibuat di folder `app/Command`.
 
-### Pendefinisian Command
+### Mendefinisikan Command
 
-Ada tiga cara untuk mendefinisikan class command. Pertama ditentukan melalui
-properti `$name`, kedua ditentukan melalui argument constructor, dan yang
-terakhir ditentukan menggunakan annotation. Kami akan mendemonstrasikannya
-melalui contoh kode, dengan asumsi kita ingin mendefinisikan command dengan nama
-`foo:hello`:
+Ada tiga cara untuk mendefinisikan command yang sesuai dengan kelas command ini. Yang pertama didefinisikan melalui properti `$name`, yang kedua didefinisikan dengan melewatkan parameter ke konstruktor, dan yang terakhir didefinisikan oleh annotation. Kami akan mendemonstrasikannya dengan contoh kode. Misalkan kita ingin mendefinisikan command dari kelas command ini sebagai `foo:hello`:
 
-#### Mendefinisikan command melalui properti `$name`:
+#### Definisi melalui Properti `$name`:
 
 ```php
 <?php
@@ -57,15 +45,13 @@ use Hyperf\Command\Annotation\Command;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Command yang dijalankan
      */
     protected ?string $name = 'foo:hello';
 }
 ```
 
-#### Mendefinisikan command melalui constructor:
+#### Definisi melalui Argumen Konstruktor:
 
 ```php
 <?php
@@ -82,12 +68,12 @@ class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
-        parent::__construct('foo:hello');    
+        parent::__construct('foo:hello');
     }
 }
 ```
 
-#### Mendefinisikan command melalui annotation:
+#### Definisi melalui Annotation:
 
 ```php
 <?php
@@ -102,15 +88,12 @@ use Hyperf\Command\Annotation\Command;
 #[Command(name: "foo:hello")]
 class FooCommand extends HyperfCommand
 {
-
 }
 ```
 
-### Mendefinisikan Logika Command
+### Mendefinisikan Logika Kelas Command
 
-Logika yang dijalankan oleh class command bergantung pada method `handle` di
-dalam kode, yang berarti bahwa method `handle` merupakan entry point untuk
-command tersebut.
+Logika sebenarnya untuk menjalankan kelas command bergantung pada kode di dalam metode `handle`, yang berarti metode `handle` adalah titik masuk untuk command.
 
 ```php
 <?php
@@ -126,32 +109,25 @@ use Hyperf\Command\Annotation\Command;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Command yang dijalankan
      */
     protected ?string $name = 'foo:hello';
-    
+
     public function handle()
     {
-        // Output Hello Hyperf. in the Console via the built-in method line()
+        // Mengeluarkan 'Hello Hyperf.' di Console menggunakan metode line bawaan.
         $this->line('Hello Hyperf.', 'info');
     }
 }
 ```
 
-### Mendefinisikan Argument Command
+### Mendefinisikan Parameter Kelas Command
 
-Saat menulis command, input dari pengguna biasanya dikumpulkan melalui
-`parameter` dan `option`, dan `parameter` atau `option` tersebut harus
-didefinisikan terlebih dahulu sebelum mengumpulkan input pengguna.
+Saat menulis command, input pengguna biasanya dikumpulkan melalui `arguments` dan `options`. Sebelum mengumpulkan input pengguna, Anda harus mendefinisikan `argument` atau `option`.
 
-#### Parameter
+#### Argument
 
-Misalkan kita ingin mendefinisikan parameter `name`, lalu mengirimkan string
-sembarang seperti `Hyperf` ke command dan menjalankan
-`php bin/hyperf.php foo:hello Hyperf` untuk menghasilkan output
-`Hello Hyperf`. Mari kita tunjukkan melalui kode:
+Misalkan kita ingin mendefinisikan argument `name`, dan kemudian melewatkan string apa pun seperti `Hyperf` ke command dan menjalankan `php bin/hyperf.php foo:hello Hyperf` untuk menghasilkan output `Hello Hyperf`. Mari kita demonstrasikan dengan kode:
 
 ```php
 <?php
@@ -168,34 +144,31 @@ use Symfony\Component\Console\Input\InputArgument;
 class FooCommand extends HyperfCommand
 {
     /**
-     * The command
-     *
-     * @var string
+     * Command yang dijalankan
      */
     protected ?string $name = 'foo:hello';
 
     public function handle()
     {
-        // Get the name argument from $input
+        // Mendapatkan argument name dari $input
         $argument = $this->input->getArgument('name') ?? 'World';
         $this->line('Hello ' . $argument, 'info');
     }
-    
+
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::OPTIONAL, 'Here is an explanation of this parameter']
+            ['name', InputArgument::OPTIONAL, 'Ini adalah penjelasan dari argument ini']
         ];
     }
 }
-``` 
+```
 
-Jalankan command `php bin/hyperf.php foo:hello Hyperf` dan kita akan melihat
-`Hello Hyperf` ditampilkan pada Console.
+Jalankan `php bin/hyperf.php foo:hello Hyperf`, dan kita akan melihat output `Hello Hyperf`.
 
-## Konfigurasi Umum
+## Pengenalan Konfigurasi Command Umum
 
-Kode berikut hanya mengubah bagian isi dari `configure` dan `handle`.
+Kode berikut hanya memodifikasi konten di `configure` dan `handle`.
 
 ### Mengatur Help
 
@@ -203,19 +176,20 @@ Kode berikut hanya mengubah bagian isi dari `configure` dan `handle`.
 public function configure()
 {
     parent::configure();
-    $this->setHelp('Hyperf\'s custom command demonstration');
+    $this->setHelp('Demonstrasi custom command Hyperf');
 }
+
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Help:
-  Hyperf's custom command demonstration
-
+  Demonstrasi custom command Hyperf
 ```
 
-### Mengatur Deskripsi
+
+### Mengatur Description
 
 ```php
 public function configure()
@@ -226,48 +200,48 @@ public function configure()
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Description:
   Hyperf Demo Command
 
 ```
 
-### Mengatur Penggunaan (Usage)
+### Mengatur Usage
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addUsage('--name Demo Code');
+    $this->addUsage('--name demonstration code');
 }
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
-# output
+# Output
 ...
 Usage:
   demo:command
-  demo:command --name Demo Code
+  demo:command --name demonstration code
 ```
 
-### Mengatur Parameter
+### Mengatur Arguments
 
-Parameter mendukung mode-mode berikut.
+Arguments mendukung mode berikut.
 
-|          Mode           | Value |                Catatan              |
-|:-----------------------:|:--:|:-----------------------------------:|
-| InputArgument::REQUIRED | 1  | Parameter wajib diisi, field "default" pada mode ini tidak berlaku. |
-| InputArgument::OPTIONAL | 2  |    Parameter bersifat opsional dan sering digunakan dengan nilai default |
-| InputArgument::IS_ARRAY | 4  |              Tipe array               |
+| Mode | Nilai | Catatan |
+|:---:|:---:|:---:|
+| InputArgument::REQUIRED | 1 | Argument wajib diisi, field default tidak berlaku dalam mode ini |
+| InputArgument::OPTIONAL | 2 | Argument opsional, sering digunakan bersama default |
+| InputArgument::IS_ARRAY | 4 | Tipe array |
 
-#### Tipe Opsional (Optional)
+#### Tipe Opsional
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addArgument('name', InputArgument::OPTIONAL, 'name', 'Hyperf');
+    $this->addArgument('name', InputArgument::OPTIONAL, 'Nama', 'Hyperf');
 }
 
 public function handle()
@@ -277,12 +251,12 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 ...
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
-# output
+# Output
 ...
 Swoole
 ```
@@ -293,7 +267,7 @@ Swoole
 public function configure()
 {
     parent::configure();
-    $this->addArgument('name', InputArgument::IS_ARRAY, 'name');
+    $this->addArgument('name', InputArgument::IS_ARRAY, 'Nama');
 }
 
 public function handle()
@@ -303,7 +277,7 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
-# output
+# Output
 ...
 array(2) {
   [0]=>
@@ -313,24 +287,24 @@ array(2) {
 }
 ```
 
-### Mengatur Option
+### Mengatur Options
 
-Option mendukung mode-mode berikut.
+Options mendukung mode berikut.
 
-|            Mode             | Value |     Catatan  |
-|:---------------------------:|:--:|:------------:|
-|   InputOption::VALUE_NONE   | 1  | Parameter wajib diisi, field "default" pada mode ini tidak berlaku |
-| InputOption::VALUE_REQUIRED | 2  |   Option wajib diisi   |
-| InputOption::VALUE_OPTIONAL | 4  |   Option bersifat opsional   |
-| InputOption::VALUE_IS_ARRAY | 8  |   Option berupa array   |
+| Mode | Nilai | Catatan |
+|:---:|:---:|:---:|
+| InputOption::VALUE_NONE | 1 | Apakah nilai opsional dilewatkan, field default tidak berlaku |
+| InputOption::VALUE_REQUIRED | 2 | Option wajib diisi |
+| InputOption::VALUE_OPTIONAL | 4 | Option opsional |
+| InputOption::VALUE_IS_ARRAY | 8 | Array option |
 
-#### Apakah mengirimkan option atau tidak
+#### Apakah Nilai Opsional Dilewatkan
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addOption('opt', 'o', InputOption::VALUE_NONE, 'Whether to optimize');
+    $this->addOption('opt', 'o', InputOption::VALUE_NONE, 'Apakah akan optimasi');
 }
 
 public function handle()
@@ -340,28 +314,27 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
-# output
+# Output
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
-# output
+# Output
 bool(true)
 ```
 
 ### Option Wajib dan Opsional
 
-`VALUE_OPTIONAL` tidak berbeda dengan `VALUE_REQUIRED` jika digunakan secara
-mandiri.
+`VALUE_OPTIONAL` identik dengan `VALUE_REQUIRED` saat digunakan sendiri.
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addOption('name', 'N', InputOption::VALUE_REQUIRED, 'name', 'Hyperf');
+    $this->addOption('name', 'N', InputOption::VALUE_REQUIRED, 'Nama', 'Hyperf');
 }
 
 public function handle()
@@ -371,24 +344,23 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
-# output
+# Output
 string(6) "Swoole"
 ```
 
-### Option Array
+### Array Option
 
-`VALUE_IS_ARRAY` dan `VALUE_OPTIONAL`, ketika digunakan bersama-sama, dapat
-memberikan efek pengiriman beberapa `Option` sekaligus.
+`VALUE_IS_ARRAY` dan `VALUE_OPTIONAL` yang digunakan bersama dapat mencapai efek memasukkan beberapa `Options`.
 
 ```php
 public function configure()
 {
     parent::configure();
-    $this->addOption('name', 'N', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'name');
+    $this->addOption('name', 'N', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Nama');
 }
 
 public function handle()
@@ -398,36 +370,33 @@ public function handle()
 ```
 ```bash
 $ php bin/hyperf.php demo:command
-# output
+# Output
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
-# output
+# Output
 array(2) {
   [0]=>
   string(6) "Hyperf"
   [1]=>
   string(6) "Swoole"
 }
-
 ```
 
-## Mengonfigurasi Command melalui `$signature`
+## Mengonfigurasi Command Line melalui `$signature`
 
-Selain metode konfigurasi di atas, command line juga mendukung konfigurasi
-menggunakan `$signature`.
+Selain metode konfigurasi yang disebutkan di atas, command line juga mendukung konfigurasi menggunakan `$signature`.
 
-`$signature` adalah sebuah string, yang dibagi menjadi tiga bagian: `command`,
-`argument`, dan `option`, seperti berikut:
+`$signature` adalah string yang terdiri dari tiga bagian: `command`, `argument`, dan `option`, sebagai berikut:
 
 ```
-command:name {argument?* : The argument description.} {--option=* : The option description.}
+command:name {argument?* : Deskripsi argument.} {--option=* : Deskripsi option.}
 ```
 
-- `?` mewakili `optional`.
+- `?` mewakili `tidak wajib`.
 - `*` mewakili `array`.
-- `?*` mewakili `optional array`.
+- `?*` mewakili `array tidak wajib`.
 - `=` mewakili `non-Bool`.
 
 ### Contoh
@@ -468,14 +437,11 @@ class DebugCommand extends HyperfCommand
         var_dump($this->input->getOptions());
     }
 }
-
 ```
 
 # Menjalankan Command
 
-!> Catatan: Secara default, menjalankan command akan memicu event dispatching.
-Anda dapat menonaktifkannya dengan menambahkan parameter
-`--disable-event-dispatcher`.
+!> Catatan: Saat menjalankan command, distribusi event dipicu secara default. Anda dapat menonaktifkannya dengan menambahkan argumen `--disable-event-dispatcher`.
 
 ## Menjalankan di Command Line
 
@@ -483,7 +449,7 @@ Anda dapat menonaktifkannya dengan menambahkan parameter
 php bin/hyperf.php foo
 ```
 
-## Menjalankan Command Lain di dalam Command
+## Menjalankan Command Lain di Dalam Command
 
 ```php
 <?php
@@ -530,7 +496,7 @@ $command = 'foo';
 
 $params = ["command" => $command, "--foo" => "foo", "--bar" => "bar"];
 
-// You can choose the input/output according to your own needs.
+// Anda dapat memilih input/output yang akan digunakan sesuai kebutuhan
 $input = new ArrayInput($params);
 $output = new NullOutput();
 
@@ -541,43 +507,42 @@ $container = \Hyperf\Context\ApplicationContext::getContainer();
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
 $application->setAutoExit(false);
 
-// This method: will not expose exceptions during command execution and will not prevent the program from returning.
+// Cara ini: tidak akan mengekspos exception selama eksekusi command, tidak akan mencegah program dari pengembalian
 $exitCode = $application->run($input, $output);
 
-// Another way: it will expose exceptions and require you to catch and handle runtime exceptions yourself, otherwise it will prevent the program from returning.
+// Cara kedua: akan mengekspos exception, Anda perlu menangkap dan menangani exception yang berjalan sendiri, jika tidak maka akan mencegah program dari pengembalian
 $exitCode = $application->find($command)->run($input, $output);
 ```
 
 ## Closure Command
 
-Anda dapat mendefinisikan command dengan cepat di dalam `config\console.php`.
+Anda dapat dengan cepat mendefinisikan command di `config\console.php`.
 
 ```php
 use Hyperf\Command\Console;
 
 Console::command('hello', function () {
     $this->comment('Hello, Hyperf!');
-})->describe('This is a demo closure command.');
+})->describe('Ini adalah demo closure command.');
 ```
 
-Anda juga dapat mengatur crontab untuk closure command.
+Mendefinisikan tugas terjadwal untuk closure command.
 
 ```php
 use Hyperf\Command\Console;
 
 Console::command('foo', function () {
     $this->comment('Hello, Foo!');
-})->describe('This is a demo closure command.')->cron('* * * * *');
+})->describe('Ini adalah demo closure command.')->cron('* * * * *');
 
 Console::command('bar', function () {
     $this->comment('Hello, Bar!');
-})->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
+})->describe('Ini adalah demo closure command lainnya.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
 ```
 
 ## AsCommand
 
-Anda dapat mengubah sebuah class menjadi command dengan memberikan annotation
-`AsCommand` pada class tersebut.
+Anda dapat mengubah sebuah kelas menjadi command melalui annotation `AsCommand`.
 
 ```php
 <?php
@@ -587,16 +552,16 @@ namespace App\Service;
 use Hyperf\Command\Annotation\AsCommand;
 use Hyperf\Command\Concerns\InteractsWithIO;
 
-#[AsCommand(signature: 'foo:bar1', handle: 'bar1', description: 'The description of foo:bar1 command.')]
-#[AsCommand(signature: 'foo', description: 'The description of foo command.')]
+#[AsCommand(signature: 'foo:bar1', handle: 'bar1', description: 'Deskripsi dari perintah foo:bar1.')]
+#[AsCommand(signature: 'foo', description: 'Deskripsi dari perintah foo.')]
 class FooService
 {
     use InteractsWithIO;
 
-    #[AsCommand(signature: 'foo:bar {--bar=1 : Bar Value}', description: 'The description of foo:bar command.')]
+    #[AsCommand(signature: 'foo:bar {--bar=1 : Nilai Bar}', description: 'Deskripsi dari perintah foo:bar.')]
     public function bar($bar)
     {
-        $this->output?->info('Bar Value: ' . $bar);
+        $this->output?->info('Nilai Bar: ' . $bar);
 
         return $bar;
     }
@@ -618,6 +583,6 @@ $ php bin/hyperf.php
 
 ...
 foo
-  foo:bar                   The description of foo:bar command.
-  foo:bar1                  The description of foo:bar1 command.
+  foo:bar                   Deskripsi dari perintah foo:bar.
+  foo:bar1                  Deskripsi dari perintah foo:bar1.
 ```

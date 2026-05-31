@@ -1,10 +1,6 @@
 # Konfigurasi
 
-Ketika Anda menggunakan proyek yang dibuat oleh
-[hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton),
-semua file konfigurasi Hyperf berada di folder `config` di bawah direktori
-root, dan setiap opsi memiliki petunjuk penjelasan, Anda selalu dapat
-memeriksa dan membiasakan diri dengan opsi yang tersedia.
+Kalau Anda pake project yang dibuat dari [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton), semua file konfigurasi Hyperf ada di folder `config` di root direktori. Setiap opsi udah ada deskripsi, jadi Anda bisa liat dan pelajari opsi yang tersedia kapan aja.
 
 # Instalasi
 
@@ -14,40 +10,38 @@ composer require hyperf/config
 
 # Struktur File Konfigurasi
 
-Struktur berikut hanya merupakan struktur dalam kasus konfigurasi default yang
-disediakan oleh Hyperf-Skeleton, dan situasi sebenarnya akan bervariasi
-tergantung pada komponen yang bergantung atau digunakan.
+Struktur di bawah ini cuma contoh dari konfigurasi default Hyperf-Skeleton. Di prakteknya, isi folder bisa beda-beda tergantung dependensi atau komponen yang dipake.
+
 ```
 config
-├── autoload // File konfigurasi di folder ini akan dimuat oleh komponen konfigurasi itu sendiri, dan nama file di folder ini akan menjadi key tingkat pertama.
-│   ├── amqp.php  // Digunakan untuk mengelola komponen AMQP
-│   ├── annotations.php // Digunakan untuk mengelola Annotation
-│   ├── apollo.php // Digunakan untuk mengelola Configuration Center Apollo
-│   ├── aspects.php // Digunakan untuk mengelola Aspect dari AOP
-│   ├── async_queue.php // Digunakan untuk mengelola komponen Async-Queue
-│   ├── cache.php // Digunakan untuk mengelola komponen Cache
-│   ├── commands.php // Digunakan untuk mengelola Custom Command
-│   ├── consul.php // Digunakan untuk mengelola Consul Client
-│   ├── databases.php // Digunakan untuk mengelola Database
-│   ├── dependencies.php // Digunakan untuk mengelola hubungan dependensi dari DI
-│   ├── devtool.php // Digunakan untuk mengelola Dev-Tool
-│   ├── exceptions.php // Digunakan untuk mengelola Exception Handler
-│   ├── listeners.php // Digunakan untuk mengelola Event Listener
-│   ├── logger.php // Digunakan untuk mengelola Logger
-│   ├── middlewares.php // Digunakan untuk mengelola Middleware
-│   ├── opentracing.php // Digunakan untuk mengelola Open-Tracing
-│   ├── processes.php // Digunakan untuk mengelola Custom Process
-│   ├── redis.php // Digunakan untuk mengelola Redis Client
-│   └── server.php // Digunakan untuk mengelola Server
-├── config.php // Konfigurasi untuk mengelola pengguna atau framework, seperti konfigurasi yang relatif independen juga dapat ditempatkan di folder autoload
-├── container.php // Bertanggung jawab atas inisialisasi container, berjalan sebagai file konfigurasi dan pada akhirnya mengembalikan objek Psr\Container\ContainerInterface
-└── routes.php // Digunakan untuk mengelola Routing
+├── autoload // File konfigurasi dalam folder ini akan dimuat oleh komponen konfigurasi itu sendiri, menggunakan nama file dalam folder sebagai key pertama
+│   ├── amqp.php  // Digunakan untuk mengelola komponen AMQP
+│   ├── annotations.php // Digunakan untuk mengelola annotation
+│   ├── apollo.php // Digunakan untuk mengelola configuration center berbasis Apollo
+│   ├── aspects.php // Digunakan untuk mengelola AOP aspect
+│   ├── async_queue.php // Digunakan untuk mengelola layanan antrian sederhana berbasis Redis
+│   ├── cache.php // Digunakan untuk mengelola komponen cache
+│   ├── commands.php // Digunakan untuk mengelola custom command
+│   ├── consul.php // Digunakan untuk mengelola client Consul
+│   ├── databases.php // Digunakan untuk mengelola client database
+│   ├── dependencies.php // Digunakan untuk mengelola dependensi DI dan pemetaan kelas
+│   ├── devtool.php // Digunakan untuk mengelola developer tool
+│   ├── exceptions.php // Digunakan untuk mengelola exception handler
+│   ├── listeners.php // Digunakan untuk mengelola event listener
+│   ├── logger.php // Digunakan untuk mengelola log
+│   ├── middlewares.php // Digunakan untuk mengelola middleware
+│   ├── opentracing.php // Digunakan untuk mengelola call chain tracing
+│   ├── processes.php // Digunakan untuk mengelola custom process
+│   ├── redis.php // Digunakan untuk mengelola client Redis
+│   └── server.php // Digunakan untuk mengelola layanan Server
+├── config.php // Digunakan untuk mengelola konfigurasi pengguna atau framework. Jika konfigurasi relatif independen, dapat juga ditempatkan di folder autoload
+├── container.php // Bertanggung jawab untuk inisialisasi container, berjalan sebagai file konfigurasi dan akhirnya mengembalikan objek Psr\Container\ContainerInterface
+└── routes.php // Digunakan untuk mengelola route
 ```
 
-## Penjelasan Konfigurasi server.php
+## Deskripsi Konfigurasi `server.php`
 
-Berikut adalah `settings` default yang disediakan oleh
-`config/autoload/server.php` di Hyperf-Skeleton.
+Berikut adalah `settings` default yang disediakan oleh `config/autoload/server.php` di Hyperf-Skeleton:
 
 ```php
 <?php
@@ -57,32 +51,25 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // Konfigurasi lain dalam file ini dihilangkan
+    // Konfigurasi lain untuk file ini dihilangkan di sini
     'settings' => [
-        'enable_coroutine' => true, // Mengaktifkan coroutine bawaan
-        'worker_num' => swoole_cpu_num(), // Mengatur jumlah Worker process yang dijalankan
+        'enable_coroutine' => true, // Aktifkan built-in coroutine
+        'worker_num' => swoole_cpu_num(), // Atur jumlah Worker process yang akan dimulai
         'pid_file' => BASE_PATH . '/runtime/hyperf.pid', // PID dari master process
-        'open_tcp_nodelay' => true, // Menonaktifkan algoritma Nagle saat koneksi TCP mengirim data, sehingga langsung dikirim ke client
-        'max_coroutine' => 100000, // Mengatur jumlah maksimum coroutine pada worker process saat ini
-        'open_http2_protocol' => true, // Mengaktifkan parsing protokol HTTP2
-        'max_request' => 100000, // Mengatur jumlah maksimum task pada worker process
-        'socket_buffer_size' => 2 * 1024 * 1024, // Mengonfigurasi panjang buffer koneksi client
+        'open_tcp_nodelay' => true, // Nonaktifkan algoritma Nagle saat mengirim data melalui koneksi TCP, segera kirim ke koneksi client
+        'max_coroutine' => 100000, // Atur jumlah maksimum coroutine untuk worker process saat ini
+        'open_http2_protocol' => true, // Aktifkan parsing protokol HTTP2
+        'max_request' => 100000, // Atur jumlah maksimum task untuk worker process
+        'socket_buffer_size' => 2 * 1024 * 1024, // Konfigurasi panjang buffer untuk koneksi client
     ],
 ];
 ```
 
-File konfigurasi ini digunakan untuk mengelola layanan Server. Opsi `settings`
-di dalamnya dapat langsung menggunakan opsi yang disediakan oleh `Swoole Server`.
-Opsi lainnya dapat merujuk ke
-[dokumentasi resmi Swoole](https://wiki.swoole.com/#/server/setting).
+File konfigurasi ini digunakan untuk mengelola layanan Server. Opsi `settings` di dalamnya dapat langsung menggunakan opsi yang disediakan oleh `Swoole Server`. Untuk opsi lainnya, silakan merujuk ke [dokumentasi resmi Swoole](https://wiki.swoole.com/#/server/setting).
 
-Jika perlu menjalankan aplikasi sebagai daemon, tambahkan `'daemonize' => true`
-ke dalam `settings`. Setelah menjalankan `php bin/hyperf.php start`, program
-akan berpindah ke background dan berjalan sebagai daemon.
+Kalau perlu daemonization, tinggal tambahin `'daemonize' => true` di `settings`. Abis jalanin `php bin/hyperf.php start`, program bakal jalan di latar belakang sebagai daemon.
 
-Konfigurasi Server terpisah perlu ditambahkan pada `settings` dari `servers`
-yang sesuai. Misalnya, konfigurasi TCP Server untuk protokol `jsonrpc` yang
-mengaktifkan EOF auto split dan mengatur string EOF:
+Konfigurasi individual Server perlu ditambahkan ke `settings` dari `servers` yang sesuai. Sebagai contoh, untuk konfigurasi TCP Server dari protokol `jsonrpc`, aktifkan EOF automatic packet splitting dan atur string EOF:
 
 ```php
 <?php
@@ -91,7 +78,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // Konfigurasi lain dalam file ini dihilangkan
+    // Konfigurasi lain untuk file ini dihilangkan di sini
     'servers' => [
         [
             'name' => 'jsonrpc',
@@ -103,26 +90,18 @@ return [
                 Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
-                'open_eof_split' => true, // Mengaktifkan EOF auto split
-                'package_eof' => "\r\n", // Mengatur string EOF
+                'open_eof_split' => true, // Aktifkan EOF automatic packet splitting
+                'package_eof' => "\r\n", // Atur string EOF
             ],
         ],
     ],
 ];
-
 ```
 
-## Hubungan antara `config.php` dan file konfigurasi di folder `autoload`
+## Hubungan Antara `config.php` dan File Konfigurasi di Folder `autoload`
 
-File konfigurasi di folder `autoload` dan `config.php` akan dipindai dan
-dimasukkan ke dalam objek `Hyperf\Contract\ConfigInterface` yang sesuai saat
-server dimulai. Struktur konfigurasi yang terbentuk adalah array besar berisi
-pasangan key-value. Perbedaan antara kedua bentuk konfigurasi tersebut adalah:
-nama file konfigurasi di `autoload` akan ada sebagai key lapisan pertama,
-sedangkan bagian dalam `config.php` akan didefinisikan secara langsung pada
-lapisan pertama. Kita akan menggunakan contoh berikut untuk mendemonstrasikannya.
-
-Mari kita asumsikan ada file `config/autoload/client.php` dengan isi berikut:
+`config.php` dan file di folder `autoload` sama-sama dipindai pas service mulai, lalu diinjeksi ke objek `Hyperf\Contract\ConfigInterface`. Struktur konfigurasinya adalah array key-value gede. Bedanya: nama file di `autoload` jadi Key tingkat pertama, sedangkan `config.php` pake key yang Anda definisikan sebagai tingkat pertama. Biar lebih jelas, liat contoh berikut:
+Misalkan ada file `config/autoload/client.php` dengan konten berikut:
 
 ```php
 return [
@@ -132,12 +111,9 @@ return [
 ];
 ```
 
-Kemudian, jika kita ingin mendapatkan nilai `timeout` yang sesuai, key-nya
-adalah `client.request.timeout`;
+Maka Key yang sesuai dengan nilai `timeout` adalah `client.request.timeout`;
 
-Kita asumsikan ingin mendapatkan hasil yang sama dengan key yang sama, tetapi
-konfigurasinya ditulis dalam file `config/config.php`, maka isi file tersebut
-harus terlihat seperti ini:
+Misalkan kita ingin mendapatkan hasil yang sama dengan Key yang sama, tetapi konfigurasi ditulis dalam file `config/config.php`, konten file harus sebagai berikut:
 
 ```php
 return [
@@ -149,54 +125,34 @@ return [
 ];
 ```
 
-## Menggunakan Komponen Config Hyperf
+## Menggunakan Hyperf Config Component
 
-Komponen ini adalah komponen konfigurasi default resmi yang diimplementasikan
-untuk interface `Hyperf\Contract\ConfigInterface`, yang didefinisikan oleh
-komponen [hyperf/config](https://github.com/hyperf/config). Objek
-`Hyperf\Config\Config` di-bind ke interface tersebut oleh ConfigProvider dari
-komponen.
+Ini adalah komponen konfigurasi default bawaan Hyperf. Dibangun berdasarkan interface `Hyperf\Contract\ConfigInterface`, dan objek `Hyperf\Config\Config` diikat ke interface tersebut oleh `ConfigProvider` dari komponen [hyperf/config](https://github.com/hyperf/config).
 
-### Menetapkan Nilai Konfigurasi
+### Mengatur Konfigurasi
 
-Konfigurasi dalam file `config/config.php`, `config/autoload/server.php`, dan
-folder `autoload` dapat dipindai dan dimasukkan ke dalam objek
-`Hyperf\Contract\ConfigInterface` yang sesuai saat server dimulai. Proses ini
-dilakukan oleh `Hyperf\Config\ConfigFactory` saat objek Config diinstansiasi.
+Konfigurasi dari `config/config.php`, `config/autoload/server.php`, dan folder `autoload` semuanya otomatis dipindai dan diinjeksi ke objek `Hyperf\Contract\ConfigInterface` pas service mulai. Proses ini ditangani oleh `Hyperf\Config\ConfigFactory` pas objek Config dibuat.
 
-### Mendapatkan Nilai Konfigurasi
+### Mendapatkan Konfigurasi
 
-Komponen Config menyediakan tiga cara untuk mendapatkan nilai konfigurasi,
-yaitu diperoleh melalui objek `Hyperf\Config\Config`, diperoleh melalui
-annotation `#[Value]`, dan diperoleh melalui fungsi `config(string $key, $default)`.
+Config component punya tiga cara buat dapetin konfigurasi: lewat objek `Hyperf\Config\Config`, lewat annotation `#[Value]`, dan lewat fungsi `config(string $key, $default)`.
 
-#### Mendapatkan Nilai Konfigurasi melalui Objek Config
+#### Mendapatkan Konfigurasi melalui Config Object
 
-Cara ini mengharuskan Anda sudah memiliki instansi dari objek `Config`. Objek
-default-nya adalah `Hyperf\Config\Config`. Untuk detail tentang instansi
-injection, silakan merujuk pada bab [Dependency Injection](id/di.md).
+Metode ini butuh Anda punya instance dari objek `Config` dulu. Objek defaultnya `Hyperf\Config\Config`. Soal injeksi instance, silakan liat bab [Dependency Injection](id/di.md);
 
 ```php
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// Mendapatkan konfigurasi yang sesuai dengan $key melalui method get(string $key, $default): mixed.
-// Nilai $key dapat menggunakan connector . untuk mengakses array turunan,
-// sedangkan $default adalah nilai default yang dikembalikan saat nilai terkait tidak ada.
+// Dapatkan konfigurasi yang sesuai dengan $key melalui metode get(string $key, $default): mixed. Nilai $key dapat diposisikan ke array tingkat lebih rendah melalui konektor ., dan $default adalah nilai default yang dikembalikan ketika nilai yang sesuai tidak ada.
 $config->get($key, $default);
 ```
 
-#### Mendapatkan Konfigurasi dengan Annotation `#[Value]`
+#### Mendapatkan Konfigurasi melalui Annotation `#[Value]`
 
-Cara ini mengharuskan objek dibuat oleh komponen
-[hyperf/di](https://github.com/hyperf/di). Detail tentang instansi injection
-dapat ditemukan di bab [Dependency Injection](id/di.md). Dalam contoh ini,
-kita berasumsi bahwa `IndexController` adalah kelas `Controller` yang telah
-didefinisikan, dan kelas `Controller` tersebut harus dibuat oleh container `DI`;
-
-String di dalam `#[Value()]` sesuai dengan parameter `$key` di
-`$config->get($key)`. Ketika instansi objek dibuat, konfigurasi yang sesuai
-akan secara otomatis dimasukkan ke dalam properti kelas yang ditentukan.
+Metode ini mengharuskan objek yang pake annotation ini dibuat oleh komponen [hyperf/di](https://github.com/hyperf/di). Soal injeksi instance, silakan liat bab [Dependency Injection](id/di.md). Di contoh ini, kita anggap `IndexController` adalah kelas `Controller` yang udah didefinisikan, dan kelas `Controller` harus dibuat oleh container `DI`;
+String di dalam `#[Value]` sesuai dengan parameter `$key` di `$config->get($key)`. Ketika membuat instance dari objek ini, konfigurasi yang sesuai akan secara otomatis diinjeksikan ke dalam properti kelas yang telah didefinisikan.
 
 ```php
 use Hyperf\Config\Annotation\Value;
@@ -213,63 +169,37 @@ class IndexController
 }
 ```
 
-#### Mendapatkan Konfigurasi dengan fungsi config()
+#### Mendapatkan melalui Fungsi `config`
 
-Konfigurasi yang sesuai dapat diperoleh dari fungsi
-`config(string $key, $default)` di mana saja, tetapi cara penggunaan ini
-berarti aplikasi Anda sangat bergantung pada komponen
-[hyperf/config](https://github.com/hyperf/config) dan
-[hyperf/support](https://github.com/hyperf/support).
+Di mana pun, Anda bisa dapetin konfigurasi lewat fungsi `config(string $key, $default)`, tapi cara ini berarti Anda bergantung banget sama komponen [hyperf/config](https://github.com/hyperf/config) dan [hyperf/support](https://github.com/hyperf/support).
 
-### Menentukan Apakah Konfigurasi Ada
+### Mengecek Apakah Sebuah Konfigurasi Ada
 
 ```php
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// Method has(): bool digunakan untuk menentukan apakah nilai $key terkait ada di konfigurasi.
-// Nilai $key dapat menggunakan connector . untuk mengakses array turunan.
+// Cek apakah nilai $key yang sesuai ada di konfigurasi lewat method has(): bool. Nilai $key bisa ngarah ke array level bawah pake separator .
 $config->has($key);
 ```
 
-## Variabel Lingkungan (Environment Variable)
+## Environment Variables
 
-Merupakan kebutuhan umum untuk menggunakan konfigurasi yang berbeda untuk
-lingkungan operasi yang berbeda. Misalnya, konfigurasi Redis untuk lingkungan
-pengujian (test) dan lingkungan produksi (production) berbeda, dan konfigurasi
-lingkungan produksi tidak boleh dikirimkan ke sistem manajemen versi kode sumber
-(source code version control) untuk menghindari kebocoran informasi.
+Menggunakan konfigurasi yang berbeda untuk lingkungan runtime yang berbeda adalah kebutuhan umum, misalnya, konfigurasi Redis untuk lingkungan testing dan production berbeda, dan konfigurasi lingkungan production tidak dapat di-commit ke sistem manajemen versi kode sumber untuk menghindari kebocoran informasi.
 
-Di Hyperf kami menyediakan solusi untuk variabel lingkungan, menggunakan
-fungsi penguraian variabel lingkungan yang disediakan oleh
-[vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) dan fungsi `env()`
-untuk mendapatkan lingkungan tersebut. Kebutuhan ini cukup mudah untuk
-diselesaikan.
+Hyperf punya solusi environment variable, pake [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) buat parsing dan fungsi `env()` buat baca nilainya, jadi kebutuhan ini gampang diatasi.
 
-Di aplikasi Hyperf yang baru diinstal, direktori root-nya akan berisi file
-`.env.example`. Dalam kasus Hyperf yang diinstal melalui Composer, Composer
-akan secara otomatis menyalin file baru berdasarkan `.env.example` dan
-menamainya menjadi `.env`. Jika tidak, Anda perlu mengubah nama file tersebut
-secara manual.
+Dalam aplikasi Hyperf yang baru diinstal, direktori root-nya akan berisi file `.env.example`. Jika Hyperf diinstal melalui Composer, file ini akan secara otomatis disalin berdasarkan `.env.example` dan diberi nama `.env`. Jika tidak, Anda perlu mengubah nama file secara manual.
 
-File `.env` Anda tidak boleh dimasukkan ke dalam sistem manajemen versi kode
-sumber aplikasi Anda, karena setiap developer/server yang menggunakan aplikasi
-Anda mungkin perlu memiliki konfigurasi lingkungan yang berbeda. Selain itu,
-jika penyusup mendapatkan akses ke repositori kode sumber Anda, hal ini dapat
-menyebabkan masalah keamanan yang serius, karena data sensitif akan langsung
-terlihat jelas.
+File `.env` Anda tidak boleh di-commit ke sistem manajemen versi kode sumber aplikasi, karena setiap pengembang/server yang menggunakan aplikasi Anda mungkin perlu memiliki konfigurasi lingkungan yang berbeda. Selain itu, ini dapat menyebabkan masalah keamanan yang serius jika seorang penyusup mendapatkan akses ke repositori kode sumber Anda, karena semua data sensitif akan terekspos.
 
-> Semua variabel di file `.env` dapat ditimpa oleh variabel lingkungan
-> eksternal (seperti variabel lingkungan tingkat server, tingkat sistem, atau
-> Docker).
+> Semua variabel dalam file `.env` dapat ditimpa oleh environment variable eksternal (seperti variabel tingkat server, sistem, atau lingkungan Docker).
 
-### Tipe Variabel Lingkungan
+### Tipe Environment Variable
 
-Semua variabel di file `.env` diurai sebagai tipe string, sehingga beberapa
-nilai khusus disediakan untuk memungkinkan Anda mendapatkan lebih banyak tipe
-variabel dari fungsi `env()`:
+Semua variabel dalam file `.env` akan diparsing sebagai tipe string, jadi beberapa nilai yang dicadangkan disediakan untuk memungkinkan Anda mendapatkan tipe variabel yang lebih banyak dari fungsi `env()`:
 
-| Nilai .env | Nilai env() |
+| .env value | env() value |
 | :------ | :----------- |
 | true    | (bool) true  |
 | (true)  | (bool) true  |
@@ -280,23 +210,16 @@ variabel dari fungsi `env()`:
 | null    | (null) null  |
 | (null)  | (null) null  |
 
-Jika Anda perlu menggunakan variabel lingkungan yang mengandung spasi, Anda
-dapat melakukannya dengan membungkus nilai tersebut dalam tanda kutip ganda,
-seperti:
+Jika Anda perlu menggunakan environment variable yang mengandung spasi atau karakter khusus lainnya, Anda dapat melakukannya dengan membungkus nilai dalam tanda kutip ganda, misalnya:
 
 ```dotenv
 APP_NAME="Hyperf Skeleton"
 ```
 
-### Mendapatkan Variabel Lingkungan
+### Membaca Environment Variable
 
-Kami juga menyebutkan di atas bahwa variabel lingkungan dapat diperoleh dengan
-fungsi `env()`. Dalam pengembangan aplikasi, variabel lingkungan hanya boleh
-digunakan sebagai nilai dari konfigurasi, dan nilai variabel lingkungan
-digunakan untuk menimpa nilai yang dikonfigurasi. **Hanya gunakan konfigurasi**
-daripada menggunakan variabel lingkungan secara langsung.
-
-Mari kita berikan contoh yang masuk akal:
+Kami telah menyebutkan di atas bahwa environment variable dapat diperoleh melalui fungsi `env()`. Dalam pengembangan aplikasi, environment variable hanya boleh digunakan sebagai nilai untuk konfigurasi, dan nilai environment variable harus digunakan untuk menimpa nilai konfigurasi. Di lapisan aplikasi, Anda sebaiknya **hanya menggunakan konfigurasi**, daripada langsung menggunakan environment variable.
+Berikut adalah contoh penggunaan yang wajar:
 
 ```php
 // config/config.php
@@ -305,26 +228,12 @@ return [
 ];
 ```
 
-## Mempublikasikan Konfigurasi Komponen
+## Menerbitkan Konfigurasi Komponen
 
-Hyperf menggunakan desain berbasis komponen. Setelah menambahkan beberapa
-komponen ke skeleton project, biasanya kita perlu membuat file konfigurasi yang
-sesuai untuk komponen baru tersebut agar dapat digunakan. Hyperf menyediakan
-`mekanisme publikasi konfigurasi komponen`. Dengan mekanisme ini, Anda cukup
-menjalankan satu perintah `vendor:publish` untuk mempublikasikan template file
-konfigurasi bawaan komponen ke skeleton project.
+Hyperf pake desain berbasis komponen. Abis nambahin komponen ke project skeleton, biasanya kita perlu bikin file konfigurasi buat komponen baru tersebut. Hyperf nyediain `mekanisme publish konfigurasi komponen`, tinggal jalanin perintah `vendor:publish` buat nge-deploy template konfigurasi dari komponen ke project skeleton.
+Misalnya, kita mau nambahin komponen `hyperf/foo` (komponen ini gak beneran ada, cuma contoh) beserta file konfigurasinya. Abis `composer require hyperf/foo`, tinggal jalanin `php bin/hyperf.php vendor:publish hyperf/foo` buat nge-publish file konfigurasi ke folder `config/autoload` project skeleton. Isi yang di-publish udah ditentuin sama komponennya.
 
-Misalnya kita ingin menambahkan komponen `hyperf/foo` (komponen ini sebenarnya
-tidak ada, hanya contoh) beserta file konfigurasi terkait. Setelah menjalankan
-`composer require hyperf/foo`, Anda dapat menjalankan
-`php bin/hyperf.php vendor:publish hyperf/foo` untuk mempublikasikan file
-konfigurasi bawaan komponen ke folder `config/autoload` di skeleton project.
-Konten spesifik yang dipublikasikan ditentukan dan disediakan oleh komponen.
+## Configuration Center
 
-## Pusat Konfigurasi
-
-Hyperf menyediakan dukungan konfigurasi eksternal untuk sistem terdistribusi.
-Saat ini Hyperf mendukung `Apollo` open source dari Ctrip, Alibaba Cloud ACM
-Application Configuration Management, ETCD, Nacos, dan Zookeeper sebagai
-configuration center. Detail penggunaan configuration center dijelaskan di bab
-[Pusat Konfigurasi](id/config-center.md).
+Hyperf nyediain dukungan konfigurasi eksternal buat sistem terdistribusi. Saat ini support `Apollo` (open-source dari Ctrip), Alibaba Cloud ACM, ETCD, Nacos, dan Zookeeper sebagai configuration center.
+Soal pemakaian configuration center, bakal dibahas di bab [Configuration Center](id/config-center.md).

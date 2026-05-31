@@ -1,7 +1,6 @@
-# Kelas Enum
+# Enum Class
 
-Ketika Anda perlu mendefinisikan kode error dan pesan error, metode berikut dapat
-digunakan,
+Ketika Anda perlu mendefinisikan kode error dan pesan error, Anda mungkin menggunakan pendekatan berikut:
 
 ```php
 <?php
@@ -13,18 +12,14 @@ class ErrorCode
 
     public static $messages = [
         self::SERVER_ERROR => 'Server Error',
-        self::PARAMS_INVALID => 'Illegal parameter'
+        self::PARAMS_INVALID => 'Invalid Parameters'
     ];
 }
 
-$message = ErrorCode::messages[ErrorCode::SERVER_ERROR] ?? 'unknown mistake';
-
+$message = ErrorCode::messages[ErrorCode::SERVER_ERROR] ?? 'Unknown error';
 ```
 
-Namun metode implementasi ini kurang bersahabat. Setiap kali Anda ingin mencari
-kode error dan informasi error yang sesuai, Anda harus mencari di `Class` saat
-ini sebanyak dua kali, sehingga framework menyediakan kelas enumerasi berbasis
-annotation.
+Namun, implementasi ini kurang praktis. Setiap kali ingin mencari kode error dan pesan error yang sesuai, Anda harus mencarinya dua kali di `Class` yang sama. Oleh karena itu, framework menyediakan kelas enumerasi berbasis annotation.
 
 ## Instalasi
 
@@ -34,9 +29,9 @@ composer require hyperf/constants
 
 ## Penggunaan
 
-### Mendefinisikan Kelas Enum
+### Mendefinisikan Enum Class
 
-Kelas enumerasi dapat dibuat dengan cepat menggunakan perintah `gen:constant`.
+Anda dapat dengan cepat membuat enum class menggunakan perintah `gen:constant`.
 
 ```bash
 php bin/hyperf.php gen:constant ErrorCode --type enum
@@ -57,24 +52,20 @@ use Hyperf\Constants\EnumConstantsTrait;
 enum ErrorCode: int
 {
     use EnumConstantsTrait;
-
-    #[Message("Server Error!")]
+    
+    #[Message("Server Error！")]
     case SERVER_ERROR = 500;
 
-    #[Message("System parameter error")]
+    #[Message("Kesalahan parameter sistem")]
     case SYSTEM_INVALID = 700;
 }
 ```
 
-User dapat menggunakan `ErrorCode::SERVER_ERROR->getMessage()` untuk mendapatkan
-pesan error yang sesuai.
+Pengguna dapat menggunakan `ErrorCode::SERVER_ERROR->getMessage()` untuk mendapatkan pesan error yang sesuai.
 
-### Mendefinisikan Kelas Exception
+### Mendefinisikan Exception Class
 
-Jika Anda hanya menggunakan `kelas enumerasi`, hal tersebut kurang nyaman saat
-menangani exception. Oleh karena itu, kita perlu mendefinisikan kelas exception
-kita sendiri, yaitu `BusinessException`. Ketika exception terjadi, kelas ini
-secara aktif akan mencari informasi error yang sesuai berdasarkan kode error.
+Jika hanya menggunakan `Enum Class`, penanganan exception masih kurang praktis. Karena itu kita perlu mendefinisikan kelas exception sendiri, yaitu `BusinessException`. Ketika terjadi exception, kelas ini akan otomatis mencari pesan error yang sesuai berdasarkan kode error.
 
 ```php
 <?php
@@ -108,8 +99,7 @@ class BusinessException extends ServerException
 
 ### Melempar Exception
 
-Setelah menyelesaikan dua langkah di atas, exception yang sesuai dapat dilempar
-di dalam business logic.
+Setelah menyelesaikan dua langkah di atas, Anda dapat melempar exception yang sesuai dalam logika bisnis Anda.
 
 ```php
 <?php
@@ -132,9 +122,7 @@ class IndexController extends AbstractController
 
 ### Parameter Variabel
 
-Saat menggunakan `ErrorCode::SERVER_ERROR->getMessage()` untuk mendapatkan
-pesan error yang sesuai, kita juga dapat meneruskan parameter variabel untuk
-menggabungkan pesan error. Sebagai contoh berikut:
+Saat menggunakan `ErrorCode::SERVER_ERROR->getMessage()` untuk mendapatkan pesan error, kita juga bisa melewatkan parameter variabel untuk menyusun pesan error, seperti contoh berikut:
 
 ```php
 <?php
@@ -147,7 +135,7 @@ use Hyperf\Constants\EnumConstantsTrait;
 enum ErrorCode: int
 {
     use EnumConstantsTrait;
-
+    
     #[Message("Params %s is invalid.")]
     case PARAMS_INVALID = 1000;
 }
@@ -155,24 +143,20 @@ enum ErrorCode: int
 $message = ErrorCode::PARAMS_INVALID->getMessage(['user_id']);
 ```
 
-### Globalisasi
+### Internasionalisasi
 
-> Fitur ini hanya tersedia pada versi v1.1.13 dan yang lebih baru
-
-Untuk mengaktifkan komponen [hyperf/constants](https://github.com/hyperf/constants)
-agar mendukung internasionalisasi, komponen [hyperf/translation](https://github.com/hyperf/translation)
-harus diinstal dan dikonfigurasi dengan file bahasa yang tepat, sebagai berikut:
+Untuk mengaktifkan internasionalisasi pada komponen [hyperf/constants](https://github.com/hyperf/constants), Anda perlu menginstal komponen [hyperf/translation](https://github.com/hyperf/translation) dan mengonfigurasi file bahasa:
 
 ```
 composer require hyperf/translation
 ```
 
-Untuk konfigurasi terkait, lihat [Internasionalisasi](id/translation.md)
+Untuk konfigurasi terkait, silakan merujuk ke [Internasionalisasi](id/translation.md).
 
 ```php
 <?php
 
-// International configuration
+// Konfigurasi internasionalisasi
 
 return [
     'params.invalid' => 'Params :param is invalid.',
@@ -185,8 +169,6 @@ use Hyperf\Constants\EnumConstantsTrait;
 #[Constants]
 enum ErrorCode: int
 {
-    use EnumConstantsTrait;
-
     #[Message("params.invalid")]
     case PARAMS_INVALID = 1000;
 }

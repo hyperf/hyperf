@@ -1,12 +1,8 @@
-# Consul Client
+# Consul Coroutine Client
 
-Hyperf menyediakan client [Consul](https://www.consul.io/api/index.html) berbasis
-coroutine. Karena API milik Consul sendiri relatif sederhana dan mendukung
-metode request HTTP, komponen ini hanya membuat beberapa abstraksi untuk
-Consul API, dan didukung oleh coroutine HTTP client yang disediakan oleh
-[hyperf/guzzle](https://github.com/hyperf/guzzle).
+Hyperf menyediakan coroutine client untuk [Consul](https://www.consul.io/api/index.html). Karena API Consul sendiri relatif sederhana dan juga mendukung metode permintaan HTTP, komponen ini hanya menyederhanakan enkapsulasi API, berdasarkan dukungan coroutine HTTP client yang disediakan oleh [hyperf/guzzle](https://github.com/hyperf/guzzle).
 
-> `ConsulResponse` berarti `Hyperf\Consul\ConsulResponse`
+> Kelas `ConsulResponse` merujuk pada kelas `Hyperf\Consul\ConsulResponse`.
 
 ## Instalasi
 
@@ -16,7 +12,7 @@ composer require hyperf/consul
 
 ## Penggunaan
 
-- Mendapatkan Consul client yang sesuai, berikut adalah contoh untuk KV client:
+- Dapatkan Consul client yang sesuai. Berikut adalah contoh client KV:
 
 ```php
 use Hyperf\Consul\KV;
@@ -38,7 +34,7 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 
 #### Menambahkan Token melalui Header
 
-Anda dapat mengatur parameter Header dengan Key `X-Consul-Token` ke Client saat memanggil method, seperti yang ditunjukkan di bawah ini:
+Anda dapat mengaturnya dengan melewatkan Header dengan Key `X-Consul-Token` ke Client saat memanggil method, sebagai berikut:
 
 ```php
 use Hyperf\Consul\KV;
@@ -61,7 +57,7 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 
 #### Menambahkan Token melalui Query
 
-Anda juga dapat mengatur parameter `token` pada argument `$options` saat memanggil method, sehingga Token akan diteruskan ke Server bersama dengan Query, seperti yang ditunjukkan di bawah ini:
+Anda juga bisa mengaturnya dengan melewatkan parameter `token` ke `$options` saat memanggil method. Dengan begitu, Token akan dikirim ke Server bersama Query:
 
 ```php
 $response = $kv->get($namespace, ['token' => 'your-token'])->json();
@@ -69,7 +65,7 @@ $response = $kv->get($namespace, ['token' => 'your-token'])->json();
 
 ## KV
 
-Interface `Hyperf\Consul\KVInterface` diimplementasikan oleh `Hyperf\Consul\KV`.
+Diimplementasikan oleh `Hyperf\Consul\KV` dan menyediakan dukungan melalui `Hyperf\Consul\KVInterface`.
 
 - get($key, array $options = []): ConsulResponse
 - put($key, $value, array $options = []): ConsulResponse
@@ -77,7 +73,7 @@ Interface `Hyperf\Consul\KVInterface` diimplementasikan oleh `Hyperf\Consul\KV`.
 
 ## Agent
 
-Interface `Hyperf\Consul\AgentInterface` diimplementasikan oleh `Hyperf\Consul\Agent`.
+Diimplementasikan oleh `Hyperf\Consul\Agent` dan menyediakan dukungan melalui `Hyperf\Consul\AgentInterface`.
 
 - checks(): ConsulResponse
 - services(): ConsulResponse
@@ -95,7 +91,7 @@ Interface `Hyperf\Consul\AgentInterface` diimplementasikan oleh `Hyperf\Consul\A
 
 ## Catalog
 
-Interface `Hyperf\Consul\CatalogInterface` diimplementasikan oleh `Hyperf\Consul\Catalog`.
+Diimplementasikan oleh `Hyperf\Consul\Catalog` dan menyediakan dukungan melalui `Hyperf\Consul\CatalogInterface`.
 
 - register($node): ConsulResponse
 - deregister($node): ConsulResponse
@@ -107,7 +103,7 @@ Interface `Hyperf\Consul\CatalogInterface` diimplementasikan oleh `Hyperf\Consul
 
 ## Health
 
-Interface `Hyperf\Consul\HealthInterface` diimplementasikan oleh `Hyperf\Consul\Health`.
+Diimplementasikan oleh `Hyperf\Consul\Health` dan menyediakan dukungan melalui `Hyperf\Consul\HealthInterface`.
 
 - node($node, array $options = []): ConsulResponse
 - checks($service, array $options = []): ConsulResponse
@@ -116,7 +112,7 @@ Interface `Hyperf\Consul\HealthInterface` diimplementasikan oleh `Hyperf\Consul\
 
 ## Session
 
-Interface `Hyperf\Consul\SessionInterface` diimplementasikan oleh `Hyperf\Consul\Session`.
+Diimplementasikan oleh `Hyperf\Consul\Session` dan menyediakan dukungan melalui `Hyperf\Consul\SessionInterface`.
 
 - create($body = null, array $options = []): ConsulResponse
 - destroy($sessionId, array $options = []): ConsulResponse

@@ -1,24 +1,16 @@
-# Server Gaya Coroutine
+# Coroutine-style Service
 
-Secara default, Hyperf menggunakan [Swoole asynchronous style](https://wiki.swoole.com/#/server/init),
-yang merupakan model multi-process dan proses kustom berjalan dalam proses
-terpisah.
+Hyperf secara default menggunakan [Swoole asynchronous style](https://wiki.swoole.com/#/server/init). Tipe ini adalah model multi-proses, dan custom process berjalan sebagai proses terpisah.
 
-> Tipe ini akan berjalan dalam mode single-process ketika menggunakan
-> SWOOLE_BASE dan tidak menggunakan proses kustom. Anda dapat memeriksa
-> dokumentasi resmi Swoole untuk detailnya.
+> Tipe ini akan berjalan sebagai model single-process saat menggunakan SWOOLE_BASE dan tidak menggunakan custom process. Untuk detailnya, silakan lihat dokumentasi resmi Swoole.
 
-Hyperf juga menyediakan layanan gaya coroutine (coroutine style), yang
-merupakan model single-process, dan semua proses kustom akan berjalan dalam
-mode coroutine, tanpa membuat proses terpisah.
+Hyperf juga menyediakan service bergaya coroutine. Tipe ini adalah model single-process. Semua custom process akan berjalan dalam mode coroutine, dan tidak ada proses terpisah yang dibuat.
 
-Kedua gaya tersebut dapat dipilih sesuai kebutuhan, **tetapi tidak disarankan
-untuk beralih ke layanan yang sudah ada tanpa pertimbangan matang**.
+Kedua gaya ini dapat dipilih sesuai kebutuhan, **tetapi tidak disarankan untuk sembarangan mengganti service yang sudah berjalan normal**.
 
 ## Konfigurasi
 
-Ubah file konfigurasi `autoload/server.php` dan atur `type` menjadi
-`Hyperf\Server\CoroutineServer::class` untuk memulai gaya coroutine.
+Ubah file konfigurasi `autoload/server.php` dan set `type` menjadi `Hyperf\Server\CoroutineServer::class` untuk memulai dalam gaya coroutine.
 
 ```php
 <?php
@@ -43,17 +35,13 @@ return [
         ],
     ],
 ];
-
 ```
 
 ## WebSocket
 
-1. Karena gaya coroutine dan gaya asynchronous memiliki perbedaan pada callback
-masing-masing, maka perlu digunakan sesuai dengan kebutuhan.
+1. Karena ada perbedaan dalam callback yang sesuai antara gaya coroutine dan gaya asynchronous, Anda perlu menggunakannya sesuai kebutuhan.
 
-Sebagai contoh, pada callback `onReceive`, gaya asynchronous menggunakan
-`Swoole\Server`, sedangkan gaya coroutine menggunakan
-`Swoole\Coroutine\Server\Connection`.
+Sebagai contoh, untuk callback `onReceive`, gaya asynchronous menggunakan `Swoole\Server`, sedangkan gaya coroutine menggunakan `Swoole\Coroutine\Server\Connection`.
 
 ```php
 <?php
@@ -67,15 +55,13 @@ use Swoole\Server as SwooleServer;
 
 interface OnReceiveInterface
 {
-     /**
-      * @param Connection|SwooleServer $server
-      */
-     public function onReceive($server, int $fd, int $reactorId, string $data): void;
+    /**
+     * @param Connection|SwooleServer $server
+     */
+    public function onReceive($server, int $fd, int $reactorId, string $data): void;
 }
 ```
 
-2. Coroutine tempat middleware berada hanya akan berakhir saat `onClose`.
+2. Coroutine tempat middleware berada hanya berakhir saat `onClose`.
 
-Karena instance database `Hyperf` dikembalikan ke connection pool saat
-coroutine dihancurkan, jika `Database` digunakan dalam middleware `WebSocket`,
-maka koneksi dalam connection pool tidak akan dikembalikan dengan normal.
+Karena instance database `Hyperf` dikembalikan ke connection pool ketika coroutine dihancurkan, menggunakan `Database` di middleware `WebSocket` akan mengakibatkan koneksi di connection pool tidak dikembalikan secara normal.

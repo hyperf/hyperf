@@ -1,20 +1,23 @@
 # Komunikasi
 
-Kami menyediakan dua saluran komunikasi: `QQ Group` dan `WeChat Group`. Saluran
-komunikasi lain yang tidak disediakan di halaman ini adalah tidak resmi.
+Kami menyediakan `grup QQ` dan `grup WeChat` sebagai saluran komunikasi. Saluran komunikasi lain yang tidak tercantum di halaman ini bukanlah saluran resmi.
 
-## QQ Group
+## Grup QQ
 
-Nomor Grup 1: `862099724`
-Nomor Grup 2: `811414891`
-Nomor Grup 3: `589051831`
-Nomor Grup 4: `571053131`
+Hyperf Discussion Group (Penuh): `862099724`
+Hyperf Discussion Group 2 (Penuh): `811414891`
+Hyperf Discussion Group 3 (Penuh): `589051831`
+Hyperf Discussion Group 4: `571053131`
 
-## WeChat Group
+## Grup WeChat
 
-Karena Anda tidak dapat bergabung secara langsung ke WeChat group, Anda dapat
-memindai kode QR di bawah ini dan menambahkan kami sebagai teman WeChat. Harap
-nyatakan tujuan Anda saat mengirim permintaan pertemanan, setelah menerima
-permintaan tersebut kami akan menambahkan Anda ke grup kami.
+Karena tidak bisa langsung bergabung ke grup WeChat, silakan tambah teman melalui QR code di bawah, sebutkan tujuan Anda, dan Anda akan ditambahkan ke grup.
 
 ![wechat](https://foruda.gitee.com/images/1697082615411352318/859339ce_775029.jpeg ':size=375')
+
+## Grup DingTalk Komunitas
+
+Untuk mengembangkan komunitas open-source Hyperf dengan lebih baik dan membantu Anda berpartisipasi dengan lebih mudah, kami menyediakan grup DingTalk Komunitas Hyperf. Dengan ini, komunitas dapat mendiskusikan Pull Request atau rencana iterasi dengan lebih mendetail. Kami mengundang Anda untuk bergabung jika ingin berpartisipasi dalam proyek open-source Hyperf.
+
+DingTalk Group 1: `34538367`
+DingTalk Group 2: `34488757`

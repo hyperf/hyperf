@@ -2,48 +2,15 @@
 
 ## Konsep
 
-Hyperf dibangun di atas coroutine dari `Swoole 5` dan `Swow`, yang merupakan salah
-satu faktor besar mengapa Hyperf dapat memberikan performa tinggi.
+Hyperf berjalan di atas coroutine `Swoole 5` dan `Swow`, inilah salah satu faktor utama yang membuat performa Hyperf bisa sangat tinggi.
 
-### Mode Menjalankan PHP-FPM
+### Mode Operasi PHP-FPM
 
-Sebelum kita membahas apa yang terjadi di balik layar, mari kita bahas
-terlebih dahulu mode operasi dari arsitektur tradisional `PHP-FPM`. `PHP-FPM`
-adalah manager `FastCGI` multi-process yang digunakan oleh sebagian besar
-aplikasi PHP. Misalkan kita menggunakan `Nginx` untuk menyediakan layanan
-`HTTP` (sama halnya jika menggunakan `Apache`). Semua request yang diinisiasi
-oleh klien akan tiba di `Nginx` terlebih dahulu, kemudian `Nginx` meneruskan
-request tersebut ke `PHP-FPM` untuk diproses melalui protokol `FastCGI`.
-`Master Process` dari `PHP-FPM` akan mengalokasikan satu `Worker Process`
-untuk setiap request. Pemrosesan ini berarti seluruh process akan terblokir
-menunggu antara waktu parsing script `PHP` dan menunggu hasil dari bisnis
-proses, kemudian mendaur ulang (recycle) child process tersebut. Artinya,
-jumlah request yang dapat Anda tangani secara bersamaan bergantung pada jumlah
-process `PHP-FPM` yang Anda miliki. Diasumsikan `PHP-FPM` memiliki `200`
-`Worker Process`, dan sebuah request membutuhkan waktu `1` detik, maka secara
-teoretis seluruh server hanya dapat menangani maksimal 200 request, dengan
-`QPS` sebesar `200/s`. Dalam skenario high-concurrency, performa seperti ini
-sering kali tidak cukup. Meskipun Anda dapat menggunakan `Nginx` sebagai load
-balancing dengan beberapa server `PHP-FPM` untuk menyediakan layanan, namun
-karena model blocking waiting dari `PHP-FPM`, satu request akan menempati
-setidaknya satu koneksi `MySQL`. Hal ini akan membuat skenario multi-node
-menghasilkan sangat banyak koneksi ke `MySQL`. Secara default, batas maksimal
-koneksi `MySQL` adalah `100`. Meskipun Anda dapat mengubah nilai tersebut,
-sangat jelas bahwa pola ini tidak dapat menangani skenario high-concurrency
-dengan baik.
+Sebelum membahas coroutine, mari kita lihat dulu cara kerja arsitektur tradisional `PHP-FPM`. `PHP-FPM` adalah manajer `FastCGI` multi-proses yang digunakan oleh sebagian besar aplikasi `PHP`. Misalnya kita pakai `Nginx` sebagai Web server (sama juga untuk `Apache`): semua request dari klien masuk ke `Nginx`, lalu diteruskan ke `PHP-FPM` melalui protokol `FastCGI`. `Worker processes` di `PHP-FPM` kemudian mengambil request tersebut secara bergantian untuk diproses, yang artinya menunggu parsing script `PHP` dan menunggu hasil bisnis sampai selesai, lalu proses anak ditutup. Seluruh proses ini bersifat blocking dan waiting. Artinya, jumlah request yang bisa ditangani `PHP-FPM` sangat tergantung pada jumlah `Worker processes` yang tersedia. Anggap saja `PHP-FPM` punya `200` `Worker processes` dan satu request butuh `1` detik, secara teoritis server hanya bisa menangani maksimal `200` request, dengan `QPS` `200/s`. Di skenario high concurrency, performa seperti ini jelas kurang. Memang `Nginx` bisa jadi load balancer dengan beberapa server `PHP-FPM`, tapi karena model kerja `PHP-FPM` yang blocking, satu request tetap memakan setidaknya satu koneksi `MySQL`. Dalam kondisi high concurrency di banyak node, ini menghasilkan koneksi `MySQL` dalam jumlah besar, padahal default maksimal koneksi `MySQL` hanya `100`. Bisa saja diubah, tapi model seperti ini jelas tidak ideal untuk skenario high concurrency.
 
-### Sistem Asynchronous Non-blocking
+### Sistem Non-blocking Asinkron
 
-Dalam skenario high-concurrency, asynchronous non-blocking memiliki keunggulan
-yang jelas. Keuntungan intuitifnya adalah bahwa `Worker Process` tidak lagi
-terblokir secara sinkron (synchronously blocking) untuk menangani suatu
-request, melainkan dapat menangani beberapa request sekaligus tanpa harus
-menunggu `I/O`. Kemampuan konkurensinya sangat kuat, dan sejumlah besar
-request dapat diinisiasi atau dipertahankan pada saat yang sama. Namun,
-kekurangan paling intuitif yang mungkin Anda ketahui adalah callback hell;
-logika bisnis harus diimplementasikan di dalam fungsi callback yang sesuai.
-Jika logika bisnis memiliki beberapa request `I/O`, akan ada banyak lapisan
-fungsi callback. Berikut adalah contoh fragmen pseudo-code pada `Swoole 1.x`.
+Di skenario high concurrency, model asynchronous non-blocking punya keunggulan yang jelas. Keuntungan utamanya: `Worker process` tidak lagi menunggu secara sync satu per satu request, tapi bisa menangani banyak request sekaligus tanpa `I/O` waiting, hasilnya kemampuan concurrency jadi sangat tinggi. Kelemahan utamanya, seperti yang mungkin sudah Anda duga, adalah callback yang bertumpuk-tumpuk. Semua logika bisnis harus ditulis di dalam fungsi callback. Kalau bisnisnya butuh beberapa kali `I/O`, jadilah callback bertingkat-tingkat seperti ini, contoh pseudo-code gaya async callback di `Swoole 1.x`:
 
 ```php
 $db = new swoole_mysql();
@@ -56,16 +23,16 @@ $config = array(
 );
 
 $db->connect($config, function ($db, $r) {
-    // Query satu baris data dari table users
+    // Query sebuah record dari tabel users
     $sql = 'select * from users where id = 1';
     $db->query($sql, function(swoole_mysql $db, $r) {
         if ($r !== false) {
-            // Ubah satu baris data setelah query berhasil
+            // Update sebuah record setelah query berhasil
             $updateSql = 'update users set name="new name" where id = 1';
             $db->query($updateSql, function (swoole_mysql $db, $r) {
                 $rows = $db->affected_rows;
                 if ($r === true) {
-                    return $this->response->end('Berhasil diperbarui');
+                    return $this->response->end('Update berhasil');
                 }
             });
         }
@@ -74,216 +41,73 @@ $db->connect($config, function ($db, $r) {
 });
 ```
 
-> Perhatikan bahwa module async seperti `MySQL` telah dihapus pada
-> [4.3.0](https://wiki.swoole.com/#/version/bc?id=430) dan dipindahkan ke
-> [swoole_async](https://github.com/swoole/ext-async).
+> Perhatikan bahwa modul asinkron seperti `MySQL` telah dihapus di [4.3.0](https://wiki.swoole.com/#/version/bc?id=430) dan dipindahkan ke [swoole_async](https://github.com/swoole/ext-async).
 
-Seperti yang dapat Anda lihat pada cuplikan kode di atas, hampir setiap
-operasi membutuhkan fungsi callback. Struktur kode dan tingkatan callback
-dalam skenario bisnis yang kompleks tentu akan menyulitkan Anda. Tidak sulit
-untuk melihat bahwa pendekatan ini mirip dengan menulis metode asinkron pada
-`JavaScript`. `JavaScript` menawarkan sejumlah solusi (yang tentu saja diadaptasi
-dari bahasa pemrograman lain), seperti `Promise`, `yield + generator`, dan
-`Async/Await`. Jika `Promise` adalah cara untuk membungkus callback, maka
-`yield + generator` dan `Async/Await` perlu menambahkan beberapa penanda
-sintaksis secara eksplisit pada kode. Ini adalah alternatif yang baik untuk
-menghindari callback, tetapi Anda masih memerlukan waktu untuk memahami
-implementasi dan sintaksisnya.
-
-Coroutine Swoole juga merupakan solusi untuk callback asinkron. Di PHP, baik
-coroutine Swoole maupun `yield + generator` adalah solusi coroutine yang
-memungkinkan penulisan kode asinkron dengan gaya yang hampir sama dengan kode
-sinkron. Perbedaan yang jelas adalah bahwa pada mekanisme coroutine
-`yield + generator`, setiap operasi `I/O` harus didahului oleh sintaksis
-`yield` untuk melakukan peralihan (switch) coroutine, dan setiap tingkat
-pemanggilan juga harus didahului oleh sintaksis `yield`. Jika tidak, akan
-terjadi kesalahan yang tidak terduga. Sebaliknya, solusi coroutine `Swoole`
-jauh lebih elegan. `I/O` dialihkan secara implisit di tingkat bawah tanpa
-perlu menambahkan sintaksis tambahan atau `yield` ke dalam kode, dan
-peralihan coroutine ini terjadi secara senyap. Hal ini sangat mengurangi
-beban mental dalam memelihara sistem asinkron.
+Seperti yang terlihat dari cuplikan kode di atas, hampir setiap operasi membutuhkan sebuah fungsi callback. Dalam skenario bisnis yang kompleks, berlapis-lapisnya callback dan struktur kode pasti akan membuat Anda menderita. Sebenarnya, tidak sulit untuk melihat bahwa cara penulisan ini agak mirip dengan penulisan metode asinkron di `JavaScript`, dan `JavaScript` telah menyediakan banyak solusi untuk ini (tentu saja, solusinya berasal dari bahasa pemrograman lain), seperti `Promise`, `yield + generator`, `async/await`. `Promise` adalah cara untuk membungkus callback, sementara `yield + generator` dan `async/await` memerlukan penambahan marker sintaks kode yang eksplisit pada kode. Dibandingkan dengan fungsi callback, ini semua adalah solusi yang sangat baik, tetapi Anda perlu menghabiskan waktu ekstra untuk memahami mekanisme implementasi dan sintaksnya.
+Coroutine `Swoole` juga merupakan solusi untuk callback asinkron. Dalam bahasa `PHP`, baik coroutine `Swoole` maupun `yield + generator` termasuk dalam solusi coroutine. Solusi coroutine memungkinkan kode ditulis dengan cara yang hampir sinkron namun tetap asinkron. Perbedaan eksplisitnya adalah di bawah mekanisme coroutine `yield + generator`, setiap kode pemanggilan operasi `I/O` perlu ditambahkan sintaks `yield` di depannya untuk mengimplementasikan coroutine switching, dan setiap lapisan pemanggilan perlu ditambahkan, jika tidak, error yang tidak terduga akan terjadi. Solusi coroutine `Swoole` jauh lebih pintar dari ini. Ketika menemukan `I/O`, lapisan bawah secara otomatis melakukan coroutine switching implisit, tanpa menambahkan sintaks tambahan apa pun, tanpa menambahkan `yield` sebelum kode, dan proses coroutine switching-nya tidak terlihat, yang sangat mengurangi beban mental dalam memelihara sistem asinkron.
 
 ### Apa itu Coroutine?
 
-Kita telah mengetahui bahwa coroutine dapat menyelesaikan masalah pengembangan
-sistem asynchronous non-blocking dengan sangat baik. Jadi, apa sebenarnya
-coroutine itu? Berdasarkan definisinya, *coroutine adalah thread ringan yang
-dijadwalkan dan dikelola oleh kode pengguna, bukan oleh kernel sistem operasi,
-yaitu dalam user mode*. Ini dapat dipahami secara langsung sebagai implementasi
-thread non-standar, tetapi pengguna yang melakukan peralihan, bukan sistem
-operasi yang mengalokasikan waktu `CPU`. Secara khusus, setiap `Worker process`
-dari `Swoole` memiliki scheduler untuk menjadwalkan coroutine, dan waktu
-peralihan coroutine adalah ketika operasi `I/O` atau peralihan kode eksplisit
-terjadi. Proses ini menjalankan coroutine sebagai single thread, yang berarti
-hanya ada satu coroutine yang berjalan pada waktu yang sama dalam sebuah
-process dan waktu peralihannya jelas. Oleh karena itu, tidak perlu berurusan
-dengan masalah sinkronisasi lock seperti pada pemrograman multi-threaded.
+Kita sudah tahu bahwa coroutine dapat menyelesaikan masalah pengembangan sistem non-blocking asinkron dengan baik, tetapi apa sebenarnya coroutine itu? Menurut definisi, **coroutine adalah thread ringan yang dijadwalkan dan dikelola oleh kode pengguna, bukan oleh kernel sistem operasi, yang berarti ia berjalan di user space**. Ini dapat langsung dipahami sebagai implementasi thread yang tidak standar, tetapi kapan harus beralih diimplementasikan oleh pengguna, bukan ditentukan oleh sistem operasi yang mengalokasikan waktu `CPU`. Secara spesifik, setiap `Worker process` di `Swoole` memiliki sebuah coroutine scheduler untuk menjadwalkan coroutine. Waktu yang tepat untuk coroutine switching adalah ketika operasi `I/O` ditemukan atau ketika kode secara eksplisit melakukan switching. Coroutine berjalan dengan cara single-threaded di dalam proses, yang berarti hanya satu coroutine yang akan berjalan dalam sebuah proses pada waktu yang sama, dan waktu switching-nya jelas, sehingga tidak perlu berurusan dengan berbagai masalah synchronization lock seperti pada pemrograman multi-threaded.
 
-Kode di dalam satu coroutine tetap berjalan secara serial. Dalam server
-coroutine HTTP, setiap request dipahami sebagai sebuah coroutine. Sebagai
-contoh, misalkan `coroutine A` dibuat untuk `request A` dan `coroutine B` dibuat
-untuk `request B`. Ketika kode berjalan hingga melakukan query `MySQL` saat
-memproses `coroutine A`, pada titik tersebut `coroutine A` akan memicu
-peralihan coroutine. `coroutine A` akan terus menunggu perangkat `I/O`
-mengembalikan hasil, kemudian beralih ke `coroutine B` untuk mulai memproses
-logika `coroutine B`. Ketika menemui operasi `I/O` lain, peralihan coroutine
-akan dipicu kembali, dan kemudian akan kembali melanjutkan dari titik di mana
-`coroutine A` terhenti tadi, dan seterusnya. Ketika operasi `I/O` ditemui,
-sistem akan beralih ke coroutine lain untuk melanjutkan proses, alih-alih
-memblokir dan menunggu.
+Kode yang berjalan dalam satu coroutine tetaplah serial. Untuk memahaminya dalam konteks layanan HTTP coroutine, setiap request adalah sebuah coroutine. Sebagai contoh, misalkan `Coroutine A` dibuat untuk `Request A`, dan `Coroutine B` dibuat untuk `Request B`. Ketika memproses `Coroutine A`, kode mencapai statement query `MySQL`. Pada saat ini, `Coroutine A` akan memicu coroutine switch, dan `Coroutine A` akan terus menunggu perangkat `I/O` mengembalikan hasil. Pada saat ini, akan beralih ke `Coroutine B`, dan mulai memproses logika `Coroutine B`. Ketika operasi `I/O` lain ditemukan, itu memicu coroutine switch, dan kemudian beralih kembali untuk melanjutkan eksekusi dari tempat `Coroutine A` berhenti. Proses ini berulang: ketika operasi `I/O` ditemukan, ia beralih ke coroutine lain untuk melanjutkan eksekusi, bukan memblokir dan menunggu.
 
-Masalahnya di sini adalah bahwa operasi query `MySQL` untuk *`coroutine A`
-harus berupa operasi asynchronous non-blocking, jika tidak, scheduler
-coroutine tidak akan dapat beralih ke coroutine lain untuk melanjutkan
-eksekusi*. Masalah pemblokiran ini adalah salah satu hal yang harus dihindari
-dalam pemrograman coroutine.
+Sebuah masalah dapat ditemukan di sini: **Operasi query `MySQL` di `Coroutine A` harus berupa operasi non-blocking asinkron, jika tidak, blocking akan menyebabkan coroutine scheduler tidak dapat beralih ke coroutine lain untuk melanjutkan eksekusi**. Ini juga merupakan salah satu masalah yang harus dihindari dalam pemrograman coroutine.
 
-### Apa perbedaan antara coroutine dan thread biasa?
+### Apa Perbedaan antara Coroutine dan Thread Biasa?
 
-Seperti yang telah kita bahas bahwa coroutine adalah thread ringan.
-Coroutine dan thread sama-sama cocok untuk skenario multitasking. Dari sudut
-pandang ini, coroutine sangat mirip dengan thread dan memiliki context-nya
-sendiri, yang dapat berbagi variabel global. Namun, perbedaannya adalah
-beberapa thread dapat berjalan secara bersamaan, sedangkan pada coroutine
-`Swoole` hanya ada satu coroutine yang aktif, dan coroutine lainnya akan
-ditangguhkan (paused). Selain itu, thread biasa bersifat preemptive, di mana
-thread yang mendapat sumber daya ditentukan oleh sistem operasi. Sedangkan
-coroutine bersifat kolaboratif, di mana hak eksekusi dialokasikan oleh user
-state.
+Sering dikatakan bahwa coroutine adalah thread ringan. Baik coroutine maupun thread cocok untuk skenario multi-tasking. Dari perspektif ini, coroutine dan thread sangat mirip, keduanya memiliki context sendiri dan dapat berbagi variabel global. Tetapi perbedaannya adalah banyak thread dapat berada dalam keadaan berjalan pada saat yang sama, tetapi untuk coroutine `Swoole`, hanya satu yang dapat berada dalam keadaan berjalan, dan coroutine lainnya akan berada dalam keadaan dijeda. Selain itu, thread biasa bersifat preemptive, dan sistem operasi yang memutuskan thread mana yang mendapatkan resources, sementara coroutine bersifat kooperatif, dan kekuatan eksekusi dialokasikan oleh user space itu sendiri.
 
-## Hal-hal yang Perlu Diperhatikan dalam Pemrograman Coroutine
+## Hal yang Perlu Diperhatikan dalam Pemrograman Coroutine
 
-### Tidak Boleh Ada Kode yang Memblokir (Blocking Code)
+### Tidak Boleh Ada Blocking Code
 
-Kode pemblokir (blocking code) di dalam coroutine akan menyebabkan scheduler
-coroutine tidak dapat beralih ke coroutine lain untuk melanjutkan eksekusi
-kode. Oleh karena itu, kita harus mencegah adanya blocking code di dalam
-coroutine. Misalkan kita telah memulai `4 Worker` untuk menangani request `HTTP`
-(biasanya jumlah `Worker` yang dimulai sama dengan jumlah core `CPU` atau `2`
-kali jumlah core `CPU`). Jika terdapat blocking code di dalam coroutine, secara
-teoretis, jika setiap request memblokir selama `1` detik, maka `QPS` aplikasi
-juga akan menurun menjadi `4/s`. Hal ini tentu saja menurunkan performa hingga
-serupa dengan `PHP-FPM`. Oleh karena itu, kita tidak boleh membiarkan adanya
-blocking code di dalam coroutine.
+Blocking code dalam coroutine akan menyebabkan coroutine scheduler tidak dapat beralih ke coroutine lain untuk melanjutkan eksekusi kode, jadi kita sama sekali tidak boleh memiliki blocking code dalam coroutine. Misalkan kita memulai `4` `Workers` untuk menangani request `HTTP` (biasanya jumlah `Workers` yang dimulai sama dengan jumlah core `CPU` atau `2` kali lipatnya), jika ada blocking dalam kode, dan kita secara teoritis berasumsi bahwa setiap request akan memblokir selama `1` detik, maka `QPS` sistem juga akan menurun menjadi `4/s`, yang tidak diragukan lagi merupakan degradasi menjadi situasi yang mirip dengan `PHP-FPM`, jadi kita sama sekali tidak boleh memiliki blocking code dalam coroutine.
 
-Jadi, apa saja yang termasuk blocking code? Secara sederhana, sebagian besar
-fungsi yang disediakan oleh selain Swoole seperti operasi `MySQL`, `Redis`,
-`Memcache`, `MongoDB`, `HTTP`, `Socket`, operasi file, `sleep/usleep`, dll. adalah
-blocking code, yang mencakup hampir semua operasi sehari-hari. Lalu bagaimana
-cara menyelesaikannya? `Swoole` menyediakan client coroutine untuk MySQL,
-`PostgreSQL`, `Redis`, `HTTP`, dan `Socket`. Selain itu, setelah `Swoole 4.1`,
-Swoole menyediakan fungsi `\Swoole\Runtime::enableCoroutine()` untuk mengubah
-sebagian besar blocking code menjadi ter-coroutine secara otomatis. Cukup jalankan
-`\Swoole\Runtime::enableCoroutine()` sebelum membuat coroutine, maka `Swoole`
-akan mengubah semua socket yang menggunakan php_stream untuk penjadwalan
-coroutine. Ini berarti sebagian besar operasi umum akan ter-coroutine, kecuali
-`curl`. Informasi lebih rinci dapat ditemukan di bagian [Dokumentasi Swoole](https://wiki.swoole.com/#/runtime) ini.
+Lalu apa sebenarnya blocking code itu? Kita dapat mengasumsikan bahwa sebagian besar client `MySQL`, `Redis`, `Memcache`, `MongoDB`, `HTTP`, `Socket`, dll., yang Anda kenal dan tidak disediakan oleh `Swoole` sebagai fungsi asinkron, serta operasi file, `sleep/usleep`, dll., adalah fungsi blocking. Ini mencakup hampir semua operasi sehari-hari. Jadi bagaimana cara mengatasinya? `Swoole` menyediakan client coroutine untuk `MySQL`, `PostgreSQL`, `Redis`, `HTTP`, `Socket` yang dapat digunakan. Pada saat yang sama, setelah `Swoole 4.1`, metode coroutine satu-klik `\Swoole\Runtime::enableCoroutine()` disediakan. Anda hanya perlu menjalankan baris kode ini sebelum menggunakan coroutine. `Swoole` akan mengubah semua operasi socket yang menggunakan `php_stream` menjadi `I/O` asinkron yang dijadwalkan oleh coroutine. Dapat dipahami bahwa kecuali `curl`, sebagian besar operasi native dapat diterapkan. Untuk informasi lebih lanjut tentang bagian ini, silakan merujuk ke [Dokumentasi Swoole](https://wiki.swoole.com/#/runtime).
 
-Di dalam `Hyperf`, kami telah menangani hal ini untuk Anda. Anda hanya perlu
-memperhatikan blocking code yang masih tidak dapat di-coroutine-kan secara
-otomatis oleh `\Swoole\Runtime::enableCoroutine()`.
+Di `Hyperf`, kami telah menangani semua ini untuk Anda. Anda hanya perlu memperhatikan blocking code yang masih belum bisa dibuat coroutine-friendly oleh `\Swoole\Runtime::enableCoroutine()`.
 
-### Tidak Boleh Menyimpan State Melalui Variabel Global
+### Tidak Bisa Menyimpan State melalui Global Variables
 
-Pada aplikasi persisten `Swoole`, variabel global di dalam `Worker` dibagikan di
-dalam `Worker` tersebut. Dari penjelasan mengenai coroutine, kita tahu bahwa
-akan ada beberapa coroutine yang berada di dalam `Worker` yang sama. Peralihan
-coroutine berarti bahwa satu `Worker` akan memproses beberapa coroutine (atau
-dapat langsung dipahami sebagai request) dalam satu rentang waktu. Ini berarti
-jika Anda menggunakan variabel global untuk menyimpan state, data state tersebut
-mungkin akan digunakan oleh beberapa coroutine secara bergantian, sehingga data
-dapat menjadi kacau di antara request atau coroutine yang berbeda. Variabel
-global di sini merujuk pada variabel yang diawali dengan `$_` seperti
-`$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER`, variabel `global`, serta
-properti atau variabel `static`.
+Dalam aplikasi persisten `Swoole`, global variable dalam sebuah `Worker` dibagikan di dalam `Worker` tersebut. Dari pengenalan coroutine, kita tahu bahwa akan ada beberapa coroutine dalam `Worker` yang sama dan coroutine switching akan terjadi. Ini berarti bahwa sebuah `Worker` akan memproses kode untuk beberapa coroutine (atau dapat dipahami sebagai request) pada waktu yang sama dalam siklus waktu, yang berarti bahwa jika global variable digunakan untuk menyimpan state, mereka mungkin digunakan oleh beberapa coroutine, yaitu data mungkin tercampur antara request yang berbeda. Global variable di sini merujuk pada variabel yang dimulai dengan `$_`, seperti `$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER`, `global` variables, dan `static` properties.
 
-Lalu apa yang harus kita lakukan ketika kita perlu menggunakan fitur-fitur
-tersebut?
+Jadi apa yang harus kita lakukan ketika kita perlu menggunakan fitur-fitur ini?
 
-Untuk variabel global, data tersebut dihasilkan oleh sebuah `Request`. Request
-dan Response di Hyperf dibuat oleh [hyperf/http-message](https://github.com/hyperf/http-message)
-dengan mengimplementasikan [PSR-7](https://www.php-fig.org/psr/psr-7/). Semua
-variabel global dapat ditemukan di dalam objek Request.
+Untuk global variable, mereka semua dihasilkan mengikuti sebuah `Request`. `Request/Response` dari `Hyperf` ditangani oleh [hyperf/http-message](https://github.com/hyperf/http-message) dengan mengimplementasikan [PSR-7](https://www.php-fig.org/psr/psr-7/), sehingga semua global variable bisa mendapatkan nilai yang relevan dalam objek `Request`;
 
-Untuk variabel `global` dan variabel `static`, pada mode `PHP-FPM`, esensinya
-adalah untuk bertahan hidup dalam satu siklus hidup request. Sedangkan pada
-`Hyperf`, karena merupakan aplikasi `CLI`, akan ada dua siklus hidup yang panjang,
-yaitu `global cycle` dan `request cycle (coroutine cycle)`.
+Untuk `global` variables dan `static` variables, dalam mode `PHP-FPM`, mereka pada dasarnya hidup dalam satu lifecycle request, sementara di `Hyperf`, karena ini adalah aplikasi `CLI`, ada dua lifecycle panjang: `global cycle` dan `request cycle (coroutine cycle)`.
+- Global cycle: Kita hanya perlu membuat static variable untuk pemanggilan global. Static variable berarti setelah layanan dimulai, coroutine dan logika kode apa pun berbagi data dalam static variable ini, yang berarti data yang disimpan tidak dapat dilayani secara khusus untuk request tertentu atau coroutine tertentu;
+- Coroutine cycle: Karena `Hyperf` secara otomatis membuat sebuah coroutine untuk setiap request untuk memprosesnya, coroutine cycle di sini juga dapat dipahami sebagai request cycle. Dalam sebuah coroutine, semua data state harus disimpan di kelas `Hyperf\Context\Context`. Anda dapat membaca dan menyimpan data dengan struktur apa pun melalui metode `get` dan `set` dari kelas ini. Data yang dibaca atau disimpan oleh kelas `Context (coroutine context)` ini saat mengeksekusi coroutine apa pun terbatas pada coroutine yang sesuai, dan data context terkait akan secara otomatis dihancurkan ketika coroutine berakhir.
 
-- Global cycle: kita hanya perlu membuat variabel statis untuk panggilan global.
-  Variabel statis berarti semua coroutine dan logika kode berbagi data yang sama
-  dalam variabel statis ini setelah layanan dimulai. Ini berarti data yang
-  disimpan tidak dapat dikhususkan untuk request tertentu atau coroutine tertentu.
-- Coroutine cycle: karena `Hyperf` akan secara otomatis membuat coroutine untuk
-  memproses setiap request, maka siklus coroutine di sini juga dapat dipahami
-  sebagai siklus request. Di dalam coroutine, semua data state harus disimpan
-  di dalam kelas `Hyperf\Context\Context`. Data dengan struktur apa pun dibaca dan
-  disimpan menggunakan metode `get` dan `set` dari kelas tersebut. Proses Get
-  atau Set data apa pun di dalam `Context` (coroutine context) dibatasi hanya pada
-  coroutine tempat fungsi get atau set tersebut dieksekusi, dan data context yang
-  relevan akan otomatis dihancurkan ketika coroutine berakhir.
+### Batas Jumlah Maksimum Coroutine
 
-### Jumlah Maksimum Coroutine
+Atur parameter `max_coroutine` melalui metode `set` pada `Swoole Server` untuk mengonfigurasi jumlah maksimum coroutine yang dapat ada dalam sebuah `Worker` process. Karena seiring bertambahnya jumlah coroutine yang diproses oleh sebuah `Worker` process, penggunaan memori yang sesuai juga akan meningkat. Untuk menghindari melebihi batas `memory_limit` `PHP`, harap atur nilai ini sesuai dengan hasil stress test dari bisnis aktual. Nilai default `Swoole` adalah `100000` (nilai default adalah `3000` ketika versi `Swoole` kurang dari `v4.4.0-beta`). Dalam proyek `hyperf-skeleton`, ini diatur ke `100000` secara default.
 
-Atur parameter `max_coroutine` pada `Swoole Server` melalui metode `set` untuk
-mengonfigurasi jumlah maksimum coroutine yang dapat ada di dalam satu proses
-`Worker`. Karena peningkatan jumlah coroutine yang diproses oleh proses `Worker`
-akan meningkatkan penggunaan memori yang sesuai, untuk menghindari terlampauinya
-batas `memory_limit` pada `PHP`, atur nilai ini berdasarkan hasil pengujian
-tekanan (stress test) bisnis yang sebenarnya. Nilai default untuk `Swoole`
-adalah `100000` (nilai default adalah `3000` pada versi `Swoole` sebelum
-`v4.4.0-beta`), dan di proyek `hyperf-skeleton` nilai default-nya diatur menjadi
-`100000`.
-
-## Penggunaan Coroutine
+## Menggunakan Coroutine
 
 ### Membuat Coroutine
 
-Gunakan fungsi `Hyperf\Coroutine\co(callable $callable)` atau
-`Hyperf\Coroutine\go(callable $callable)` atau metode
-`Hyperf\Coroutine\Coroutine::create(callable $callable)` untuk membuat coroutine
-dengan mudah. Metode dan client yang berkaitan dengan coroutine dapat digunakan
-di dalam coroutine tersebut.
+Cukup buat coroutine melalui fungsi `Hyperf\Coroutine\co(callable $callable)`, `Hyperf\Coroutine\go(callable $callable)`, atau `Hyperf\Coroutine\Coroutine::create(callable $callable)`. Di dalam coroutine, Anda dapat menggunakan metode dan client yang terkait dengan coroutine.
 
-### Apakah Sedang Berjalan di Lingkungan Coroutine?
+### Mengecek Apakah Lingkungan Saat Ini adalah Lingkungan Coroutine
 
-Dalam beberapa kasus, kita ingin menentukan apakah saat ini sedang berjalan di
-lingkungan coroutine. Untuk beberapa kode yang kompatibel dengan lingkungan
-coroutine maupun non-coroutine, ini akan digunakan sebagai basis penilaian. Kita
-dapat menggunakan metode `Hyperf\Coroutine\Coroutine::inCoroutine(): bool` untuk
-mendapatkan hasilnya.
+Dalam beberapa kasus, kita ingin mengecek apakah kita sedang berjalan di lingkungan coroutine. Untuk beberapa kode yang kompatibel dengan lingkungan coroutine dan non-coroutine, ini dapat dijadikan sebagai dasar pengecekan. Kita bisa mendapatkan hasilnya melalui metode `Hyperf\Coroutine\Coroutine::inCoroutine(): bool`.
 
-### Mendapatkan ID Coroutine
+### Mendapatkan ID Coroutine Saat Ini
 
-Dalam beberapa kasus, kita perlu melakukan beberapa logika berdasarkan
-`coroutine ID`, seperti `coroutine context`. Anda dapat memperoleh ID coroutine
-saat ini menggunakan `Hyperf\Coroutine\Coroutine::id(): int`. Jika tidak sedang
-berada di lingkungan coroutine, metode ini akan mengembalikan `-1`.
+Dalam beberapa kasus, kita perlu melakukan beberapa logika berdasarkan `Coroutine ID`, seperti logika untuk `Coroutine Context`. Anda bisa mendapatkan `Coroutine ID` saat ini melalui `Hyperf\Coroutine\Coroutine::id(): int`. Jika tidak berada di lingkungan coroutine, `-1` akan dikembalikan.
 
 ### Channel
 
-Mirip dengan `chan` pada bahasa Go, `Channel` menyediakan dukungan untuk mode
-coroutine multi-producer dan multi-consumer. Lapisan bawah secara otomatis
-mengimplementasikan peralihan dan penjadwalan coroutine. `Channel` mirip dengan
-array PHP; ia hanya memakan memori dan tidak ada sumber daya tambahan lain yang
-diminta. Semua operasinya adalah operasi memori, tanpa `I/O`, dan penggunaannya
-mirip dengan antrean `SplQueue`.
+Mirip dengan `chan` di bahasa `Go`, `Channel` menyediakan dukungan untuk mode coroutine multi-producer dan multi-consumer. Lapisan bawah secara otomatis mengimplementasikan coroutine switching dan scheduling. `Channel` mirip dengan array `PHP`, hanya menggunakan memori, tanpa permintaan resource tambahan lainnya. Semua operasi adalah operasi memori, tanpa konsumsi `I/O`. Penggunaannya mirip dengan antrian `SplQueue`.
+`Channel` terutama digunakan untuk komunikasi antar coroutine. Ketika kita ingin mengembalikan beberapa data dari satu coroutine ke coroutine lainnya, kita dapat melewatinya melalui `Channel`.
 
-`Channel` terutama digunakan untuk komunikasi antar-coroutine. Ketika kita
-ingin mengembalikan beberapa data dari satu coroutine ke coroutine lainnya, kita
-dapat meneruskannya melalui `Channel`.
+Method utama:
+- `Channel->push`: Ketika coroutine lain sedang menunggu untuk `pop` data dalam antrian, secara otomatis membangunkan consumer coroutine secara berurutan. Ketika antrian penuh, secara otomatis `yield` untuk menyerahkan kontrol, dan menunggu coroutine lain untuk mengonsumsi data.
+- `Channel->pop`: Ketika antrian kosong, secara otomatis `yield`, dan menunggu coroutine lain untuk memproduksi data. Setelah mengonsumsi data, antrian dapat menulis data baru, dan secara otomatis membangunkan producer coroutine secara berurutan.
 
-Metode utama:
-- `Channel->push` : Ketika ada coroutine lain di dalam antrean yang menunggu
-  data `pop`, coroutine konsumen secara otomatis dipanggil secara berurutan.
-  Secara otomatis `yield` melepaskan hak kontrol ketika antrean penuh, menunggu
-  coroutine lain untuk mengonsumsi data.
-- `Channel->pop` : Secara otomatis `yield` ketika antrean kosong, menunggu
-  coroutine lain memproduksi data. Setelah data dikonsumsi, antrean dapat
-  menerima data baru yang di-push ke dalamnya dan secara otomatis membangunkan
-  coroutine produsen secara berurutan.
-
-Berikut adalah contoh sederhana komunikasi antar-coroutine:
+Berikut adalah contoh sederhana komunikasi antar coroutine:
 
 ```php
 <?php
@@ -296,54 +120,41 @@ co(function () {
 });
 ```
 
-### Defer
+### Fitur Defer
 
-Ketika kita ingin menjalankan beberapa kode di akhir coroutine, kita dapat
-menggunakan fungsi `defer(callable $callable)` atau
-`Hyperf\Coroutine::defer(callable $callable)` untuk memasukkan fungsi dalam
-bentuk `stack`. Setelah disimpan, fungsi-fungsi di dalam `stack` tersebut akan
-dieksekusi satu per satu pada akhir coroutine saat ini, dengan urutan eksekusi
-LIFO (Last in, First out).
+Ketika kita ingin menjalankan beberapa kode saat sebuah coroutine berakhir, kita dapat menggunakan fungsi `defer(callable $callable)` atau `Hyperf\Coroutine::defer(callable $callable)` untuk menyimpan sebuah fungsi dalam bentuk `stack`. Fungsi-fungsi dalam `stack` akan dieksekusi satu per satu dalam proses `first-in-last-out` ketika coroutine saat ini berakhir.
 
-### WaitGroup
+### Fitur WaitGroup
 
-`WaitGroup` adalah fitur yang diturunkan dari `Channel`. Jika Anda mengetahui
-tentang bahasa `Go`, Anda akan familier dengan fitur `WaitGroup`. Di dalam
-`Hyperf`, tujuan dari `WaitGroup` adalah untuk memblokir coroutine utama,
-menunggu hingga semua child coroutine yang relevan selesai menyelesaikan tugas,
-dan kemudian melanjutkan jalannya program. Pemblokiran tunggu yang dimaksud di
-sini hanya berlaku untuk coroutine utama (yaitu coroutine saat ini) dan tidak
-memblokir proses saat ini.
-Kami mendemonstrasikan fitur ini dengan sepotong kode:
+`WaitGroup` adalah fitur yang berasal dari `Channel`. Jika Anda pernah mengenal bahasa `Go`, kita semua tahu fitur `WaitGroup`. Di `Hyperf`, tujuan `WaitGroup` adalah untuk memungkinkan main coroutine memblokir dan menunggu sampai semua sub-coroutine terkait menyelesaikan tugas mereka sebelum melanjutkan eksekusi. Pemblokiran dan penungguan yang disebutkan di sini hanya berlaku untuk main coroutine (yaitu coroutine saat ini) dan tidak akan memblokir proses saat ini.
+Kita gunakan sepotong kode untuk mendemonstrasikan fitur ini:
 
 ```php
 <?php
 $wg = new \Hyperf\Coroutine\WaitGroup();
-// Counter increase 2
+// Increment counter sebanyak dua
 $wg->add(2);
-// Create coroutine A
+// Membuat Coroutine A
 co(function () use ($wg) {
-    // some code
-    // Counter decrease 1
+    // beberapa kode
+    // Decrement counter sebanyak satu
     $wg->done();
 });
-// Create coroutine B
+// Membuat Coroutine B
 co(function () use ($wg) {
-    // some code
-    // Counter decrease 1
+    // beberapa kode
+    // Decrement counter sebanyak satu
     $wg->done();
 });
-// Wait for coroutine A and coroutine B finished
+// Tunggu Coroutine A dan Coroutine B selesai berjalan
 $wg->wait();
 ```
 
-> Perhatikan bahwa `WaitGroup` sendiri juga perlu digunakan di dalam coroutine.
+> Perhatikan bahwa `WaitGroup` sendiri juga perlu digunakan dalam sebuah coroutine.
 
-### Parallel
+### Fitur Parallel
 
-Fitur `Parallel` adalah sebuah abstraksi berbasis fitur `WaitGroup` yang
-disediakan oleh Hyperf, memberikan cara penggunaan yang lebih nyaman dibandingkan
-dengan `WaitGroup`. Mari kita demonstrasikan dengan sepotong kode:
+Fitur `Parallel` adalah metode penggunaan yang lebih nyaman yang diabstraksi oleh Hyperf berdasarkan fitur `WaitGroup`. Mari kita demonstasikan dengan sepotong kode.
 
 ```php
 <?php
@@ -362,30 +173,24 @@ $parallel->add(function () {
 });
 
 try{
-    // Hasil $results adalah [1, 2]
-   $results = $parallel->wait(); 
+    // $results akan berupa [1, 2]
+    $results = $parallel->wait();
 } catch(ParallelExecutionException $e){
-    // $e->getResults() mendapatkan nilai return dari coroutine.
-    // $e->getThrowables() mendapatkan exception yang muncul di coroutine.
+    // $e->getResults() untuk mendapatkan nilai return dalam coroutine.
+    // $e->getThrowables() untuk mendapatkan exception yang terjadi dalam coroutine.
 }
 ```
-> Perhatikan bahwa exception `Hyperf\Coroutine\Exception\ParallelExecutionException`
-> hanya akan dilempar pada versi 1.1.6 dan yang lebih baru.
 
-Dari kode di atas, kita dapat melihat bahwa hanya membutuhkan waktu 1 detik
-untuk mendapatkan ID dari dua coroutine yang berbeda. Saat memanggil
-`add(callable $callable)`, kelas `Parallel` akan secara otomatis membuat
-coroutine untuknya, dan menggabungkannya ke dalam dispatcher milik `WaitGroup`.
-Tidak hanya itu, kita juga dapat menyederhanakan kode di atas lebih lanjut
-dengan menggunakan fungsi `parallel(array $callables)` untuk mencapai tujuan yang
-sama. Berikut adalah kode yang disederhanakan.
+> Perhatikan bahwa exception `Hyperf\Coroutine\Exception\ParallelExecutionException` hanya akan dilempar di versi 1.1.6 dan versi yang lebih baru.
+
+Melalui kode di atas, kita dapat melihat bahwa hanya butuh `1` detik untuk mendapatkan `ID` dari dua coroutine yang berbeda. Ketika memanggil `add(callable $callable)`, kelas `Parallel` akan secara otomatis membuat sebuah coroutine untuknya dan menambahkannya ke penjadwalan `WaitGroup`.
+Tidak hanya itu, kita juga dapat lebih menyederhanakan kode di atas melalui fungsi `parallel(array $callables)` untuk mencapai tujuan yang sama. Berikut adalah kode yang disederhanakan.
 
 ```php
 <?php
 use Hyperf\Coroutine\Coroutine;
 
-// Parameter array yang dikirim juga dapat menggunakan key agar mudah membedakan child coroutine,
-// dan hasil yang dikembalikan juga akan mengikuti key terkait.
+// Anda juga dapat menambahkan key ke parameter array yang dikirim untuk memudahkan membedakan sub-coroutine, dan hasil yang dikembalikan juga akan mengembalikan hasil yang sesuai berdasarkan key tersebut.
 $result = parallel([
     function () {
         sleep(1);
@@ -398,21 +203,11 @@ $result = parallel([
 ]);
 ```
 
-> Perhatikan bahwa `Parallel` sendiri juga perlu digunakan di dalam coroutine.
+> Perhatikan bahwa `Parallel` sendiri juga perlu digunakan dalam sebuah coroutine.
 
-#### Membatasi Jumlah Maksimum Coroutine yang Berjalan Bersamaan pada Parallel
+#### Membatasi Jumlah Maksimum Coroutine yang Berjalan Secara Bersamaan di Parallel
 
-Saat ada banyak task yang ditambahkan ke `Parallel`, misalnya semuanya adalah
-request task, mengirim semua request dalam sekejap dapat membuat service di sisi
-lain menerima terlalu banyak request sekaligus dan berisiko tidak mampu
-memprosesnya. Karena itu, service di sisi lain perlu dilindungi secara wajar.
-Namun kita tetap ingin menggunakan mekanisme `Parallel` untuk mempercepat waktu
-request. Untuk itu, Anda dapat mengirimkan parameter pertama saat membuat objek
-`Parallel` untuk mengatur jumlah maksimum coroutine yang berjalan. Misalnya,
-jika jumlah maksimum coroutine diatur menjadi `5`, maka di dalam `Parallel`
-hanya akan ada paling banyak `5` coroutine yang berjalan. Setelah salah satu dari
-`5` coroutine tersebut selesai, coroutine berikutnya baru akan dijalankan sampai
-semua coroutine menyelesaikan task-nya. Contoh kode:
+Ketika ada banyak tugas yang ditambahkan ke `Parallel`, dengan asumsi semuanya adalah task request, mengirim semua request sekaligus sangat mungkin menyebabkan layanan lawan tidak dapat menanganinya karena menerima sejumlah besar request dalam satu waktu, yang membawa risiko downtime. Oleh karena itu, perlu untuk melindungi pihak lawan dengan tepat, tetapi kami juga berharap dapat mempercepat request ini melalui mekanisme `Parallel`. Dalam kasus ini, Anda dapat mengatur jumlah maksimum coroutine yang berjalan dengan melewatkan parameter pertama saat menginisiasi objek `Parallel`. Sebagai contoh, jika kita ingin mengatur jumlah maksimum coroutine menjadi `5`, itu berarti paling banyak `5` coroutine akan berjalan di `Parallel` pada waktu yang sama. Hanya ketika sebuah coroutine dalam `5` tersebut selesai, coroutine berikutnya akan mulai berjalan sampai semua coroutine menyelesaikan tugas mereka. Contoh kodenya adalah sebagai berikut:
 
 ```php
 use Hyperf\Coroutine\Exception\ParallelExecutionException;
@@ -425,25 +220,21 @@ for ($i = 0; $i < 20; $i++) {
         sleep(1);
         return Coroutine::id();
     });
-} 
+}
 
 try{
-   $results = $parallel->wait(); 
+   $results = $parallel->wait();
 } catch(ParallelExecutionException $e){
-    // $e->getResults() mendapatkan nilai return dari coroutine.
-    // $e->getThrowables() mendapatkan exception yang muncul di coroutine.
+    // $e->getResults() untuk mendapatkan nilai return dalam coroutine.
+    // $e->getThrowables() untuk mendapatkan exception yang terjadi dalam coroutine.
 }
 ```
 
-### Kontrol Eksekusi Coroutine dengan Concurrent
+### Kontrol Eksekusi Coroutine Konkuren
 
-`Hyperf\Coroutine\Concurrent` diimplementasikan berdasarkan
-`Swoole\Coroutine\Channel`, dan digunakan untuk mengontrol jumlah maksimum
-coroutine yang berjalan bersamaan dalam satu blok kode.
+`Hyperf\Coroutine\Concurrent` diimplementasikan berdasarkan `Swoole\Coroutine\Channel` dan digunakan untuk mengontrol jumlah maksimum coroutine yang berjalan secara bersamaan dalam sebuah blok kode.
 
-Pada contoh berikut, ketika `10` child coroutine sedang berjalan bersamaan,
-loop akan terblokir. Namun yang terblokir hanya coroutine saat ini. Setelah ada
-satu slot dilepas, loop akan melanjutkan eksekusi child coroutine berikutnya.
+Dalam contoh berikut, ketika `10` sub-coroutine dijalankan pada saat yang sama, ia akan memblokir dalam loop, tetapi hanya akan memblokir coroutine saat ini sampai ada posisi yang dirilis, dan kemudian loop akan terus mengeksekusi sub-coroutine berikutnya.
 
 ```php
 <?php
@@ -454,87 +245,63 @@ $concurrent = new Concurrent(10);
 
 for ($i = 0; $i < 15; ++$i) {
     $concurrent->create(function () {
-        // Do something...
+        // Lakukan sesuatu...
     });
 }
 ```
 
 ### Coroutine Context
 
-Karena coroutine di dalam proses yang sama berbagi memori yang sama,
-eksekusi/peralihan coroutine bersifat tidak berurutan. Ini berarti sulit untuk
-mengendalikan coroutine mana yang saat ini aktif secara langsung (sebenarnya
-bisa, tetapi tidak ada yang ingin melakukannya dengan cara tersebut). Oleh karena
-itu, kita perlu dapat beralih ke context yang sesuai pada saat yang sama ketika
-peralihan coroutine terjadi.
-
-Mengimplementasikan manajemen context untuk coroutine di Hyperf sangatlah
-mudah. Berdasarkan method static `set(string $id, $value)`,
-`get(string $id, $default = null)`, `has(string $id)`, dan
-`override(string $id, \Closure $closure)` dari `Hyperf\Context\Context`,
-manajemen data context dapat diselesaikan. Nilai yang diatur dan didapatkan
-oleh method-method ini dibatasi hanya untuk coroutine saat ini. Ketika coroutine
-berakhir, context yang sesuai akan dirilis secara otomatis. Tidak perlu
-mengelolanya secara manual, dan tidak perlu khawatir tentang risiko kebocoran
-memori.
+Karena memori dibagikan antar coroutine dalam proses yang sama, tetapi eksekusi/switching coroutine tidak berurutan, yang berarti sulit bagi kita untuk mengontrol coroutine mana yang sedang berjalan **(sebenarnya mungkin, tetapi biasanya tidak ada yang melakukannya)**, jadi kita harus dapat mengganti context yang sesuai pada saat yang sama ketika coroutine switch terjadi.
+Di `Hyperf`, mengimplementasikan manajemen coroutine context sangat sederhana. Berdasarkan metode statis `set(string $id, $value)`, `get(string $id, $default = null)`, `has(string $id)`, dan `override(string $id, \Closure $closure)` dari kelas `Hyperf\Context\Context`, Anda dapat menyelesaikan manajemen data context. Nilai yang diatur dan diperoleh melalui metode ini terbatas pada coroutine saat ini. Ketika coroutine berakhir, context yang sesuai juga akan secara otomatis dilepaskan. Tidak perlu mengelolanya secara manual, dan tidak perlu khawatir tentang risiko memory leak.
 
 #### Hyperf\Context\Context::set()
 
-Gunakan method `set(string $id, $value)` untuk menyimpan sebuah nilai ke context
-coroutine saat ini, seperti berikut:
+Simpan sebuah nilai dalam context dari coroutine saat ini dengan memanggil metode `set(string $id, $value)`, sebagai berikut:
 
 ```php
 <?php
 use Hyperf\Context\Context;
 
-// Menyimpan string bar ke context coroutine saat ini dengan key foo
+// Simpan string bar ke dalam context coroutine saat ini dengan foo sebagai key
 $foo = Context::set('foo', 'bar');
-// Method set akan mengembalikan value sebagai return value, sehingga nilai $foo adalah bar
+// Method set akan mengembalikan nilai tersebut sebagai nilai return dari method, jadi nilai $foo adalah bar
 ```
 
 #### Hyperf\Context\Context::get()
 
-Gunakan method `get(string $id, $default = null)` untuk mengambil nilai yang
-disimpan dengan `key` `$id` dari context coroutine saat ini. Jika tidak ada,
-method ini mengembalikan `$default`, seperti berikut:
+Ambil sebuah nilai yang disimpan dengan `$id` sebagai `key` dari context coroutine saat ini dengan memanggil metode `get(string $id, $default = null)`. Jika tidak ada, kembalikan `$default`, sebagai berikut:
 
 ```php
 <?php
 use Hyperf\Context\Context;
 
-// Mengambil nilai dengan key foo dari context coroutine saat ini; jika tidak ada, mengembalikan string bar
+// Ambil nilai dengan key foo dari context coroutine saat ini. Jika tidak ada, kembalikan string bar
 $foo = Context::get('foo', 'bar');
 ```
 
 #### Hyperf\Context\Context::has()
 
-Gunakan method `has(string $id)` untuk menentukan apakah nilai dengan `key`
-`$id` ada di context coroutine saat ini. Jika ada, method ini mengembalikan
-`true`; jika tidak ada, mengembalikan `false`, seperti berikut:
+Tentukan apakah sebuah nilai yang disimpan dengan `$id` sebagai `key` ada dalam context coroutine saat ini dengan memanggil metode `has(string $id)`. Jika ada, kembalikan `true`, jika tidak, kembalikan `false`, sebagai berikut:
 
 ```php
 <?php
 use Hyperf\Context\Context;
 
-// Menentukan apakah nilai dengan key foo ada di context coroutine saat ini
+// Tentukan apakah nilai dengan key foo ada dalam context coroutine saat ini
 $foo = Context::has('foo');
 ```
 
 #### Hyperf\Context\Context::override()
 
-Ketika perlu melakukan pemrosesan context yang lebih kompleks, misalnya
-memeriksa apakah sebuah `key` ada, mengambil `value` jika ada, mengubah `value`,
-lalu menyimpannya kembali ke context container, logika kondisionalnya dapat
-menjadi cukup rumit. Anda dapat langsung menggunakan method `override` untuk
-mengimplementasikan logika tersebut, seperti berikut:
+Ketika kita perlu melakukan beberapa pemrosesan context yang kompleks, seperti pertama-tama mengecek apakah sebuah `key` ada, jika ada, ambil `value` dan kemudian lakukan beberapa modifikasi pada `value`, lalu set `value` kembali ke container context, akan ada kondisi pengecekan yang relatif rumit pada saat ini. Anda bisa langsung memanggil metode `override` untuk mengimplementasikan logika ini, sebagai berikut:
 
 ```php
 <?php
 use Psr\Http\Message\ServerRequestInterface;
 use Hyperf\Context\Context;
 
-// Mengambil objek $request dari coroutine context, menambahkan Header dengan key foo,
-// lalu menyimpannya kembali ke coroutine context
+// Ambil objek $request dari coroutine context dan set Header dengan key foo, lalu simpan kembali ke coroutine context
 $request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {
     return $request->withAddedHeader('foo', 'bar');
 });
@@ -542,14 +309,11 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
 
 ### Swoole Runtime Hook Level
 
-Framework menyediakan constant `SWOOLE_HOOK_FLAGS` pada entry function. Jika
-Anda perlu mengubah level `Runtime Hook` untuk seluruh project, misalnya ingin
-mendukung `CURL coroutine` dan versi `Swoole` lebih lama dari `v4.5.4`, ubah
-kode tersebut seperti berikut:
+Framework menyediakan konstanta `SWOOLE_HOOK_FLAGS` dalam fungsi entry. Jika Anda perlu memodifikasi level `Runtime Hook` dari seluruh proyek, misalnya, jika Anda ingin mendukung `CURL coroutines` dan versi `Swoole` lebih awal dari `v4.5.4`, Anda dapat memodifikasi kode di sini, sebagai berikut.
 
 ```php
 <?php
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-``` 
+```
 
-!> Jika versi Swoole >= `v4.5.4`, tidak perlu melakukan perubahan apa pun.
+!> Jika versi Swoole >= `v4.5.4`, tidak perlu modifikasi.
