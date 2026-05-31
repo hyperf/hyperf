@@ -1,6 +1,6 @@
 # Cache
 
-[hyperf/cache](https://github.com/hyperf/cache) menyediakan aspect cache berdasarkan implementasi `Aspect`, dan juga menyediakan class cache yang mengimplementasikan `Psr\SimpleCache\CacheInterface`.
+[hyperf/cache](https://github.com/hyperf/cache) nyediain caching berbasis aspek yang diimplementasiin pake `Aspect`, dan juga nyediain cache class yang implementasiin `Psr\SimpleCache\CacheInterface`.
 
 ## Instalasi
 
@@ -12,10 +12,10 @@ composer require hyperf/cache
 
 | Konfigurasi | Nilai Default | Keterangan |
 |:------:|:----------------------------------------:|:---------------------:|
-| driver | Hyperf\Cache\Driver\RedisDriver | Cache driver, default adalah Redis |
-| packer | Hyperf\Codec\Packer\PhpSerializerPacker | Packager |
+| driver | Hyperf\Cache\Driver\RedisDriver | Cache driver, defaultnya Redis |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker | Packer |
 | prefix | c: | Cache prefix |
-| skip_cache_results | [] | Hasil tertentu tidak disimpan di cache |
+| skip_cache_results | [] | Hasil yang ditentukan tidak di-cache |
 
 ```php
 <?php
@@ -32,14 +32,9 @@ return [
 
 ## Penggunaan
 
-### Metode Simple Cache
+### Simple Cache Mode
 
-Simple Cache adalah spesifikasi [PSR-16](https://www.php-fig.org/psr/psr-16/).
-Komponen ini menyesuaikan dengan spesifikasi tersebut. Jika Anda ingin
-menggunakan class cache `Psr\SimpleCache\CacheInterface`, misalnya jika Anda
-ingin menulis ulang modul cache milik `EasyWeChat`, Anda dapat mendapatkan
-`Psr\SimpleCache\CacheInterface` secara langsung dari dependency injection
-container, seperti yang ditunjukkan di bawah ini:
+Simple Cache ngacu ke spesifikasi [PSR-16](https://www.php-fig.org/psr/psr-16/). Komponen ini ngikutin spesifikasi itu. Kalo mau pake cache class yang implementasiin `Psr\SimpleCache\CacheInterface`, misalnya buat ganti modul cache `EasyWeChat`, tinggal ambil `Psr\SimpleCache\CacheInterface` dari dependency injection container:
 
 ```php
 
@@ -47,19 +42,10 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 
 ```
 
-### Metode Annotation
+### Mode Annotation
 
-Komponen ini menyediakan annotation `Hyperf\Cache\Annotation\Cacheable`, yang
-bekerja pada method class dan dapat mengonfigurasi cache prefix, expiration
-time, listener, serta cache group yang sesuai.
-
-Sebagai contoh, UserService menyediakan method user yang dapat melakukan query
-informasi user berdasarkan id. Ketika annotation
-`Hyperf\Cache\Annotation\Cacheable` ditambahkan, Redis cache yang sesuai akan
-secara otomatis dibuat. Key cache tersebut bernilai `user:id` dan timeout
-sebesar `9000` detik. Saat melakukan query untuk pertama kalinya, data akan
-diambil dari database, dan untuk query berikutnya, data akan diambil dari
-cache.
+Komponen nyediain annotation `Hyperf\Cache\Annotation\Cacheable` yang dipasang di method class, bisa ngatur prefix cache, waktu kedaluwarsa, listener, dan cache group.
+Misalnya, `UserService` punya method `user` buat nanyain info user berdasarkan `id`. Abis ditambahin annotation `Hyperf\Cache\Annotation\Cacheable`, cache Redis bakal otomatis tergenerate, dengan `key` `user:id` dan timeout `9000` detik. Pertama kali query, ambil dari database; query selanjutnya, ambil dari cache.
 
 ```php
 <?php
@@ -85,16 +71,13 @@ class UserService
 }
 ```
 
-### Membersihkan cache yang dibuat oleh `#[Cacheable]`
+### Menghapus Cache yang Dihasilkan oleh `#[Cacheable]`
 
-Kami menyediakan dua annotation, `CachePut` dan `CacheEvict`, untuk
-mengimplementasikan operasi update cache dan pembersihan cache.
+Ada dua annotation: `CachePut` buat update cache, dan `CacheEvict` buat hapus cache.
 
-Tentu saja, kita juga dapat menghapus cache melalui event. Mari buat sebuah
-Service baru untuk menyediakan method yang membantu kita menangani caching.
+Tentu aja, kita juga bisa hapus cache lewat events. Di bawah ini, bikin `Service` baru dan sediah method buat nanganin cache.
 
-> Namun, kami menyarankan pengguna untuk menggunakan pemrosesan annotation
-> alih-alih listener.
+> Tapi kami saranin pake annotation daripada listener.
 
 ```php
 <?php
@@ -121,8 +104,7 @@ class SystemService
 }
 ```
 
-Ketika kita melakukan kustomisasi pada `value` dari `Cacheable`, seperti situasi
-berikut.
+Ketika kita menyesuaikan nilai `value` dari `Cacheable`, misalnya dalam situasi berikut.
 
 ```php
 <?php
@@ -144,8 +126,7 @@ class DemoService
 }
 ```
 
-Anda perlu menyesuaikan variabel `$arguments` di dalam constructor
-`DeleteListenerEvent`. Kode lengkapnya adalah sebagai berikut.
+Maka Anda perlu mengubah variabel `$arguments` di constructor `DeleteListenerEvent` sesuai dengan itu. Kode spesifiknya adalah sebagai berikut.
 
 ```php
 <?php
@@ -176,9 +157,7 @@ class SystemService
 
 ### Cacheable
 
-Sebagai contoh, pada konfigurasi di bawah ini, cache prefix adalah `user`,
-timeout adalah `7200`, dan nama event penghapusan adalah `USER_CACHE`. Cache
-KEY yang sesuai akan dibuat sebagai `c:user:1`.
+Misalnya, dalam konfigurasi berikut, cache prefix adalah `user`, timeout adalah `7200`, dan nama deletion event adalah `USER_CACHE`. Cache `KEY` yang dihasilkan adalah `c:user:1`.
 
 ```php
 <?php
@@ -205,12 +184,9 @@ class UserService
 }
 ```
 
-Ketika `value` diatur, framework akan memberi nama key `KEY` cache sesuai
-dengan aturan yang telah ditentukan. Pada contoh berikut, ketika `$user->id = 1`,
-`KEY` cache-nya adalah `c:userBook:_1`
+Setelah menyetel `value`, framework akan menamai cache `KEY` sesuai dengan aturan yang ditetapkan. Seperti dalam contoh berikut, ketika `$user->id = 1`, cache `KEY` adalah `c:userBook:_1`
 
-> Konfigurasi ini juga mendukung jenis annotation cache lainnya yang
-> dijelaskan di bawah ini
+> Konfigurasi ini juga mendukung tipe cache annotation lain yang disebutkan di bawah ini.
 
 ```php
 <?php
@@ -237,10 +213,7 @@ class UserBookService
 
 ### CacheAhead
 
-Sebagai contoh, pada konfigurasi di bawah ini, cache prefix adalah `user`,
-timeout adalah `7200`, cache KEY yang dihasilkan adalah `c:user:1`, dan cache
-akan diinisialisasi setiap 10 detik dari detik ke-7200 hingga detik ke-600
-sebelum kedaluwarsa hingga berhasil untuk pertama kalinya.
+Misalnya, dalam konfigurasi berikut, cache prefix adalah `user`, timeout adalah `7200`, dan cache `KEY` yang dihasilkan adalah `c:user:1`. Dan antara 7200 - 600 detik, inisialisasi cache dilakukan setiap 10 detik sampai berhasil untuk pertama kalinya.
 
 ```php
 <?php
@@ -269,9 +242,7 @@ class UserService
 
 ### CachePut
 
-`CachePut` berbeda dengan `Cacheable` karena ia mengeksekusi body method
-setiap kali dipanggil dan kemudian menulis ulang cache. Jadi, ketika kita
-ingin memperbarui cache, kita dapat memanggil method yang bersangkutan.
+`CachePut` beda sama `Cacheable`, ia bakal ngejalanin badan fungsi setiap kali dipanggil, lalu numpuk cache. Jadi kalo mau update cache, tinggal panggil method yang relevan.
 
 ```php
 <?php
@@ -302,8 +273,7 @@ class UserService
 
 ### CacheEvict
 
-`CacheEvict` lebih mudah dipahami. Ketika body method dijalankan, cache akan
-dibersihkan secara aktif.
+CacheEvict lebih simpel: abis ngejalanin badan method, cache langsung dihapus.
 
 ```php
 <?php
@@ -324,18 +294,17 @@ class UserBookService
 }
 ```
 
-## Cache driver
+## Cache Driver
 
-### Redis driver
+### Redis Driver
 
-`Hyperf\Cache\Driver\RedisDriver` akan menyimpan data cache di `Redis`, dan
-pengguna perlu mengonfigurasi `Redis configuration` yang sesuai. Mode ini
-merupakan mode default.
+`Hyperf\Cache\Driver\RedisDriver` nyimpen data cache di `Redis`, dan Anda perlu konfigurasi `Redis` dulu. Ini mode default.
 
-### Process memory driver
+### Process Memory Driver
 
-Jika Anda perlu menyimpan data cache ke dalam memori, Anda dapat mencoba
-driver ini. Konfigurasinya adalah sebagai berikut:
+Kalo perlu nyimpen data di memory, bisa pake driver ini.
+
+Konfigurasinya adalah sebagai berikut:
 
 ```php
 <?php
@@ -347,12 +316,9 @@ return [
 ];
 ```
 
-### Coroutine memory driver
+### Coroutine Memory Driver
 
-Jika Anda perlu menyimpan data cache ke dalam `Context`, Anda dapat mencoba
-driver ini. Sebagai contoh, pada skenario aplikasi di bawah ini, `Demo::get`
-akan dipanggil berkali-kali di beberapa tempat, tetapi Anda tidak ingin
-melakukan query ke `Redis` setiap saat.
+Kalo perlu nyimpen data di `Context`, bisa pake driver ini. Misalnya, di skenario berikut, `Demo::get` bakal dipanggil berkali-kali di banyak tempat, tapi Anda gak mau query ke `Redis` tiap kali.
 
 ```php
 <?php
