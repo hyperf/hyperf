@@ -1,6 +1,5 @@
-# Nano
 
-Dengan `hyperf/nano`, Anda dapat membangun aplikasi Hyperf dengan cepat tanpa skeleton dan tanpa konfigurasi.
+Dengan `hyperf/nano`, Anda dapat dengan cepat membangun aplikasi Hyperf tanpa scaffolding dan tanpa konfigurasi.
 
 ## Instalasi
 
@@ -44,15 +43,15 @@ Sesederhana itu.
 
 ## Fitur
 
-* Tanpa skeleton
-* Zero konfigurasi
+* Tanpa scaffolding
+* Tanpa konfigurasi
 * Startup cepat
 * Gaya closure
-* Mendukung semua fitur Hyperf kecuali anotasi
+* Mendukung semua fitur Hyperf kecuali annotation
 * Kompatibel dengan semua komponen Hyperf
-* Phar-friendly
+* Ramah Phar
 
-## Contoh Lebih Lanjut
+## Contoh Lainnya
 
 ### Routing
 
@@ -79,7 +78,6 @@ $app->run();
 ```
 
 ### DI Container
-
 ```php
 <?php
 use Hyperf\Nano\ContainerProxy;
@@ -108,7 +106,6 @@ $app->run();
 > Di semua callback closure yang dikelola `$app`, `$this` terikat ke `Hyperf\Nano\ContainerProxy`.
 
 ### Middleware
-
 ```php
 <?php
 use Hyperf\Nano\Factory\AppFactory;
@@ -129,7 +126,7 @@ $app->addMiddleware(function ($request, $handler) {
 $app->run();
 ```
 
-> Selain closure, semua method `$app->addXXX()` juga menerima nama class sebagai parameter. Anda dapat menggunakan class Hyperf yang sesuai.
+> Selain closure, semua method $app->addXXX() menerima nama class sebagai parameter. Anda dapat memasukkan class Hyperf yang sesuai.
 
 ### Exception Handler
 
@@ -148,13 +145,13 @@ $app->get('/', function () {
 
 $app->addExceptionHandler(function ($throwable, $response) {
     return $response->withStatus('418')
-        ->withBody(new SwooleStream('I\'m a teapot'));
+        ->withBody(new SwooleStream('Saya sebuah teko'));
 });
 
 $app->run();
 ```
 
-### Command
+### Command Line
 
 ```php
 <?php
@@ -166,7 +163,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 $app = AppFactory::create();
 
 $app->addCommand('echo', function(){
-    $this->get(StdoutLoggerInterface::class)->info('A new command called echo!');
+    $this->get(StdoutLoggerInterface::class)->info('Sebuah perintah baru bernama echo!');
 });
 
 $app->run();
@@ -191,14 +188,13 @@ require_once __DIR__ . '/vendor/autoload.php';
 $app = AppFactory::create();
 
 $app->addListener(BootApplication::class, function($event){
-    $this->get(StdoutLoggerInterface::class)->info('App started');
+    $this->get(StdoutLoggerInterface::class)->info('Aplikasi dimulai');
 });
 
 $app->run();
 ```
 
 ### Custom Process
-
 ```php
 <?php
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -211,14 +207,14 @@ $app = AppFactory::create();
 $app->addProcess(function(){
     while (true) {
         sleep(1);
-        $this->get(StdoutLoggerInterface::class)->info('Processing...');
+        $this->get(StdoutLoggerInterface::class)->info('Memproses...');
     }
 });
 
 $app->run();
 ```
 
-### Crontab
+### Cron Job
 
 ```php
 <?php
@@ -230,14 +226,13 @@ require_once __DIR__ . '/vendor/autoload.php';
 $app = AppFactory::create();
 
 $app->addCrontab('* * * * * *', function(){
-    $this->get(StdoutLoggerInterface::class)->info('execute every second!');
+    $this->get(StdoutLoggerInterface::class)->info('dijalankan setiap detik!');
 });
 
 $app->run();
 ```
 
 ### Menggunakan Komponen Hyperf
-
 ```php
 <?php
 use Hyperf\DB\DB;

@@ -1,13 +1,6 @@
 # Logger
 
-Komponen `hyperf/logger` diimplementasikan berdasarkan
-[psr/logger](https://github.com/php-fig/log), dan
-[monolog/monolog](https://github.com/Seldaek/monolog) digunakan secara default
-sebagai driver. Beberapa konfigurasi log disediakan secara default dalam proyek
-`hyperf-skeleton`, dan `Monolog\Handler\StreamHandler` digunakan secara default.
-Karena `Swoole` telah meng-coroutine-kan fungsi-fungsi seperti `fopen`,
-`fwrite`, selama parameter `useLocking` tidak disetel ke `true`, coroutine
-tersebut aman (coroutine-safe).
+Komponen `hyperf/logger` diimplementasikan berdasarkan [psr/logger](https://github.com/php-fig/log) dan menggunakan [monolog/monolog](https://github.com/Seldaek/monolog) sebagai driver bawaan. Di dalam project `hyperf-skeleton`, beberapa konfigurasi logger sudah disediakan secara default, menggunakan `Monolog\Handler\StreamHandler`. Karena `Swoole` telah mendukung coroutine untuk fungsi seperti `fopen` dan `fwrite`, maka ini aman digunakan dalam coroutine selama parameter `useLocking` tidak disetel ke `true`.
 
 ## Instalasi
 
@@ -17,9 +10,7 @@ composer require hyperf/logger
 
 ## Konfigurasi
 
-Beberapa konfigurasi log disediakan secara default dalam proyek
-`hyperf-skeleton`. Secara default, file konfigurasi log adalah
-`config/autoload/logger.php`. Contohnya adalah sebagai berikut:
+Di dalam project `hyperf-skeleton`, beberapa konfigurasi logger sudah disediakan secara default. Secara default, file konfigurasi untuk logger adalah `config/autoload/logger.php`, seperti contoh berikut:
 
 ```php
 <?php
@@ -45,7 +36,7 @@ return [
 ];
 ```
 
-## Petunjuk Penggunaan
+## Penggunaan
 
 ```php
 <?php
@@ -59,26 +50,26 @@ use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
+
     protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        // The first parameter corresponds to the name of the log, and the second parameter corresponds to the key in config/autoload/logger.php
+        // Argumen pertama adalah nama log, argumen kedua adalah key di config/autoload/logger.php
         $this->logger = $loggerFactory->get('log', 'default');
     }
 
     public function method()
     {
-        // Do something.
-        $this->logger->info("Your log message.");
+        // Lakukan sesuatu.
+        $this->logger->info("Pesan log Anda.");
     }
 }
 ```
 
-## Pengetahuan Dasar tentang Monolog
+## Pengetahuan Dasar Monolog
 
-Mari kita lihat beberapa konsep dasar yang terlibat dalam monolog dengan kode
-berikut:
+Mari kita lihat beberapa konsep dasar `monolog` melalui kode berikut:
 
 ```php
 use Monolog\Formatter\LineFormatter;
@@ -86,36 +77,36 @@ use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-// Create a Channel. The parameter log is the name of the Channel
+// Membuat Channel, argumen 'log' adalah nama Channel
 $log = new Logger('log');
 
-// Create two Handlers, corresponding to variables $stream and $fire
+// Membuat dua Handler, sesuai dengan variabel $stream dan $fire
 $stream = new StreamHandler('test.log', Logger::WARNING);
 $fire = new FirePHPHandler();
 
-// Define the time format as "Y-m-d H:i:s"
+// Menentukan format tanggal sebagai "Y-m-d H:i:s"
 $dateFormat = "Y n j, g:i a";
-// Define the log format as "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+// Menentukan format log sebagai "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
 $output = "%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n";
-// Create a Formatter based on the time format and log format
+// Membuat Formatter berdasarkan format tanggal dan format log
 $formatter = new LineFormatter($output, $dateFormat);
 
-// Set Formatter to Handler
+// Mengatur Formatter ke Handler
 $stream->setFormatter($formatter);
 
-// Push the Handler into the Handler queue of the Channel
+// Mendorong Handler ke dalam antrian Handler Channel
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 
-// Clone new log channel
+// Meng-clone channel log baru
 $log2 = $log->withName('log2');
 
-// Add records to the log
+// Menambahkan record ke log
 $log->warning('Foo');
 
-// Add extra data to record
+// Menambahkan data tambahan ke record
 // 1. log context
-$log->error('a new user', ['username' => 'daydaygo']);
+$log->error('pengguna baru', ['username' => 'daydaygo']);
 // 2. processor
 $log->pushProcessor(function ($record) {
     $record['extra']['dummy'] = 'hello';
@@ -125,35 +116,20 @@ $log->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor());
 $log->alert('czl');
 ```
 
-- Pertama, instansiasi `Logger` dan tentukan nama yang sesuai dengan `channel`.
-- Anda dapat mengikat (bind) beberapa `Handler` ke `Logger`. `Logger` melakukan
-  pencatatan log, lalu menyerahkannya ke `Handler` untuk diproses.
-- `Handler` dapat menentukan **log level** mana yang perlu diproses, seperti
-  `Logger::WARNING` atau hanya memproses log dengan tingkat log
-  `>=Logger::WARNING`.
-- Siapa yang akan memformat log? `Formatter` yang akan melakukannya. Cukup setel
-  Formatter dan ikat ke `Handler` yang sesuai.
-- Bagian log yang disertakan:
-  `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`.
-- Bedakan informasi tambahan yang ditambahkan dalam log `context` dan `extra`:
-  `context` ditentukan secara tambahan oleh pengguna saat mencatat log, yang
-  bersifat lebih fleksibel; sedangkan `extra` ditambahkan secara tetap oleh
-  `Processor` yang terikat pada `Logger`, yang lebih cocok untuk mengumpulkan
-  beberapa **informasi umum**.
+- Pertama, instansiasi `Logger` dan berikan nama; nama tersebut sesuai dengan `channel`.
+- Anda dapat mengikat beberapa `Handler` ke satu `Logger`. Ketika `Logger` mencatat log, ia mendelegasikan pemrosesan ke `Handler`-handler tersebut.
+- `Handler` dapat menentukan **level log** mana yang akan ditangani, misalnya, `Logger::WARNING` hanya akan menangani log dengan level `>= Logger::WARNING`.
+- Siapa yang memformat log? `Formatter`. Atur `Formatter` dan ikat ke `Handler` yang sesuai.
+- Sebuah log terdiri dari: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
+- Bedakan antara `context` dan `extra` yang ditambahkan dalam log: `context` adalah tambahan yang ditentukan oleh pengguna saat mencatat log, yang lebih fleksibel; `extra` ditambahkan secara tetap oleh `Processor` yang terikat pada `Logger`, yang lebih cocok untuk mengumpulkan **informasi umum**.
 
-## Penggunaan Lebih Lanjut
+## Penggunaan Lanjutan
 
-### Mengenkapsulasi Kelas `Log`
+### Membungkus Kelas `Log`
 
-Terkadang, Anda mungkin ingin mempertahankan kebiasaan logging seperti pada
-kebanyakan framework. Maka Anda dapat membuat kelas `Log` di bawah `App`, dan
-memanggil magic static method `__callStatic` untuk mengakses `Logger` dan setiap
-level logging. Mari kita demonstrasikan melalui kode:
+Terkadang Anda mungkin ingin mempertahankan kebiasaan pencatatan log yang digunakan di sebagian besar framework. Dalam kasus seperti itu, Anda dapat membuat kelas `Log` di bawah `App` dan menggunakan metode magic `__callStatic` untuk mengimplementasikan panggilan statis guna mengakses `Logger` dan mencatat log di berbagai level. Mari kita demonstrasikan dengan kode:
 
-> Ingatlah untuk tidak mengaitkan nama logger dengan request, seperti
-> menghubungkan $request_id sebagai nama logger. Hal ini dapat menyebabkan
-> objek log tingkat request disimpan di dalam factory, yang mengakibatkan
-> memory leak yang serius.
+> Ingat, saat menggunakannya, jangan biarkan $name terikat dengan request. Misalnya, menggunakan $request_id sebagai nama logger akan menyebabkan Factory menyimpan objek logger di tingkat request, yang menyebabkan kebocoran memori yang parah.
 
 ```php
 namespace App;
@@ -170,24 +146,15 @@ class Log
 }
 ```
 
-Secara default, `Channel` bernama `app` digunakan untuk mencatat log. Anda juga
-dapat menggunakan metode `Log::get($name)` untuk mendapatkan `Logger` dari
-`Channel` yang berbeda. `Container` yang andal dapat membantu Anda menyelesaikan
-semua itu.
+Secara default, ia menggunakan `Channel` bernama `app` untuk mencatat log. Anda juga bisa mendapatkan `Logger` untuk `Channel` yang berbeda menggunakan metode `Log::get($name)`. `Container` yang powerful menangani semua ini untuk Anda.
 
-### Log stdout
+### Logging ke stdout
 
-Secara default, output log dari komponen framework didukung oleh kelas
-implementasi dari interface `Hyperf\Contract\StdoutLoggerInterface`, yaitu
-`Hyperf\Framework\Logger\StdoutLogger`. Kelas implementasi ini hanya untuk
-mengeluarkan informasi relevan pada `stdout` melalui `print_r()`, yang merupakan
-`terminal` tempat memulai `Hyperf`. Dalam hal ini, `monolog` sebenarnya tidak
-digunakan. Bagaimana jika Anda ingin menggunakan `monolog` agar konsisten?
+Secara default, log yang dihasilkan oleh komponen framework didukung oleh kelas implementasi `Hyperf\Framework\Logger\StdoutLogger` dari antarmuka `Hyperf\Contract\StdoutLoggerInterface`. Kelas ini hanya mengeluarkan informasi melalui `print_r()` ke `standard output (stdout)`, yaitu `Terminal` yang menjalankan `Hyperf`, yang berarti `monolog` sebenarnya tidak digunakan. Lalu bagaimana jika kita ingin menggunakan `monolog` untuk menjaga konsistensi?
 
-Tentu saja, hal ini dapat dilakukan melalui `Container` yang andal.
+Ya, tetap melalui `Container` yang powerful.
 
-- Pertama, implementasikan kelas `StdoutLoggerFactory`. Penggunaan `Factory`
-  dapat dijelaskan lebih rinci dalam bab [Dependency Injection](id/di.md).
+- Pertama, implementasikan kelas `StdoutLoggerFactory`. Untuk detail lebih lanjut tentang penggunaan `Factory`, silakan lihat bab [Dependency Injection](id/di.md).
 
 ```php
 <?php
@@ -206,8 +173,7 @@ class StdoutLoggerFactory
 }
 ```
 
-- Deklarasikan dependensi, pekerjaan `StdoutLoggerInterface` dilakukan oleh
-  kelas yang diinstansiasi oleh `StdoutLoggerFactory` sebagai dependensi aktual.
+- Deklarasikan dependency. Di tempat-tempat yang menggunakan `StdoutLoggerInterface`, dependency tersebut akan diselesaikan oleh kelas yang diinstansiasi oleh `StdoutLoggerFactory` yang sebenarnya dijadikan dependency.
 
 ```php
 // config/autoload/dependencies.php
@@ -216,10 +182,9 @@ return [
 ];
 ```
 
-### Output format log yang berbeda di lingkungan (environment) yang berbeda
+### Format Log Berbeda di Lingkungan Berbeda
 
-Banyak penggunaan di atas hanya untuk `Logger` di monolog. Mari kita lihat
-`Handler` dan `Formatter`.
+Penggunaan di atas hanya berpusat pada `Logger` di monolog. Mari kita lihat `Handler` dan `Formatter`.
 
 ```php
 // config/autoload/logger.php
@@ -251,28 +216,19 @@ return [
         ],
         'formatter' => $formatter,
     ],
-]
+];
 ```
 
-- `Handler` bernama `default` dikonfigurasi secara default, dan berisi informasi
-  tentang `Handler` ini serta `Formatter`-nya.
-- Saat mendapatkan `Logger`, jika `Handler` tidak ditentukan, lapisan bawah
-  (underlying) secara otomatis akan mengikat `default(Handler)` ke `Logger`.
-- Lingkungan dev (development): Menggunakan `php://stdout` untuk mengeluarkan
-  log ke `stdout`, dan menyetel `allowInlineLineBreaks` pada `Formatter`, yang
-  memudahkan untuk melihat log multi-baris.
-- Lingkungan non-dev: Log menggunakan `JsonFormatter`, yang akan diformat sebagai
-  `json` dan memudahkan pengiriman ke layanan log pihak ketiga.
+- Sebuah `Handler` bernama `default` dikonfigurasi secara default, yang mencakup informasi tentang `Handler` ini dan `Formatter`-nya.
+- Saat mendapatkan `Logger`, jika tidak ada `Handler` yang ditentukan, lapisan bawah secara otomatis akan mengikat `Handler` `default` ke `Logger`.
+- Lingkungan `dev` (pengembangan): Log dikeluarkan ke `standard output (stdout)` menggunakan `php://stdout`, dan `allowInlineLineBreaks` disetel di `Formatter` untuk memudahkan melihat log multi-baris.
+- Lingkungan non-`dev`: Log diformat sebagai `json` menggunakan `JsonFormatter`, yang memudahkan untuk dikirimkan ke layanan log pihak ketiga.
 
-### Rotasi file log berdasarkan tanggal
+### Rotasi File Log Berdasarkan Tanggal
 
-Jika Anda ingin file log dirotasi sesuai dengan tanggal, Anda dapat menggunakan
-`Monolog\Handler\RotatingFileHandler` yang disediakan oleh `Monolog`.
-Konfigurasinya adalah sebagai berikut:
+Jika Anda ingin file log dirotasi berdasarkan tanggal, Anda dapat menggunakan `Monolog\Handler\RotatingFileHandler` yang sudah disediakan oleh `Monolog`. Konfigurasikan sebagai berikut:
 
-Ubah file konfigurasi `config/autoload/logger.php`, ganti `Handler` menjadi
-`Monolog\Handler\RotatingFileHandler::class` dan ubah field `stream` menjadi
-`filename`.
+Ubah file konfigurasi `config/autoload/logger.php`, ganti `Handler` menjadi `Monolog\Handler\RotatingFileHandler::class`, dan ubah field `stream` menjadi `filename`.
 
 ```php
 <?php
@@ -298,17 +254,12 @@ return [
 ];
 ```
 
-Jika Anda ingin melakukan pemotongan log (log cutting) yang lebih detail, Anda
-juga dapat memperluas (extend) kelas `Monolog\Handler\RotatingFileHandler` dan
-mengimplementasikan kembali metode `rotate()`.
+Jika Anda ingin melakukan pemisahan log yang lebih terperinci, Anda juga dapat memperluas kelas `Monolog\Handler\RotatingFileHandler` dan mengimplementasikan ulang metode `rotate()`.
 
-### Mengonfigurasi beberapa `Handler`
+### Mengonfigurasi Beberapa `Handler`
 
-Pengguna dapat memodifikasi `handlers` sehingga grup log terkait dapat mendukung
-beberapa `handlers`. Sebagai contoh, pada konfigurasi berikut, ketika pengguna
-mengirimkan log dengan level lebih tinggi dari `INFO`, log tersebut akan ditulis
-di `hyperf.log` and `hyperf-debug.log`. Ketika pengguna mengirimkan log `DEBUG`,
-log tersebut hanya akan ditulis di `hyperf-debug.log`.
+Pengguna dapat memodifikasi `handlers` agar grup log yang sesuai mendukung beberapa `handler`. Misalnya, dalam konfigurasi berikut, ketika pengguna mengirimkan log dengan level `INFO` atau lebih tinggi, log akan ditulis ke `hyperf.log` dan `hyperf-debug.log`.
+Ketika pengguna mengirimkan log level `DEBUG`, log hanya akan ditulis ke `hyperf-debug.log`.
 
 ```php
 <?php
@@ -406,9 +357,10 @@ return [
         ],
     ],
 ];
+
 ```
 
-Hasilnya adalah sebagai berikut
+Hasilnya adalah sebagai berikut:
 
 ```shell
 ==> runtime/logs/hyperf.log <==
@@ -419,10 +371,10 @@ Hasilnya adalah sebagai berikut
 {"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
 ```
 
-### Log Terpadu Tingkat Request
 
-Terkadang kita perlu menghubungkan log yang berasal dari request yang sama. Untuk
-itu, kita dapat mengimplementasikan sebuah Processor.
+### Logging Terpadu di Tingkat Request
+
+Terkadang, kita perlu mengaitkan log untuk request yang sama. Oleh karena itu, kita dapat mengimplementasikan sebuah `Processor`.
 
 ```php
 <?php
@@ -446,11 +398,11 @@ class AppendRequestIdProcessor implements ProcessorInterface
         $record['extra']['coroutine_id'] = Coroutine::id();
         return $record;
     }
-}
 
+}
 ```
 
-Kemudian konfigurasikan processor tersebut ke konfigurasi `logger.php`.
+Kemudian konfigurasikan ke dalam konfigurasi `logger.php` kita:
 
 ```php
 <?php
@@ -461,7 +413,7 @@ use App\Kernel\Log;
 
 return [
     'default' => [
-        // Konfigurasi lain dihapus
+        // Hapus konfigurasi lainnya
         'processors' => [
             [
                 'class' => Log\AppendRequestIdProcessor::class,
@@ -469,5 +421,4 @@ return [
         ],
     ],
 ];
-
 ```

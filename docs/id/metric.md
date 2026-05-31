@@ -1,38 +1,29 @@
 # Service Monitoring
 
-Salah satu kebutuhan utama dalam tata kelola microservice adalah service
-observability. Sebagai pengelola microservice, tidaklah mudah untuk memantau
-status kesehatan dari berbagai service. Banyak solusi telah muncul di bidang
-ini di era cloud-native. Komponen ini mengabstraksikan telemetri dan pemantauan,
-yang merupakan pilar penting dari observability, untuk memungkinkan pengguna
-berintegrasi dengan cepat dengan infrastruktur yang ada sambil menghindari
-vendor lock-in.
+Kebutuhan inti dari tata kelola microservice adalah observabilitas service. Sebagai seorang pengelola microservice, tidak mudah untuk selalu mengetahui status kesehatan setiap service. Banyak solusi telah muncul di bidang ini di era cloud-native. Komponen ini mengabstraksi pilar-pilar penting observabilitas, telemetry dan monitoring, sehingga memudahkan pengguna untuk mengintegrasikan dengan infrastruktur yang ada dengan cepat, sambil menghindari ketergantungan pada vendor tertentu.
 
 ## Instalasi
 
-### Instal Komponen melalui Composer
+### Install komponen melalui Composer
 
 ```bash
 composer require hyperf/metric
 ```
 
-Komponen [hyperf/metric](https://github.com/hyperf/metric) secara default
-telah menyertakan dependensi [Prometheus](https://prometheus.io/). Jika Anda
-ingin menggunakan [StatsD](https://github.com/statsd/statsd) atau
-[InfluxDB](http://influxdb.com), Anda juga perlu menjalankan perintah berikut
-untuk menginstal dependensi yang sesuai:
+Metric mendukung [Prometheus](https://prometheus.io/), [StatsD](https://github.com/statsd/statsd), dan [InfluxDB](http://influxdb.com). Anda dapat menjalankan perintah berikut untuk menginstal dependensi yang sesuai:
 
 ```bash
-# StatsD required dependencies
+# Prometheus
+composer require promphp/prometheus_client_php
+# StatsD dependencies
 composer require domnikl/statsd
-# InfluxDB required dependencies
+# InfluxDB dependencies
 composer require influxdb/influxdb-php 
 ```
 
-### Tambahkan Konfigurasi Komponen
+### Tambahkan konfigurasi komponen
 
-Jika file tersebut belum ada, jalankan perintah berikut untuk menambahkan file
-konfigurasi `config/autoload/metric.php`:
+Jika file belum ada, Anda dapat menjalankan perintah berikut untuk menambahkan file konfigurasi `config/autoload/metric.php`:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/metric
@@ -44,41 +35,32 @@ php bin/hyperf.php vendor:publish hyperf/metric
 
 #### Opsi
 
-`default`: Nilai yang sesuai dengan `default` pada file konfigurasi adalah nama
-driver yang digunakan. Konfigurasi spesifik dari driver didefinisikan di bawah
-`metric`, menggunakan nama driver yang sama sebagai `key`.
+`default`: Nilai yang sesuai dengan `default` dalam file konfigurasi adalah nama driver yang digunakan. Konfigurasi spesifik dari driver didefinisikan di bawah item `metric`, menggunakan driver yang sama sebagai `key`.
 
 ```php
 'default' => env('METRIC_DRIVER', 'prometheus'),
 ```
 
-* `use_standalone_process`: Menentukan apakah akan menggunakan `proses
-pemantauan mandiri` (standalone monitoring process). Sangat disarankan untuk
-mengaktifkannya. Jika dinonaktifkan, pengumpulan dan pelaporan metric akan
-ditangani di dalam `Worker process`.
+* `use_standalone_process`: Apakah akan menggunakan `proses monitoring mandiri`. Disarankan untuk diaktifkan. Jika dinonaktifkan, pengumpulan dan pelaporan metrik akan ditangani di `Worker process`.
 
 ```php
 'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
 ```
 
-* `enable_default_metric`: Menentukan apakah akan menghitung metric default.
-Metric default meliputi penggunaan memori, beban CPU sistem, serta metric
-Swoole Server dan Swoole Coroutine.
+* `enable_default_metric`: Apakah akan mengumpulkan metrik default. Metrik default mencakup penggunaan memori, beban CPU sistem, serta metrik Swoole Server dan metrik Swoole Coroutine.
 
 ```php
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
-`default_metric_interval`: Interval pengiriman (push) metric default, dalam
-satuan detik (berlaku sama untuk konfigurasi selanjutnya).
+`default_metric_interval`: Periode push untuk metrik default, dalam detik (berlaku sama untuk di bawah).
 ```php
 'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
 ```
 
-#### Mengonfigurasi Prometheus
+#### Mengkonfigurasi Prometheus
 
-Saat menggunakan Prometheus, tambahkan konfigurasi spesifik Prometheus pada
-bagian metric di dalam file konfigurasi.
+Saat menggunakan Prometheus, tambahkan konfigurasi spesifik Prometheus ke item `metric` dalam file konfigurasi.
 
 ```php
 use Hyperf\Metric\Adapter\Prometheus\Constants;
@@ -104,23 +86,17 @@ return [
 ];
 ```
 
-Prometheus memiliki dua mode kerja: crawl mode (mode tarik/tarik data) dan push
-mode (melalui Prometheus Pushgateway), yang keduanya didukung oleh komponen
-ini.
+Prometheus memiliki dua mode operasi: scrape mode dan push mode (melalui Prometheus Pushgateway). Komponen ini mendukung keduanya.
 
-Saat menggunakan crawl mode (rekomendasi resmi dari Prometheus), Anda perlu
-mengatur:
+Saat menggunakan scrape mode (direkomendasikan secara resmi oleh Prometheus), Anda perlu mengatur:
 
 ```php
 'mode' => Constants::SCRAPE_MODE
 ```
 
-Dan konfigurasikan alamat penarikan `scrape_host`, port penarikan
-`scrape_port`, serta path penarikan `scrape_path`. Prometheus dapat menarik
-semua metric dalam bentuk akses HTTP berdasarkan konfigurasi tersebut.
+Dan konfigurasikan alamat scraping `scrape_host`, port scraping `scrape_port`, dan path scraping `scrape_path`. Prometheus dapat menarik semua metrik dalam bentuk akses HTTP di bawah konfigurasi yang sesuai.
 
-> Catatan: Dalam crawl mode, proses mandiri (standalone process) harus
-diaktifkan, yaitu `use_standalone_process = true`.
+> Catatan: Dalam gaya asinkron, scrape mode harus mengaktifkan proses independen, yaitu `use_standalone_process = true`.
 
 Saat menggunakan push mode, Anda perlu mengatur:
 
@@ -128,28 +104,19 @@ Saat menggunakan push mode, Anda perlu mengatur:
 'mode' => Constants::PUSH_MODE
 ```
 
-Dan konfigurasikan alamat pengiriman `push_host`, port pengiriman `push_port`,
-serta interval pengiriman `push_interval`. Push mode hanya direkomendasikan
-untuk tugas offline (offline tasks).
+Dan konfigurasikan alamat push `push_host`, port push `push_port`, dan interval push `push_interval`. Push mode hanya direkomendasikan untuk offline task.
 
-Karena perbedaan dalam pengaturan dasar, mode di atas mungkin tidak memenuhi
-kebutuhan Anda. Komponen ini juga mendukung custom mode. Dalam custom mode,
-komponen hanya bertanggung jawab atas pengumpulan indikator (metric), sedangkan
-pelaporan spesifiknya harus ditangani sendiri oleh pengguna.
+Karena perbedaan dalam pengaturan dasar, mode di atas mungkin tidak memenuhi semua kebutuhan. Komponen ini juga mendukung custom mode. Dalam custom mode, komponen hanya bertanggung jawab untuk pengumpulan metrik, dan pelaporan spesifik perlu ditangani oleh pengguna.
 
 ```php
 'mode' => Constants::CUSTOM_MODE
 ```
 
-Misalnya, Anda mungkin ingin melaporkan metric melalui route kustom, atau
-menyimpan metric di Redis, dan service independen lainnya bertanggung jawab atas
-pelaporan terpusat dari metric tersebut. Bagian [pelaporan kustom](#pelaporan-kustom)
-berisi contoh yang sesuai.
+Misalnya, Anda mungkin ingin melaporkan metrik melalui route kustom, atau berharap menyimpan metrik di Redis, dengan service independen lain yang bertanggung jawab untuk pelaporan metrik secara terpusat. Bagian [Custom Reporting](#custom-reporting) berisi contoh yang sesuai.
 
-#### Mengonfigurasi StatsD
+#### Mengkonfigurasi StatsD
 
-Saat menggunakan StatsD, tambahkan konfigurasi spesifik StatsD pada bagian
-metric di dalam file konfigurasi.
+Saat menggunakan StatsD, tambahkan konfigurasi spesifik StatsD ke item `metric` dalam file konfigurasi.
 
 ```php
 return [
@@ -170,15 +137,11 @@ return [
 ];
 ```
 
-StatsD saat ini hanya mendukung mode UDP, Anda perlu mengonfigurasi alamat UDP
-`udp_host`, port UDP `udp_port`, apakah akan mengirim secara massal
-`enable_batch` (mengurangi jumlah request), interval pengiriman massal
-`push_interval`, dan sample rate `sample_rate`.
+StatsD saat ini hanya mendukung mode UDP. Ini memerlukan konfigurasi alamat UDP `udp_host`, port UDP `udp_port`, apakah akan melakukan batch push `enable_batch` (untuk mengurangi jumlah request), interval batch push `push_interval`, dan sample rate `sample_rate`.
 
-#### Mengonfigurasi InfluxDB
+#### Mengkonfigurasi InfluxDB
 
-Saat menggunakan InfluxDB, tambahkan konfigurasi spesifik InfluxDB pada bagian
-metric di dalam file konfigurasi.
+Saat menggunakan InfluxDB, tambahkan konfigurasi spesifik InfluxDB ke item `metric` dalam file konfigurasi.
 
 ```php
 return [
@@ -200,19 +163,15 @@ return [
 ];
 ```
 
-InfluxDB menggunakan mode HTTP default, Anda perlu mengonfigurasi alamat `host`,
-port `port`, username `username`, password `password`, nama database `dbname`,
-dan interval pengiriman massal `push_interval`.
+InfluxDB menggunakan mode HTTP default. Ini memerlukan konfigurasi alamat `host`, port UDP `port` (Catatan: InfluxDB biasanya menggunakan port HTTP 8086), username `username`, password `password`, tabel `dbname`, dan interval batch push `push_interval`.
 
 ### Abstraksi Dasar
 
-Komponen telemetri mengabstraksikan tiga tipe data yang umum digunakan untuk
-memastikan pemisahan (decoupling) dari implementasi konkretnya.
+Komponen telemetry mengabstraksi tiga tipe data yang umum digunakan untuk memastikan dekopling dari implementasi spesifik.
 
 Ketiga tipe tersebut adalah:
 
-Counter: Indikator yang digunakan untuk menggambarkan peningkatan satu arah
-(one-way increments). Seperti jumlah request HTTP.
+Counter: Digunakan untuk mendeskripsikan metrik yang meningkat secara monoton. Misalnya, jumlah HTTP request.
 
 ```php
 interface CounterInterface
@@ -223,8 +182,7 @@ interface CounterInterface
 }
 ```
 
-Gauge: Indikator yang digunakan untuk menggambarkan kenaikan atau penurunan
-seiring waktu. Seperti jumlah koneksi yang tersedia di connection pool.
+Gauge: Digunakan untuk mendeskripsikan metrik yang naik atau turun seiring waktu. Misalnya, jumlah koneksi yang tersedia di connection pool.
 
 ```php
 interface GaugeInterface
@@ -232,14 +190,12 @@ interface GaugeInterface
     public function with(string ...$labelValues): self;
 
     public function set(float $value);
-
+    
     public function add(float $delta);
 }
 ```
 
-* Histogram: digunakan untuk menggambarkan distribusi statistik yang dihasilkan
-dari observasi berkelanjutan atas suatu event, biasanya dinyatakan dalam
-persentil atau bucket. Seperti delay request HTTP.
+Histogram: Digunakan untuk mendeskripsikan distribusi statistik yang dihasilkan setelah pengamatan berkelanjutan terhadap suatu event, biasanya direpresentasikan sebagai persentil atau bucket. Misalnya, latensi HTTP request.
 
 ```php
 interface HistogramInterface
@@ -250,12 +206,10 @@ interface HistogramInterface
 }
 ```
 
-### Mengonfigurasi Middleware
+### Mengkonfigurasi middleware
 
-Setelah mengonfigurasi driver, Anda hanya perlu mengonfigurasi middleware
-untuk mengaktifkan fungsi statistik Histogram request.
-Buka file `config/autoload/middlewares.php`, contoh berikut adalah untuk
-mengaktifkan middleware pada HTTP Server.
+Setelah mengkonfigurasi driver, cukup konfigurasi middleware untuk mengaktifkan fungsi statistik Histogram untuk request.
+Buka file `config/autoload/middlewares.php`, contoh menunjukkan pengaktifan middleware di Server `http`.
 
 ```php
 <?php
@@ -268,18 +222,11 @@ return [
     ],
 ];
 ```
-> Dimensi statistik dalam middleware ini meliputi `request_status`,
-`request_path`, dan `request_method`. Jika `request_path` Anda terlalu besar,
-disarankan untuk menulis ulang middleware ini untuk menghapus dimensi
-`request_path`, jika tidak, tingginya kardinalitas (high cardinality) dapat
-menyebabkan luapan memori (memory overflow).
+> Dimensi statistik di middleware ini mencakup `request_status`, `request_path`, `request_method`. Jika Anda memiliki terlalu banyak `request_path`, disarankan untuk menulis ulang middleware ini dan menghapus dimensi `request_path`, jika tidak, kardinalitas yang berlebihan akan menyebabkan memori overflow.
 
 ### Penggunaan Kustom
 
-Telemetri melalui HTTP middleware hanyalah sebagian kecil dari kemampuan
-komponen ini. Anda dapat menginjeksi class `Hyperf\Metric\Contract\MetricFactoryInterface`
-untuk melakukan telemetri data bisnis Anda sendiri. Contohnya: jumlah pesanan
-yang dibuat, jumlah klik pada iklan, dll.
+Telemetry melalui HTTP middleware hanyalah puncak gunung es dari tujuan komponen ini. Anda dapat meng-inject class `Hyperf\Metric\Contract\MetricFactoryInterface` untuk melakukan telemetry data bisnis sendiri. Contoh: jumlah pesanan yang dibuat, jumlah klik iklan, dll.
 
 ```php
 <?php
@@ -301,14 +248,12 @@ class IndexController extends AbstractController
     {
         $counter = $this->metricFactory->makeCounter('order_created', ['order_type']);
         $counter->with($order->type)->add(1);
-        // order logic...
+        // Logika order...
     }
-
 }
 ```
 
-`MetricFactoryInterface` berisi method factory berikut untuk menghasilkan tiga
-tipe statistik dasar yang sesuai.
+`MetricFactoryInterface` berisi method factory berikut untuk menghasilkan tiga tipe statistik dasar yang sesuai.
 
 ```php
 public function makeCounter($name, $labelNames): CounterInterface;
@@ -318,11 +263,7 @@ public function makeGauge($name, $labelNames): GaugeInterface;
 public function makeHistogram($name, $labelNames): HistogramInterface;
 ```
 
-Contoh di atas adalah metric yang dihasilkan dalam cakupan request statistik.
-Terkadang indikator yang perlu kita hitung adalah untuk siklus hidup lengkap
-(complete life cycle), seperti menghitung panjang antrean asinkron
-(asynchronous queue) atau jumlah barang dalam stok. Dalam skenario ini, Anda
-dapat mendengarkan (listen) event `MetricFactoryReady`.
+Contoh di atas adalah untuk mengumpulkan metrik yang dihasilkan dalam lingkup sebuah request. Terkadang metrik yang perlu kita kumpulkan berorientasi pada siklus hidup lengkap, seperti menghitung panjang antrean asinkron atau jumlah stok produk. Dalam skenario ini, Anda dapat mendengarkan event `MetricFactoryReady`.
 
 ```php
 <?php
@@ -368,30 +309,19 @@ class OnMetricFactoryReady implements ListenerInterface
 }
 ```
 
-> Dari sudut pandang engineering, tidak disarankan untuk menanyakan panjang
-antrean langsung dari Redis. Panjang antrean sebaiknya diperoleh melalui method
-`info()` di bawah interface `DriverInterface` dari driver antrean. Ini hanya
-demonstrasi sederhana di sini. Anda dapat menemukan contoh lengkap di folder
-`src/Listener` pada source code komponen.
+> Dari sudut pandang engineering, tidak terlalu tepat untuk menanyakan panjang antrean langsung dari Redis. Anda harus menggunakan method `info()` di bawah interface `DriverInterface` dari driver antrean untuk mendapatkan panjang antrean. Ini hanya demonstrasi sederhana. Anda dapat menemukan contoh lengkap di folder `src/Listener` dari source code komponen ini.
 
-### Anotasi
+### Annotation
 
-Anda dapat menggunakan `#[Counter(name="stat_name_here")]` dan
-`#[Histogram(name="stat_name_here")]` untuk menghitung waktu pemanggilan dan
-menjalankan aspek (aspect).
+Anda dapat menggunakan `#[Counter(name="stat_name_here")]` dan `#[Histogram(name="stat_name_here")]` untuk menghitung jumlah pemanggilan dan runtime dari aspect.
 
-Untuk penggunaan anotasi, silakan merujuk ke [Bab Anotasi](id/annotation).
+Untuk penggunaan annotation, silakan merujuk ke [Bab Annotation](id/annotation.md).
 
 ### Custom Histogram Bucket
 
 > Bagian ini hanya berlaku untuk driver Prometheus
 
-Ketika Anda menggunakan Histogram dari Prometheus, terkadang ada kebutuhan
-untuk kustom Bucket. Sebelum memulai service, Anda dapat menginjeksi
-dependensi ke dalam Registry dan mendaftarkan Histogram sendiri, serta
-mengatur Bucket yang diperlukan. Ketika Anda menggunakannya nanti,
-`MetricFactory` akan menggunakan pendaftaran Histogram dengan nama yang sama
-tersebut. Contohnya adalah sebagai berikut:
+Ketika Anda menggunakan Histogram di Prometheus, terkadang ada kebutuhan untuk Bucket kustom. Anda dapat mengandalkan injeksi Registry dan mendaftarkan Histogram sendiri sebelum service dimulai, dan mengatur Bucket yang diperlukan. Nantinya, saat menggunakan `MetricFactory`, ia akan memanggil Histogram dengan nama yang sama yang Anda daftarkan. Contohnya sebagai berikut:
 
 ```php
 <?php
@@ -431,25 +361,17 @@ class OnMainServerStart implements ListenerInterface
     }
 }
 ```
-Setelah itu, ketika Anda menggunakan `$metricFactory->makeHistogram('test')`,
-Histogram yang dikembalikan adalah Histogram yang telah Anda daftarkan sebelumnya.
+Setelah itu, ketika Anda menggunakan `$metricFactory->makeHistogram('test')`, ia akan mengembalikan Histogram yang Anda daftarkan sebelumnya.
 
-### Pelaporan Kustom
+### Custom Reporting
 
 > Bagian ini hanya berlaku untuk driver Prometheus
 
-Setelah mengatur mode kerja driver Prometheus komponen ke custom mode
-(`Constants::CUSTOM_MODE`), Anda dapat dengan bebas menangani pelaporan
-indikator (metric). Di bagian ini, kami menunjukkan cara menyimpan metric di
-Redis, kemudian menambahkan HTTP route baru ke Worker yang mengembalikan
-metric yang dirender oleh Prometheus.
+Setelah mengatur mode operasi driver Prometheus komponen ke custom mode (`Constants::CUSTOM_MODE`), Anda dapat dengan bebas menangani pelaporan metrik. Di bagian ini, kami menunjukkan cara menyimpan metrik di Redis, dan kemudian menambahkan route HTTP baru di Worker untuk mengembalikan metrik yang dirender oleh Prometheus.
 
-#### Menyimpan Metric dengan Redis
+#### Menggunakan Redis untuk menyimpan metrik
 
-Media penyimpanan untuk metric ditentukan oleh interface
-`Prometheus\Storage\Adapter`. Penyimpanan memori (memory storage) digunakan
-secara default. Kita dapat mengubahnya ke penyimpanan Redis di
-`config/autoload/dependencies.php`.
+Media penyimpanan untuk metrik didefinisikan oleh interface `Prometheus\Storage\Adapter`. Penyimpanan in-memory digunakan secara default. Kita dapat mengubahnya ke penyimpanan Redis di `config/autoload/dependencies.php`.
 
 ```php
 <?php
@@ -459,13 +381,11 @@ return [
 ];
 ```
 
-#### Menambahkan Route /metrics ke Worker
+#### Menambahkan route /metrics di Worker
 
-Tambahkan route Prometheus di `config/routes.php`.
+Tambahkan route Prometheus di config/routes.php.
 
-> Catatan bahwa jika Anda ingin mendapatkan metric di bawah Worker, Anda perlu
-menangani sendiri pembagian state (state sharing) antar Worker. Salah satu
-caranya adalah dengan menyimpan state di Redis seperti yang dijelaskan di atas.
+> Catatan bahwa jika Anda ingin mendapatkan metrik di Worker, Anda perlu menangani masalah state sharing antar Worker sendiri. Salah satu caranya adalah menyimpan state di Redis seperti yang dijelaskan di atas.
 
 ```php
 <?php
@@ -479,19 +399,14 @@ Router::get('/metrics', function(){
 });
 ```
 
-## Membuat Dashboard di Grafana
+## Membuat Console di Grafana
 
 > Bagian ini hanya berlaku untuk driver Prometheus
 
-Jika Anda mengaktifkan metric default, `Hyperf/Metric` menyediakan dashboard
-Grafana untuk Anda langsung setelah instalasi (out of the box). Unduh
-[file json](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)
-dashboard tersebut, lalu impor ke Grafana dan gunakan.
+Jika Anda mengaktifkan default metrics, `Hyperf/Metric` telah menyiapkan console Grafana yang siap pakai untuk Anda. Download file json console [di sini](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json) dan impor ke Grafana untuk menggunakannya.
 
 ![grafana](imgs/grafana.png)
 
-## Hal yang Perlu Diperhatikan
+## Perhatian
 
-- Untuk menggunakan komponen ini dalam mengumpulkan metric pada custom command
-  `hyperf/command`, Anda perlu menambahkan parameter command line:
-  `--enable-event-dispatcher` saat menjalankan perintah tersebut.
+- Jika Anda perlu menggunakan komponen ini untuk mengumpulkan metrik di perintah kustom `hyperf/command`, Anda perlu menambahkan argumen baris perintah saat memulai perintah: `--enable-event-dispatcher`.

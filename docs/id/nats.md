@@ -1,12 +1,6 @@
 # NATS
 
-NATS adalah middleware distributed messaging open-source, ringan, dan
-berperforma tinggi yang mengimplementasikan skalabilitas tinggi serta model
-`Publish` / `Subscribe` yang elegan, dikembangkan menggunakan bahasa `Golang`.
-Filosofi pengembangan NATS meyakini bahwa QoS berkualitas tinggi harus dibangun
-di sisi klien, sehingga hanya `Request-Reply` yang disediakan, dan NATS tidak
-menyediakan 1. Persistence 2. Pemrosesan transaksi 3. Mode pengiriman yang
-ditingkatkan 4. Antrean tingkat enterprise.
+NATS adalah message middleware terdistribusi open-source, ringan, dan berkinerja tinggi. NATS mengimplementasikan skalabilitas tinggi dan model `Publish` / `Subscribe` yang elegan dan dikembangkan dalam `Golang`. Filosofi pengembangan NATS berpendapat bahwa QoS berkualitas tinggi harus dibangun di sisi klien, sehingga hanya menyediakan `Request-Reply` dan tidak menyediakan 1. Persistence, 2. Transaction processing, 3. Enhanced delivery models, atau 4. Enterprise-level queues.
 
 ## Instalasi
 
@@ -18,12 +12,11 @@ composer require hyperf/nats
 
 ### Membuat Consumer
 
-```
+```bash
 php bin/hyperf.php gen:nats-consumer DemoConsumer
 ```
 
-Jika `queue` diatur, `subject` yang sama hanya akan dikonsumsi oleh satu
-`queue`. Jika `queue` tidak diatur, setiap consumer akan menerima pesan.
+Jika `queue` diatur, `subject` yang sama hanya akan dikonsumsi oleh satu `queue`. Jika `queue` tidak diatur, setiap consumer akan menerima pesan.
 
 ```php
 <?php
@@ -41,14 +34,14 @@ class DemoConsumer extends AbstractConsumer
 {
     public function consume(Message $payload)
     {
-        // Do something...
+        // Lakukan sesuatu...
     }
 }
 ```
 
-### Mengirim Pesan
+### Producing Messages
 
-Gunakan publish untuk mengirimkan pesan.
+Gunakan publish untuk mengirim pesan.
 
 ```php
 <?php
@@ -76,10 +69,9 @@ class NatsController extends AbstractController
         return $this->response->success($res);
     }
 }
-
 ```
 
-Gunakan request untuk mengirimkan pesan.
+Gunakan request untuk mengirim pesan.
 
 ```php
 <?php
@@ -110,10 +102,9 @@ class NatsController extends AbstractController
         return $this->response->success($res);
     }
 }
-
 ```
 
-Gunakan requestSync untuk mengirimkan pesan.
+Gunakan requestSync untuk mengirim pesan.
 
 ```php
 <?php
@@ -143,5 +134,4 @@ class NatsController extends AbstractController
         return $this->response->success($message->getBody());
     }
 }
-
 ```

@@ -1,147 +1,55 @@
-# Microservice
+# Microservices
 
-Microservice adalah service kecil dan otonom yang bekerja bersama-sama.
+Microservice adalah layanan-layanan kecil yang otonom dan saling bekerja sama.
 
-## Kecil, fokus melakukan satu hal dengan baik
+## Small, Focused on Doing One Thing Well
 
-Seiring dengan iterasi kebutuhan dan bertambahnya fitur-fitur baru, repository
-kode cenderung menjadi semakin besar. Meskipun kita sangat berharap untuk
-mencapai modularitas yang jelas dalam repository kode yang besar tersebut, pada
-kenyataannya batas-batas antar-modul sulit untuk dibedakan secara jelas. Lambat
-laun, kode dengan fungsi serupa dapat terlihat di mana-mana di dalam repository
-kode. Akibatnya, sangat sulit untuk mengetahui di mana perubahan harus dilakukan
-saat ada pembaruan versi, dan semakin sulit pula untuk memperbaiki `Bug` serta
-menambahkan fitur baru.
-Dalam mono-system (sistem tunggal), beberapa lapisan abstraksi atau
-modularisasi biasanya dibuat untuk memastikan `cohesion` dari kode, sehingga
-menghindari masalah yang disebutkan di atas.
+Seiring berjalannya waktu, saat kebutuhan terus berulang dan fitur baru ditambahkan, basis kode seringkali tumbuh semakin besar. Bahkan dengan upaya terbaik kita untuk mencapai modularitas yang jelas dalam basis kode yang besar, pada kenyataannya, batasan antar modul sulit untuk didefinisikan. Seiring waktu, kode fungsional yang serupa menjadi tersebar luas, sehingga sulit untuk mengetahui di mana harus melakukan modifikasi saat iterasi, dan semakin sulit untuk memperbaiki bug atau menambahkan fitur baru.
+Dalam sistem monolitik, kita biasanya membuat lapisan abstraksi atau menerapkan modularitas untuk memastikan `kohesi` code, sehingga menghindari masalah-masalah yang disebutkan di atas.
 
-> Menurut Robert C. Martin [Single Responsibility Principle](https://baike.baidu.com/item/单一职责原则/9456515): "* Kumpulkan hal-hal yang berubah karena alasan yang sama secara bersama-sama, dan pisahkan hal-hal yang berubah karena alasan yang berbeda. *" Argumen ini menekankan konsep `cohesion` dengan sangat baik.
+> Menurut Robert C. Martin tentang [Single Responsibility Principle](https://baike.baidu.com/item/单一职责原则/9456515): "*Kumpulkan hal-hal yang berubah karena alasan yang sama. Pisahkan hal-hal yang berubah karena alasan yang berbeda.*" Ini menekankan konsep kohesi.
 
-Microservice menerapkan konsep ini ke service yang independen, dan menentukan
-batas-batas service berdasarkan batas-batas bisnis. Setiap service fokus pada
-hal-hal di dalam batas service tersebut. Dengan melakukan hal ini, kita dapat
-menghindari banyak masalah yang timbul akibat repository kode yang terlalu
-besar.
+Microservices menerapkan filosofi ini ke dalam layanan-layanan yang independen, menentukan batasan layanan berdasarkan batasan bisnis. Setiap layanan fokus pada apa yang ada di dalam batasannya, sehingga menghindari banyak masalah yang berasal dari basis kode yang terlalu besar.
+Jadi, seberapa kecil seharusnya sebuah microservice? Cukup kecil saja, tetapi jangan terlalu kecil. Bagaimana cara mengukur apakah sebuah sistem sudah terpecah cukup kecil? Ketika Anda menghadapi sistem tersebut dan tidak lagi memiliki keinginan untuk "memecahnya" karena terlalu besar, maka itu sudah cukup kecil. Semakin kecil layanannya, semakin jelas pula kelebihan dan kekurangan dari `Microservice architecture`. Layanan yang lebih kecil membawa lebih banyak manfaat dari sisi independensi, namun mengelola banyak layanan juga menjadi lebih kompleks.
 
-Seberapa kecil seharusnya sebuah microservice? Cukup kecil, tetapi tidak
-terlalu kecil.
-Bagaimana cara mengevaluasi apakah suatu sistem sudah dipecah hingga cukup
-kecil? Ketika Anda tidak memiliki keinginan lagi untuk membuatnya lebih kecil
-di seluruh sistem, maka sistem tersebut sudah cukup kecil. Semakin kecil
-service yang ada, semakin jelas pula kelebihan dan kekurangan dari
-`Microservice`. Semakin kecil service yang digunakan, semakin besar manfaat
-independensinya, tetapi pengelolaan sejumlah besar service juga akan menjadi
-lebih rumit.
+## Autonomy
 
-## Otonomi
+Sebuah microservice adalah entitas independen yang dapat di-deploy secara mandiri dan eksis sebagai proses sistem operasi. Terdapat isolasi antar layanan, dan komunikasi antar layanan terjadi melalui network calls, sehingga memperkuat isolasi dan menghindari tight coupling. Layanan harus dapat dimodifikasi secara independen satu sama lain, dan deployment dari sebuah layanan tidak boleh menyebabkan perubahan pada `Service Consumer`-nya. Hal ini mengharuskan kita untuk mempertimbangkan apa yang harus diekspos oleh `Service Provider` dan apa yang harus disembunyikan. Jika terlalu banyak yang diekspos, `Service Consumer` akan terikat dengan implementasi internal layanan tersebut, yang akan menimbulkan pekerjaan koordinasi tambahan bagi layanan, sehingga mengurangi otonominya.
 
-Sebuah microservice adalah entitas independen, ia dapat di-deploy secara
-independen, dan juga dapat berdiri sendiri sebagai sebuah proses operating
-system. Terdapat isolasi antar-service, dan komunikasi antar-service dilakukan
-melalui jaringan, sehingga memperkuat isolasi antar-service dan menghindari
-coupling yang erat. Service harus dapat dimodifikasi secara independen, dan
-deployment dari service tertentu seharusnya tidak menyebabkan perubahan pada
-`Service Consumer`. Hal ini mengharuskan kita untuk mempertimbangkan seberapa
-banyak bagian dari `Service Providers` yang harus diekspos dan apa yang harus
-disembunyikan. Jika terlalu banyak yang diekspos, `Service Consumer` akan
-terikat (coupled) dengan implementasi internal dari provider. Hal ini akan
-membuat service secara langsung menghasilkan pekerjaan koordinasi tambahan,
-sehingga mengurangi otonomi dari service tersebut.
+## Main Benefits
 
-## Manfaat Utama
+### Technical Heterogeneity
 
-### Heterogenitas teknologi
+Dalam sebuah sistem yang terdiri dari beberapa layanan yang bekerja sama, Anda dapat memilih teknologi yang paling sesuai untuk setiap layanan. Karena komunikasi antar layanan dilakukan melalui network calls, implementasi sebuah layanan tidak terbatas pada bahasa atau framework implementasi sistem. Ini berarti ketika suatu bagian dari sistem membutuhkan peningkatan performa, bagian tersebut dapat dibangun ulang menggunakan technology stack dengan performa yang lebih baik.
 
-Dalam sistem yang memiliki beberapa service yang saling bekerja sama, teknologi
-yang paling cocok untuk suatu service dapat dipilih secara berbeda di setiap
-service. Karena service dipanggil melalui jaringan, realisasi service tidak akan
-dibatasi oleh bahasa pemrograman atau framework sistem yang digunakan. Ini
-berarti ketika sebagian sistem memerlukan peningkatan performa, implementasi
-bagian tersebut dapat dibangun kembali menggunakan stack teknologi yang
-berkinerja lebih baik.
+### Resilience
 
-### Elastisitas
+Konsep kunci untuk mencapai sistem yang tangguh adalah `Bulkhead`. Jika sebuah komponen atau layanan dalam sistem menjadi tidak tersedia, hal tersebut tidak boleh menyebabkan cascading failure, sehingga bagian lain dari sistem tetap dapat berfungsi normal. `Service boundary` dari sebuah microservice jelas merupakan `Bulkhead`. Dalam `Monolithic architecture`, khususnya di bawah arsitektur tradisional `PHP-FPM`, jika satu bagian tidak tersedia, dalam banyak kasus, semua fungsionalitas menjadi tidak tersedia. Meskipun Anda dapat menggunakan load balancing dan teknologi lainnya untuk men-deploy sistem di beberapa node guna mengurangi probabilitas sistem menjadi tidak tersedia sepenuhnya, untuk `Microservice architecture`, arsitekturnya sendiri sudah dapat menangani dengan baik ketidaktersediaan layanan dan degradasi fungsional.
 
-Konsep kunci untuk mewujudkan sistem yang elastis adalah `Bulkhead`. Jika suatu
-komponen atau service dalam sistem tidak tersedia, namun tidak menyebabkan
-kegagalan beruntun (cascading failure), maka bagian sistem lainnya masih dapat
-beroperasi dengan normal. Batas service (`service boundary`) dari microservice
-jelas merupakan sebuah `Bulkhead`. Dalam sistem berarsitektur monolitik
-(`Monolithic architecture`), yaitu sistem di bawah arsitektur `PHP-FPM`
-tradisional, jika bagian tertentu tidak tersedia, maka dalam banyak kasus semua
-fungsi menjadi tidak dapat digunakan. Meskipun sistem dapat di-deploy pada
-beberapa node melalui teknologi seperti load balancing untuk mengurangi
-probabilitas kegagalan sistem secara total, untuk sistem `Microservice`,
-arsitektur itu sendiri dapat menangani ketidaktersediaan service dan masalah
-seperti penurunan fungsi (functional degradation).
+### Scalability
 
-### Kemampuan ekspansi
+Sebuah `Monolithic architecture` hanya dapat di-scale secara keseluruhan, bahkan jika hanya sebagian kecil dari sistem yang memiliki masalah performa. Dengan menggunakan beberapa layanan yang lebih kecil, Anda dapat melakukan scaling hanya pada layanan yang membutuhkan scaling, sehingga layanan yang tidak membutuhkan scaling dapat berjalan di server yang lebih murah, menghemat biaya.
 
-Sistem berarsitektur monolitik (`monolithic architecture`) hanya dapat
-diekspansi secara keseluruhan, bahkan jika hanya sebagian kecil dari sistem yang
-memiliki masalah performa. Jika Anda menggunakan beberapa service yang lebih
-kecil, Anda hanya perlu mengekspansi service yang memang perlu diekspansi,
-sehingga service yang tidak perlu diekspansi dapat dijalankan di server yang
-lebih murah dan menghemat biaya.
+### Simplified Deployment
 
-### Deployment yang sederhana
+Dalam `Monolithic architecture` dengan jumlah kode yang sangat besar, bahkan jika Anda hanya mengubah satu baris kode, Anda perlu men-deploy ulang seluruh sistem untuk merilis perubahan tersebut. Deployment semacam itu memiliki dampak yang signifikan dan risiko yang tinggi; oleh karena itu, para pemangku kepentingan enggan untuk men-deploy dengan mudah. Akibatnya, dalam operasi praktis, frekuensi deployment menjadi sangat rendah. Banyak fitur atau `Bugfixes` yang menumpuk di antara versi, dan sejumlah besar perubahan dirilis ke production environment sekaligus. Namun, semakin besar perbedaan antara dua rilis, semakin besar pula kemungkinan terjadinya error.
+Tentu saja, dalam pengembangan di bawah arsitektur tradisional `PHP-FPM`, kita mungkin tidak memiliki masalah seperti itu, karena hot update sudah ada secara alami, tetapi pro dan kontra selalu ada bersamaan.
 
-Dalam sistem berarsitektur monolitik (`monolithic architecture`) dengan jumlah
-kode yang sangat besar, bahkan jika hanya satu baris kode yang dimodifikasi,
-seluruh sistem harus di-deploy ulang untuk merilis perubahan tersebut.
-Deployment semacam ini memiliki dampak yang besar dan risiko tinggi, sehingga
-pihak terkait jarang melakukan deployment seperti itu. Oleh karena itu,
-frekuensi deployment dalam operasional nyata menjadi sangat rendah. Banyak
-fitur atau `Bugfix` akan ditambahkan ke sistem di antara versi-versi perilisan,
-dan sejumlah besar perubahan akan dirilis ke lingkungan production sekaligus.
-Namun, semakin besar perbedaan antara dua rilis, semakin besar pula
-kemungkinan terjadinya kesalahan.
-Tentu saja, dalam pengembangan di bawah arsitektur `PHP-FPM` tradisional, kita
-mungkin tidak menghadapi masalah seperti itu, karena hot update sudah ada
-secara alami. Namun, kelebihan dan kekurangan selalu ada secara bersamaan.
+### Alignment with Organizational Structure
 
-### Kesesuaian dengan struktur organisasi
+Dalam `Monolithic architecture`, terutama ketika struktur tim "terdistribusi" (tersebar secara geografis), konflik kode yang disebabkan oleh banyaknya submit kode dari engineer dan komunikasi iterasi jarak jauh membuat pemeliharaan sistem menjadi lebih kompleks. Kita semua tahu bahwa tim dengan ukuran yang sesuai yang bekerja pada basis kode kecil dapat mencapai produktivitas yang lebih tinggi. Oleh karena itu, pemecahan dan kepemilikan layanan dapat membagi tanggung jawab terkait dengan baik.
 
-Dalam kasus arsitektur monolitik (`Monolithic architecture`) dengan struktur
-tim yang juga 'terdistribusi' (remote), konflik kode yang disebabkan oleh
-penyerahan kode dari banyak engineer serta komunikasi iteratif di tempat yang
-berbeda akan membuat pemeliharaan sistem menjadi lebih kompleks. Seperti yang
-kita ketahui bahwa tim dengan ukuran yang tepat dapat memperoleh produktivitas
-yang lebih tinggi dengan bekerja pada repository yang kecil, sehingga
-pembagian service dapat membagi tanggung jawab terkait dengan baik.
+### Composability
 
-### Komposabilitas
+Salah satu manfaat utama yang diklaim dari `Distributed systems` dan `Service-Oriented Architecture (SOA)` adalah kemudahan dalam menggunakan kembali fungsionalitas yang sudah ada. Di bawah `Microservice architecture`, pemecahan layanan yang lebih granular akan membuat keuntungan ini semakin menonjol.
 
-Manfaat utama yang ditawarkan oleh sistem terdistribusi (`Distributed System`)
-dan `Service Oriented Architecture (SOA)` adalah kemudahan dalam menggunakan
-kembali fungsi-fungsi yang sudah ada. Di bawah arsitektur `Microservice`,
-pembagian service yang lebih terperinci (fine-grained) akan mencerminkan
-keunggulan ini secara lebih nyata.
+### High Refactorability
 
-### Sangat mudah dikonfigurasi ulang
+Jika Anda menghadapi sistem `Monolithic architecture` yang besar dengan kode yang kacau dan buruk, semua orang takut untuk me-refactornya dengan mudah. Namun ketika Anda menghadapi layanan berskala kecil dan granular, me-refactor sebuah layanan atau bahkan menulis ulang layanan yang sesuai relatif lebih dapat dilakukan. Bisakah Anda yakin bahwa menghapus ratusan baris kode dalam sistem `Monolithic architecture` yang besar dalam satu hari tidak akan menimbulkan masalah? Namun dalam `Microservice architecture` yang dirancang dengan baik, saya yakin Anda juga dapat menangani penghapusan sebuah layanan dengan mudah.
 
-Jika Anda menghadapi sistem berarsitektur monolitik (`monolithic architecture`)
-yang besar, kode di dalamnya berantakan, dan semua orang takut untuk melakukan
-refactoring. Namun ketika Anda berurusan dengan service skala kecil yang
-terperinci, melakukan refactoring pada suatu service atau bahkan menulis ulang
-service tersebut relatif lebih mudah dilakukan.
-Dalam sistem berarsitektur monolitik (`monolithic architecture`) yang besar,
-dapatkah Anda yakin bahwa tidak akan ada masalah jika ratusan baris kode
-dihapus dalam satu hari? Namun dengan `Microservice` yang baik, saya yakin
-Anda dapat menghapus suatu service secara langsung tanpa masalah.
+## No Silver Bullet
 
-## Bukan Peluru Perak
+Meskipun `Microservice architecture` memiliki banyak manfaat, **Microservices bukanlah silver bullet!!!** Anda perlu menghadapi kompleksitas yang harus dihadapi oleh semua distributed systems. Anda mungkin perlu melakukan banyak pekerjaan dalam deployment, testing, dan monitoring, serta banyak pekerjaan dalam hal inter-service calls dan keandalan layanan. Anda bahkan mungkin perlu menangani masalah seperti distributed transaction atau yang berkaitan dengan CAP. Meskipun `Hyperf` telah menyelesaikan banyak masalah untuk Anda, sebelum menerapkan `Microservice architecture`, tim Anda harus memiliki pengetahuan yang cukup tentang distributed systems untuk menghadapi banyak masalah yang mungkin belum pernah Anda hadapi atau pertimbangkan di bawah `Monolithic architecture`.
 
-Meskipun manfaat `Microservice` sangat banyak, namun, **Microservice bukanlah
-peluru perak (silver bullet)! ! !**. Anda perlu mempertimbangkan kompleksitas
-yang harus dihadapi oleh semua sistem terdistribusi. Anda mungkin perlu
-melakukan banyak pekerjaan pada deployment, pengujian (testing), pemantauan
-(monitoring), pemanggilan antar-service, dan keandalan service, bahkan Anda
-harus menangani masalah seperti transaksi terdistribusi atau masalah terkait
-CAP. Meskipun `Hyperf` telah menyelesaikan banyak masalah untuk Anda, tim Anda
-harus memiliki pengetahuan yang cukup terkait dengan sistem terdistribusi
-sebelum menerapkan `Microservice`, guna menghadapi masalah yang mungkin belum
-pernah Anda hadapi atau pertimbangkan sebelumnya.
 
-*| Sebagian konten dalam bab ini merujuk dari buku 《Building Microservices》 oleh Sam Newman*
+*| Beberapa konten dari bab ini diterjemahkan dari buku Sam Newman "Building Microservices"*

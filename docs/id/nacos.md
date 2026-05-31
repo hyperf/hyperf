@@ -1,7 +1,6 @@
 # Nacos
 
-Sebuah client coroutine `PHP` untuk `Nacos`, terintegrasi secara sempurna
-dengan configuration center dan microservice governance dari `Hyperf`.
+Coroutine client `PHP` untuk `Nacos`, terintegrasi sempurna dengan configuration center dan microservice governance Hyperf.
 
 ## Instalasi
 
@@ -21,7 +20,7 @@ php bin/hyperf.php vendor:publish hyperf/nacos
 declare(strict_types=1);
 
 return [
-    // Developers who cannot use the IP port form can directly configure the url
+    // Developer yang tidak bisa menggunakan format IP port dapat langsung mengkonfigurasi url
     // 'url' => '',
     'host' => '127.0.0.1',
     'port' => 8848,
@@ -31,22 +30,19 @@ return [
         'config' => null,
     ],
 ];
-
 ```
 
-## Service dan instans
+## Services dan Instances
 
-Komponen saat ini masih mempertahankan fungsionalitas registrasi service
-yang disediakan sebelumnya.
+Komponen saat ini masih mempertahankan fungsi registrasi service yang disediakan sebelumnya.
 
-Cukup instal komponen `hyperf/service-governance-nacos`, lalu konfigurasikan
-listener dan proses kustom berikut.
+Anda hanya perlu menginstal komponen `hyperf/service-governance-nacos`, lalu konfigurasikan listener dan custom process berikut.
 
 `Hyperf\ServiceGovernanceNacos\Listener\MainWorkerStartListener`
 `Hyperf\ServiceGovernanceNacos\Listener\OnShutdownListener`
 `Hyperf\ServiceGovernanceNacos\Process\InstanceBeatProcess`
 
-Kemudian tambahkan konfigurasi berikut untuk mendengarkan event `Shutdown`
+Kemudian tambahkan konfigurasi berikut untuk mendengarkan event `Shutdown`:
 
 - config/autoload/server.php
 
@@ -54,20 +50,17 @@ Kemudian tambahkan konfigurasi berikut untuk mendengarkan event `Shutdown`
 <?php
 use Hyperf\Server\Event;
 return [
-    // ...other
+    // ...lainnya
     'callbacks' => [
-        // ...other
+        // ...lainnya
         Event::ON_SHUTDOWN => [Hyperf\Framework\Bootstrap\ShutdownCallback::class, 'onShutdown']
     ]
 ];
 ```
 
-## Autentikasi Layanan Aliyun
+## Alibaba Cloud Service Authentication
 
-Saat menggunakan layanan Nacos Aliyun, Anda mungkin perlu menggunakan
-autentikasi AK dan SK. Komponen Nacos mendukung hal ini secara bawaan
-(natively). Kita dapat dengan mudah menambahkan konfigurasi yang sesuai sebagai
-berikut:
+Saat menggunakan layanan Nacos dari Alibaba Cloud, Anda mungkin perlu menggunakan AK dan SK untuk autentikasi. Komponen Nacos mendukungnya secara native. Kita dapat dengan mudah menambahkan konfigurasi yang sesuai sebagai berikut:
 
 ```php
 <?php
@@ -75,12 +68,12 @@ berikut:
 declare(strict_types=1);
 
 return [
-    // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+    // url server nacos seperti https://nacos.hyperf.io, Prioritas lebih tinggi dari host:port
     // 'uri' => 'http://127.0.0.1:8848/',
-    // The nacos host info
+    // Informasi host nacos
     'host' => '127.0.0.1',
     'port' => 8848,
-    // The nacos account info
+    // Informasi akun nacos
     'username' => null,
     'password' => null,
     'access_key' => 'xxxx',
