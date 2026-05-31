@@ -1,120 +1,88 @@
 # Instalasi
 
-## Persyaratan
+## Persyaratan Server
 
-Hyperf hanya dapat berjalan pada lingkungan sistem Linux dan macOS. Namun,
-dengan perkembangan teknologi virtualisasi Docker, Anda dapat menggunakan
-Windows sebagai lingkungan sistem dengan menggunakan Docker untuk Windows. Jika
-Anda menggunakan macOS, kami menyarankan deployment lokal untuk menghindari
-lambatnya waktu startup Hyperf yang disebabkan oleh shared disk Docker.
+Hyperf punya beberapa syarat lingkungan sistem. Kalo pake Swoole network engine, cuma bisa jalan di Linux dan Mac. Tapi dengan Docker, bisa juga jalan di Windows lewat Docker for Windows. Di Mac, kami saranin deploy lokal aja biar gak lambat akibat akses shared disk Docker. Kalo pake Swow network engine, bisa jalan di Windows, Linux, dan Mac.
 
-Berbagai Dockerfile telah disiapkan dalam proyek
-[hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker), atau Anda
-dapat menggunakan image prebuilt berbasis
-[hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf).
+Project [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) udah nyiapin berbagai versi Dockerfile, atau Anda bisa langsung pake image [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) yang udah dibangun.
 
-Jika Anda tidak menggunakan Docker sebagai dasar dari lingkungan sistem Anda,
-Anda juga dapat mempertimbangkan penggunaan [Box](id/eco/box.md) sebagai
-lingkungan dasar untuk menjalankan aplikasi. Jika Anda ingin menyiapkan
-lingkungan sendiri, Anda perlu memastikan bahwa lingkungan lokal Anda memenuhi
-persyaratan berikut:
+Kalo gak mau pake Docker sebagai basis lingkungan runtime, bisa pake [Box](../eco/box.md). Kalo mau setup sendiri, pastiin lingkungan runtime-nya memenuhi syarat berikut:
 
  - PHP >= 8.1
- - Salah satu dari engine jaringan berikut:
-   - [Ekstensi PHP Swoole](https://github.com/swoole/swoole-src) >= 5.0, dengan `swoole.use_shortname` diset ke `Off` pada `php.ini` Anda
-   - [Ekstensi PHP Swow](https://github.com/swow/swow) >= 1.4
- - Ekstensi PHP JSON
- - Ekstensi PHP Pcntl (Hanya pada engine Swoole)
- - Ekstensi PHP OpenSSL (Jika Anda perlu menggunakan HTTPS)
- - Ekstensi PHP PDO (Jika Anda perlu menggunakan MySQL Client)
- - Ekstensi PHP Redis (Jika Anda perlu menggunakan Redis Client)
- - Ekstensi PHP Protobuf (Jika Anda perlu menggunakan gRPC Server atau Client)
+ - Salah satu dari network engine berikut:
+   - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.0, dengan `swoole.use_shortname` diset ke `Off` pada `php.ini`.
+   - [Swow PHP extension](https://github.com/swow/swow) >= 1.4
+ - JSON PHP extension
+ - Pcntl PHP extension (hanya saat menggunakan Swoole engine)
+ - OpenSSL PHP extension (jika diperlukan HTTPS)
+ - PDO PHP extension (jika diperlukan MySQL client)
+ - Redis PHP extension (jika diperlukan Redis client)
+ - Protobuf PHP extension (jika diperlukan gRPC server atau client)
 
+## Menginstal Hyperf
 
-## Instal Hyperf
+Hyperf menggunakan [Composer](https://getcomposer.org) untuk mengelola dependencies project. Sebelum menggunakan Hyperf, pastikan Composer sudah terinstal di lingkungan runtime Anda.
 
-Hyperf menggunakan [Composer](https://getcomposer.org) untuk mengelola
-dependency proyek. Sebelum menggunakan Hyperf, pastikan lingkungan operasi Anda
-telah terinstal Composer.
+### Membuat Project melalui `Composer`
 
-### Membuat proyek via `Composer`
+Kita udah nyiapin skeleton project lengkap dengan komponen umum, file konfigurasi, dan struktur yang sesuai. Ini project Web dasar yang siap pake buat pengembangan bisnis. Pas instalasi, Anda bisa milih component dependencies sesuai kebutuhan.
 
-Proyek [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
-adalah proyek skeleton yang telah kami siapkan untuk Anda, dengan file bawaan
-untuk komponen umum dan konfigurasi terkait. Ini adalah proyek web dasar yang
-dapat digunakan dengan cepat untuk memulai pengembangan Hyperf secara
-profesional. Pada saat instalasi, Anda dapat memilih dependency komponen sesuai
-dengan kebutuhan Anda sendiri.
-Jalankan perintah berikut untuk membuat proyek hyperf-skeleton di lokasi saat
-ini:
+Jalankan perintah berikut untuk membuat skeleton project di lokasi Anda saat ini:
 
-Berbasis engine Swoole:
+Berbasis Swoole driver:
 ```
 composer create-project hyperf/hyperf-skeleton 
 ```
-
-Berbasis engine Swow:
+Berbasis Swow driver:
 ```
 composer create-project hyperf/swow-skeleton 
 ```
 
-> Selama proses instalasi, untuk opsi yang tidak Anda yakini, silakan langsung
-tekan Enter untuk menghindari masalah di mana service tidak dapat dijalankan
-karena penambahan otomatis beberapa listener tanpa konfigurasi yang tepat.
+> Selama proses instalasi, untuk opsi yang Anda tidak yakin, cukup tekan Enter untuk melanjutkan. Ini menghindari masalah di mana layanan gagal dijalankan karena secara otomatis menambahkan beberapa listener tanpa konfigurasi yang benar.
 
-### Pengembangan di Docker
+### Pengembangan di dalam Docker
 
-Jika lingkungan lokal Anda tidak memenuhi persyaratan sistem Hyperf, atau jika
-Anda tidak terbiasa dengan konfigurasi sistem, Anda dapat menjalankan dan
-mengembangkan proyek Hyperf seperti berikut menggunakan Docker.
+Jika lingkungan lokal Anda tidak memenuhi persyaratan lingkungan Hyperf, atau jika Anda tidak terbiasa dengan konfigurasi lingkungan, Anda bisa menjalankan dan mengembangkan project Hyperf menggunakan metode berikut:
 
-- Menjalankan Container
+- Menjalankan container
 
-Pada contoh berikut, host akan dimapping ke direktori lokal
-`/workspace/skeleton`:
+Anda bisa melakukan mapping ke direktori yang sesuai di host machine sesuai dengan situasi aktual. Berikut adalah contoh menggunakan `/workspace/skeleton`.
 
-> Jika opsi `selinux-enabled` diaktifkan saat docker dimulai, akses ke resource
-host di dalam container akan dibatasi, sehingga Anda harus menambahkan opsi
-`--privileged -u root` saat memulai container.
+> Jika opsi `selinux-enabled` diaktifkan saat menjalankan Docker, akses ke resource host dari dalam container akan dibatasi. Oleh karena itu, Anda bisa menambahkan opsi `--privileged -u root` saat menjalankan container.
 
 ```shell
 docker run --name hyperf \
 -v /workspace/skeleton:/data/project \
+-w /data/project \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
 hyperf/hyperf:8.1-alpine-v3.18-swoole
 ```
 
-- Membuat Proyek
+- Membuat project
 
 ```shell
-cd /data/project
 composer create-project hyperf/hyperf-skeleton
 ```
 
-- Memulai proyek
+- Menjalankan project
 
 ```shell
 cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-Selanjutnya, Anda dapat melihat proyek yang terinstal di
-`/workspace/skeleton/hyperf-skeleton`. Karena Hyperf adalah framework CLI
-persisten, ketika Anda telah memodifikasi kode Anda, Anda harus menghentikan
-instance process yang sedang berjalan dengan `CTRL + C` dan menjalankan kembali
-perintah startup `php bin/hyperf.php start` untuk me-restart server Anda dan
-memuat ulang kode.
+Selanjutnya, Anda akan melihat kode Anda yang terinstal di host machine pada `/workspace/skeleton/hyperf-skeleton`.
+Karena Hyperf adalah framework CLI persisten, setelah ngubah kode, matiin proses pake `CTRL + C` trus jalanin ulang `php bin/hyperf.php start`.
 
-## Ekstensi yang tidak kompatibel
+## Ekstensi dengan Masalah Kompatibilitas
 
-Karena Hyperf didasarkan pada fungsionalitas coroutine Swoole yang belum pernah
-ada sebelumnya, banyak ekstensi yang tidak kompatibel. Ekstensi berikut
-(termasuk namun tidak terbatas pada) saat ini tidak kompatibel:
+Karena Hyperf dibangun di atas Swoole coroutines, dan coroutine di Swoole 4 adalah hal baru di PHP, masih ada masalah kompatibilitas dengan banyak ekstensi.
+Ekstensi berikut (namun tidak terbatas pada) akan menyebabkan masalah kompatibilitas tertentu dan tidak bisa digunakan bersama atau berdampingan dengan Hyperf:
 
 - xhprof
-- xdebug (Tersedia pada PHP 8.1+ dan Swoole >= 5.0.2)
+- xdebug (tersedia saat PHP version >= 8.1 dan Swoole version >= 5.0.2)
 - blackfire
 - trace
 - uopz

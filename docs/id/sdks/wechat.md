@@ -1,18 +1,14 @@
 # EasyWeChat
 
-[EasyWeChat](https://www.easywechat.com/) adalah SDK WeChat open source
-(bukan SDK resmi WeChat).
+[EasyWeChat](https://www.easywechat.com/) adalah WeChat SDK open-source (bukan SDK resmi dari WeChat).
 
-> Jika Anda menggunakan Swoole 4.7.0 ke atas, dan telah mengaktifkan opsi
-> native curl, Anda tidak perlu mengikuti dokumen ini.
+> Jika Anda menggunakan Swoole 4.7.0 atau lebih tinggi dengan opsi native curl yang diaktifkan, Anda tidak perlu mengikuti dokumentasi ini.
 
-> Karena komponen ini menggunakan `Curl` secara default, kita perlu mengubah
-> `GuzzleClient` terkait menjadi coroutine client, atau mengubah konstanta
-> [SWOOLE_HOOK_FLAGS](/id/coroutine?id=swoole-runtime-hook-level)
+> Karena komponen ini menggunakan `Curl` secara default, kita perlu mengganti `GuzzleClient` dengan client yang mendukung coroutine, atau memodifikasi konstanta [SWOOLE_HOOK_FLAGS](../coroutine.md#swoole-runtime-hook-level).
 
 ## Mengganti `Handler`
 
-Berikut ini adalah contoh menggunakan official account,
+Mengambil contoh Official Account:
 
 ```php
 <?php
@@ -28,39 +24,36 @@ $container = ApplicationContext::getContainer();
 $app = Factory::officialAccount($config);
 $handler = new CoroutineHandler();
 
-// Set HttpClient, some interfaces use http_client directly.
+// Set HttpClient; beberapa interface menggunakan http_client secara langsung.
 $config = $app['config']->get('http', []);
 $config['handler'] = $stack = HandlerStack::create($handler);
 $app->rebind('http_client', new Client($config));
 
-// Some interfaces will reset the Handler according to guzzle_handler when requesting data
+// Beberapa interface me-reset Handler berdasarkan guzzle_handler saat meminta data.
 $app['guzzle_handler'] = $handler;
 
-// If you are using OfficialAccount, you also need to set the following parameters
+// Jika Anda menggunakan OfficialAccount, Anda juga perlu mengatur parameter berikut:
 $app->oauth->setGuzzleOptions([
     'http_errors' => false,
     'handler' => $stack,
 ]);
 ```
 
-## Mengubah `SWOOLE_HOOK_FLAGS`
+## Memodifikasi `SWOOLE_HOOK_FLAGS`
 
-Referensi [SWOOLE_HOOK_FLAGS](/id/coroutine?id=swoole-runtime-hook-level)
+Lihat [SWOOLE_HOOK_FLAGS](../coroutine.md#swoole-runtime-hook-level).
 
 ## Cara Menggunakan EasyWeChat
 
-`EasyWeChat` dirancang untuk arsitektur `PHP-FPM`, sehingga perlu disesuaikan
-di beberapa bagian agar dapat digunakan di bawah Hyperf. Mari kita ambil contoh
-callback pembayaran untuk menjelaskannya.
+`EasyWeChat` dirancang untuk arsitektur `PHP-FPM`, sehingga memerlukan beberapa modifikasi agar dapat bekerja dengan baik di Hyperf. Di bawah ini, kita akan menggunakan callback pembayaran sebagai contoh.
 
-1. `EasyWeChat` dilengkapi dengan parsing `XML` bawaan, sehingga kita bisa
-mendapatkan `XML` asli.
+1. `EasyWeChat` sudah menyertakan parsing `XML`, jadi kita hanya perlu mendapatkan `XML` mentahnya.
 
 ```php
 $xml = $this->request->getBody()->getContents();
 ```
 
-2. Masukkan data XML ke dalam `Request` `EasyWeChat`.
+2. Masukkan data XML ke dalam objek `Request` dari `EasyWeChat`.
 
 ```php
 <?php
@@ -81,18 +74,15 @@ foreach ($uploadFiles as $k => $v) {
 $request = new Request($get, $post, [], $cookie, $files, $server, $xml);
 $request->headers = new HeaderBag($this->request->getHeaders());
 $app->rebind('request', $request);
-// Do something...
-
+// Lakukan sesuatu...
 ```
 
 3. Konfigurasi Server
 
-Jika Anda perlu menggunakan fungsi konfigurasi server dari platform publik
-WeChat, Anda dapat menggunakan kode berikut.
+Jika Anda perlu menggunakan fungsi konfigurasi server dari platform Official Account WeChat, Anda dapat menggunakan kode berikut:
 
-> `$response` berikut ini adalah `Symfony\Component\HttpFoundation\Response`
-> dan bukan `Hyperf\HttpMessage\Server\Response`. Jadi, cukup kembalikan
-> konten `Body` secara langsung untuk lolos verifikasi WeChat.
+> `$response` di bawah adalah `Symfony\Component\HttpFoundation\Response`, bukan `Hyperf\HttpMessage\Server\Response`.
+> Jadi, cukup kembalikan konten `Body` secara langsung untuk melewati verifikasi WeChat.
 
 ```php
 $response = $app->server->serve();
@@ -102,11 +92,7 @@ return $response->getContent();
 
 ## Cara Mengganti Cache
 
-`EasyWeChat` menggunakan `file cache` secara default, tetapi dalam skenario
-nyata, cache `Redis` lebih sering digunakan. Oleh karena itu, ini dapat diganti
-dengan komponen cache `hyperf/cache` yang disediakan oleh `Hyperf`. Jika Anda
-belum menginstal komponen ini, silakan jalankan `composer require hyperf/cache`.
-Contoh penggunaannya adalah sebagai berikut:
+`EasyWeChat` menggunakan `file cache` secara default, tetapi dalam skenario dunia nyata, cache `Redis` lebih umum digunakan. Anda dapat menggantinya dengan komponen `hyperf/cache` yang disediakan oleh `Hyperf`. Jika Anda belum menginstal komponen ini, jalankan `composer require hyperf/cache`. Contohnya sebagai berikut:
 
 ```php
 <?php

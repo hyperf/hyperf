@@ -1,65 +1,56 @@
-# QuickStart
+# Memulai dengan Cepat
 
-Sebagai contoh cara menggunakan `Hyperf`, halaman ini akan `membuat HTTP
-Server` untuk mengimplementasikan `Web Service` sederhana dengan mendefinisikan
-route dan controller. Hyperf dapat melakukan jauh lebih banyak hal, tetapi
-fitur seperti service governance, layanan `gRPC`, pemrograman annotations,
-`AOP`, dan fitur lainnya akan dijelaskan pada bab-bab khusus.
+Biar lebih cepet paham `Hyperf`, bagian ini bakal pake studi kasus `Membuat HTTP Server`, implementasi `Web Service` sederhana lewat definisi route dan controller. Tapi `Hyperf` lebih dari sekedar itu; service governance, layanan `gRPC`, annotation, `AOP`, dan lainnya bakal dibahas di bab-bab terpisah.
 
-## Mendefinisikan route
+## Mendefinisikan Access Routes
 
-`Hyperf` menggunakan [nikic/fast-route](https://github.com/nikic/FastRoute)
-sebagai komponen routing bawaan, sehingga Anda dapat mendefinisikan route
-dengan mudah di `config/routes.php`. `Hyperf` juga menyediakan fitur
-`Annotation Routing` yang sangat andal dan nyaman.
+Hyperf pake [nikic/fast-route](https://github.com/nikic/FastRoute) sebagai default routing component. Anda bisa dengan gampang define route di `config/routes.php`.
 
-Untuk informasi lebih lanjut tentang routing di luar contoh yang ditunjukkan di
-bawah ini, silakan merujuk ke bab [Router](id/router.md).
+Gak cuma itu, framework juga nyediain `Annotation Routing` yang powerful, praktis, dan fleksibel. Detailnya liat di bagian [Routing](../router.md).
 
-### Mendefinisikan route melalui konfigurasi file
+### Mendefinisikan Route melalui File Konfigurasi
 
-File route berada di `config/routes.php` pada proyek
-[hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton). Di bawah ini
-adalah beberapa contoh penggunaan umum:
+File route terletak di `config/routes.php` dari project [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton). Berikut adalah beberapa contoh penggunaan yang umum.
 
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
 
-// The code example here provides three different binding definitions for each example. In practice, you only need to define one of them.
+// Contoh kode di sini menyediakan tiga metode binding yang berbeda untuk setiap contoh. Dalam konfigurasi aktual, hanya satu yang harus digunakan dan route yang sama hanya boleh didefinisikan sekali.
 
-// Set the route for a GET request, bind the access address '/get' to App\Controller\IndexController::get()
+// Menyetel GET request route, mengikat alamat akses '/get' ke method get dari App\Controller\IndexController
 Router::get('/get', 'App\Controller\IndexController::get');
 Router::get('/get', 'App\Controller\IndexController@get');
 Router::get('/get', [\App\Controller\IndexController::class, 'get']);
 
-// Set the route for a POST request, bind the access address '/post' to App\Controller\IndexController::post()
+// Menyetel POST request route, mengikat alamat akses '/post' ke method post dari App\Controller\IndexController
 Router::post('/post', 'App\Controller\IndexController::post');
 Router::post('/post', 'App\Controller\IndexController@post');
 Router::post('/post', [\App\Controller\IndexController::class, 'post']);
 
-// Set a route that allows GET, POST, and HEAD requests, bind the access address '/multi' to App\Controller\IndexController::multi()
+// Menyetel route yang mengizinkan request GET, POST dan HEAD, mengikat alamat akses '/multi' ke method multi dari App\Controller\IndexController
 Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', 'App\Controller\IndexController::multi');
 Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', 'App\Controller\IndexController@multi');
 Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexController::class, 'multi']);
 ```
 
-### Mendefinisikan route melalui annotations
+### Mendefinisikan Route melalui Annotation
 
-`Hyperf` menyediakan fitur [Annotations](id/annotation.md) yang membuatnya
-cepat dan mudah untuk mendefinisikan route. Hyperf menyediakan annotation
-`#[Controller]` and `#[AutoController]` untuk digunakan dalam kelas
-`Controller`. Untuk instruksi mendalam, silakan merujuk ke bab
-[Routing](id/router.md). Berikut adalah beberapa contoh cepat:
+`Hyperf` nyediain [Annotation](../annotation.md) yang powerful, praktis, dan fleksibel, yang jelas nyediain cara berbasis annotation buat define route. Hyperf punya dua jenis annotation: `#[Controller]` dan `#[AutoController]` buat mendefinisikan `Controller`. Ini cuma pengantar; detail lebih lanjut ada di bagian [Routing](../router.md).
 
-### Mendefinisikan route melalui `#[AutoController]`
+### Mendefinisikan Route melalui Annotation `#[AutoController]`
 
-`#[AutoController]` menyediakan binding routing otomatis untuk sebagian besar
-skenario routing sederhana. Saat menggunakan `#[AutoController]`, `Hyperf`
-akan secara otomatis mem-parse semua method `public` dari kelas tersebut dan
-menyediakan request `GET` dan `POST` untuk masing-masing method tersebut.
+`#[AutoController]` nyediain binding route buat skenario akses sederhana. Pas pake `#[AutoController]`, Hyperf bakal otomatis parse semua method `public` dari class dan nyediain metode request `GET` dan `POST`.
 
-> Annotation `#[AutoController]` memerlukan namespace `use Hyperf\HttpServer\Annotation\AutoController;`
+> Saat menggunakan annotation `#[AutoController]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\AutoController`;
+
+Controller dengan nama camelCase akan secara otomatis dikonversi menjadi route snake_case. Berikut adalah contoh korespondensi antara controller dan route aktual:
+
+|      Controller      |              Annotation               |    Access Route    |
+| :-------------------: | :------------------------------------: | :----------------: |
+| MyDataController      |        @AutoController()               | /my_data/index     |
+| MydataController      |        @AutoController()               | /mydata/index      |
+| MyDataController      | @AutoController(prefix="/data")       |  /data/index       |
 
 ```php
 <?php
@@ -73,36 +64,29 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
+    // Hyperf akan secara otomatis membuat route /index/index untuk method ini, mengizinkan request melalui GET atau POST
     public function index(RequestInterface $request)
     {
-        // Retrieve the id parameter from the request
+        // Mendapatkan parameter id dari request
         $id = $request->input('id', 1);
         return (string)$id;
     }
 }
 ```
 
-### Mendefinisikan route melalui `#[Controller]`
+### Mendefinisikan Route melalui Annotation `#[Controller]`
 
-Untuk definisi routing yang lebih fleksibel, `#[Controller]` dapat digunakan
-sebagai pengganti `#[AutoController]`. Menggunakan annotation `#[Controller]`
-pada sebuah kelas menjadikannya sebuah `Controller class`, dan annotation
-`#[RequestMapping]` dapat digunakan untuk mendefinisikan method dan path
-request.
+`#[Controller]` ada untuk memenuhi kebutuhan definisi route yang lebih detail. Menggunakan annotation `#[Controller]` menandakan bahwa class saat ini adalah sebuah `Controller class`, dan perlu digunakan bersama dengan annotation `#[RequestMapping]` untuk memberikan definisi yang lebih detail untuk metode request dan path request.
 
-`Hyperf` juga menyediakan berbagai `Mapping annotations` yang cepat dan nyaman,
-seperti `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]`,
-`#[DeleteMapping]`, yang dapat menggantikan `#[RequestMapping]` untuk menghemat
-waktu Anda ketika suatu route hanya membutuhkan satu HTTP method saja.
+Kami juga menyediakan berbagai `Mapping Annotations` yang cepat dan nyaman, seperti `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]`, dan `#[DeleteMapping]`, yaitu 5 annotation praktis yang digunakan untuk menandakan metode request yang berbeda yang diizinkan.
 
-> Annotation `#[Controller]` memerlukan namespace `use Hyperf\HttpServer\Annotation\Controller;`
-> Annotation `#[RequestMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\RequestMapping;` 
-> Annotation `#[GetMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\GetMapping;`  
-> Annotation `#[PostMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\PostMapping;` 
-> Annotation `#[PutMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\PutMapping;`  
-> Annotation `#[PatchMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\PatchMapping;`
-> Annotation `#[DeleteMapping]` memerlukan namespace `use Hyperf\HttpServer\Annotation\DeleteMapping;`
+> Saat menggunakan annotation `#[Controller]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\Controller`;   
+> Saat menggunakan annotation `#[RequestMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\RequestMapping`;   
+> Saat menggunakan annotation `#[GetMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\GetMapping`;   
+> Saat menggunakan annotation `#[PostMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\PostMapping`;   
+> Saat menggunakan annotation `#[PutMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\PutMapping`;   
+> Saat menggunakan annotation `#[PatchMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\PatchMapping`;   
+> Saat menggunakan annotation `#[DeleteMapping]`, Anda perlu menggunakan namespace `Hyperf\HttpServer\Annotation\DeleteMapping`;  
 
 ```php
 <?php
@@ -117,28 +101,23 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 #[Controller]
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
+    // Hyperf akan secara otomatis membuat route /index/index untuk method ini, mengizinkan request melalui GET atau POST
     #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
-        // Retrieve the id parameter from the request
+        // Mendapatkan parameter id dari request
         $id = $request->input('id', 1);
         return (string)$id;
     }
 }
 ```
 
+## Menangani HTTP Requests
 
-## Menangani HTTP Request
+`Hyperf` sepenuhnya terbuka. Intinya, gak ada aturan baku soal pola penanganan request. Anda bisa pake pola `MVC` tradisional atau pola `RequestHandler`.
 
-`Hyperf` bersifat tidak kaku (*unopinionated*). Tidak ada keharusan bagi Anda
-untuk mengimplementasikan pemrosesan HTTP request menggunakan format tertentu.
-Anda dapat menggunakan `MVC mode` tradisional atau `RequestHandler mode` untuk
-menangani request. Mari kita ambil contoh menggunakan `MVC mode`:
-
-Buat folder `Controller` di dalam folder `app` lalu buat file
-`IndexController.php`. Method `index` akan mengambil parameter `id` dari
-request, mengonversinya menjadi tipe `string`, dan mengembalikannya ke client.
+Mari kita ambil pola `MVC` sebagai contoh:
+Buat folder `Controller` di dalam folder `app` dan buat `IndexController.php` sebagai berikut. Method `index` mendapatkan parameter `id` dari request dan mengonversinya menjadi tipe `string` untuk dikembalikan ke client.
 
 ```php
 <?php
@@ -152,12 +131,12 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
+    // Hyperf akan secara otomatis membuat route /index/index untuk method ini, mengizinkan request melalui GET atau POST
     public function index(RequestInterface $request)
     {
-        // Retrieve the id parameter from the request
+        // Mendapatkan parameter id dari request
         $id = $request->input('id', 1);
-        // Transfer $id parameter to a string, and return $id to the client with Content-Type:plain/text
+        // Mengonversi $id ke format string dan mengembalikan nilai $id ke client dengan Content-Type plain/text
         return (string)$id;
     }
 }
@@ -165,28 +144,15 @@ class IndexController
 
 ## Dependency Auto-Injection
 
-Dependency injection adalah fitur sangat andal yang disediakan oleh `Hyperf` dan
-merupakan fondasi bagi fleksibilitas framework ini.
+Dependency auto-injection adalah fitur super powerful dari `Hyperf` dan jadi fondasi fleksibilitas framework.
 
-`Hyperf` menyediakan dua metode injection, yaitu melalui constructor injection,
-dan satunya lagi melalui annotation injection `#[Inject]`. Di bawah ini adalah
-contoh untuk kedua metode tersebut:
+`Hyperf` punya dua cara injection: pertama lewat constructor injection (standar), kedua lewat annotation `#[Inject]`. Di bawah ini contoh implementasi keduanya:
 
-Misalkan kita memiliki kelas `\App\Service\UserService`. Terdapat method
-`getInfoById(int $id)` di dalam kelas tersebut yang menerima argumen `id` dan
-mengembalikan sebuah entitas user. Tipe kembalian (*return type*) dan bagian
-internal dari kelas tersebut tidak relevan dengan dokumentasi ini, sehingga
-kita tidak perlu terlalu memperhatikannya. Yang kita inginkan adalah mendapatkan
-`UserService` ke dalam kelas kita dan menggunakan method dari kelas tersebut.
-Cara biasa adalah dengan menginstansiasi kelas `UserService` melalui `new
-UserService()`, tetapi dengan menggunakan dependency injection pada `Hyperf`,
-kita memiliki solusi yang lebih baik.
+Misalnya kita punya class `\App\Service\UserService` dengan method `getInfoById(int $id)` yang nerima `id` dan balikin user entity. Return value-nya bukan fokus kita di sini. Yang pengen kita bahas adalah gimana cara dapetin `UserService` di class mana pun dan panggil method-nya. Biasanya sih pake `new UserService()`, tapi di `Hyperf` ada solusi yang lebih oke.
 
-### Injection melalui constructor
+### Injection melalui Constructor
 
-Deklarasikan tipe parameter di dalam argumen constructor, dan `Hyperf` akan
-secara otomatis melakukan inject objek atau nilai yang sesuai.
-
+Cukup deklarasikan tipe parameter di constructor, dan `Hyperf` akan secara otomatis menginjeksikan objek atau nilai yang sesuai.
 ```php
 <?php
 declare(strict_types=1);
@@ -200,10 +166,9 @@ use App\Service\UserService;
 #[AutoController]
 class IndexController
 {
-
     private UserService $userService;
     
-    // Declare the parameter type within the constructor's arguments, and Hyperf will automatically inject the corresponding object or value.
+    // Deklarasikan tipe parameter di constructor, dan Hyperf akan secara otomatis menginjeksikan objek atau nilai yang sesuai
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -218,13 +183,11 @@ class IndexController
 }
 ```
 
-### Injection melalui annotation `#[Inject]`
+### Injection melalui Annotation `#[Inject]`
 
-Deklarasikan tipe parameter di atas properti kelas yang sesuai menggunakan
-`@var` dan gunakan annotation `#[Inject]`. `Hyperf` akan secara otomatis
-melakukan inject objek atau nilai yang sesuai.
+Cukup deklarasikan tipe properti class yang sesuai melalui `@var`, dan gunakan annotation `#[Inject]` untuk menandai properti tersebut. `Hyperf` akan secara otomatis menginjeksikan objek atau nilai yang sesuai.
 
-> Annotation `#[Inject]` memerlukan namespace `use Hyperf\Di\Annotation\Inject;`
+> Saat menggunakan annotation `#[Inject]`, Anda perlu menggunakan namespace `Hyperf\Di\Annotation\Inject`;
 
 ```php
 <?php
@@ -240,6 +203,7 @@ use App\Service\UserService;
 #[AutoController]
 class IndexController
 {
+
     #[Inject]
     private UserService $userService;
     
@@ -251,45 +215,126 @@ class IndexController
     }
 }
 ```
-   
-Pada contoh di atas, kita dapat melihat dengan jelas bahwa `$userService` tidak
-diinstansiasi secara manual, melainkan objek kelas yang sesuai dengan properti
-tersebut di-inject secara otomatis oleh `Hyperf`.
 
-Namun, contoh kasus ini belum benar-benar menunjukkan kekuatan sesungguhnya dari
-dependency injection. Kita asumsikan bahwa `UserService` memiliki dependency-nya
-sendiri, dan dependency tersebut juga memiliki banyak dependency lainnya,
-sehingga kelas apa pun yang Anda definisikan harus menginstansiasi banyak objek
-secara manual dan mengelola urutan argumen setiap kelas. Di `Hyperf`, kita tidak
-perlu mengelola dependency ini secara manual, cukup deklarasikan nama kelas
-dari argumen yang kita butuhkan, dan `Hyperf` akan melakukan semua pekerjaan itu
-untuk kita.
+Dari contoh di atas, keliatan kan bahwa `$userService` udah otomatis di-inject sebagai objek class tanpa perlu instansiasi manual.
 
-Ketika `UserService` perlu mengalami perubahan internal yang drastis seperti
-mengganti layanan lokal dengan layanan remote RPC, kita hanya perlu menyesuaikan
-definisi kelas pada `UserService.php` untuk mengganti layanan lama dengan
-layanan RPC baru dalam satu file saja.
+Tapi contoh ini belum sepenuhnya nunjukin manfaat dependency auto-injection. Bayangin `UserService` punya banyak dependencies, dan dependencies itu juga punya dependencies lagi. Kalo pake `new`, kita harus instansiasi banyak objek manual dan atur posisi parameter. Tapi di `Hyperf`, kita gak perlu ngatur semua itu, tinggal deklarasiin class yang mau dipake.
 
-## Memulai server
+Dan pas `UserService` butuh perubahan gede, misalnya dari local service ke RPC remote service, kita tinggal sesuaikan dependency configuration buat ngubah class yang terikat di key `UserService` ke class RPC service yang baru.
 
-Karena `Hyperf` memiliki coroutine server bawaan, `Hyperf` akan berjalan sebagai
-proses `CLI`. Setelah mendefinisikan route dan menulis kode logika aplikasi, kita
-dapat memulai server dengan masuk ke direktori utama (*root*) proyek dan
-menjalankan perintah `php bin/hyperf.php start`.
+## Menjalankan Hyperf Service
 
-Ketika `console` menunjukkan bahwa server telah dimulai, Anda dapat mengakses
-server melalui `cURL` atau browser. Secara default, URL untuk contoh dependency
-injection di atas adalah `http://127.0.0.1:9501/index/info?id=1`.
+Karena `Hyperf` punya built-in coroutine server, `Hyperf` bakal jalan sebagai `CLI`. Makanya, abis define route dan kode logika, kita perlu jalanin `php bin/hyperf.php start` dari command line di root project buat mulai service.
 
-## Memuat ulang kode
+Ketika antarmuka `Console` menunjukkan bahwa service sudah berjalan, Anda bisa membuat request ke service tersebut secara normal melalui `cURL` atau browser. Secara default, service menyediakan halaman utama `http://127.0.0.1:9501/`. Untuk contoh yang dipandu dalam bab ini, alamat akses yang sesuai adalah `http://127.0.0.1:9501/index/info?id=1`.
 
-`Hyperf` adalah aplikasi `CLI` yang persisten. Setelah proses dimulai, kode
-`PHP` yang telah di-parse akan tetap tidak berubah selama proses berjalan,
-sehingga perubahan pada kode `PHP` setelah server dimulai tidak akan berpengaruh.
-Jika Anda ingin server memuat ulang kode Anda, Anda perlu menghentikan proses
-dengan menekan `CTRL + C` di `console` lalu menjalankan kembali perintah
-`php bin/hyperf.php start`.
+## Memuat Ulang Kode
 
-> Tip: Anda juga dapat mengonfigurasi perintah untuk mengelola Server di IDE
-> Anda, dan Anda dapat dengan cepat menjalankan operasi `Memulai Server` atau
-> `Memuat ulang kode` secara langsung melalui tombol `Start/Stop` pada IDE.
+Karena `Hyperf` adalah aplikasi `CLI` yang persisten, begitu proses jalan, kode `PHP` yang udah diparsing bakal nempel di proses. Artinya, kalo Anda ubah kode `PHP` abis service mulai, perubahan gak bakal ngefek ke service yang udah jalan. Mau reload kode yang udah diubah? Hentikan service pake `CTRL + C` di `Console`, lalu jalanin ulang `php bin/hyperf.php start`.
+
+> Tips: Anda juga bisa konfigurasi perintah start Server di IDE, biar tinggal pake tombol `start/stop` buat `start service` atau `restart service`.
+> Selain itu, pas development non-view, Anda bisa pake [TDD (Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369). Ini gak cuma ngilangin repot restart service dan pindah-pindah jendela, tapi juga ngejamin kebenaran data interface.
+
+> Selain itu, bab [Hot Reload/Hot Update](../awesome-components.md?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%bd%e8%bd%bd) dalam dokumentasi menyediakan berbagai solusi yang didukung oleh developer komunitas. Jika Anda masih ingin menggunakan solusi Hot Reload/Hot Update, Anda bisa mempelajarinya lebih lanjut.
+
+## Multi-port Listening
+
+`Hyperf` bisa dengerin multiple ports, tapi karena objek `callbacks` diambil langsung dari container, `Hyperf\HttpServer\Server::class` yang sama bakal ketimpa di container. Makanya, kita perlu definisi ulang `Server` di dependency relationship biar objeknya terisolasi.
+
+> Hal yang sama berlaku untuk WebSocket dan TCP Servers.
+
+`config/autoload/dependencies.php`
+
+```php
+<?php
+
+return [
+    'InnerHttp' => Hyperf\HttpServer\Server::class,
+];
+```
+
+`config/autoload/server.php`
+
+```php
+<?php
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+        ],
+        [
+            'name' => 'innerHttp',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => ['InnerHttp', 'onRequest'],
+            ],
+        ],
+    ]
+];
+```
+
+Pada saat yang sama, `route file` atau `annotation` juga perlu menentukan `server` yang sesuai, sebagai berikut:
+
+- Route file `config/routes.php`
+
+```php
+<?php
+Router::addServer('innerHttp', function () {
+    Router::get('/', 'App\Controller\IndexController@index');
+});
+```
+
+- Annotation
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+
+#[AutoController(server: "innerHttp")]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello World.';
+    }
+}
+```
+
+## Events
+
+Selain event `Event::ON_REQUEST` yang disebutkan di atas, framework juga mendukung event lainnya. Nama-nama event tersebut adalah sebagai berikut:
+
+|         Nama Event          |               Keterangan                |
+| :---------------------: | :---------------------------------: |
+|    Event::ON_REQUEST    |                                   |
+|     Event::ON_START     | Event ini tidak valid di mode `SWOOLE_BASE` |
+| Event::ON_WORKER_START  |                                   |
+|  Event::ON_WORKER_EXIT  |                                   |
+| Event::ON_PIPE_MESSAGE  |                                   |
+|    Event::ON_RECEIVE    |                                   |
+|    Event::ON_CONNECT    |                                   |
+|  Event::ON_HAND_SHAKE   |                                   |
+|     Event::ON_OPEN      |                                   |
+|    Event::ON_MESSAGE    |                                   |
+|     Event::ON_CLOSE     |                                   |
+|     Event::ON_TASK      |                                   |
+|    Event::ON_FINISH     |                                   |
+|   Event::ON_SHUTDOWN    |                                   |
+|    Event::ON_PACKET     |                                   |
+| Event::ON_MANAGER_START |                                   |
+| Event::ON_MANAGER_STOP  |                                   |

@@ -1,53 +1,37 @@
-# Pengetahuan Sebelum Mulai Pemrograman
+# Pengetahuan Sebelum Memulai Pemrograman
 
-Berikut adalah kumpulan pengetahuan atau konten yang harus diketahui sebelum
-mulai memprogram dengan Hyperf.
+Berikut hal-hal yang perlu diketahui sebelum coding pake Hyperf.
 
-## Tidak Dapat Mengambil/Mengatur Parameter Properti Melalui Variabel Global
+## Tidak Bisa Mendapatkan/Menyetel Parameter Properti melalui Global Variables
 
-Di bawah `PHP-FPM`, Anda dapat mengambil parameter permintaan melalui variabel
-global, parameter server, dll. Namun, dalam `Hyperf` dan `Swoole`, Anda **tidak
-dapat** mengambil parameter atribut apa pun melalui variabel global yang diawali
-dengan `$_` seperti `$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER`.
+Di `PHP-FPM`, Anda bisa dapetin parameter request lewat global variables, server parameters, dll. Tapi di `Hyperf` dan `Swoole`, Anda **gak bisa** pake `$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER` atau variabel `$_` lainnya buat dapetin parameter.
 
-## Class yang Diperoleh Melalui Container Bersifat Singleton
+## Class yang Diperoleh melalui Container Bersifat Singleton
 
-Melalui dependency injection container, semua persistensi dalam proses akan
-dibagikan ke beberapa coroutine, sehingga tidak boleh berisi data apa pun yang
-bersifat unik untuk request atau unik untuk coroutine. Jenis data seperti ini
-diproses melalui coroutine context. Silakan baca bagian
-[Dependency Injection](id/di.md) dan [Coroutine](id/coroutine.md) dengan cermat.
+Lewat dependency injection container, semua objek yang persist di dalam proses dibagi ke multiple coroutines, jadi gak boleh nyimpen data spesifik request atau spesifik coroutine tertentu. Data kayak gitu diproses lewat coroutine context. Baca bagian [Dependency Injection](./di.md) dan [Coroutine](./coroutine.md) baik-baik.
 
 ## Deployment
 
 > Dockerfile resmi sudah menyiapkan operasi-operasi ini.
 
-Saat melakukan deployment ke lingkungan produksi (production), pastikan untuk
-mengaktifkan `scan_cacheable`.
+Saat men-deploy production environment, pastikan untuk mengaktifkan `scan_cacheable`.
 
-Setelah konfigurasi ini diaktifkan, proxy class dan cache anotasi akan dibuat
-selama pemindaian pertama, dan cache tersebut dapat langsung digunakan saat
-dijalankan ulang. Hal ini sangat mengoptimalkan penggunaan memori dan waktu
-memulai (startup). Karena tahap pemindaian dilewati, `Composer Class Map` akan
-diandalkan, sehingga kita harus menjalankan perintah composer dengan opsi
-`--optimize-autoloader` untuk mengoptimalkan indeks class.
+Kalo konfigurasi ini diaktifin, proxy class dan annotation cache bakal digenerate pas scan pertama, dan cache bisa langsung dipake pas restart, ini ngoptimalin pemakaian memori dan waktu startup. Karena tahap scan dilewati, `Composer Class Map` jadi andalan, makanya kita harus jalanin `--optimize-autoloader` dari composer buat ngoptimalkan class index.
 
-Singkatnya, untuk memperbarui kode di lingkungan produksi, Anda perlu
-menjalankan perintah berikut sebelum memulai ulang proyek:
+Ringkasnya, untuk mengupdate kode di production environment, Anda perlu menjalankan perintah berikut sebelum me-restart project:
 
 ```bash
-# Optimize the composer class index
+# Optimasi composer class index
 composer dump-autoload -o
-# Generate all proxy classes and the annotation cache
+# Generate semua proxy class dan annotation cache
 php bin/hyperf.php
 ```
 
-## Hindari Peralihan Coroutine dalam Magic Method
+## Hindari Beralih Coroutine di Magic Methods
 
-> Tidak termasuk metode __call dan __callStatic
+> Tidak termasuk method __call dan __callStatic
 
-Cobalah untuk menghindari peralihan coroutine di dalam `__get`, `__set`, dan
-`__isset` karena hal ini dapat menyebabkan perilaku yang tidak terduga.
+Hindari coroutine switching di `__get`, `__set`, dan `__isset`, bisa bikin perilaku yang gak terduga.
 
 ```php
 <?php
@@ -92,8 +76,7 @@ go(static function () use ($foo) {
 \Swoole\Event::wait();
 ```
 
-Ketika kita menjalankan kode di atas, kode tersebut akan mengembalikan hasil
-berikut:
+Saat kita menjalankan kode di atas, akan menghasilkan output berikut:
 
 ```shell
 bool(false)

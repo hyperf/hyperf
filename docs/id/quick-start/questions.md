@@ -1,121 +1,82 @@
 # FAQ
 
-## Nama fungsi pendek Swoole belum dinonaktifkan
+## Swoole short name belum dimatiin
 
 ```
 [ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
-Anda perlu menambahkan `swoole.use_shortname = 'Off'` ke dalam file konfigurasi
-php.ini Anda.
+Tambahin konfigurasi `swoole.use_shortname = 'Off'` ke `php.ini`.
 
-> Catatan: Konfigurasi ini HARUS dikonfigurasi di php.ini dan TIDAK DAPAT
-> ditimpa menggunakan fungsi ini_set().
+> Perhatikan bahwa konfigurasi ini harus disetel di `php.ini` dan tidak bisa ditimpa melalui fungsi `ini_set()`.
 
-Anda juga dapat memulai server melalui perintah berikut untuk menonaktifkan
-nama fungsi pendek Swoole saat menjalankan perintah PHP:
+Atau, Anda bisa menjalankan service dengan perintah berikut untuk menonaktifkan fitur Swoole short name saat mengeksekusi perintah PHP:
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
 ```
 
-## Kehilangan pesan pada asynchronous queue
+## Async queue kehilangan pesan
 
-Jika metode `handle` tidak dijalankan saat menggunakan komponen `async-queue`,
-silakan periksa beberapa kemungkinan berikut:
+Kalo method di `handle` gak jalan pas pake komponen `async-queue`, cek dulu hal berikut:
 
-1. Apakah `Redis` digunakan bersama dengan proyek lain atau pengguna lain,
-   sehingga pesan dikonsumsi oleh proyek atau pengguna tersebut?
-2. Apakah Anda masih memiliki sisa-sisa proses lama yang berjalan yang mungkin
-   mengonsumsi pesan tersebut?
+1. Apakah `Redis` digunakan bersama dengan orang lain dan pesan dikonsumsi oleh orang lain.
+2. Apakah ada sisa proses lokal yang dikonsumsi oleh proses lain.
 
-Berikut adalah solusi mudah untuk kedua masalah tersebut:
+Berikut adalah solusi yang tidak pernah gagal:
 
-1. Jalankan perintah `killall php` di `console` Anda
-2. Ubah konfigurasi `channel` pada `async-queue` Anda
+1. `killall php`
+2. Ubah konfigurasi `channel` pada `async-queue`
 
-## Kesalahan `Swoole\Error: API must be called in the coroutine` saat menggunakan komponen `hyperf/amqp`
+## Menggunakan komponen AMQP menghasilkan error `Swoole\Error: API must be called in the coroutine`
 
-Atur nilai konfigurasi `close_on_destruct` menjadi `false` di dalam file
-konfigurasi `config/autoload/amqp.php`.
-
-## Semua request mengembalikan error 404 saat menggunakan Swoole versi 4.5 dan komponen `view`
-
-Jika Anda menggunakan Swoole versi 4.5 dan komponen `view` serta mengalami
-masalah error `404`, Anda dapat mencoba menghapus item konfigurasi
-`static_handler_locations` dari file konfigurasi
-`config/autoload/server.php`.
-
-Nilai konfigurasi ini berisi path yang akan dianggap sebagai rute
-`static file`, jadi jika nilainya adalah `/`, semua request akan diproses
-sebagai file, yang menghasilkan error 404.
+Tinggal ganti `params.close_on_destruct` jadi `false` di `config/autoload/amqp.php`.
 
 ## Perubahan kode tidak berpengaruh
 
-Jika tidak ada perubahan saat Anda memodifikasi kode aplikasi `Hyperf` Anda,
-jalankan perintah berikut:
+Kalo kode yang diubah gak ngefek, jalanin perintah ini:
 
 ```bash
 composer dump-autoload -o
 ```
 
-Selama pengembangan, harap JANGAN mengatur nilai konfigurasi `scan_cacheable`
-menjadi `true`, karena hal itu akan menyebabkan file tidak diparse ulang saat
-`collector cache` digunakan. Selain itu, `Dockerfile` dalam paket resmi
-`hyperf-skeleton` mengaktifkan konfigurasi ini secara default. Saat melakukan
-pengembangan di lingkungan `Docker`, harap atur `scan_cacheable` ke `false`.
+Pas tahap development, jangan set `scan_cacheable` ke `true`, soalnya nanti scanner gak bakal mindai ulang file kalo `collector cache` udah ada. Oh iya, `Dockerfile` di skeleton package resmi udah enable ini secara default. Developer `Docker` harap perhatiin.
 
-> Ketika environment variable `SCAN_CACHEABLE` ada, konfigurasi ini tidak dapat
-> diubah di file `.env` apa pun.
+> Ketika environment variable `SCAN_CACHEABLE` ada, konfigurasi ini tidak bisa dimodifikasi di `.env`.
 
-## Error sintaksis saat memulai server
+## Service gagal dijalankan karena syntax error
 
-Apakah exception berikut dilemparkan ketika server `Hyperf` dimulai:
+Saat project dijalankan dan memunculkan error seperti berikut:
 
 ```
 Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
 ```
 
-Silakan jalankan `composer analyse` untuk menginisialisasi static scan dari
-source code untuk menemukan masalahnya.
+Anda bisa menjalankan script `composer analyse` untuk melakukan static analysis pada project guna menemukan segmen kode yang bermasalah.
 
-Biasanya masalah ini disebabkan oleh penggunaan versi `3.0.5` dari
-[zircote/swagger](https://github.com/zircote/swagger-php), silakan lihat
-[#834](https://github.com/zircote/swagger-php/issues/834) untuk informasi lebih
-lanjut.
+Masalah ini biasanya karena update `zircote/swagger` ke versi 3.0.5. Detailnya liat [#834](https://github.com/zircote/swagger-php/issues/834).
+Jika Anda telah menginstal [hyperf/swagger](https://github.com/hyperf/swagger), disarankan untuk mengunci versi [zircote/swagger](https://github.com/zircote/swagger-php) ke 3.0.4.
 
-Jika Anda telah menginstal [hyperf/swagger](https://github.com/hyperf/swagger),
-harap kunci versi [zircote/swagger](https://github.com/zircote/swagger-php) pada
-`3.0.4`.
+## Project gagal dijalankan karena batas memori terlalu kecil
 
-## `Hyperf` tidak dapat dimulai karena memory_limit terlalu kecil
+`memory_limit` default PHP hanya `128M`.
 
-Secara default, `memory_limit` pada `PHP` diatur ke `128M`. Karena `Hyperf`
-menggunakan paket `BetterReflection` untuk melakukan analisis kode, sejumlah
-besar memori mungkin dikonsumsi dan proses `PHP` dapat melemparkan fatal
-exception ketika kehabisan memori.
+Kita bisa jalanin pake `php -d memory_limit=-1 bin/hyperf.php start`, atau ubah `php.ini`:
 
-Anda dapat menjalankan perintah dengan argumen untuk meningkatkan batas memori
-seperti `php -d memory_limit=-1 bin/hyperf.php start` atau memodifikasi file
-konfigurasi `php.ini`:
-
-```ini
-# Look for the location of your php.ini file
+```
+# Lihat lokasi file konfigurasi php.ini
 php --ini
 
-# Set the memory_limit within that file
+# Ubah konfigurasi memory_limit
 memory_limit=-1
 ```
 
-## Error `Error while injecting dependencies into... No entry or class found...` saat menginjeksi trait menggunakan `#[Inject]`
+## Error saat menggunakan `#[Inject]` di Trait: `Error while injecting dependencies into ... No entry or class found ...`
 
-Error ini muncul ketika Anda menginjeksi trait menggunakan namespace melalui
-`Inject` dan class yang berisi sintaks `use Trait;` menggunakan namespace yang
-berkonflik. Ini adalah konsep yang rumit tetapi contoh berikut akan membuatnya
-mudah dipahami:
+Kalo sebuah Trait inject properti pake `#[Inject] @var`, dan subclass-nya `use` class dengan nama yang sama dari namespace beda, nama class di Trait bakal ketimpa, jadinya injection gagal:
 
 ```php
-use Hyperf\HttpServer\Contract\ResponseInterface; # Namespace containing ResponseInterface class
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Di\Annotation\Inject;
 
 trait TestTrait
@@ -125,65 +86,54 @@ trait TestTrait
 }
 ```
 
-Pada trait di atas, class `Hyperf\HttpServer\Contract\ResponseInterface`
-diinjeksi. Jika sub-class (class yang menggunakan trait ini) menggunakan class
-`ResponseInterface` dengan namespace yang berbeda, misalnya
-`Psr\Http\Message\ResponseInterface`, hal itu akan menyebabkan
-`ResponseInterface` yang diinjeksi tertimpa.
+Seperti di atas, Trait class inject `Hyperf\HttpServer\Contract\ResponseInterface`. Tapi kalo subclass pake class `ResponseInterface` dari namespace beda, misalnya `use Psr\Http\Message\ResponseInterface`, nama class asli di Trait bakal ketimpa:
 
 ```php
-use Psr\Http\Message\ResponseInterface; # A conflicting namespace containing a ResponseInterface class
+// penggunaan nama class yang sama akan menimpa Trait
+use Psr\Http\Message\ResponseInterface;
 
 class IndexController
 {
     use TestTrait;
-    // Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
 }
+// Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
 ```
 
-Masalah ini dapat diperbaiki menggunakan metode berikut:
+Masalah di atas bisa diselesaikan dengan dua metode berikut:
 
-* Buat alias pada sub-class untuk mencegah konflik: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
-* Di `PHP` versi `7.4` Anda dapat menambahkan tipe ke atribut di dalam class trait: `protected ResponseInterface $response;`
+- Ubah alias di subclass melalui `as`: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
+- Untuk Trait class, batasi tipe properti di `PHP 7.4` ke atas: `protected ResponseInterface $response;`
 
-## `Hyperf` tidak akan menjalankan perintah karena ekstensi `grpc` atau `pcntl` tidak diinstal
+## Project gagal dijalankan karena ekstensi Grpc tidak terinstal atau Pcntl hilang
 
-`Hyperf` versi `2.2` membutuhkan ekstensi `pcntl`, Anda dapat memeriksa apakah
-ekstensi tersebut sudah terinstal dengan menjalankan perintah `php --ri pcntl`:
+- Scanning annotation di v2.2 pake ekstensi `pcntl`, jadi pastiin `PHP` Anda punya ekstensi ini.
 
-```
+```shell
+php --ri pcntl
+
 pcntl
 
 pcntl support => enabled
 ```
 
-Saat menggunakan `grpc`, Anda harus mengaktifkan `fork support` untuk mendukung
-pembukaan child process dengan menambahkan baris berikut ke `php.ini` Anda:
+- Saat `grpc` diaktifkan, Anda perlu menambahkan `grpc.enable_fork_support= 1;` ke `php.ini` untuk mendukung pengaktifan child processes.
 
-```
-grpc.enable_fork_support=1;
-```
+## HTTP Server gagal dijalankan setelah menyetel `open_websocket_protocol` ke `false`: `Swoole\Server::start(): require onReceive callback`
 
-## Nilai `open_websocket_protocol` diatur ke `false` setelah menerima error: `Swoole\Server::start(): require onReceive callback`
+1. Periksa apakah Swoole dikompilasi dengan http2
 
-1. Periksa apakah `Swoole` telah dikompilasi dengan dukungan `http2`:
-
-```
+```shell
 php --ri swoole | grep http2
 http2 => enabled
 ```
 
-Jika hasil dari perintah ini kosong, Anda perlu mengompilasi ulang `Swoole`
-dengan parameter `--enable-http2`.
+Jika tidak, Anda perlu mengkompilasi ulang Swoole dan menambahkan parameter `--enable-http2`.
 
-2. Periksa apakah nilai konfigurasi `open_http2_protocol` diatur ke `true` di
-   dalam file konfigurasi `config/autoload/server.php`
+2. Periksa apakah opsi `open_http2_protocol` di file `server.php` adalah `true`.
 
-## Command tidak dapat ditutup dengan benar
+## Command tidak bisa ditutup secara normal
 
-Setelah menggunakan teknologi multipleks seperti AMQP di dalam Command,
-Command tersebut mungkin tidak dapat ditutup secara normal. Dalam kasus ini,
-Anda hanya perlu menambahkan kode berikut di akhir logika eksekusi.
+Abis pake teknologi multiplexing kayak AMQP di dalam Command, kadang prosesnya gak bisa ditutup normal. Kalo gitu, tinggal tambahin kode berikut di akhir logika eksekusi:
 
 ```php
 <?php
@@ -193,38 +143,35 @@ use Hyperf\Coordinator\Constants;
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```
 
-## Komponen unggah OSS melaporkan error iconv
+## Komponen upload OSS melaporkan error iconv
 
-- fix Aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
 - https://github.com/docker-library/php/issues/240#issuecomment-762438977
 - https://github.com/docker-library/php/pull/1264
 
-Saat menggunakan komponen `aliyuncs/oss-sdk-php` untuk mengunggah, error iconv
-akan dilaporkan. Anda dapat mencoba menghindarinya dengan metode berikut:
+Pas pake komponen `aliyuncs/oss-sdk-php` buat upload, bisa muncul error iconv. Coba hindari pake cara berikut:
 
-Saat menggunakan image `hyperf/hyperf:8.0-alpine-v3.12-swoole`
+Saat menggunakan image `hyperf/hyperf:8.0-alpine-v3.12-swoole`:
 
 ```
 RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
 ```
 
-Saat menggunakan image `hyperf/hyperf:8.0-alpine-v3.13-swoole`
+Saat menggunakan image `hyperf/hyperf:8.0-alpine-v3.13-swoole`:
 
 ```dockerfile
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/gnu-libiconv=1.15-r3
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```
 
-## DI Reflection Manager gagal melakukan pengumpulan (collect failed)
+## Koleksi DI gagal
 
-Ketika terjadi exception selama fase pengumpulan DI (misalnya, error namespace),
-output log dengan format berikut mungkin akan dihasilkan.
+Kalo terjadi exception pas fase koleksi DI (misalnya namespace salah, dll), log-nya bakal keliatan kayak gini:
 
-- Kode layanan (service code), periksa file dan class yang terkait dengan path
-  di dalam log.
-- Kode framework, kirimkan umpan balik melalui PR.
-- Komponen pihak ketiga, kirimkan umpan balik ke pembuat komponen.
+- Untuk kode bisnis, perbaiki file dan class yang terkait dengan path di log.
+- Untuk kode framework, kirimkan PR atau Issue sebagai feedback.
+- Untuk komponen pihak ketiga, berikan feedback ke penulis komponen.
 
 ```bash
 [ERROR] DI Reflection Manager collecting class reflections failed. 
@@ -232,16 +179,14 @@ File: xxxx.
 Exception: xxxx
 ```
 
-## Layanan tidak dapat dimulai karena versi lingkungan tidak konsisten
+## Service gagal dijalankan karena ketidakcocokan versi lingkungan
 
-Ketika proyek dimulai, error yang mirip dengan berikut ini akan dilemparkan
+Saat project dijalankan dan memunculkan error seperti berikut:
 
-```
+```bash
 Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
 ```
 
-Masalah ini biasanya disebabkan oleh ketidakkonsistenan antara versi Swoole
-yang digunakan saat menginstal framework/komponen dan versi Swoole aktual yang
-digunakan saat runtime.
+Masalah ini biasanya karena versi Swoole saat runtime beda sama versi Swoole pas install framework/component.
 
-Harap jaga konsistensi versi Swoole dan PHP saat menginstal dan menggunakan.
+Ini bisa diselesaikan dengan menggunakan versi Swoole dan PHP yang sama seperti yang digunakan saat instalasi.

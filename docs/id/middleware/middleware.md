@@ -1,73 +1,48 @@
 # Middleware
 
-Middleware di sini merujuk pada `middleware mode`, yang merupakan fungsi utama
-dalam komponen [hyperf/http-server](https://github.com/hyperf/http-server). Ini
-terutama digunakan untuk menenun (weave) seluruh proses dari `Request` ke
-`Response`. Diimplementasikan berdasarkan [PSR-15](https://www.php-fig.org/psr/psr-15/).
+Middleware di sini maksudnya "Middleware Pattern", fitur utama dari komponen [hyperf/http-server](https://github.com/hyperf/http-server) yang gunanya buat nyusun alur dari `Request` sampai `Response`. Fitur ini sepenuhnya berdasarkan [PSR-15](https://www.php-fig.org/psr/psr-15/).
 
 ## Prinsip
 
-*Middleware terutama digunakan untuk menenun seluruh proses dari `Request` ke
-`Response`.* Melalui pengaturan beberapa middleware, aliran data dijalankan
-sesuai urutan yang kita tentukan. Esensi dari middleware adalah `Onion model`
-(model bawang merah). Penjelasannya melalui diagram berikut:
+*Middleware gunanya buat nyusun alur dari `Request` hingga `Response`*. Dengan ngatur multiple middlewares, data bakal ngikutin alur yang udah ditentuin. Middleware pada dasarnya adalah `Onion Model`. Biar lebih jelas, liat diagram ini:
 
 ![middleware](middleware.jpg)
 
-Urutan pada gambar diatur dengan urutan `Middleware 1 -> Middleware 2 -> Middleware 3`.
-Kita dapat melihat bahwa ketika garis horizontal tengah melewati `kernel`, yaitu
-`Middleware 3`, ia kembali ke `Middleware 2`, ini adalah model bersarang (nested
-model), sehingga urutan sebenarnya adalah:
+Diagram di atas ngatur urutan `Middleware 1 -> Middleware 2 -> Middleware 3`. Setelah lewat `Kernel` (Middleware 3), alurnya balik lagi ke `Middleware 2`, jadinya model bersarang. Urutan aslinya:
 `Request -> Middleware 1 -> Middleware 2 -> Middleware 3 -> Middleware 2 -> Middleware 1 -> Response`
-Fokusnya adalah pada `kernel`, yaitu `Middleware 3`, yang merupakan titik pembagi
-dari bawang merah tersebut. Bagian sebelum titik batas tersebut sebenarnya diproses
-berdasarkan `Request`, dan setelah melewati titik batas tersebut, `kernel`
-menghasilkan objek `Response`, yang juga merupakan target kode utama dari `kernel`.
-Setelah itu, objek `Response` ditangani oleh middleware lainnya. `Kernel` biasanya
-diimplementasikan oleh framework, dan sisanya diserahkan kepada Anda.
+Fokus di `Kernel`, yaitu `Middleware 3`. Ini titik potong onion-nya. Bagian sebelum titik potong semuanya ditangani berdasarkan `Request`. Pas lewat titik potong, `Kernel` menghasilkan objek `Response`, ini juga target kode utama `Kernel`. Setelah itu, `Response` ditangani. `Kernel` biasanya diimplementasiin oleh framework, sisanya terserah Anda.
 
-## Mendefinisikan middleware global
+## Mendefinisikan Global Middleware
 
-Middleware global HANYA dapat dikonfigurasi melalui file konfigurasi. File
-konfigurasi terletak di `config/autoload/middlewares.php` dan konfigurasinya
-adalah sebagai berikut:
+Global middleware cuma bisa dikonfigurasi lewat file konfigurasi. Filenya ada di `config/autoload/middlewares.php`:
+
 ```php
 <?php
 return [
-    // http sesuai dengan nilai property name dari setiap server di config/autoload/server.php, konfigurasi ini hanya diterapkan pada Server tersebut
+    // 'http' sesuai dengan nilai atribut name dari setiap server di config/autoload/server.php. Konfigurasi ini hanya berlaku untuk Server tersebut.
     'http' => [
-        // Konfigurasikan middleware global Anda di dalam array ini, urutannya mengikuti urutan array
+        // Konfigurasikan global middleware Anda di dalam array, urutannya tergantung pada urutan array ini.
         YourMiddleware::class
     ],
 ];
 ```
-Cukup konfigurasi middleware global Anda di dalam file tersebut beserta `Server Name`
-yang sesuai, yang berarti semua request di bawah `Server` tersebut akan menerapkan
-middleware global yang telah dikonfigurasi.
+Tinggal konfigurasi global middleware di file ini sesuai `Server Name` yang dimaksud, semua request di `Server` itu bakal pake middleware tersebut.
 
-## Mendefinisikan middleware lokal
+## Mendefinisikan Local Middleware
 
-Ketika beberapa middleware kita hanya ditujukan untuk request atau controller
-tertentu saja, kita dapat mendefinisikannya sebagai middleware lokal, yang dapat
-didefinisikan melalui file konfigurasi atau melalui annotation.
+Kalo middleware cuma ditargetin ke request atau controller tertentu, bisa didefinisikan sebagai local middleware, lewat file konfigurasi atau annotation.
 
-### Didefinisikan melalui file konfigurasi
+### Mendefinisikan melalui File Konfigurasi
 
-Ketika mendefinisikan route menggunakan file konfigurasi, disarankan untuk
-mendefinisikan middleware yang sesuai melalui file konfigurasi tersebut. Konfigurasi
-middleware lokal akan diselesaikan pada konfigurasi routing.
-Parameter terakhir `$options` dari setiap metode pendefinisian route pada class
-`Hyperf\HttpServer\Router\Router` akan menerima sebuah array, yang dapat
-didefinisikan dengan meneruskan key `middleware` dan nilai array untuk
-mendefinisikan middleware dari route tersebut. Kami mendemonstrasikannya melalui
-beberapa definisi route:
+Kalo pake file konfigurasi buat define route, Anda cuma bisa define middleware lewat file konfigurasi juga. Konfigurasi local middleware ditaruh di konfigurasi route.
+Parameter terakhir `$options` dari tiap method definisi route di class `Hyperf\HttpServer\Router\Router` nerima array. Anda bisa define middleware buat route tersebut dengan ngasih key `middleware` dan nilai array. Langsung liat contoh:
 
 ```php
 <?php
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
-// Setiap method definisi route dapat menerima parameter $options
+// Setiap metode definisi route dapat menerima parameter $options
 Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
@@ -76,35 +51,27 @@ Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middlew
 Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 
-// Semua route di bawah Group ini akan menerapkan middleware yang dikonfigurasi
+// Semua route di bawah Group ini akan menerapkan middleware yang telah dikonfigurasi
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
     },
     ['middleware' => [FooMiddleware::class]]
 );
-
 ```
 
-### Didefinisikan melalui annotation
+### Mendefinisikan melalui Annotation
 
-Ketika mendefinisikan route melalui annotation, kami menyarankan untuk mendefinisikan
-middleware menggunakan annotation. Terdapat dua annotation untuk pendefinisian
-middleware, yaitu:
-  - Annotation `#[Middleware]` digunakan saat mendefinisikan satu middleware tunggal.
-    Hanya satu annotation yang dapat didefinisikan di satu tempat, dan tidak dapat
-    didefinisikan secara berulang.
-  - Annotation `#[Middlewares]` digunakan saat mendefinisikan beberapa middleware.
-    Hanya satu annotation yang dapat didefinisikan di satu tempat, kemudian beberapa
-    definisi middleware dapat diimplementasikan dengan mendefinisikan beberapa
-    annotation `#[Middleware]` di dalam annotation tersebut.
+Kalo define route lewat annotation, Anda cuma bisa define middleware lewat annotation juga. Ada dua annotation:
+  - `#[Middleware]`, buat satu middleware. Cuma satu annotation ini yang bisa dipasang di satu tempat, dan gak bisa didefinisikan ulang.
+  - `#[Middlewares]`, buat multiple middlewares. Cuma satu annotation ini di satu tempat, lalu isi beberapa `#[Middleware]` di dalemnya.
 
-> Penggunaan `#[Middleware]` harus menggunakan namespace `use Hyperf\HttpServer\Annotation\Middleware;`;
-> Penggunaan `#[Middlewares]` harus menggunakan namespace `use Hyperf\HttpServer\Annotation\Middlewares;`;
+> Gunakan namespace `use Hyperf\HttpServer\Annotation\Middleware;` saat menggunakan annotation `#[Middleware]`;
+> Gunakan namespace `use Hyperf\HttpServer\Annotation\Middlewares;` saat menggunakan annotation `#[Middlewares]`;
 
-*Catatan: Ini harus digunakan bersama dengan `#[AutoController]` atau `#[Controller]`.*
+***Catatan: Harus digunakan bersama dengan `#[AutoController]` atau `#[Controller]`***
 
-Mendefinisikan satu middleware tunggal:
+Mendefinisikan single middleware:
 
 ```php
 <?php
@@ -125,7 +92,7 @@ class IndexController
 }
 ```
 
-Mendefinisikan beberapa middleware:
+Mendefinisikan multiple middlewares melalui annotation `#[Middlewares]`:
 
 ```php
 <?php
@@ -148,7 +115,7 @@ class IndexController
 }
 ```
 
-Mendefinisikan beberapa middleware melalui annotation `#[Middleware]`:
+Mendefinisikan multiple middlewares melalui annotation `#[Middleware]`:
 
 ```php
 <?php
@@ -172,13 +139,10 @@ class IndexController
 }
 ```
 
-#### Mendefinisikan middleware tingkat metode (method level)
+#### Mendefinisikan Method-Level Middleware
 
-Sangat mudah untuk mendefinisikan tingkat metode ketika mengonfigurasi middleware
-melalui file konfigurasi. Bagaimana jika didefinisikan menggunakan annotation?
-Anda hanya perlu mendefinisikan annotation secara langsung pada metode tersebut.
-Middleware tingkat metode memiliki prioritas lebih tinggi daripada middleware
-tingkat class. Mari kita lihat kodenya:
+Pas konfigurasi lewat file, gampang aja nentuin middleware di level method. Tapi gimana kalo lewat annotation? Tinggal definisiin annotation langsung di method-nya.
+Class-level middleware prioritasnya di atas method-level middleware. Liat contoh:
 
 ```php
 <?php
@@ -201,9 +165,10 @@ class IndexController
     }
 }
 ```
-#### Terkait
 
-Membuat middleware menggunakan perintah:
+#### Kode Terkait Middleware
+
+Generate middleware:
 
 ```
 php ./bin/hyperf.php gen:middleware Auth/FooMiddleware
@@ -241,7 +206,7 @@ class FooMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Berdasarkan logika bisnis tertentu, di sini diasumsikan token yang dibawa user valid
+        // Menentukan alur logika berdasarkan bisnis spesifik, asumsikan token yang dibawa user valid di sini
         $isValidToken = true;
         if ($isValidToken) {
             return $handler->handle($request);
@@ -251,28 +216,23 @@ class FooMiddleware implements MiddlewareInterface
             [
                 'code' => -1,
                 'data' => [
-                    'error' => 'Validasi token middleware tidak valid, mencegah eksekusi berlanjut',
+                    'error' => 'Middleware token verification invalid, block continuing to execute downwards',
                 ],
             ]
         );
     }
 }
 ```
-Urutan eksekusi middleware adalah `FooMiddleware -> BarMiddleware`.
+Urutan eksekusi middleware-nya: `FooMiddleware -> BarMiddleware`.
 
 ## Urutan Eksekusi Middleware
 
-Kita dapat melihat dari penjelasan di atas bahwa total ada 3 tingkat middleware,
-yaitu `global middleware`, `class level middleware`, dan `method level middleware`.
-Jika semua middleware ini didefinisikan, urutan eksekusinya adalah:
-`global middleware -> class level middleware -> method level middleware`.
+Dari penjelasan di atas, ada `3` level middleware: `Global Middleware`, `Class-level Middleware`, dan `Method-level Middleware`. Kalo semuanya didefinisikan, urutan eksekusinya: `Global Middleware -> Class-level Middleware -> Method-level Middleware`.
 
-Pada versi `>=3.0.34`, konfigurasi prioritas baru telah ditambahkan, yang
-memungkinkan Anda mengubah urutan eksekusi middleware saat mengonfigurasi metode
-dan routing middleware. Semakin tinggi prioritasnya, semakin tinggi urutan eksekusinya.
+Di versi `>=3.0.34`, ada fitur prioritas. Anda bisa ngatur urutan middleware pas konfigurasi method atau route middleware. Makin tinggi prioritas, makin awal dieksekusi.
 
 ```php
-// File konfigurasi middleware global middleware.php
+// File konfigurasi global middleware middleware.php
 return [
     'http' => [
         YourMiddleware::class,
@@ -306,42 +266,24 @@ class IndexController
 }
 ```
 
-## Mengubah objek request dan response secara global
+## Mengubah Request dan Response Objects Secara Global
 
-Pertama, terdapat penyimpanan objek `request` dan `response` PSR-7 yang paling
-primitif di dalam context coroutine. Sifat `immutable` yang disyaratkan oleh PSR-7
-untuk objek terkait berarti bahwa `$response` yang kita panggil dengan
-`$response = $response->with***()` bukanlah menulis ulang objek asli, melainkan
-objek baru hasil dari `Clone`. Ini berarti objek `request` dan `response` yang
-disimpan dalam context coroutine tidak akan berubah. Ketika kita memiliki beberapa
-logika di middleware yang mengubah objek `request` atau `response`, dan kita
-berharap agar kode berikutnya mendapatkan objek `request` atau `response` yang
-telah diubah tersebut, kita dapat mengatur objek baru tersebut ke dalam context
-setelah mengubah objeknya, seperti yang ditunjukkan dalam kode:
+Pertama, di coroutine context, PSR-7 `Request Object` dan `Response Object` asli udah tersimpan. Sesuai prinsip `immutability` dari PSR-7, `$response` yang didapet dari `$response = $response->with***()` bukan menimpa objek asli, melainkan objek `Clone` baru. Artinya, `Request Object` dan `Response Object` yang tersimpan di coroutine context gak bakal berubah. Nah, kalo middleware kita ngubah `Request Object` atau `Response Object`, dan kita pengen kode *non-passing* berikutnya dapetin objek yang udah diubah, kita bisa set objek baru ke dalam context abis ngubahnya:
 
 ```php
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-// $request and $response are the modified objects
+// $request dan $response adalah objek yang telah dimodifikasi
 $request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
 $response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
 
-## Kustomisasi perilaku CoreMiddleWare
+## Menyesuaikan Perilaku CoreMiddleware
 
-Secara default, ketika Hyperf menangani route yang tidak dapat ditemukan atau HTTP
-method tidak diizinkan, yaitu ketika HTTP status code adalah `404` or `405`,
-`CoreMiddleware` secara langsung menanganinya dan mengembalikan objek response
-yang sesuai. Berkat desain dependency injection Hyperf, Anda dapat mengarahkan
-`CoreMiddleware` ke `CoreMiddleware` yang Anda implementasikan sendiri dengan
-mengganti pemetaan objeknya.
+Secara default, pas Hyperf nemu route not found atau HTTP method not allowed (status code `404` atau `405`), langsung ditangani `CoreMiddleware` yang bakal balikin response object. Berkat desain dependency injection Hyperf, Anda bisa ganti `CoreMiddleware` dengan implementasi sendiri.
 
-Sebagai contoh, kita ingin mendefinisikan class `App\Middleware\CoreMiddleware`
-untuk menimpa perilaku default. Pertama-tama kita dapat mendefinisikan class
-`App\Middleware\CoreMiddleware` sebagai berikut. Di sini kita hanya mengambil HTTP
-Server sebagai contoh. Server lain juga dapat menggunakan metode atau praktik
-yang sama untuk mencapai tujuan yang sama.
+Misalnya, kita mau define class `App\Middleware\CoreMiddleware` buat ganti perilaku default. Pertama, define class-nya kayak gini. Di sini kita pake HTTP Server sebagai contoh, Server lain juga bisa pake cara yang sama.
 
 ```php
 <?php
@@ -357,31 +299,30 @@ use Psr\Http\Message\ServerRequestInterface;
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
     /**
-     * Handle the response when cannot found any routes.
+     * Menangani response ketika tidak ada route yang ditemukan.
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        // Rewrite the processing logic for route not found
+        // Menimpa logika pemrosesan untuk route not found
         return $this->response()->withStatus(404);
     }
 
     /**
-     * Handle the response when the routes found but doesn't match any available methods.
+     * Menangani response ketika route ditemukan tetapi tidak cocok dengan metode yang tersedia.
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
     protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        // Rewrite processing logic that is not allowed by HTTP methods
+        // Menimpa logika pemrosesan untuk HTTP method not allowed
         return $this->response()->withStatus(405);
     }
 }
 ```
 
-Kemudian definisikan hubungan objek di `config/autoload/dependencies.php` dan
-tulis ulang objek CoreMiddleware:
+Kemudian definisikan object relationship di `config/autoload/dependencies.php` untuk mengganti objek CoreMiddleware:
 
 ```php
 <?php
@@ -390,18 +331,13 @@ return [
 ];
 ```
 
-> Metode penulisan ulang secara langsung CoreMiddleware di sini baru efektif pada
-> versi 1.1.0 ke atas. Versi 1.0.x masih mengharuskan Anda untuk menulis ulang
-> panggilan tingkat atas dari CoreMiddleware melalui DI, kemudian mengganti nilai
-> yang diteruskan oleh CoreMiddleware dengan class middleware yang Anda definisikan.
+> Cara langsung ganti CoreMiddleware ini cuma berlaku di v1.1.0+. Di v1.0.x, Anda masih perlu ganti panggilan level atas CoreMiddleware lewat DI, baru ganti nilai CoreMiddleware-nya.
 
-## Middleware yang Umum Digunakan
+## Middleware Umum
 
-### Middleware lintas domain (Cross-domain/CORS)
+### CORS Middleware
 
-Jika Anda perlu menyelesaikan masalah lintas domain (cross-origin) di dalam
-framework, Anda dapat mengimplementasikan middleware berikut sesuai dengan
-kebutuhan Anda:
+Kalo perlu nanganin cross-domain di framework, tinggal implementasiin middleware kayak gini:
 
 ```php
 <?php
@@ -423,7 +359,7 @@ class CorsMiddleware implements MiddlewareInterface
         $response = Context::get(ResponseInterface::class);
         $response = $response->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Credentials', 'true')
-            // Headers can be rewritten according to actual conditions.
+            // Header bisa dimodifikasi sesuai kondisi aktual.
             ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization');
 
         Context::set(ResponseInterface::class, $response);
@@ -437,7 +373,7 @@ class CorsMiddleware implements MiddlewareInterface
 }
 ```
 
-Faktanya, konfigurasi lintas domain juga dapat langsung dipasang pada `Nginx`.
+Sebenarnya, konfigurasi cross-domain juga bisa langsung dipasang di `Nginx`.
 
 ```
 location / {
@@ -451,17 +387,15 @@ location / {
 }
 ```
 
-### Post-middleware
+### Post-Middleware
 
-Biasanya, kode terakhir yang kita jalankan adalah
+Biasanya, kita jalanin di akhir:
 
 ```
 return $handler->handle($request);
 ```
 
-Oleh karena itu, ini setara dengan pre-middleware. Jika Anda ingin membuat logika
-middleware berjalan setelah proses (post-middleware), Anda hanya perlu mengubah
-urutan eksekusinya.
+Jadi ini sama dengan pre-middleware. Biar middleware jalan setelah proses (post-process), tinggal ubah urutan eksekusinya.
 
 ```php
 <?php
@@ -485,11 +419,11 @@ class OpenApiMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // TODO: pre-operation
+        // TODO: Pre-operation
         try{
             $result = $handler->handle($request);
         } finally {
-            // TODO: post operation
+            // TODO: Post-operation
         }
         return $result;
     }
