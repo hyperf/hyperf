@@ -11,7 +11,7 @@ Jika komponen coroutine yang Anda kembangkan diadaptasi untuk Hyperf, maka Anda 
 
 ## Bagaimana cara beradaptasi dengan Hyperf?
 
-Kami menyediakan [Panduan Pengembangan Komponen Hyperf](component-guide/intro.md) untuk membantu Anda mengembangkan komponen Hyperf atau beradaptasi dengan framework Hyperf.
+Kami menyediakan [Panduan Pengembangan Komponen Hyperf](id/component-guide/intro.md) untuk membantu Anda mengembangkan komponen Hyperf atau beradaptasi dengan framework Hyperf.
 
 # Component List
 
@@ -121,7 +121,7 @@ Kami menyediakan [Panduan Pengembangan Komponen Hyperf](component-guide/intro.md
 
 ## Hot Update/Hot Reload
 
-- [hyperf/watcher](watcher.md) Komponen hot update resmi.
+- [hyperf/watcher](id/watcher.md) Komponen hot update resmi.
 - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) Komponen hot update umum yang diimplementasikan berdasarkan Swoole.
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) Komponen hot update umum yang diimplementasikan oleh Mixphp.
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) Komponen hot update umum yang diimplementasikan berdasarkan Go language.
