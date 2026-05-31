@@ -4,7 +4,7 @@ Saat menggunakan [hyperf/database](https://github.com/hyperf/database) untuk que
 
 # Cara Penggunaan
 
-Ketika query data melalui [Query Builder](/db/querybuilder.md) atau [Model](/db/model.md), gunakan method `paginate` untuk pagination. Method ini otomatis mengatur limit dan offset berdasarkan halaman yang dilihat user. Secara default, nomor halaman dideteksi dari nilai parameter `page` di HTTP request:
+Ketika query data melalui [Query Builder](id/db/querybuilder.md) atau [Model](id/db/model.md), gunakan method `paginate` untuk pagination. Method ini otomatis mengatur limit dan offset berdasarkan halaman yang dilihat user. Secara default, nomor halaman dideteksi dari nilai parameter `page` di HTTP request:
 
 > Karena Hyperf belum mendukung views, pagination component belum bisa me-render view. Mengembalikan hasil pagination langsung akan menghasilkan output `application/json` secara default.
 
