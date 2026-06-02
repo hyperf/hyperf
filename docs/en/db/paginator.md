@@ -1,39 +1,39 @@
-# Query pagination
+# Database Pagination
 
-When using [hyperf/database](https://github.com/hyperf/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf/paginator) component to easily paginate query results.
+When using [hyperf/database](https://github.com/hyperf/database) to query data, you can conveniently paginate query results by using the [hyperf/paginator](https://github.com/hyperf/paginator) component.
 
-# Instructions
+# How to use
 
-When you query data through [Query Builder](en/db/querybuilder.md) or [Model](en/db/model.md), pagination can be handled through the `paginate` method, which automatically The page being viewed is used to set the limit and offset. By default, the current number of pages is detected by the value of the `page` parameter carried by the current HTTP request:
+When you query data through the [Query Builder](/en/db/querybuilder.md) or [Model](/en/db/model.md), you can use the `paginate` method to process pagination. This method automatically sets limits and offsets based on the page the user is viewing. By default, the current page number is detected via the `page` parameter value in the current HTTP request:
 
-> Since Hyperf does not currently support views, the paging component does not yet support rendering of views, and the paging results returned directly will be output in application/json format by default.
+> Since Hyperf does not currently support views, the pagination component does not yet support rendering for views. Directly returning pagination results will output in `application/json` format by default.
 
-## query builder pagination
+## Query Builder Pagination
 
 ```php
 <?php
-// Show all users in the app, 10 pieces of data per page
+// Display all users in the application, showing 10 items per page
 return Db::table('users')->paginate(10);
 ```
 
-## Model pagination
+## Model Pagination
 
-You can do pagination by calling the `paginate` method directly from a static method:
+You can call the `paginate` method directly via a static method to perform pagination:
 
 ```php
 <?php
-// Show all users in the app, 10 pieces of data per page
+// Display all users in the application, showing 10 items per page
 return User::paginate(10);
 ```
 
-You can also set the query conditions or other query settings:
+Of course, you can also set query conditions or other query settings:
 
 ```php
 <?php 
-// Show all users in the app, 10 pieces of data per page
+// Display all users in the application, showing 10 items per page
 return User::where('gender', 1)->paginate(10);
 ```
 
-## Paginator instance methods
+## Paginator Instance Methods
 
-Only the usage of the paginator in database queries is described here. For more details about the paginator, please read the [Pagination](en/paginator.md) chapter.
+This section only describes the usage of the paginator in database queries. For more details about the paginator, please read the [Pagination](/en/paginator.md) chapter.

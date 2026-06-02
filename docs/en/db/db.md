@@ -1,62 +1,62 @@
-# Minimalist DB component
+# Minimalist DB Component
 
-[hyperf/database](https://github.com/hyperf/database) The function is very powerful, but it is undeniable that the efficiency is indeed a little insufficient. Here is a minimalist `hyperf/db` component.
+[hyperf/database](https://github.com/hyperf/database) is very powerful, but it is undeniable that it is slightly lacking in efficiency. Here, a minimalist `hyperf/db` component is provided.
 
-## Install
+## Installation
 
 ```bash
 composer require hyperf/db
 ```
 
-## Publish component configuration
+## Publish Component Configuration
 
-The configuration file for this component is located at `config/autoload/db.php`. If the file does not exist, you can publish the configuration file to the skeleton with the following command:
+The configuration file for this component is located at `config/autoload/db.php`. If the file does not exist, you can publish the configuration file to the skeleton via the following command:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
 ```
 
-## Component configuration
+## Component Configuration
 
-The default configuration `config/autoload/db.php` is as follows, the database supports multi-database configuration, the default is `default`.
+The default configuration in `config/autoload/db.php` is as follows. The database supports multi-database configuration, with `default` as the default connection.
 
-|  configuration item  |  type  |       default      |                          remark                          |
-|:--------------------:|:------:|:------------------:|:--------------------------------------------------------:|
-|        driver        | string |        none        |                    The database engine                   |
-|         host         | string |    `localhost`     |                      database address                    |
-|         port         |  int   |        3306        |                      database address                    |
-|       database       | string |        none        |                    Database default DB                   |
-|       username       | string |        none        |                     database username                    |
-|       password       | string |        null        |                     database password                    |
-|       charset        | string |        utf8        |                     database charset                     |
-|      collation       | string |  utf8_unicode_ci   |                    database collation                    |
-|      fetch_mode      |  int   | `PDO::FETCH_ASSOC` |                 PDO Query result set type                |
-| pool.min_connections |  int   |         1          | The minimum number of connections in the connection pool |
-| pool.max_connections |  int   |         10         | The maximum number of connections in the connection pool |
-| pool.connect_timeout | float  |        10.0        |                  connection wait timeout                 |
-|  pool.wait_timeout   | float  |        3.0         |                      overtime time                       |
-|    pool.heartbeat    |  int   |         -1         |                        heartbeat                         |
-|  pool.max_idle_time  | float  |        60.0        |                    maximum idle time                     |
-|       options        | array  |                    |                      PDO configure                       |
+| Configuration Item | Type | Default Value | Remarks |
+|:--------------------:|:------:|:------------------:|:--------------------------------:|
+| driver | string | N/A | Database engine |
+| host | string | `localhost` | Database address |
+| port | int | 3306 | Database address |
+| database | string | N/A | Default database |
+| username | string | N/A | Database username |
+| password | string | null | Database password |
+| charset | string | utf8 | Database character set |
+| collation | string | utf8_unicode_ci | Database collation |
+| fetch_mode | int | `PDO::FETCH_ASSOC` | PDO query result set type |
+| pool.min_connections | int | 1 | Minimum connections in connection pool |
+| pool.max_connections | int | 10 | Maximum connections in connection pool |
+| pool.connect_timeout | float | 10.0 | Connection wait timeout |
+| pool.wait_timeout | float | 3.0 | Timeout duration |
+| pool.heartbeat | int | -1 | Heartbeat |
+| pool.max_idle_time | float | 60.0 | Maximum idle time |
+| options | array | | PDO configuration |
 
-## Component supported methods
+## Supported Methods
 
-The specific interface can be viewed `Hyperf\DB\ConnectionInterface`.
+For specific interfaces, please check `Hyperf\DB\ConnectionInterface`.
 
-|    method name   |  return value  |                                       remark                                        |
-|:----------------:|:--------------:|:-----------------------------------------------------------------------------------:|
-| beginTransaction |     `void`     |                    Open transaction (Support transaction nesting)                   |
-|      commit      |     `void`     |                   Commit transaction (Support transaction nesting                   |
-|     rollBack     |     `void`     |                  Rollback transaction (Support transaction nesting)                 |
-|      insert      |     `int`      | Insert data, return the primary key ID, non-auto-incrementing primary key returns 0 |
-|     execute      |     `int`      |                   Execute SQL to return the number of rows affected                 |
-|      query       |    `array`     |                       Query SQL, return a list of result sets                       |
-|      fetch       | `array, object`|                  Query SQL to return the first row of the result set                |
-|      connection  |     `self`     |                          Specify the database to connect to                         |
+| Method Name | Return Value Type | Remarks |
+|:----------------:|:--------------:|:------------------------------------:|
+| beginTransaction | `void` | Start a transaction, supports nested transactions |
+| commit | `void` | Commit a transaction, supports nested transactions |
+| rollBack | `void` | Rollback a transaction, supports nested transactions |
+| insert | `int` | Insert data, returns primary key ID; returns 0 for non-auto-increment primary keys |
+| execute | `int` | Execute SQL, returns number of affected rows |
+| query | `array` | Query SQL, returns result set list |
+| fetch | `array, object` | Query SQL, returns the first row of the result set |
+| connection | `self` | Specify the database connection |
 
-## Use
+## Usage
 
-### Use DB instance
+### Using DB Instance
 
 ```php
 <?php
@@ -67,10 +67,9 @@ use Hyperf\DB\DB;
 $db = ApplicationContext::getContainer()->get(DB::class);
 
 $res = $db->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
-
 ```
 
-### Use static methods
+### Using Static Methods
 
 ```php
 <?php
@@ -78,14 +77,13 @@ $res = $db->query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 use Hyperf\DB\DB;
 
 $res = DB::query('SELECT * FROM `user` WHERE gender = ?;', [1]);
-
 ```
 
-### Custom methods using anonymous functions
+### Using Anonymous Functions to Customize Methods
 
-> This method allows users to directly operate the underlying `PDO` or `MySQL`, so you need to deal with compatibility issues yourself
+> This method allows users to directly operate the underlying `PDO` or `MySQL`, so you need to handle compatibility issues yourself.
 
-For example, if we want to execute certain queries and use different `fetch mode`, we can customize our own methods in the following ways
+For example, if we want to execute certain queries using different `fetch mode`s, we can customize our own method via the following approach:
 
 ```php
 <?php

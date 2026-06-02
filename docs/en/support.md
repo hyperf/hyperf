@@ -1,32 +1,32 @@
-# Support
+# Helper Classes
 
-Hyperf provides a large number of convenient utils. Some commonly used and useful ones but not all of them are listed in this section. For more details, please refer [hyperf/support](https://github.com/hyperf/support).
+Hyperf provides a large number of convenient helper classes. Some commonly used and useful ones are listed here. This is not an exhaustive list; you can check the code of the [hyperf/support](https://github.com/hyperf/support) component yourself for more information.
 
-## Coroutine Util
+## Coroutine Helper Classes
 
 ### Hyperf\Coroutine\Coroutine
 
-This util is used to assist in the judgment or operation of the coroutine.
+This helper class is used to assist with coroutine-related judgments or operations.
 
 #### id(): int
 
-Get current `coroutine ID` by using static method `id()`. If it is not under the coroutine environment return `-1`.
+Use the static method `id()` to obtain the `Coroutine ID` of the current coroutine. If not currently in a coroutine environment, `-1` is returned.
 
 #### create(callable $callable): int
 
-The static method `create(callable $callable)` can be used to create a coroutine. It can also be done by using global method `co(callable $callable)` and `go(callable $callable)`. The `create(callable $callable)` method is an encapsulation of the creation method in `Swoole`. The difference is that it will not throw out uncaught exceptions, which will be thrown by `Hyperf\Contract\StdoutLoggerInterface` as `warning` exceptions.
+Use the static method `create(callable $callable)` to create a coroutine. You can also achieve the same purpose through the global functions `co(callable $callable)` or `go(callable $callable)`. This method is a wrapper for the `Swoole` coroutine creation method. The difference is that it does not throw uncaught exceptions. Uncaught exceptions will be output at `warning` level via `Hyperf\Contract\StdoutLoggerInterface`.
 
 #### inCoroutine(): bool
 
-`inCoroutine()` is a static method to determine whether it is currently in a coroutine environment.
+Use the static method `inCoroutine()` to determine whether the current environment is a coroutine environment.
 
 ### Hyperf\Context\Context
 
-The `Context` is used to handle coroutine context. It is basically an encapsulation of `Swoole\Coroutine::getContext()`. However, the `Hyperf\Context\Context` is compatible with running in a non-coroutine environment.
+Used to handle the coroutine context. Essentially, it is a wrapper for the `Swoole\Coroutine::getContext()` method, but the difference is that it is compatible with execution in non-coroutine environments.
 
 ### Hyperf\Coordinator\CoordinatorManager
 
-The `CoordinatorManager` is used to schedule the coroutine when events occurred.
+This helper class is used to command coroutines to wait for events to occur.
 
 ```php
 <?php
@@ -35,13 +35,13 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coroutine\Coroutine;
 
 Coroutine::create(function() {
-    // Invoked after all OnWorkerStart event callbacks are completed
+    // Wake up after all OnWorkerStart event callbacks are completed
     CoordinatorManager::until(Constants::WORKER_START)->yield();
     echo 'worker started';
-    // Assigning resources
-    // Invoked after all OnWorkerStart event callbacks are completed
+    // Allocate resources
+    // Wake up after all OnWorkerExit event callbacks are completed
     CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
     echo 'worker exited';
-    // Recycling resources
+    // Reclaim resources
 });
 ```

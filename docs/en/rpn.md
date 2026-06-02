@@ -1,58 +1,56 @@
 # RPN - Reverse Polish Notation
 
-![PHPUnit](https://github.com/hyperf/rpn-incubator/workflows/PHPUnit/badge.svg)
+`RPN` is a mathematical expression method introduced by the Polish mathematician Jan Łukasiewicz in 1920. In reverse Polish notation, all operators are placed after the operands, so it is also called postfix notation. Reverse Polish notation does not require parentheses to identify the priority of operators.
 
-`RPN` is a mathematical expression method introduced by Polish mathematician Jan Vukasevich in 1920. In reverse Polish notation, all operators are placed after the operand, so it is also called postfix notation. . Reverse Polish notation does not require parentheses to identify operator precedence.
-
-```
+```bash
 composer require hyperf/rpn
 ```
 
-## RPN logic
+## RPN Logic
 
-basic logic
+Basic logic:
 
-- while with input
-    - read in the next symbol X
+- while there is input
+    - Read the next symbol X
     - IF X is an operand
-        - push the stack
+        - Push onto stack
     - ELSE IF X is an operator
-        - there is a table of a priori that the operator takes n arguments
-        - IF less than n operands on stack
+        - There is a prior table giving that the operator requires n arguments
+        - IF there are fewer than n operands on the stack
             - (Error) User did not enter enough operands
-    - Else, pop n operands from stack
-    - Computational operators.
-    - push the calculated value onto the stack
-- There is only one value in the IF stack
-    - This value is the result of the entire calculation
-- ELSE more than one value
-    - (Error) User entered redundant operands
+        - Else, pop n operands from the stack
+        - Calculate the operator.
+        - Push the calculated value onto the stack
+- IF there is only one value in the stack
+    - This value is the result of the entire expression
+- ELSE there is more than one value
+    - (Error) User entered extra operands
 
-Example
+Example:
 
-The infix expression `5 + ((1 + 2) * 4) - 3` is written
+The infix expression `5 + ((1 + 2) * 4) - 3` is written as:
 
 `5 1 2 + 4 * + 3 -`
 
-The following table shows how this Reverse Polish expression is evaluated from left to right, with the intermediate values ​​given in the stack bar, which is used to keep track of the algorithm.
+The following table shows the evaluation process of this reverse Polish expression from left to right. The stack column shows intermediate values used to track the algorithm.
 
-| input | action | stack | comment |
-| ---- | -------- | ------- | ---------------------------- |
+| Input | Operation | Stack | Notes |
+| ---- | -------- | ------- | -------------------------- |
 | 5 | Push | 5 | |
 | 1 | Push | 5, 1 | |
 | 2 | Push | 5, 1, 2 | |
-| + | Addition | 5, 3 | Pop 1, 2, push result 3 |
+| + | Addition | 5, 3 | 1, 2 pop, push result 3 |
 | 4 | Push | 5, 3, 4 | |
 | * | Multiplication | 5, 12 | 3, 4 pop, push result 12 |
-| + | Add operation | 17 | 5, 12 pop, push result 17 |
-| 3 | push | 17, 3 | |
+| + | Addition | 17 | 5, 12 pop, push result 17 |
+| 3 | Push | 17, 3 | |
 | - | Subtraction | 14 | 17, 3 pop, push result 14 |
 
-When the calculation is complete, there is only one operand on the stack, which is the result of the expression: 14
+When the calculation is completed, there is only one operand in the stack, which is the result of the expression: 14.
 
-## use
+## Usage
 
-Evaluate RPN expressions directly
+Calculate RPN expression directly:
 
 ```php
 <?php
@@ -62,7 +60,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', []); // '14'
 ```
 
-Set calculation precision
+Set calculation precision:
 
 ```php
 <?php
@@ -72,7 +70,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', [], 2); // '14.00'
 ```
 
-set variable
+Set variables:
 
 ```php
 <?php
@@ -82,9 +80,9 @@ $calculator = new Calculator();
 $calculator->calculate('[0] 1 2 + 4 * + [1] -', [5, 10]); // '7'
 ```
 
-### Convert infix expressions to postfix expressions
+### Convert Infix Expression to Postfix Expression
 
-> The use of variables is temporarily not supported
+> Variables are not supported yet
 
 ```php
 <?php

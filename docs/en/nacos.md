@@ -1,6 +1,6 @@
 # Nacos
 
-A `PHP` coroutine client of `Nacos`, perfectly combined with the configuration center and microservice governance of `Hyperf`.
+A `PHP` coroutine client for `Nacos`, perfectly combined with Hyperf's configuration center and microservice governance.
 
 ## Installation
 
@@ -8,7 +8,7 @@ A `PHP` coroutine client of `Nacos`, perfectly combined with the configuration c
 composer require hyperf/nacos
 ```
 
-### Publish the config file
+### Publish configuration file
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/nacos
@@ -20,7 +20,7 @@ php bin/hyperf.php vendor:publish hyperf/nacos
 declare(strict_types=1);
 
 return [
-    // Developers who cannot use the IP port form can directly configure the url
+    // Developers who cannot use IP port format can directly configure url
     // 'url' => '',
     'host' => '127.0.0.1',
     'port' => 8848,
@@ -30,20 +30,19 @@ return [
         'config' => null,
     ],
 ];
-
 ```
 
-## Services and instances
+## Services and Instances
 
-The current component still retains the previously provided service registration functionality.
+The current component still retains the previously provided service registration function.
 
-Just install the `hyperf/service-governance-nacos` component, then configure the following listeners and custom processes.
+You only need to install the `hyperf/service-governance-nacos` component, and then configure the following listeners and custom processes.
 
 `Hyperf\ServiceGovernanceNacos\Listener\MainWorkerStartListener`
 `Hyperf\ServiceGovernanceNacos\Listener\OnShutdownListener`
 `Hyperf\ServiceGovernanceNacos\Process\InstanceBeatProcess`
 
-Then add the following configuration to listen to the `Shutdown` event
+Then add the following configuration to listen for the `Shutdown` event:
 
 - config/autoload/server.php
 
@@ -59,9 +58,9 @@ return [
 ];
 ```
 
-## Aliyun Service Authentication
+## Alibaba Cloud Service Authentication
 
-When using Aliyun's Nacos service, you may need to use AK and SK authentication. The Nacos component supports it natively. We can easily add the corresponding configuration, as follows:
+When using Alibaba Cloud's Nacos service, you may need to use AK and SK for authentication. The Nacos component supports it natively. We can easily add the corresponding configuration as follows:
 
 ```php
 <?php

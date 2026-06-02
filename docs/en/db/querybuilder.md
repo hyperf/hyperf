@@ -1,15 +1,15 @@
-# Query builder
+# Query Builder
 
 ## Introduction
 
-Hyperf's database query builder provides a convenient interface for creating and running database queries. It can be used to perform most database operations in an application and runs on all supported database systems.
+Hyperf's database query builder provides a convenient interface for creating and running database queries. It can be used to perform most database operations in your application and works on all supported database systems.
 
-Hyperf's query builder uses PDO parameter binding to protect your application from SQL injection attacks. So there is no need to sanitize strings passed as bindings.
+Hyperf's query builder uses PDO parameter binding to protect your application from SQL injection attacks. Therefore, there is no need to sanitize the strings passed as bindings.
 
-Only some commonly used tutorials are provided here, and specific tutorials can be viewed on the Laravel official website.
+Here are only some commonly used tutorials. For specific tutorials, please visit the official Laravel website.
 [Laravel Query Builder](https://laravel.com/docs/5.8/queries)
 
-## Get results
+## Retrieving Results
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-The `Db::select()` method returns an array, and the `get` method returns `Hyperf\Collection\Collection`. The element is `stdClass`, so the data of each element can be returned by the following code
+The `Db::select()` method will return an array, and the `get` method will return a `Hyperf\Collection\Collection`. The elements are `stdClass`, so you can access the data of each element using the following code:
 
 ```php
 <?php
@@ -29,9 +29,9 @@ foreach ($users as $user) {
 }
 ```
 
-### Convert the result to array format
+### Converting Results to Array Format
 
-In some scenarios, you may want to use `Array` instead of `stdClass` object structure in the query result, and `Eloquent` removes the default `FetchMode` configured by configuration, then At this point, you can change the configuration by listening to the `Hyperf\Database\Events\StatementPrepared` event through the listener:
+In some scenarios, you may want the query results to use `Array` instead of `stdClass` object structure. Since `Eloquent` has removed the ability to configure the default `FetchMode` via configuration, you can listen to the `Hyperf\Database\Events\StatementPrepared` event to change this configuration:
 
 ```php
 <?php
@@ -63,9 +63,33 @@ class FetchModeListener implements ListenerInterface
 }
 ```
 
-### Get the value of a column
+### Retrieving a Single Row
 
-If you want to get a collection containing a single column of values, you can use the `pluck` method. In the following example, we will get a collection of titles in the roles table:
+If you want to get a single row, you can use the `first` method:
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$row = Db::table('user')->first(); // SQL will automatically include limit 1
+var_dump($row);
+```
+
+### Retrieving a Single Value
+
+If you want to get a single value, you can use the `value` method:
+
+```php
+<?php
+use Hyperf\DbConnection\Db;
+
+$id = Db::table('user')->value('id');
+var_dump($id);
+```
+
+### Retrieving a Column of Values
+
+If you want to get a collection containing values of a single column, you can use the `pluck` method. In the example below, we will get a collection of titles from the roles table:
 
 ```php
 <?php
@@ -74,12 +98,11 @@ use Hyperf\DbConnection\Db;
 $names = Db::table('user')->pluck('name');
 
 foreach ($names as $name) {
-    echo $names;
+    echo $name;
 }
-
 ```
 
-You can also specify custom keys for fields in the returned collection:
+You can also specify a custom key for the returned collection:
 
 ```php
 <?php
@@ -90,12 +113,11 @@ $roles = Db::table('roles')->pluck('title', 'name');
 foreach ($roles as $name => $title) {
     echo $title;
 }
-
 ```
 
-### Chunked results
+### Chunking Results
 
-If you need to process thousands of database records, you might consider using the `chunk` method. This method takes a small chunk of the result set at a time and passes it to the `closure` function for processing. This method is very useful when `Command` is writing thousands of pieces of processing data. For example, we can cut the entire user table data into small pieces that process 100 records at a time:
+If you need to process thousands of database records, consider using the `chunk` method. This method retrieves a small chunk of the result set at a time and passes it to a `Closure` function for processing. This method is very useful when writing `Command` to process thousands of data. For example, we can split all data in the user table into chunks of 100 records:
 
 ```php
 <?php
@@ -108,7 +130,7 @@ Db::table('user')->orderBy('id')->chunk(100, function ($users) {
 });
 ```
 
-You can stop fetching chunked results by returning `false` in the closure:
+You can terminate further retrieval of chunked results by returning `false` in the `Closure`:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -119,7 +141,7 @@ Db::table('user')->orderBy('id')->chunk(100, function ($users) {
 });
 ```
 
-If you are updating database records while chunking the results, the chunked results may not be the same as expected. Therefore, when updating records in chunks, it is better to use the chunkById method. This method will automatically paginate the results based on the record's primary key:
+If you update database records while chunking results, the chunked results may be inconsistent with the expected results. Therefore, when chunking records for updates, it is best to use the `chunkById` method. This method will automatically paginate the results based on the primary key of the records:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -133,11 +155,11 @@ Db::table('user')->where('gender', 1)->chunkById(100, function ($users) {
 });
 ```
 
-> Any changes to the primary or foreign keys may affect the block query while updating or deleting records inside the block's callback. This may result in records not being included in the chunked result.
+> When updating or deleting records in the chunk callback, any changes to the primary key or foreign key may affect the chunk query. This may result in records not being included in the chunked results.
 
-### Aggregate query
+### Aggregations
 
-The framework also provides aggregate class methods such as `count`, `max`, `min`, `avg`, `sum`.
+The framework also provides aggregate methods, such as `count`, `max`, `min`, `avg`, `sum`.
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -145,9 +167,9 @@ use Hyperf\DbConnection\Db;
 $count = Db::table('user')->count();
 ```
 
-#### Determine if the record exists
+#### Determining If Records Exist
 
-In addition to using the `count` method to determine whether the result of a query condition exists, you can also use the `exists` and `doesntExist` methods:
+In addition to using the `count` method to determine whether the results of a query condition exist, you can also use `exists` and `doesntExist` methods:
 
 ```php
 return Db::table('orders')->where('finalized', 1)->exists();
@@ -155,23 +177,23 @@ return Db::table('orders')->where('finalized', 1)->exists();
 return Db::table('orders')->where('finalized', 1)->doesntExist();
 ```
 
-## Inquire
+## Queries
 
-### Specify a Select statement
+### Specifying a Select Statement
 
-Of course you may not always want to get all the columns from the database table. Using the select method, you can customize a select query statement to query the specified fields:
+Of course, you may not always want to retrieve all columns from a database table. Using the `select` method, you can customize a `select` query statement to query specific fields:
 
 ```php
 $users = Db::table('user')->select('name', 'email as user_email')->get();
 ```
 
-The `distinct` method forces the query to return unique results:
+The `distinct` method forces the query to return distinct results:
 
 ```php
 $users = Db::table('user')->distinct()->get();
 ```
 
-If you already have a query builder instance and want to add a field to the existing query, you can use the addSelect method:
+If you already have a query builder instance and want to add a field to the existing query statement, you can use the `addSelect` method:
 
 ```php
 $query = Db::table('users')->select('name');
@@ -179,9 +201,9 @@ $query = Db::table('users')->select('name');
 $users = $query->addSelect('age')->get();
 ```
 
-## Original expression
+## Raw Expressions
 
-Sometimes you need to use raw expressions in a query, for example to implement `COUNT(0) AS count`, which requires the use of the `raw` method.
+Sometimes you need to use raw expressions in queries, such as implementing `COUNT(0) AS count`. This requires the use of the `raw` method.
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -189,11 +211,19 @@ use Hyperf\DbConnection\Db;
 $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->groupBy('gender')->get();
 ```
 
-### Native method
+### Forcing Indexes
 
-The following methods can be used instead of `Db::raw` to insert raw expressions into various parts of the query.
+More than 90% of database slow query problems are due to incorrect indexes. Some queries occur because the database server's `query optimizer` did not use the best index. In this case, you need to use a forced index:
 
-The `selectRaw` method can be used in place of `select(Db::raw(...))`. The second parameter of this method is optional, and the value is an array of bound parameters:
+```php
+Db::table(Db::raw("{$table} FORCE INDEX({$index})"));
+```
+
+### Raw Methods
+
+You can use the following methods instead of `Db::raw` to insert raw expressions into various parts of the query.
+
+The `selectRaw` method can be used instead of `select(Db::raw(...))`. The second argument of this method is optional and is an array of binding parameters:
 
 ```php
 $orders = Db::table('order')
@@ -201,7 +231,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-The `whereRaw` and `orWhereRaw` methods inject native `where` into your query. The second parameter of these two methods is still optional, and the value is still an array of bound parameters:
+The `whereRaw` and `orWhereRaw` methods inject raw `where` clauses into your query. The second argument of these two methods is also optional and is an array of binding parameters:
 
 ```php
 $orders = Db::table('order')
@@ -209,7 +239,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-The `havingRaw` and `orHavingRaw` methods can be used to set a raw string as the value of a `having` statement:
+The `havingRaw` and `orHavingRaw` methods can be used to set raw strings as the value of the `having` statement:
 
 ```php
 $orders = Db::table('order')
@@ -219,7 +249,7 @@ $orders = Db::table('order')
     ->get();
 ```
 
-The `orderByRaw` method can be used to set a raw string as the value of the `order by` clause:
+The `orderByRaw` method can be used to set raw strings as the value of the `order by` clause:
 
 ```php
 $orders = Db::table('order')
@@ -227,11 +257,11 @@ $orders = Db::table('order')
     ->get();
 ```
 
-## Join table
+## Table Joins
 
 ### Inner Join Clause
 
-Query builders can also write `join` methods. To perform basic `"inner join"`, you can use the `join` method on the query builder instance. The first argument passed to the `join` method is the name of the table you want to join, while the other arguments use the field constraints that specify the join. You can also join multiple tables in a single query:
+The query builder can also write `join` methods. To perform a basic "inner join", you can use the `join` method on the query builder instance. The first argument passed to the `join` method is the name of the table you need to join, while other arguments specify the field constraints for the join. You can also join multiple tables in a single query:
 
 ```php
 $users = Db::table('users')
@@ -243,7 +273,7 @@ $users = Db::table('users')
 
 ### Left Join
 
-If you want to use `"left join"` or `"right join"` instead of `"inner join"`, use the `leftJoin` or `rightJoin` methods. These two methods are used in the same way as the `join` method:
+If you want to use "left join" or "right join" instead of "inner join", you can use `leftJoin` or `rightJoin` methods. These two methods are used in the same way as the `join` method:
 
 ```php
 $users = Db::table('users')
@@ -254,9 +284,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-### Cross Join Statement
+### Cross Join Clause
 
-Use the `crossJoin` method to do a `"cross join"` with the name of the table you want to join. A cross join produces a Cartesian product between the first table and the joined tables:
+Use the `crossJoin` method with the table name you want to join to perform a "cross join". Cross join generates a Cartesian product between the first table and the joined table:
 
 ```php
 $users = Db::table('sizes')
@@ -264,9 +294,9 @@ $users = Db::table('sizes')
     ->get();
 ```
 
-### Advanced Join Statement
+### Advanced Join Clauses
 
-You can specify more advanced `join` statements. For example passing a `closure` as the second parameter of the `join` method. This `closure` accepts a `JoinClause` object, specifying the constraints specified in the `join` statement:
+You can specify more advanced `join` statements. For example, pass a `Closure` as the second argument to the `join` method. This `Closure` receives a `JoinClause` object to specify constraints in the `join` statement:
 
 ```php
 Db::table('users')
@@ -276,7 +306,7 @@ Db::table('users')
     ->get();
 ```
 
-If you want to use `"where"` style statements on the join, you can use the `where` and `orWhere` methods on the join. These methods compare columns to values instead of columns to columns:
+If you want to use "where" style clauses on joins, you can use the `where` and `orWhere` methods on the join. These methods compare columns and values instead of comparing columns and columns:
 
 ```php
 Db::table('users')
@@ -287,9 +317,9 @@ Db::table('users')
     ->get();
 ```
 
-### Subjoin query
+### Subquery Joins
 
-You can use the `joinSub`, leftJoinSub` and `rightJoinSub` methods to join a query as a subquery. Each of their methods takes three parameters: a subquery, a table alias, and a closure that defines the associated fields:
+You can use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query as a subquery. Each of these methods receives three arguments: the subquery, the table alias, and a Closure that defines the joined fields:
 
 ```php
 $latestPosts = Db::table('posts')
@@ -303,9 +333,9 @@ $users = Db::table('users')
     })->get();
 ```
 
-## Combined query
+## Unions
 
-The query builder also provides a shortcut for "joining" two queries. For example, you can create a query first, then use the `union` method to union it with the second query:
+The query builder also provides a shortcut to "union" two queries. For example, you can first create a query and then use the `union` method to union it with a second query:
 
 ```php
 $first = Db::table('users')->whereNull('first_name');
@@ -316,25 +346,25 @@ $users = Db::table('users')
     ->get();
 ```
 
-## Where statement
+## Where Clauses
 
-### Simple Where Statement
+### Simple Where Clauses
 
-In constructing a `where` query instance, you can use the `where` method. The most basic way to call `where` is to pass three parameters: the first parameter is the column name, the second parameter is any operator supported by the database system, and the third parameter is the value to be compared for the column.
+When constructing a `where` query instance, you can use the `where` method. The most basic way to call `where` is to pass three arguments: the first argument is the column name, the second argument is any operator supported by the database system, and the third is the value to compare against that column.
 
-For example, here is a query to verify that the value of the gender field is equal to 1:
+For example, here is a query to verify that the value of the `gender` field is equal to 1:
 
 ```php
 $users = Db::table('user')->where('gender', '=', 1)->get();
 ```
 
-For convenience, if you are simply comparing the column value to a given value, you can pass the value directly as the second parameter of the `where` method:
+For convenience, if you are simply comparing column values for equality with a given value, you can pass the value directly as the second argument to the `where` method:
 
 ```php
 $users = Db::table('user')->where('gender', 1)->get();
 ```
 
-Of course, you can also use other operators to write where clauses:
+Of course, you can also use other operators to write `where` clauses:
 
 ```php
 $users = Db::table('users')->where('gender', '>=', 0)->get();
@@ -344,7 +374,7 @@ $users = Db::table('users')->where('gender', '<>', 1)->get();
 $users = Db::table('users')->where('name', 'like', 'T%')->get();
 ```
 
-You can also pass an array of conditions to the where function:
+You can also pass an array of conditions to the `where` function:
 
 ```php
 $users = Db::table('user')->where([
@@ -353,9 +383,21 @@ $users = Db::table('user')->where([
 ])->get();
 ```
 
-### Or Statement
+You can also use a Closure to create query arrays:
 
-You can chain `where` constraints together or add `or` clauses to the query. The `orWhere` method accepts the same parameters as the `where` method:
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
+])->get();
+```
+
+### Or Clauses
+
+You can chain `where` constraints together, or add `or` clauses to your query. The `orWhere` method receives the same arguments as the `where` method:
 
 ```php
 $users = Db::table('user')
@@ -364,11 +406,11 @@ $users = Db::table('user')
     ->get();
 ```
 
-### Other Where Statements
+### Other Where Clauses
 
 #### whereBetween
 
-The `whereBetween` method verifies that the field value is between two given values:
+The `whereBetween` method verifies that a field's value is between two given values:
 
 ```php
 $users = Db::table('users')->whereBetween('votes', [1, 100])->get();
@@ -376,7 +418,7 @@ $users = Db::table('users')->whereBetween('votes', [1, 100])->get();
 
 #### whereNotBetween
 
-The `whereNotBetween` method verifies that the field value is outside the given two values:
+The `whereNotBetween` method verifies that a field's value lies outside of two given values:
 
 ```php
 $users = Db::table('users')->whereNotBetween('votes', [1, 100])->get();
@@ -384,21 +426,21 @@ $users = Db::table('users')->whereNotBetween('votes', [1, 100])->get();
 
 #### whereIn / whereNotIn
 
-The `whereIn` method validates that the value of the field must exist in the specified array:
+The `whereIn` method verifies that a field's value exists in a given array:
 
 ```php
 $users = Db::table('users')->whereIn('id', [1, 2, 3])->get();
 ```
 
-The `whereNotIn` method verifies that the value of the field must not exist in the specified array:
+The `whereNotIn` method verifies that a field's value does not exist in a given array:
 
 ```php
 $users = Db::table('users')->whereNotIn('id', [1, 2, 3])->get();
 ```
 
-### Parameter grouping
+### Parameter Grouping
 
-Sometimes you need to create more advanced `where` clauses, such as `"where exists"` or nested parameter groupings. The query builder can also handle these. Below, let's see an example of grouping constraints in parentheses:
+Sometimes you need to create more advanced `where` clauses, such as "where exists" or nested parameter groups. The query builder can also handle these. Below, let's look at an example of nested constraint grouping in parentheses:
 
 ```php
 Db::table('users')->where('name', '=', 'John')
@@ -409,17 +451,17 @@ Db::table('users')->where('name', '=', 'John')
     ->get();
 ```
 
-As you can see, a `Closure` is written to the `where` method to construct a query builder to constrain a grouping. The `Closure` receives a query instance that you can use to set constraints that should be included. The above example will generate the following SQL:
+As you can see, by passing a `Closure` into the `where` method, you construct a grouping constraint. The `Closure` receives a query builder instance, which you can use to set the constraints that should be included. The example above will generate the following SQL:
 
 ```sql
 select * from users where name = 'John' and (votes > 100 or title = 'Admin')
 ```
 
-> You should call this grouping with orWhere to avoid accidental application of global effects.
+> You should group these constraints with an `orWhere` call to avoid unexpected behavior when global scopes are applied.
 
-#### Where Exists Statement
+#### Where Exists Clauses
 
-The `whereExists` method allows you to use the `where exists SQL` statement. The `whereExists` method accepts a `Closure` parameter, the `whereExists` method accepts a `Closure` parameter, the closure takes a query builder instance allowing you to define queries placed in the `exists` clause:
+The `whereExists` method allows you to write `where exists SQL` statements. The `whereExists` method receives a `Closure`, which receives a query builder instance, allowing you to define the query to be placed inside the `exists` clause:
 
 ```php
 Db::table('users')->whereExists(function ($query) {
@@ -430,7 +472,7 @@ Db::table('users')->whereExists(function ($query) {
 ->get();
 ```
 
-The above query will produce the following SQL statement:
+The above query will generate the following SQL statement:
 
 ```sql
 select * from users
@@ -439,9 +481,9 @@ where exists (
 )
 ```
 
-#### JSON Where Statement
+#### JSON Where Clauses
 
-`Hyperf` also supports querying fields of type `JSON` (only on databases that support type `JSON`).
+Hyperf also supports querying `JSON` field types (only on databases that support the `JSON` type).
 
 ```php
 $users = Db::table('users')
@@ -477,7 +519,7 @@ $users = Db::table('users')
 
 ### orderBy
 
-The `orderBy` method allows you to order the result set by a given field. The first parameter of `orderBy` should be the field you want to sort, and the second parameter controls the direction of sorting, which can be `asc` or `desc`
+The `orderBy` method allows you to sort the result set by a given field. The first argument to `orderBy` should be the field you wish to sort by, and the second argument controls the direction of the sort, which can be `asc` or `desc`:
 
 ```php
 $users = Db::table('users')
@@ -487,7 +529,7 @@ $users = Db::table('users')
 
 ### latest / oldest
 
-The `latest` and `oldest` methods allow you to easily sort by date. It uses the `created_at` column as the sort by default. Of course, you can also pass custom column names:
+The `latest` and `oldest` methods allow you to easily order results by date. By default, it uses `created_at` as the column to sort by. Of course, you can also pass a custom column name:
 
 ```php
 $user = Db::table('users')->latest()->first();
@@ -495,7 +537,7 @@ $user = Db::table('users')->latest()->first();
 
 ### inRandomOrder
 
-The `inRandomOrder` method is used to randomly order the results. For example, you can use this method to find a random user.
+The `inRandomOrder` method can be used to sort results randomly. For example, you can use this method to randomly fetch a user:
 
 ```php
 $randomUser = Db::table('users')->inRandomOrder()->first();
@@ -503,7 +545,7 @@ $randomUser = Db::table('users')->inRandomOrder()->first();
 
 ### groupBy / having
 
-The `groupBy` and `having` methods can group results. The use of the `having` method is very similar to the `where` method:
+The `groupBy` and `having` methods can be used to group the results. The `having` method's usage is very similar to the `where` method:
 
 ```php
 $users = Db::table('users')
@@ -521,25 +563,25 @@ $users = Db::table('users')
     ->get();
 ```
 
-> For more advanced having syntax, see havingRaw method.
+> For more advanced `having` syntax, see the `havingRaw` method.
 
 ### skip / take
 
-To limit the number of results returned, or to skip a specified number of results, you can use the `skip` and `take` methods:
+To limit the number of results returned or to skip a given number of results, you can use `skip` and `take` methods:
 
 ```php
 $users = Db::table('users')->skip(10)->take(5)->get();
 ```
 
-Or you can also use the limit and offset methods:
+Alternatively, you can use `limit` and `offset` methods:
 
 ```php
 $users = Db::table('users')->offset(10)->limit(5)->get();
 ```
 
-## Conditional statements
+## Conditional Clauses
 
-Sometimes you may want to execute a query only if the clause applies if a certain condition is true. For example, you might only want to apply a `where` statement if a given value exists in the request. You can do this by using the `when` method:
+Sometimes you may want clauses to apply only when something is true. For example, you may only want to apply a `where` statement if a given value is present in the request. You can do this by using the `when` method:
 
 ```php
 $role = $request->input('role');
@@ -551,9 +593,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-The `when` method executes the given closure only if the first argument is `true`. If the first argument is `false` , then the closure will not be executed
+The `when` method only executes the given closure when the first argument is `true`. If the first argument is `false`, the closure will not be executed.
 
-You can pass another closure as the third parameter of the `when` method. The closure will be executed if the first argument is `false`. To illustrate how to use this feature, let's configure the default ordering of a query:
+You can pass another closure as the third argument to the `when` method. This closure will execute if the first argument is `false`. To illustrate how to use this feature, let's configure default sorting for a query:
 
 ```php
 $sortBy = null;
@@ -567,9 +609,9 @@ $users = Db::table('users')
     ->get();
 ```
 
-## Insert
+## Inserts
 
-The query builder also provides the `insert` method for inserting records into the database. The `insert` method accepts an array of field names and field values for insertion:
+The query builder also provides an `insert` method for inserting records into the database. The `insert` method receives an array of field names and values to insert:
 
 ```php
 Db::table('users')->insert(
@@ -577,7 +619,7 @@ Db::table('users')->insert(
 );
 ```
 
-You can even pass an array to the `insert` method to insert multiple records into the table
+You can even pass an array of arrays to the `insert` method to insert multiple records into the table:
 
 ```php
 Db::table('users')->insert([
@@ -586,9 +628,9 @@ Db::table('users')->insert([
 ]);
 ```
 
-### Auto Increment ID
+### Auto-incrementing IDs
 
-If the table has an auto-incrementing `ID`, use the `insertGetId` method to insert the record and return the `ID` value
+If the table has an auto-incrementing `ID`, use the `insertGetId` method to insert a record and return the `ID` value:
 
 ```php
 $id = Db::table('users')->insertGetId(
@@ -596,9 +638,9 @@ $id = Db::table('users')->insertGetId(
 );
 ```
 
-## Update
+## Updates
 
-Of course, in addition to inserting records into the database, the query builder can also update existing records via the `update` method. The `update` method, like the `insert` method, accepts an array containing the fields and values to update. You can constrain the `update` query with the `where` clause:
+In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, like the `insert` method, accepts an array of columns and values to update. You can constrain `update` queries using the `where` clause:
 
 ```php
 Db::table('users')->where('id', 1)->update(['votes' => 1]);
@@ -606,9 +648,9 @@ Db::table('users')->where('id', 1)->update(['votes' => 1]);
 
 ### Update or Insert
 
-Sometimes you may wish to update an existing record in the database, or create a matching record if it does not exist. In this case, the `updateOrInsert` method can be used. The `updateOrInsert` method accepts two parameters: an array of conditions to find the record, and an array of key-value pairs containing the record to update.
+Sometimes you may want to update an existing record in the database, or create it if no matching record exists. In this case, you can use the `updateOrInsert` method. The `updateOrInsert` method accepts two arguments: an array of conditions for finding the record, and an array of key-value pairs containing the changes to the record.
 
-The `updateOrInsert` method will first try to find a matching database record using the key and value pair of the first argument. If the record exists, use the value in the second parameter to update the record. If the record is not found, a new record is inserted, and the updated data is a collection of two arrays:
+The `updateOrInsert` method will first attempt to find a matching database record using the first argument's key-value pairs. If the record exists, it will update the record with the values from the second argument. If the record cannot be found, a new record will be inserted with the data merged from both arrays:
 
 ```php
 Db::table('users')->updateOrInsert(
@@ -617,19 +659,19 @@ Db::table('users')->updateOrInsert(
 );
 ```
 
-### Update JSON fields
+### Updating JSON Fields
 
-When updating a JSON field, you can use the -> syntax to access the corresponding value in the JSON object, which is only supported on MySQL 5.7+:
+When updating `JSON` fields, you can use the `->` syntax to access the corresponding value in the `JSON` object. This operation is only supported on MySQL 5.7+:
 
 ```php
 Db::table('users')->where('id', 1)->update(['options->enabled' => true]);
 ```
 
-### Auto increment and decrement
+### Increments & Decrements
 
-The query builder also provides convenience methods for incrementing or decrementing a given field. This method provides a more expressive and concise interface than manually writing `update` statements.
+The query builder also provides convenient methods for incrementing or decrementing the value of a given column. This method provides a more expressive and concise interface than manually writing `update` statements.
 
-Both methods receive at least one parameter: the column that needs to be modified. The second parameter is optional and controls the amount by which the column is incremented or decremented:
+Both methods accept at least one argument: the column to modify. A second argument is optional, used to control the amount by which the column should be incremented or decremented:
 
 ```php
 Db::table('users')->increment('votes');
@@ -641,15 +683,15 @@ Db::table('users')->decrement('votes');
 Db::table('users')->decrement('votes', 5);
 ```
 
-You can also specify fields to update during the operation:
+You can also specify additional columns to update during the operation:
 
 ```php
 Db::table('users')->increment('votes', 1, ['name' => 'John']);
 ```
 
-## Delete
+## Deletes
 
-The query builder can also delete records from a table using the `delete` method. Before using `delete`, you can add a `where` clause to constrain the `delete` syntax:
+The query builder can also use the `delete` method to delete records from the table. Before using `delete`, you can add `where` clauses to constrain the `delete` statement:
 
 ```php
 Db::table('users')->delete();
@@ -657,23 +699,22 @@ Db::table('users')->delete();
 Db::table('users')->where('votes', '>', 100)->delete();
 ```
 
-If you need to empty the table, you can use the `truncate` method, which will delete all rows and reset the auto-incrementing `ID` to zero:
+If you need to truncate the table, you can use the `truncate` method, which will remove all rows and reset the auto-increment `ID` to zero:
 
 ```php
 Db::table('users')->truncate();
 ```
 
-## Pessimistic lock
+## Pessimistic Locking
 
-The query builder also contains some functions that can help you implement `pessimistic locking` on the `select` syntax. To implement a `"shared lock"` in a query, you can use the `sharedLock` method. Shared locks prevent selected data columns from being tampered with until the transaction is committed
+The query builder also includes a few functions to help you achieve "pessimistic locking" on your `select` statements. If you want to place a "shared lock" on your query, you can use the `sharedLock` method. A shared lock prevents the selected data rows from being modified until the transaction is committed:
 
 ```php
 Db::table('users')->where('votes', '>', 100)->sharedLock()->get();
 ```
 
-Alternatively, you can use the `lockForUpdate` method. Use the `"update"` lock to prevent rows from being modified or selected by other shared locks:
+Alternatively, you can use the `lockForUpdate` method. Using an "update" lock prevents the rows from being modified or selected with another shared lock:
 
 ```php
 Db::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
 ```
-

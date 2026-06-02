@@ -1,22 +1,22 @@
 # NATS
 
-NATS is an open source, lightweight, high-performance distributed messaging middleware that implements high scalability and an elegant `Publish` / `Subscribe` model, developed using the `Golang` language. The development philosophy of NATS believes that high-quality QoS should be built on the client side, so only `Request-Reply` is established, and it does not provide 1. Persistence 2. Transaction processing 3. Enhanced delivery mode 4. Enterprise-level queue.
+NATS is an open-source, lightweight, and high-performance distributed message middleware. It implements high scalability and an elegant `Publish` / `Subscribe` model and is developed in `Golang`. The development philosophy of NATS holds that high-quality QoS should be built on the client side, so it only establishes `Request-Reply` and does not provide 1. Persistence, 2. Transaction processing, 3. Enhanced delivery models, or 4. Enterprise-level queues.
 
-## Install
+## Installation
 
 ```bash
 composer require hyperf/nats
 ```
 
-## use
+## Usage
 
-### create consumer
+### Creating Consumers
 
-```
+```bash
 php bin/hyperf.php gen:nats-consumer DemoConsumer
 ```
 
-If `queue` is set, the same `subject` will only be consumed by one `queue`. If `queue` is not set, each consumer will receive the message.
+If `queue` is set, the same `subject` will only be consumed by one `queue`. If `queue` is not set, every consumer will receive the message.
 
 ```php
 <?php
@@ -39,7 +39,7 @@ class DemoConsumer extends AbstractConsumer
 }
 ```
 
-### Post message
+### Producing Messages
 
 Use publish to deliver messages.
 
@@ -69,7 +69,6 @@ class NatsController extends AbstractController
         return $this->response->success($res);
     }
 }
-
 ```
 
 Use request to deliver messages.
@@ -103,7 +102,6 @@ class NatsController extends AbstractController
         return $this->response->success($res);
     }
 }
-
 ```
 
 Use requestSync to deliver messages.
@@ -136,5 +134,4 @@ class NatsController extends AbstractController
         return $this->response->success($message->getBody());
     }
 }
-
 ```

@@ -1,67 +1,69 @@
-# Preface to the guide
+# Introduction to the Guide
 
-In order to help developers better develop components for Hyperf and build an ecosystem together, we provide this guide to guide developers in component development. Before reading this guide, you need to have a **comprehensive** review of the Hyperf documentation Read, especially the [coroutine](en/coroutine.md) and [Dependency Injection](en/di.md) chapters, if you lack a sufficient understanding of the basic components of Hyperf, it may cause problems during development mistake.
+To help developers better create components for Hyperf and build the ecosystem together, we have provided this guide to instruct developers on component development. Before reading this guide, you should have **comprehensively** read the Hyperf documentation, especially the [Coroutine](../coroutine.md) and [Dependency Injection](../di.md) chapters. A lack of sufficient understanding of Hyperf's basic components may lead to errors during development.
 
-# The purpose of component development
+# Purpose of Component Development
 
-In the development under the traditional PHP-FPM architecture, usually when we need to use a third-party library to solve our needs, we will directly introduce a corresponding library through Composer. However, under Hyperf, due to the persistent The two characteristics of application` and `coroutine` lead to some differences in the life cycle and mode of the application, so not all `Library` can be used directly in Hyperf, of course, some well-designed `Library` can also be used directly. After reading this guide, you will know how to identify whether some `Library` can be used directly in the project, and how to make changes if not.
+In traditional PHP-FPM architecture development, when we need to use third-party libraries to solve our needs, we usually introduce a corresponding `Library` via Composer. However, in Hyperf, due to the two characteristics of `persistent application` and `coroutine`, there are some differences in the application lifecycle and mode. Therefore, not all `Libraries` can be used directly in Hyperf, although some well-designed `Libraries` can indeed be used directly. By reading this guide thoroughly, you will know how to discern whether a `Library` can be used directly in a project and, if not, what modifications should be made.
 
-# Component development preparations
+# Preparation for Component Development
 
-The development preparation referred to here, in addition to the basic operating conditions of Hyperf, focuses more on how to organize the structure of the code more conveniently to facilitate the development of components. Note that the following methods may not be able to jump due to the *soft link Issue* and does not apply to the development environment under Windows for Docker.
-In terms of code organization, we recommend Clone [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project skeleton and [hyperf/hyperf](https://github. com/hyperf/hyperf) project component library two projects. Do the following and have the following structure:
+The development preparation work referred to here, in addition to the basic running conditions of Hyperf, focuses more on how to organize the code structure more conveniently to facilitate component development. Note that the following method may not be suitable for development environments under Windows for Docker due to *issues with soft link traversal*.
+
+Regarding code organization, we suggest cloning the [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project skeleton and the [hyperf/hyperf](https://github.com/hyperf/hyperf) project component library in the same directory. Perform the following operations to achieve the structure below:
 
 ```bash
-// Install the skeleton and configure it
-composer create-project hyperf/hyperf-skeleton
+// Install skeleton and complete configuration
+composer create-project hyperf/hyperf-skeleton 
 
-// Clone the hyperf component library project, remember to replace hyperf with your Github ID, that is, clone the project you forked
+// Clone the hyperf component library project, remember to replace hyperf with your Github ID, i.e., clone the project you forked
 git clone git@github.com:hyperf/hyperf.git
 ```
 
-It has the following structure:
+Achieve the following structure:
 
 ```
 .
 ├── hyperf
-│ ├── bin
-│ └── src
+│   ├── bin
+│   └── src
 └── hyperf-skeleton
-     ├── app
-     ├── bin
-     ├──config
-     ├── runtime
-     ├── test
-     └── vendor
+    ├── app
+    ├── bin
+    ├── config
+    ├── runtime
+    ├── test
+    └── vendor
 ```
 
-The purpose of this is to allow the `hyperf-skeleton` project to be directly sourced through the `path` form, so that Composer can be directly loaded into the `vendor` of the `hyperf-skeleton` project through the project in the `hyperf` folder as a dependency ` directory, we add a `repositories` item to the `composer.json` file in `hyperf-skeleton`, as follows:
+The purpose of doing this is to allow the `hyperf-skeleton` project to directly load the projects within the `hyperf` folder as dependencies into the `vendor` directory of the `hyperf-skeleton` project through the `path` source form. We add a `repositories` item to the `composer.json` file in `hyperf-skeleton`, as follows:
 
 ```json
 {
-     "repositories": {
-         "hyperf": {
-             "type": "path",
-             "url": "../hyperf/src/*"
-         }
-     }
+    "repositories": {
+        "hyperf": {
+            "type": "path",
+            "url": "../hyperf/src/*"
+        }
+    }
 }
 ```
-Then delete the `composer.lock` file and the `vendor` folder in the `hyperf-skeleton` project, and then execute `composer update` to update the dependencies again. The command is as follows:
+
+Then, delete the `composer.lock` file and `vendor` folder in the `hyperf-skeleton` project, and execute `composer update` to update the dependencies again. The commands are as follows:
 
 ```bash
 cd hyperf-skeleton
 rm -rf composer.lock && rm -rf vendor && composer update
 ```
-
-Finally, all the project folders in the `hyperf-skeleton/vendor/hyperf` folder are connected to the `hyperf` folder through `softlinks`. We can use the `ls -l` command to verify whether `softlink (softlink)` has been successfully established:
+   
+Ultimately, this ensures that all project folders within `hyperf-skeleton/vendor/hyperf` are connected to the `hyperf` folder through `soft links`. We can verify if the `soft links` have been successfully created using the `ls -l` command:
 
 ```bash
 cd vendor/hyperf/
 ls -l
 ```
 
-When we see a connection relationship like the following, it means that the `soft link (softlink)` has been established successfully:
+When we see connection relationships similar to those below, it indicates that the `soft links` have been successfully established:
 
 ```
 cache -> ../../../hyperf/src/cache
@@ -90,4 +92,4 @@ testing -> ../../../hyperf/src/testing
 support -> ../../../hyperf/src/support
 ```
 
-At this point, we can directly modify the files in `vendor/hyperf` in the IDE, but what we modify is the code in `hyperf`, so that we can directly modify the `hyperf` project in the end. `commit`, and then submit a `Pull Request (PR)` to the trunk.
+At this point, we can achieve the goal of directly modifying the files in `vendor/hyperf` within the IDE, while actually modifying the code in `hyperf`. In this way, we can directly `commit` in the `hyperf` project and then submit a `Pull Request(PR)` to the main branch.

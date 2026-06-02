@@ -1,6 +1,6 @@
 # View
 
-View rendering is implemented by [hyperf/view](https://github.com/hyperf/view) component. The component supports five different templating engines; `Blade`, `Smarty`, `Twig`, ` Plates` and `ThinkTemplate`.
+The view component is implemented and provided by [hyperf/view](https://github.com/hyperf/view) to meet your needs for view rendering. By default, the component supports five template engines: `Blade`, `Smarty`, `Twig`, `Plates`, and `ThinkTemplate`.
 
 ## Installation
 
@@ -10,22 +10,22 @@ composer require hyperf/view
 
 ## Configuration
 
-The configuration file of the view component is located in `config/autoload/view.php`, if the configuration file does not exist, the following command can be executed to generate the configuration file:
+The configuration file for the View component is located at `config/autoload/view.php`. If the configuration file does not exist, you can execute the following command to generate it:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/view
 ```
 
-The following configuration options are available:
+The following is an explanation of the relevant configurations:
 
-| Configuration       | Type     | Default Value                            | Remarks                      |
-| :-----------------: | :------: | :--------------------------------------: | :--------------------------: |
-| engine              | string   | Hyperf\View\Engine\BladeEngine::class    | View rendering engine        |
-| mode                | string   | Mode::TASK                               | View rendering mode          |
-| config.view_path    | string   | None                                     | Default address of view file |
-| config.cache_path   | string   | None                                     | View file cache address      |
+| Configuration | Type | Default Value | Note |
+|:---:|:---:|:---:|:---:|
+| engine | string | Hyperf\View\Engine\BladeEngine::class | View rendering engine |
+| mode | string | Mode::TASK | View rendering mode |
+| config.view_path | string | None | Default directory for view files |
+| config.cache_path | string | None | Default cache directory for view files |
 
-Example configuration file format:
+Configuration file format example:
 
 ```php
 <?php
@@ -35,48 +35,46 @@ use Hyperf\View\Mode;
 use Hyperf\View\Engine\BladeEngine;
 
 return [
-    // The rendering engine used
+    // Rendering engine used
     'engine' => BladeEngine::class,
-    // If you don't fill it in, the default is Task mode, it is recommended to use Task mode
+    // If not filled, Task mode is used by default. Task mode is recommended
     'mode' => Mode::TASK,
     'config' => [
-        // If the following folder does not exist, please create it yourself
-        'view_path' => BASE_PATH.'/storage/view/',
-        'cache_path' => BASE_PATH.'/runtime/view/',
+        // Please create the following folders if they do not exist
+        'view_path' => BASE_PATH . '/storage/view/',
+        'cache_path' => BASE_PATH . '/runtime/view/',
     ],
 ];
 ```
 
 ### Task Mode
 
-When using the `Task` mode, the [hyperf/task](https://github.com/hyperf/task) component must be installed and the `task_enable_coroutine` must be configured as `false`, otherwise there will be a problem of coroutine data consistency. Please refer to the [task](zh-cn/task.md) component documentation.
+When using `Task` mode, you need to introduce the [hyperf/task](https://github.com/hyperf/task) component and must configure `task_enable_coroutine` to `false`, otherwise, coroutine data confusion issues will occur. For more information, please refer to the [Task](task.md) component documentation.
 
-In addition, in the `Task` mode the view rendering work is done by a `Task Worker` process while the request processing in the controller is completed by a `Worker` process. This means that it's not possible to access context dependent data objects such as `Request` and `Session` directly from the view. If you need to use context dependent data in your views, make sure you pass the data from the controller via the `render` method.
+Additionally, in `Task` mode, view rendering work is completed in the `Task Worker` process, while request processing (i.e., Controller) is completed in the `Worker` process. The work of the two parts is completed by different processes. Therefore, objects or data managed through the context in the `Worker` process, such as `Request` and `Session`, cannot be directly used on the view page. In this case, you need to process data or judgment results in the Controller first, and then pass the data to the view for rendering when calling `render`.
 
+### Sync Mode
 
-### Sync mode
+If you use `Sync` mode to render views, please ensure that the related engine is coroutine-safe, otherwise, data confusion issues will occur. It is recommended to use the more data-safe `Task` mode.
 
-If you use the `Sync` mode to render the view, please ensure that the relevant engine is coroutine safe, otherwise there will be data consistency problems. It is recommended to use the more data-safe `Task` mode.
+### Configure Static Resources
 
-### Configure static resources
-
-If you want `Swoole` to manage static resources, please add the following configuration in the `config/autoload/server.php` configuration.
+If you want `Swoole` to manage static resources, please add the following configuration to your `config/autoload/server.php` configuration.
 
 ```
 return [
     'settings' => [
         ...
-        // static resources
-        'document_root' => BASE_PATH.'/public',
+        // Static resources
+        'document_root' => BASE_PATH . '/public',
         'enable_static_handler' => true,
     ],
 ];
-
 ```
 
-## View rendering engine
+## View Rendering Engine
 
-The current officially supported rendering engines are `Blade`, `Smarty`, `Twig`, `Plates` and `ThinkTemplate`. The templating engine will not be automatically installed when [hyperf/view](https://github.com/hyperf/view) is installed. You need to install the corresponding templating engine in addition to the view package.
+The official currently supports five templates: `Blade`, `Smarty`, `Twig`, `Plates`, and `ThinkTemplate`. By default, installing [hyperf/view](https://github.com/hyperf/view) will not automatically install any template engine. You need to install the corresponding template engine yourself according to your own needs. You must install at least one template engine before using it.
 
 ### Install Blade Engine
 
@@ -84,11 +82,11 @@ The current officially supported rendering engines are `Blade`, `Smarty`, `Twig`
 composer require hyperf/view-engine
 ```
 
-For details, please refer to the [view engine documentation](en/view-engine.md).
+For detailed methods, see the document [View Engine](view-engine.md)
 
-Or use
+Or use:
 
-> duncan3dc/blade uses Laravel's Support library, so some functions will be incompatible, so it is not recommended for the time being
+> duncan3dc/blade is not recommended for now because it uses Laravel's Support library, which causes some functions to be incompatible.
 
 ```bash
 composer require duncan3dc/blade
@@ -118,9 +116,9 @@ composer require league/plates
 composer require sy-records/think-template
 ```
 
-### Access other templates
+### Integrate Other Templates
 
-Suppose we want to connect a virtual template engine named `TemplateEngine`, then we need to create the corresponding `TemplateEngine` class anywhere and implement the `Hyperf\View\Engine\EngineInterface` interface.
+Suppose we want to integrate a virtual template engine named `TemplateEngine`. We need to create the corresponding `TemplateEngine` class anywhere and implement the `Hyperf\View\Engine\EngineInterface` interface.
 
 ```php
 <?php
@@ -135,13 +133,12 @@ class TemplateEngine implements EngineInterface
 {
     public function render($template, $data, $config): string
     {
-        // instantiate an instance of the corresponding template engine
+        // Instantiate the instance of the corresponding template engine
         $engine = new TemplateInstance();
-        // and call the corresponding rendering method
+        // And call the corresponding rendering method
         return $engine->render($template, $data);
     }
 }
-
 ```
 
 Then modify the configuration of the view component:
@@ -156,15 +153,15 @@ return [
     'engine' => TemplateEngine::class,
     'mode' => Mode::TASK,
     'config' => [
-        'view_path' => BASE_PATH.'/storage/view/',
-        'cache_path' => BASE_PATH.'/runtime/view/',
+        'view_path' => BASE_PATH . '/storage/view/',
+        'cache_path' => BASE_PATH . '/runtime/view/',
     ],
 ];
 ```
 
-## Use
+## Usage
 
-The following takes `BladeEngine` as an example. First, create the view file `index.blade.php` in the corresponding directory.
+Taking `BladeEngine` as an example, first create a view file `index.blade.php` in the corresponding directory.
 
 ```blade
 <!DOCTYPE html>
@@ -179,7 +176,7 @@ Hello, {{ $name }}. You are using blade template now.
 </html>
 ```
 
-Obtain the `Hyperf\View\Render` instance in the controller, then call the `render` method and pass the view file address `index` and `rendering data`. The file address ignores the suffix of the view file.
+In the Controller, get the `Hyperf\View\Render` instance, and then call the `render` method and pass the view file address `index` and `rendering data`. The file address ignores the suffix of the view file.
 
 ```php
 <?php
@@ -196,13 +193,12 @@ class ViewController
 {
     public function index(RenderInterface $render)
     {
-        return $render->render('index', ['name' =>'Hyperf']);
+        return $render->render('index', ['name' => 'Hyperf']);
     }
 }
-
 ```
 
-Visit the corresponding URL to get the view page as shown below:
+Access the corresponding URL to get the view page as shown below:
 
 ```
 Hello, Hyperf. You are using blade template now.

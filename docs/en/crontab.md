@@ -1,8 +1,6 @@
-# Task Scheduling
+# Scheduled Tasks (Crontab)
 
-In most cases, the execution of scheduled tasks can be achieved through the `crontab` command of Linux. However, in some cases, configuring crontab in production environment can be inconvenient and comes with the limitation of supporting a minimum of `minute level` scheduling.
-
-The [hyperf/crontab](https://github.com/hyperf/crontab) component provides you with a `second Level` task scheduling and makes it easy to define tasks.
+Generally, scheduled tasks are implemented using the Linux `crontab` command. However, in reality, not all developers have access to production servers to set up these tasks. The [hyperf/crontab](https://github.com/hyperf/crontab) component provides a `second-level` scheduled task function that allows you to define a scheduled task with simple configuration.
 
 # Installation
 
@@ -12,9 +10,9 @@ composer require hyperf/crontab
 
 # Usage
 
-## Start the scheduler process
+## Start the task scheduler process
 
-Before using the timer task component, you need to register the `Hyperf\Crontab\Process\CrontabDispatcherProcess` in `config/autoload/processes.php`, as follows:
+Before using the scheduled task component, you need to register the `Hyperf\Crontab\Process\CrontabDispatcherProcess` custom process in `config/autoload/processes.php`:
 
 ```php
 <?php
@@ -24,21 +22,21 @@ return [
 ];
 ```
 
-In this way, when the service starts, a custom process is started for the analysis and scheduling of tasks. At the same time, you also need to set the `enable` setting in `config/autoload/crontab.php` to `true`, which enables scheduler processing. If the configuration file doesn't exist, you can create it yourself. The configuration is as follows:
+When the service starts, this will launch a custom process used for parsing, scheduling, and distributing scheduled tasks. Additionally, you need to set the `enable` configuration in `config/autoload/crontab.php` to `true` to enable the scheduled task function. If this file does not exist, you can create it yourself:
 
 ```php
 <?php
 return [
-    // Whether to enable timed tasks
+    // Whether to enable scheduled tasks
     'enable' => true,
 ];
 ```
 
-## Define a scheduled task
+## Defining scheduled tasks
 
-### Using a configuration file
+### Definition via configuration file
 
-You can define all your scheduled tasks in `config/autoload/crontab.php` configuration file. The file returns an array of `Hyperf\Crontab\Crontab[]` objects. If the configuration file doesn't exist, you can create it yourself:
+You can configure all your scheduled tasks in the `config/autoload/crontab.php` configuration file. The file should return an array of `Hyperf\Crontab\Crontab` objects. If this file does not exist, you can create it yourself:
 
 ```php
 <?php
@@ -46,21 +44,21 @@ You can define all your scheduled tasks in `config/autoload/crontab.php` configu
 use Hyperf\Crontab\Crontab;
 return [
     'enable' => true,
-    // Timed tasks defined by configuration
+    // Scheduled tasks defined via configuration file
     'crontab' => [
-        // Callback type timed task (default)
-        (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('This is an example timed task'),
-        // Command type timed task
+        // Callback type scheduled task (default)
+        (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('This is an example scheduled task'),
+        // Command type scheduled task
         (new Crontab())->setType('command')->setName('Bar')->setRule('* * * * *')->setCallback([
             'command' => 'swiftmailer:spool:send',
             // (optional) arguments
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
-            // Remember to add it, otherwise it will cause the main process to exit
+            // Remember to include this, otherwise the main process might exit
             '--disable-event-dispatcher' => true,
         ])->setEnvironments(['develop', 'production']),
-        // Closure type timed task (Only supported in Coroutine style server)
+        // Closure type scheduled task (only supported in Coroutine style server)
         (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
             var_dump(date('Y-m-d H:i:s'));
         })->setEnvironments('production'),
@@ -68,7 +66,7 @@ return [
 ];
 ```
 
-Since 3.1 a new configuration method has been added. You can define scheduled tasks through `config/crontabs.php`. If the configuration file doesn't exist, you can create it yourself:
+Since version 3.1, a new configuration method has been added. You can define scheduled tasks via `config/crontabs.php`. If this file does not exist, you can create it yourself:
 
 ```php
 <?php
@@ -80,9 +78,9 @@ Schedule::call([Foo::class, 'bar'])->setName('foo-bar')->setRule('* * * * *');
 Schedule::call(fn() => (new Foo)->bar())->setName('foo-bar')->setRule('* * * * *');
 ```
 
-### Using annotations
+### Definition via Annotation
 
-The definition of a task can be quickly completed through the `#[Crontab]` annotation. The following definition examples and the configuration file definition achieve the same purpose. Define a timed task named `Foo` to execute `App\Task\FooTask::execute()` every minute.
+You can quickly define a task using the `#[Crontab]` annotation. The following definition example achieves the same goal as the configuration file definition. This defines a scheduled task named `Foo` that executes `App\Task\FooTask::execute()` every minute.
 
 ```php
 <?php
@@ -95,7 +93,7 @@ use Hyperf\Di\Annotation\Inject;
 #[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "This is an example scheduled task")]
 class FooTask
 {
-     #[Inject]
+    #[Inject]
     private StdoutLoggerInterface $logger;
 
     public function execute()
@@ -103,7 +101,7 @@ class FooTask
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
 
-    #[Crontab(rule: "* * * * * *", memo: "foo")]
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -111,57 +109,112 @@ class FooTask
 }
 ```
 
-### Task configuration
+### Task Attributes
 
 #### name
-
-The name of the timed task can be any string, and the name of each timed task must be unique.
+The name of the scheduled task, which can be any string. The names of all scheduled tasks must be unique.
 
 #### rule
-
-The execution rules of timed tasks are defined at the minute level, consistent with the rules of the Linux `crontab` command. When defined at the second level, the rule length is changed from 5 digits to 6 digits, and a second-level node is added in front of the rule. This means that it's executed at the minute-level rule for 5 digits and the second-level rule for 6 digits. For example, `*/5 * * * * *` means it will be executed every 5 seconds. Note that forward slashes in the annotation rule definition must be escaped using the backlash `\` symbol: `*\/5 * * * * *`.
+The execution rule of the scheduled task. When defined at the minute level, it is consistent with the rules of the Linux `crontab` command. When defined at the second level, the rule length changes from 5 to 6 digits, adding a corresponding second-level node at the beginning of the rule. That is, a 5-digit rule executes at the minute level, and a 6-digit rule executes at the second-level, such as `*/5 * * * * *`, which means it executes every 5 seconds. Note that when defining via annotations, you need to escape the `\` symbol in the rule, i.e., write `*\/5 * * * * *`.
 
 #### callback
-
-The callback that is executed by the timed task. When defined by the configuration file, an array of `[$class, $method]` is used where `$class` is the full name of a class and `$method` is a `public` method of that class. When using annotations, you only need to provide the method name of a `public` method in the current class. If the current class has only one `public` method, you don't even need to provide this attribute.
+The execution callback of the scheduled task, which is the actual code to be executed. When defined through a configuration file, you need to pass an array `[$class, $method]`, where `$class` is the fully qualified class name, and `$method` is a `public` method within that class. When defined via annotation, you only need to provide the method name of a `public` method within the current class. If the current class only has one `public` method, you can even omit this attribute.
 
 #### singleton
-
-To solve the problem of concurrent execution of tasks, tasks will always run at the same time. But this problem cannot guarantee the repeated execution of tasks in the cluster.
+Solves the problem of concurrent execution of tasks; at most one instance of the task will run at any given time. However, this does not guarantee against repeated execution of tasks in a cluster.
 
 #### onOneServer
-
-When deploying a project with multiple instances, only one instance will execute a given task.
+When deploying the project in multiple instances, only one instance will be triggered.
 
 #### mutexPool
-
-The `Redis` connection pool used by the mutex.
+The `Redis` connection pool used for the mutex lock.
 
 #### mutexExpires
-
-The mutex lock timeout period. If the scheduled task is executed but the mutex lock fails to be released, the mutex lock will be automatically released after this time.
+The timeout for the mutex lock. If the scheduled task completes execution but fails to release the mutex lock, the lock will automatically be released after this time.
 
 #### memo
-
-Notes for the timed task. This attribute is optional and has no syntactical meaning. Its' purpose is to help developers understand the timed task.
+A note for the scheduled task. This attribute is optional and has no logical significance; it is only for developers to read to help understand the task.
 
 #### enable
+Whether the current task is enabled.
 
-Whether the current task is effective.
+> Besides boolean, string and array types are also supported.
+
+If `enable` is a `string`, the method corresponding to the current class will be called to determine whether this scheduled task runs:
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "This is an example scheduled task")]
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+```
+
+If `enable` is an `array`, the method defined in `array[1]` of the class defined in `array[0]` will be called to determine whether this scheduled task runs:
+
+```php
+<?php
+
+namespace App\Crontab;
+
+class EnableChecker
+{
+    public function isEnable(): bool
+    {
+        return false;
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "This is an example scheduled task")]
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+
+```
 
 #### environments
+Set the environment for the scheduled task. If not set, it will be effective in all environments. Supports array and string inputs.
 
-The environment variables that need to be set when executing the task. The value of this attribute is an array, and the key is the name of the environment variable, and the value is the value of the environment variable.
+### Scheduling and Distribution Strategy
+The scheduled task is designed to allow tasks to be scheduled and distributed using different strategies. Currently, only `Multi-process Execution Strategy` and `Coroutine Execution Strategy` are provided. The default is `Multi-process Execution Strategy`, and more powerful strategies will be added in later iterations.
 
-### Scheduling distribution strategy
+> When using a Coroutine style server, please use the Coroutine Execution Strategy.
 
-Timed tasks are designed to allow different strategies to be used for scheduling and distributing execution of tasks.
-
-> When using coroutine style services, please use the coroutine execution strategy.
-
-#### Customizing scheduling distribution strategy
-
-You can change the currently used strategy by changing the instance corresponding to the `Hyperf\Crontab\Strategy\StrategyInterface` interface class in `config/autoload/dependencies.php`. By default, the `Worker process execution strategy` is used, and the corresponding class is `Hyperf\Crontab\Strategy\WorkerStrategy`. For example, if we wanted to use `App\Crontab\Strategy\FooStrategy`:
+#### Changing the Scheduling and Distribution Strategy
+You can change the strategy currently in use by changing the instance corresponding to the `Hyperf\Crontab\Strategy\StrategyInterface` interface class in `config/autoload/dependencies.php`. By default, the `Worker Process Execution Strategy` is used, corresponding to the class `Hyperf\Crontab\Strategy\WorkerStrategy`. If we want to change the strategy to a new one, for example, `App\Crontab\Strategy\FooStrategy`, you can do the following:
 
 ```php
 <?php
@@ -170,30 +223,64 @@ return [
 ];
 ```
 
-##### Worker process execution strategy [default]
+##### Worker Process Execution Strategy [Default]
+Strategy Class: `Hyperf\Crontab\Strategy\WorkerStrategy`
 
-Class: `Hyperf\Crontab\Strategy\WorkerStrategy`
+This strategy is used by default. The `CrontabDispatcherProcess` process parses scheduled tasks and polls them to pass the tasks to each `Worker` process for execution via inter-process communication. Each `Worker` process then executes the tasks as coroutines.
 
-By default, this strategy is used. The `CrontabDispatcherProcess` process parses scheduled tasks and passes the execution tasks to each `worker` process through inter-process communication polling. Each `worker` process then uses a coroutine to actually execute the task.
+##### TaskWorker Process Execution Strategy
+Strategy Class: `Hyperf\Crontab\Strategy\TaskWorkerStrategy`
 
-##### TaskWorker execution strategy
+In this strategy, the `CrontabDispatcherProcess` process parses scheduled tasks and polls them to pass the tasks to each `TaskWorker` process for execution via inter-process communication. Each `TaskWorker` process then executes the tasks as coroutines. Note whether the `TaskWorker` process is configured to support coroutines when using this strategy.
 
-Class: `Hyperf\Crontab\Strategy\TaskWorkerStrategy`
+##### Multi-process Execution Strategy
+Strategy Class: `Hyperf\Crontab\Strategy\ProcessStrategy`
 
-This strategy parses the scheduled tasks for the `CrontabDispatcherProcess` process and passes the execution tasks to each `TaskWorker` process through inter-process communication polling. Each `TaskWorker` process then uses the coroutine to actually execute the task. When using this strategy, pay attention to whether the `TaskWorker` process is configured with a supported protocol.
+In this strategy, the `CrontabDispatcherProcess` process parses scheduled tasks and polls them to pass the tasks to each `Worker` process and `TaskWorker` process for execution via inter-process communication. Each process then executes the tasks as coroutines. Note whether the `TaskWorker` process is configured to support coroutines when using this strategy.
 
-##### Multi-process execution strategy
+##### Coroutine Execution Strategy
+Strategy Class: `Hyperf\Crontab\Strategy\CoroutineStrategy`
 
-Class: `Hyperf\Crontab\Strategy\ProcessStrategy`
+In this strategy, the `CrontabDispatcherProcess` process parses scheduled tasks and creates a coroutine within the process to execute each task.
 
-This strategy parses scheduled tasks for the `CrontabDispatcherProcess` process and transfers the execution tasks to each `Worker` process and `TaskWorker` process through inter-process communication polling. Each process then uses a coroutine to actually execute tasks. Use this strategy to pay attention to whether the `TaskWorker` process is configured to support coroutines.
+## Running Scheduled Tasks
 
-##### Coroutine execution strategy
+Once you have completed the configuration above and defined the scheduled tasks, you only need to start the `Server`, and the scheduled tasks will start simultaneously.
 
-Class: `Hyperf\Crontab\Strategy\CoroutineStrategy`
+After starting, even if you have defined a scheduled task with a short cycle, it will not start execution immediately. All scheduled tasks will wait until the next minute cycle to start execution. For example, if you start at `10:11:12`, the scheduled tasks will formally start execution at `10:12:00`.
 
-This strategy parses scheduled tasks for the `CrontabDispatcherProcess` process and creates a coroutine to run for each execution task in the process.
+### FailToExecute Event
+When a scheduled task fails to execute, a `FailToExecute` event is triggered. We can write the following listener to receive the corresponding `Crontab` and `Throwable`.
 
-## Running timed tasks
+```php
+<?php
 
-After you complete the above configuration and define the scheduled tasks, you only need to directly start the `Server`, and the timed tasks will start together. After you start, even if you define a timed task with a short enough period, the timed task will not start immediately. All the timed tasks will not start until the next minute period. For example, when you start it is `10:11 12 seconds`, then the timed task will officially start execution at `10:12:00`.
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Psr\Container\ContainerInterface;
+
+#[Listener]
+class FailToExecuteCrontabListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            FailToExecute::class,
+        ];
+    }
+
+    /**
+     * @param FailToExecute $event
+     */
+    public function process(object $event)
+    {
+        var_dump($event->crontab->getName());
+        var_dump($event->throwable->getMessage());
+    }
+}
+```
