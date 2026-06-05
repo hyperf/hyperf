@@ -2114,6 +2114,159 @@ class ModelTest extends TestCase
         $this->assertFalse(ModelStub::isSoftDeletable());
     }
 
+    public function testWithoutEventsDisablesEventDispatcher()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+
+        $result = ModelStub::withoutEvents(function () {
+            // Event dispatcher should be null inside the callback
+            $this->assertNull(Register::getEventDispatcher());
+            return 'test_result';
+        });
+
+        // Verify the callback result is returned
+        $this->assertEquals('test_result', $result);
+
+        // Verify event dispatcher is restored after callback
+        $this->assertSame($events, Register::getEventDispatcher());
+    }
+
+    public function testWithoutEventsPreventsModelEventDispatching()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+
+        // Set up expectations for model creation events (booting/booted)
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model = new ModelSaveStub();
+        $model->name = 'Test';
+
+        // Reset expectations - events should NOT be dispatched during save inside withoutEvents
+        $events = Mockery::mock(Dispatcher::class);
+        Register::setEventDispatcher($events);
+        $events->shouldNotReceive('dispatch');
+
+        ModelStub::withoutEvents(function () use ($model) {
+            // These operations would normally trigger events, but shouldn't inside withoutEvents
+            $model->save();
+        });
+
+        // Verify event dispatcher is still intact after callback
+        $this->assertSame($events, Register::getEventDispatcher());
+    }
+
+    public function testWithoutEventsRestoresDispatcherEvenWithException()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+
+        try {
+            ModelStub::withoutEvents(function () {
+                // Event dispatcher should be null inside the callback
+                $this->assertNull(Register::getEventDispatcher());
+                throw new Exception('Test exception');
+            });
+            $this->fail('Expected exception was not thrown');
+        } catch (Exception $e) {
+            $this->assertEquals('Test exception', $e->getMessage());
+        }
+
+        // Verify event dispatcher is restored even after exception
+        $this->assertSame($events, Register::getEventDispatcher());
+    }
+
+    public function testWithoutEventsWithNoDispatcherInitially()
+    {
+        // Ensure no dispatcher is set initially
+        Register::unsetEventDispatcher();
+
+        $this->assertNull(Register::getEventDispatcher());
+
+        $result = ModelStub::withoutEvents(function () {
+            // Should still be null inside callback
+            $this->assertNull(Register::getEventDispatcher());
+            return 'no_dispatcher_test';
+        });
+
+        $this->assertEquals('no_dispatcher_test', $result);
+
+        // Should still be null after callback since there was no dispatcher initially
+        $this->assertNull(Register::getEventDispatcher());
+    }
+
+    public function testWithoutEventsHandlesNestedCalls()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+
+        $callCount = 0;
+
+        $result = ModelStub::withoutEvents(function () use (&$callCount) {
+            ++$callCount;
+            $this->assertNull(Register::getEventDispatcher());
+
+            // Nested withoutEvents call
+            $nestedResult = ModelStub::withoutEvents(function () use (&$callCount) {
+                ++$callCount;
+                $this->assertNull(Register::getEventDispatcher());
+                return 'nested_result';
+            });
+
+            $this->assertNull(Register::getEventDispatcher());
+            $this->assertEquals('nested_result', $nestedResult);
+
+            return 'outer_result';
+        });
+
+        $this->assertEquals('outer_result', $result);
+        $this->assertEquals(2, $callCount);
+        $this->assertSame($events, Register::getEventDispatcher());
+    }
+
+    public function testWithoutEventsActuallyPreventsEventFiring()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+
+        // Test that events ARE dispatched normally outside withoutEvents
+        // Set up event expectations for model creation (booting/booted)
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model = new ModelSaveStub();
+        $model->name = 'Original Name';
+
+        // Set up event expectations for normal save
+        $events->shouldReceive('dispatch')->with(Events\Saving::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Creating::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Created::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Saved::class)->andReturn(null);
+
+        // Save outside withoutEvents - events should be dispatched
+        $model->save();
+
+        // Reset mock expectations for the withoutEvents test
+        $events = Mockery::mock(Dispatcher::class);
+        Register::setEventDispatcher($events);
+
+        // Set up expectations for model creation inside withoutEvents (booting/booted should still be called)
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        // Now test that save events are NOT dispatched inside withoutEvents
+        $events->shouldNotReceive('dispatch')->with(Events\Saving::class);
+        $events->shouldNotReceive('dispatch')->with(Events\Creating::class);
+        $events->shouldNotReceive('dispatch')->with(Events\Created::class);
+        $events->shouldNotReceive('dispatch')->with(Events\Saved::class);
+
+        ModelStub::withoutEvents(function () {
+            $model = new ModelSaveStub();
+            $model->name = 'Updated Name';
+            $model->save();
+        });
+
+        // If we get here without exceptions, the test passed
+        $this->assertTrue(true);
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
