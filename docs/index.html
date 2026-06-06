@@ -29,7 +29,7 @@
     mermaid.initialize({ startOnLoad: false });
 
     // Set html "lang" attribute based on URL
-    var lang = location.hash.match(/#\/(zh-tw|zh-hk|en|id)\//);
+    var lang = location.hash.match(/#\/(zh-tw|zh-hk|en|id|pt-br)\//);
     if (lang) {
       document.documentElement.setAttribute('lang', lang[1]);
     }
@@ -52,6 +52,7 @@
         noData: {
           '/en/': 'No results!',
           '/id/': 'Hasil tidak ditemukan!',
+          '/pt-br/': 'Nenhum resultado!',
           '/zh-cn/': '没有找到结果!',
           '/zh-hk/': '沒有找到結果!',
           '/zh-tw/': '沒有找到結果!',
@@ -61,12 +62,13 @@
         placeholder: {
           '/en/': 'Type to Search',
           '/id/': 'Ketik untuk Mencari',
+          '/pt-br/': 'Digite para pesquisar',
           '/zh-cn/': '输入关键词搜索',
           '/zh-hk/': '輸入關鍵詞搜索',
           '/zh-tw/': '輸入關鍵詞搜索',
           '/': '输入关键词搜索'
         },
-        pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en', '/id']
+        pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en', '/id', '/pt-br']
       },
       alias: {
         '/summary.md': '/zh-cn/summary.md',
@@ -76,6 +78,7 @@
         '/zh-hk/.*/summary.md': '/zh-hk/summary.md',
         '/en/.*/summary.md': '/en/summary.md',
         '/id/.*/summary.md': '/id/summary.md',
+        '/pt-br/.*/summary.md': '/pt-br/summary.md',
         '/(.*)/utils': '/$1/support',
       },
       nameLink: {
@@ -84,6 +87,7 @@
         '/zh-hk/': '#/zh-hk/',
         '/en/': '#/en/',
         '/id/': '#/id/',
+        '/pt-br/': '#/pt-br/',
         '/': '#/',
       },
       plugins: [
@@ -92,7 +96,7 @@
           hook.beforeEach(function(content) {
             var shortMatches = ['en', 'id'],
                     // zh-cn is the default so is not present
-                    fullMatches = ['zh-tw', 'zh-hk'],
+                    fullMatches = ['zh-tw', 'zh-hk', 'pt-br'],
                     locale = (navigator.languages
                             ? navigator.languages[0]
                             : (navigator.language || navigator.userLanguage)).toLowerCase();
@@ -109,7 +113,7 @@
               }
             }
 
-            let hash = window.location.hash.split(/\/(en|id|zh-cn|zh-tw|zh-hk)\//);
+            let hash = window.location.hash.split(/\/(en|id|pt-br|zh-cn|zh-tw|zh-hk)\//);
             let lang = hash[1] ?? '';
             let path = hash[2] ?? '';
 
