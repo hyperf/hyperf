@@ -4,8 +4,9 @@
 
 | Version | Status | Active Support End Date | Security Maintenance End Date | Release or Estimated Release Date |
 | :--- | :--- | :--- | :--- | :--- |
-| 3.1(LTS) | Active Support | 2026-01-01 | 2027-01-01 | 2023-12-01 |
-| 3.0 | Security Support | 2023-11-30 | 2024-06-30 | 2023-01-03 |
+| 3.2      | Active Support  | 2027-06-07 | 2028-01-01 | 2026-06-07 |
+| 3.1(LTS) | Security Support | 2026-06-07 | 2027-06-07 | 2023-12-01 |
+| 3.0 | End of Life | 2023-11-30 | 2024-06-30 | 2023-01-03 |
 | 2.2 | End of Life | 2022-06-20 | 2023-11-30 | 2021-07-19 |
 | 2.1 | End of Life | 2021-06-30 | 2021-12-31 | 2020-12-28 |
 | 2.0 | End of Life | 2020-12-28 | 2021-06-30 | 2020-06-22 |
