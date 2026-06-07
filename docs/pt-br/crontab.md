@@ -46,21 +46,21 @@ Você pode definir todas as suas tarefas agendadas no arquivo de configuração 
 use Hyperf\Crontab\Crontab;
 return [
     'enable' => true,
-    // Timed tasks defined by configuration
+    // Tarefas agendadas definidas por configuração
     'crontab' => [
-        // Callback type timed task (default)
-        (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('This is an example timed task'),
-        // Command type timed task
+        // Tarefa agendada do tipo Callback (padrão)
+        (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('Este é um exemplo de tarefa agendada'),
+        // Tarefa agendada do tipo Command
         (new Crontab())->setType('command')->setName('Bar')->setRule('* * * * *')->setCallback([
             'command' => 'swiftmailer:spool:send',
-            // (optional) arguments
+            // (opcional) argumentos
             'fooArgument' => 'barValue',
-            // (optional) options
+            // (opcional) opções
             '--message-limit' => 1,
-            // Remember to add it, otherwise it will cause the main process to exit
+            // Lembre-se de adicionar isso, caso contrário o processo principal será encerrado
             '--disable-event-dispatcher' => true,
         ])->setEnvironments(['develop', 'production']),
-        // Closure type timed task (Only supported in Coroutine style server)
+        // Tarefa agendada do tipo Closure (Suportado apenas em servidores no estilo Corrotina)
         (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
             var_dump(date('Y-m-d H:i:s'));
         })->setEnvironments('production'),
@@ -92,7 +92,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "This is an example scheduled task")]
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "Este é um exemplo de tarefa agendada")]
 class FooTask
 {
      #[Inject]
