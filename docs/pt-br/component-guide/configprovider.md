@@ -22,9 +22,9 @@ class ConfigProvider
      public function __invoke(): array
      {
          return [
-             // merged into config/autoload/dependencies.php file
+             // mesclado no arquivo config/autoload/dependencies.php
              'dependencies' => [],
-             // merged into config/autoload/annotations.php file
+             // mesclado no arquivo config/autoload/annotations.php
              'annotations' => [
                  'scan' => [
                      'paths' => [
@@ -32,21 +32,21 @@ class ConfigProvider
                      ],
                  ],
              ],
-             // The definition of the default Command is merged into Hyperf\Contract\ConfigInterface, another way to understand it is corresponding to config/autoload/commands.php
+             // A definição do Command padrão é mesclada em Hyperf\Contract\ConfigInterface, outra forma de entender é que corresponde a config/autoload/commands.php
              'commands' => [],
-             // similar to commands
+             // semelhante a commands
              'listeners' => [],
-             // Component default configuration file, that is, after executing the command, the file corresponding to source will be copied to the file corresponding to destination
+             // Arquivo de configuração padrão do componente, ou seja, após executar o comando, o arquivo correspondente a source será copiado para o arquivo correspondente a destination
              'publish' => [
                  [
                      'id' => 'config',
-                     'description' => 'description of this config file.', // description
-                     // It is recommended that the default configuration be placed in the publish folder, and the file name is the same as the component name
-                     'source' => __DIR__ . '/../publish/file.php', // corresponding configuration file path
-                     'destination' => BASE_PATH . '/config/autoload/file.php', // copy as the file under this path
+                     'description' => 'descrição deste arquivo de configuração.', // descrição
+                     // Recomenda-se que a configuração padrão seja colocada na pasta publish, e o nome do arquivo seja o mesmo que o nome do componente
+                     'source' => __DIR__ . '/../publish/file.php', // caminho do arquivo de configuração correspondente
+                     'destination' => BASE_PATH . '/config/autoload/file.php', // copiar como o arquivo sob este caminho
                  ],
              ],
-             // You can also continue to define other configurations, which will eventually be merged into the configuration storage corresponding to ConfigInterface
+             // Você também pode continuar a definir outras configurações, que eventualmente serão mescladas no armazenamento de configuração correspondente ao ConfigInterface
          ];
      }
 }

@@ -149,7 +149,7 @@ namespace App\Model;
 /**
  * @property int $id
  * @property int $count
- * @property string $float_num // decimal
+ * @property string $float_num // decimal (ponto flutuante)
  * @property string $str
  * @property string $json
  * @property \Carbon\Carbon $created_at

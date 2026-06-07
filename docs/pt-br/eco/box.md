@@ -40,7 +40,7 @@ sudo chmod 755 /usr/local/bin/box
 
 ```powershell
 curl -o box.exe https://github.com/hyperf/box/releases/download/v0.5.5/box_x64_windows.exe
-// Put `box.exe` into any path in $PATH env that you want, and use `box.exe` instead of `box` when executing on Windows
+// Coloque o `box.exe` em qualquer caminho no seu PATH que você desejar, e use `box.exe` em vez de `box` ao executar no Windows
 ```
 
 #### Inicializar Github Access Token
@@ -56,10 +56,10 @@ O Box precisa de um Github Access Token para chamar a API do GitHub e obter as v
 Por padrão, o Box é suportado pelo kernel Swow, mas também fornecemos o kernel Swoole. Você pode alternar para o kernel Swoole com `box config set kernel swoole`, mas observe que o kernel Swoole suporta apenas PHP 8.1 e não oferece suporte ao recurso de construir binários e a sistemas Windows.
 
 ```bash
-// set to Swow Kernel [default]
+// definir para Swow Kernel [padrão]
 box config set kernel swow
 
-// set to Swoole Kernel (NOT supported on Windows)
+// definir para Swoole Kernel (NÃO suportado no Windows)
 box config set kernel swoole
 ````
 

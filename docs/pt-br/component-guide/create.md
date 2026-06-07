@@ -39,4 +39,4 @@ Modifique `/opt/project/composer.json`
 }
 ```
 
-Finally, execute `composer update -o` in the directory `/opt/project`.
+Finalmente, execute `composer update -o` no diretório `/opt/project`.

@@ -303,7 +303,7 @@ $affected = Db::update('UPDATE user set name =? WHERE id = ?', ['John', 1]); // 
 
 $affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // retorna o número de linhas afetadas (int)
 
-$result = Db::statement("CALL pro_test(?,'?')", [1,'your words']); // retorna bool; CALL pro_test(?,?) é uma stored procedure, o atributo é MODIFIES SQL DATA
+$result = Db::statement("CALL pro_test(?,'?')", [1,'your words']); // retorna bool; CALL pro_test(?,?) é uma stored procedure, o atributo é MODIFIES SQL DATA (modifica dados SQL)
 ```
 
 ### Gerenciar transações automaticamente

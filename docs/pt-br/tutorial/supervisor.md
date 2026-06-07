@@ -21,23 +21,23 @@ cp /etc/supervisord.conf /etc/supervisord.d/supervisord.conf
 Edite o arquivo recém-copiado `/etc/supervisord.d/supervisord.conf` e salve após adicionar o seguinte no final do arquivo:
 
 ```ini
-# Create a new application and set a name, here is set to hyperf
+# Cria uma nova aplicação e define um nome, aqui está definido como hyperf
 [program:hyperf]
-# Here is the startup command of the project you want to manage, corresponding to the real path of your project
+# Aqui está o comando de inicialização do projeto que você deseja gerenciar, correspondendo ao caminho real do seu projeto
 command=php /var/www/hyperf/bin/hyperf.php start
-# Which user to run the process as
+# Qual usuário executará o processo
 user=root
-# automatically the app when supervisor starts
+# inicia automaticamente a aplicação quando o supervisor inicia
 autostart=true
-# Automatically restart the process after the process exits
+# Reinicia automaticamente o processo após a saída do processo
 autorestart=true
-# retry interval in seconds
+# intervalo de retentativa em segundos
 startsecs=5
-# number of retries
+# número de retentativas
 startretries=3
-# stderr log output location
+# local de saída do log stderr
 stderr_logfile=/var/www/hyperf/runtime/stderr.log
-# stdout log output location
+# local de saída do log stdout
 stdout_logfile=/var/www/hyperf/runtime/stdout.log
 ```
 

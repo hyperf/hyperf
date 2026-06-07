@@ -172,7 +172,7 @@ Além disso, podemos simplificar ainda mais o código acima usando a função `p
 <?php
 use Hyperf\Coroutine\Coroutine;
 
-// The passed array parameters can also use `key of array` to facilitate distinguish the result of coroutine, and the returned result will also return the corresponding result according to key.
+// Os parâmetros de array passados também podem usar a `key do array` para facilitar a distinção do resultado da corrotina, e o resultado retornado também retornará o resultado correspondente de acordo com a key.
 $result = parallel([
     function () {
         Coroutine::sleep(1);
@@ -191,4 +191,3 @@ $result = parallel([
 
 Como as corrotinas no mesmo processo compartilham memória e a execução/troca das corrotinas é não sequencial, é difícil controlar qual corrotina atual é (na prática, até dá, mas ninguém gostaria de fazer isso). Por isso, precisamos conseguir trocar o contexto correspondente no momento em que ocorre uma troca de corrotina.
 Implementar gerenciamento de contexto para corrotinas no Hyperf é muito simples: com base nos métodos estáticos `set(string $id, $value)`, `get(string $id, $default = null)` e `has(string $id)` da classe `Hyperf\Context\Context`, conseguimos gerenciar dados de contexto. Os valores definidos e obtidos por esses métodos ficam limitados à corrotina atual. Ao final da corrotina, o contexto correspondente é liberado automaticamente. Não é necessário gerenciar manualmente e não há necessidade de se preocupar com risco de memory leaks.
-y leaks.

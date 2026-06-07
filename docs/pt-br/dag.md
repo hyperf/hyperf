@@ -127,7 +127,7 @@ O próprio `\Hyperf\Dag\Dag` também implementa a interface `\Hyperf\Dag\Runner`
 
 ```php
 <?php
-// namespace omitted
+// namespace omitido
 $a = Vertex::make(function () { return 1;});
 $b = Vertex::make(function () { return 2;});
 $c = Vertex::make(function () { return 3;});
