@@ -18,7 +18,7 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Seu código
     }
 }
 ```
@@ -54,7 +54,7 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Seu código
     }
 }
 ```
@@ -79,12 +79,12 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Seu código
     }
 
     public function isEnable($server): bool
     {
-        // Do not start with service startup
+        // Não realizar o startup do service
         return false;
     }
 }
@@ -169,10 +169,6 @@ class DemoProcess extends AbstractProcess
 
             sleep(1);
         }
-    }
-}
-```
-       }
     }
 }
 ```
