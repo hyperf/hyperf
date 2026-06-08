@@ -9,7 +9,7 @@
 
   * [Release Planning](en/release-planning.md)
   * [Versions](en/versions.md)
-  * [Changelogs](en/changelog/3.1.md)
+  * [Changelogs](en/changelog/3.2.md)
 
 * Quick Start
 
@@ -149,6 +149,7 @@
 
 * Old Changelogs
 
+  * [v3.1](en/changelog/3.1.md)
   * [v3.0](en/changelog/3.0.md)
   * [v2.2](en/changelog/2.2.md)
   * [v2.1](en/changelog/2.1.md)
@@ -164,3 +165,4 @@
   * [2.2 Upgrade Guide](en/upgrade/2.2.md)
   * [3.0 Upgrade Guide](en/upgrade/3.0.md)
   * [3.1 Upgrade Guide](en/upgrade/3.1.md)
+  * [3.2 Upgrade Guide](en/upgrade/3.2.md)

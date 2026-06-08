@@ -10,7 +10,7 @@
 
   * [版本計劃](zh-hk/release-planning.md)
   * [版本説明](zh-hk/versions.md)
-  * [版本更新記錄](zh-hk/changelog/3.1.md)
+  * [版本更新記錄](zh-hk/changelog/3.2.md)
 
 * 快速入門
 
@@ -151,6 +151,7 @@
 
 * 歷史版本更新記錄
 
+  * [3.1 更新記錄](zh-hk/changelog/3.1.md)
   * [3.0 更新記錄](zh-hk/changelog/3.0.md)
   * [2.2 更新記錄](zh-hk/changelog/2.2.md)
   * [2.1 更新記錄](zh-hk/changelog/2.1.md)
@@ -166,3 +167,4 @@
   * [2.2 升級指南](zh-hk/upgrade/2.2.md)
   * [3.0 升級指南](zh-hk/upgrade/3.0.md)
   * [3.1 升級指南](zh-hk/upgrade/3.1.md)
+  * [3.2 升級指南](zh-hk/upgrade/3.2.md)

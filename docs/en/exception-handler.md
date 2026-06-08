@@ -164,7 +164,7 @@ return [
 
 As shown in the image:
 
-![whoops](/imgs/whoops.png)
+![whoops](en/imgs/whoops.png)
 
 
 ## Error Listener
@@ -205,4 +205,3 @@ PHP Notice:  Undefined offset: 1 in IndexController.php on line 24
 Notice: Undefined offset: 1 in IndexController.php on line 24
 NULL
 ```
-
