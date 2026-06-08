@@ -1,4 +1,4 @@
-# Pendahuluan 3.1
+# Pendahuluan 3.2
 
 Hyperf adalah framework PHP coroutine progresif yang menggabungkan performa tinggi dengan fleksibilitas luar biasa. Framework ini hadir dengan server coroutine bawaan dan beragam komponen siap pakai, menawarkan peningkatan performa yang signifikan dibandingkan framework tradisional berbasis PHP-FPM. Selain kencang, Hyperf juga tetap sangat fleksibel dan mudah dikembangkan. Semua komponen standar dibangun di atas [standar PSR](https://www.php-fig.org/psr), dan berkat desain Dependency Injection (DI) yang kuat, sebagian besar komponen atau class bisa diganti dan digunakan kembali sesuai kebutuhan.
 

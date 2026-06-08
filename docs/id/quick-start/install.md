@@ -8,7 +8,7 @@ Project [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) udah nyi
 
 Kalo gak mau pake Docker sebagai basis lingkungan runtime, bisa pake [Box](id/eco/box.md). Kalo mau setup sendiri, pastiin lingkungan runtime-nya memenuhi syarat berikut:
 
- - PHP >= 8.1
+ - PHP >= 8.2
  - Salah satu dari network engine berikut:
    - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.0, dengan `swoole.use_shortname` diset ke `Off` pada `php.ini`.
    - [Swow PHP extension](https://github.com/swow/swow) >= 1.4
@@ -82,7 +82,7 @@ Karena Hyperf dibangun di atas Swoole coroutines, dan coroutine di Swoole 4 adal
 Ekstensi berikut (namun tidak terbatas pada) akan menyebabkan masalah kompatibilitas tertentu dan tidak bisa digunakan bersama atau berdampingan dengan Hyperf:
 
 - xhprof
-- xdebug (tersedia saat PHP version >= 8.1 dan Swoole version >= 5.0.2)
+- xdebug (tersedia saat PHP version >= 8.2 dan Swoole version >= 5.0.2)
 - blackfire
 - trace
 - uopz

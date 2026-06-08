@@ -104,7 +104,7 @@ return [
 ## Konfigurasi Middleware
 
 Sebelum digunakan, Anda perlu mengkonfigurasi middleware `DtmClient\Middleware\DtmMiddleware` sebagai global middleware untuk Server. Middleware ini mendukung spesifikasi PSR-15 dan dapat diterapkan ke berbagai framework yang mendukung spesifikasi ini.
-Untuk konfigurasi middleware di Hyperf, Anda dapat merujuk ke bab [Hyperf Middleware](id/middleware.md).
+Untuk konfigurasi middleware di Hyperf, Anda dapat merujuk ke bab [Hyperf Middleware](id/middleware/middleware.md).
 
 # Penggunaan
 
