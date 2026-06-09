@@ -1,5 +1,9 @@
 # v3.2.1 - TBD
 
+## Added
+
+- [#7759](https://github.com/hyperf/hyperf/pull/7759) Added `Hyperf\Logger\Handler\StreamHandler` which don't contain `set_error_handler`.
+
 # v3.2.0 - 2026-06-07
 
 ## Break Changes
