@@ -212,16 +212,6 @@ class StreamHandler extends AbstractProcessingHandler
         fwrite($stream, (string) $record->formatted);
     }
 
-    /**
-     * @return true
-     */
-    private function customErrorHandler(int $code, string $msg): bool
-    {
-        $this->errorMessage = preg_replace('{^(fopen|mkdir|fwrite)\(.*?\): }', '', $msg);
-
-        return true;
-    }
-
     private function getDirFromStream(string $stream): ?string
     {
         $pos = strpos($stream, '://');
