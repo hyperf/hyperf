@@ -51,8 +51,6 @@ class StreamHandler extends AbstractProcessingHandler
 
     protected string $fileOpenMode;
 
-    private ?string $errorMessage = null;
-
     /** @var null|true */
     private ?bool $dirCreated = null;
 
@@ -158,7 +156,6 @@ class StreamHandler extends AbstractProcessingHandler
                 throw new LogicException('Missing stream url, the stream can not be opened. This may be caused by a premature call to close().' . Utils::getRecordMessageForException($record));
             }
             $this->createDir($url);
-            $this->errorMessage = null;
 
             $stream = fopen($url, $this->fileOpenMode);
             if ($this->filePermission !== null) {
@@ -235,7 +232,6 @@ class StreamHandler extends AbstractProcessingHandler
 
         $dir = $this->getDirFromStream($url);
         if ($dir !== null && ! is_dir($dir)) {
-            $this->errorMessage = null;
             mkdir($dir, 0777, true);
         }
         $this->dirCreated = true;
