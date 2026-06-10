@@ -3,6 +3,7 @@
   * [繁體中文(臺)](zh-tw/)
   * [繁體中文(港)](zh-hk/)
   * [English](en/)
+  * [Português (Brasil)](pt-br/)
   * [Bahasa Indonesia](id/)
 
 * 历史版本/Versions
