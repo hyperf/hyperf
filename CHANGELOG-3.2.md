@@ -1,5 +1,9 @@
 # v3.2.1 - TBD
 
+## Fixed
+
+- [#7760](https://github.com/hyperf/hyperf/pull/7760) Fixed bug that `ModelRewriteInheritanceVisitor` cannot work for command `gen:model`.
+
 ## Added
 
 - [#7759](https://github.com/hyperf/hyperf/pull/7759) Added `Hyperf\Logger\Handler\StreamHandler` which don't contain `set_error_handler`.
