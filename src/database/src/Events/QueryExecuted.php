@@ -37,7 +37,11 @@ class QueryExecuted
         public array $bindings,
         public ?float $time,
         public ConnectionInterface $connection,
-        public mixed $result = null
+        public mixed $result = null,
+        public ?float $prepareTime = null,
+        public ?float $bindTime = null,
+        public ?float $executeTime = null,
+        public ?float $fetchTime = null,
     ) {
         $this->connectionName = $connection->getName();
     }
