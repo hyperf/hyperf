@@ -66,7 +66,7 @@ class ServerConfig implements Arrayable
         return $this->config[$name] ?? null;
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $prefix = strtolower(substr($name, 0, 3));
         if (in_array($prefix, ['set', 'get'])) {

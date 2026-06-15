@@ -22,9 +22,9 @@ function str($string = null)
 {
     if (func_num_args() === 0) {
         return new class implements \Stringable {
-            public function __call($method, $parameters)
+            public function __call(string $name, array $arguments): mixed
             {
-                return Str::$method(...$parameters);
+                return Str::$name(...$arguments);
             }
 
             public function __toString(): string

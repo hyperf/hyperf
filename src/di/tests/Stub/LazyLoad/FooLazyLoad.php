@@ -14,7 +14,8 @@ namespace HyperfTest\Di\Stub\LazyLoad;
 
 class FooLazyLoad
 {
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
+        return null;
     }
 }

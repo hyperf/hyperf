@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace HyperfTest\Elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Transport\Exception\NoNodeAvailableException;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -27,7 +29,9 @@ class ClientFactoryTest extends TestCase
 {
     public function testClientBuilderFactoryCreate()
     {
-        $clientFactory = new ClientBuilderFactory();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(false);
+        $clientFactory = new ClientBuilderFactory($container);
 
         $client = $clientFactory->create();
 
@@ -36,9 +40,11 @@ class ClientFactoryTest extends TestCase
 
     public function testHostNotReached()
     {
-        $this->expectException(NoNodesAvailableException::class);
+        $this->expectException(NoNodeAvailableException::class);
 
-        $clientFactory = new ClientBuilderFactory();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(false);
+        $clientFactory = new ClientBuilderFactory($container);
 
         $client = $clientFactory->create()->setHosts(['http://127.0.0.1:9201'])->build();
 

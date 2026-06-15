@@ -74,4 +74,19 @@ class CarbonTest extends TestCase
         $uuidv7 = Carbon::createFromId('01880dfa-2825-72e4-acbb-b1e4981cf8af');
         $this->assertEquals('2023-05-12 03:21:18.117000', $uuidv7->toDateTimeString('microsecond'));
     }
+
+    public function testCreateFromTimestamp()
+    {
+        $timezone = date_default_timezone_get();
+        try {
+            date_default_timezone_set('Asia/Shanghai');
+
+            $t1 = Carbon::make('2025-07-22');
+            $t2 = Carbon::createFromTimestamp($t1->getTimestamp(), date_default_timezone_get());
+
+            $this->assertSame($t1->toDateTimeString(), $t2->toDateTimeString());
+        } finally {
+            date_default_timezone_set($timezone);
+        }
+    }
 }

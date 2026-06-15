@@ -84,14 +84,8 @@ class GenSchemaCommand extends HyperfCommand
             return;
         }
 
-        $lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $lexer = new Emulative();
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $printer = new Standard();
 
         $traverser = new NodeTraverser();

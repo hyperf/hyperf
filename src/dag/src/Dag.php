@@ -146,6 +146,7 @@ class Dag implements Runner
         }
 
         foreach ($this->vertexes as $vertex) {
+            // @phpstan-ignore identical.alwaysTrue
             if ($this->dfn[$vertex->key] === 0) {
                 $this->_checkCircularDependencies($vertex);
             }

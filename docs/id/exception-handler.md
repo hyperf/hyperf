@@ -161,7 +161,7 @@ return [
 
 Efeknya seperti yang ditunjukkan pada gambar:
 
-![whoops](/imgs/whoops.png)
+![whoops](id/imgs/whoops.png)
 
 ## Error Listener
 

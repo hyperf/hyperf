@@ -124,10 +124,8 @@ class Builder
 
     /**
      * The table joins for the query.
-     *
-     * @var array
      */
-    public $joins;
+    public ?array $joins = null;
 
     /**
      * The where constraints for the query.
@@ -267,20 +265,19 @@ class Builder
     /**
      * Handle dynamic method calls into the method.
      *
-     * @param string $method
-     * @param array $parameters
      * @throws BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
-        if (Str::startsWith($method, 'where')) {
-            return $this->dynamicWhere($method, $parameters);
+        if (Str::startsWith($name, 'where')) {
+            return $this->dynamicWhere($name, $arguments);
         }
 
-        static::throwBadMethodCallException($method);
+        static::throwBadMethodCallException($name);
+        return null;
     }
 
     /**
@@ -1274,7 +1271,7 @@ class Builder
      * Add a nested where statement to the query.
      *
      * @param string $boolean
-     * @return Builder|static
+     * @return static
      */
     public function whereNested(Closure $callback, $boolean = 'and')
     {
@@ -2137,10 +2134,13 @@ class Builder
     public function limit($value)
     {
         $property = $this->unions ? 'unionLimit' : 'limit';
+        $value = (int) $value;
 
-        if ($value >= 0) {
-            $this->{$property} = $value;
+        if ($value < 0) {
+            throw new InvalidArgumentException('Limit cannot be negative.');
         }
+
+        $this->{$property} = $value;
 
         return $this;
     }

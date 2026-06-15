@@ -134,7 +134,7 @@ class CrontabRegisterListener implements ListenerInterface
     {
         $crontab = new Crontab();
         isset($annotation->name) && $crontab->setName($annotation->name);
-        isset($annotation->type) && $crontab->setType($annotation->type);
+        $crontab->setType($annotation->type);
         isset($annotation->rule) && $crontab->setRule($annotation->rule);
         isset($annotation->singleton) && $crontab->setSingleton($annotation->singleton);
         isset($annotation->mutexPool) && $crontab->setMutexPool($annotation->mutexPool);
@@ -142,10 +142,10 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->onOneServer) && $crontab->setOnOneServer($annotation->onOneServer);
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
-        isset($annotation->enable) && $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
+        $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
         isset($annotation->timezone) && $crontab->setTimezone($annotation->timezone);
-        isset($annotation->environments) && $crontab->setEnvironments($annotation->environments);
-        isset($annotation->options) && $crontab->setOptions($annotation->options);
+        $crontab->setEnvironments($annotation->environments);
+        $crontab->setOptions($annotation->options);
 
         return $crontab;
     }

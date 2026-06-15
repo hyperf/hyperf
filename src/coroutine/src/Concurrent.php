@@ -32,7 +32,7 @@ class Concurrent
         $this->channel = new Channel($limit);
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         if (in_array($name, ['isFull', 'isEmpty'])) {
             return $this->channel->{$name}(...$arguments);

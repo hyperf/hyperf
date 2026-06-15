@@ -14,7 +14,6 @@ namespace Hyperf\Support\Traits;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
-use Hyperf\Carbon\Carbon as Date;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Stringable\Str;
@@ -285,16 +284,15 @@ trait InteractsWithData
     public function date($key, $format = null, $tz = null)
     {
         $tz = enum_value($tz);
-
         if ($this->isNotFilled($key)) {
             return null;
         }
 
         if (is_null($format)) {
-            return Date::parse($this->data($key), $tz);
+            return Carbon::parse($this->data($key), $tz);
         }
 
-        return Date::createFromFormat($format, $this->data($key), $tz);
+        return Carbon::createFromFormat($format, $this->data($key), $tz);
     }
 
     /**
@@ -304,7 +302,7 @@ trait InteractsWithData
      *
      * @param string $key
      * @param class-string<TEnum> $enumClass
-     * @param null|TEnum $default
+     * @param null|mixed $default
      * @return null|TEnum
      */
     public function enum($key, $enumClass, $default = null)

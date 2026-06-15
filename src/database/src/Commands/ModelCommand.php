@@ -22,8 +22,6 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\Stringable\Str;
-use PhpParser\Lexer;
-use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\Parser;
@@ -44,8 +42,6 @@ class ModelCommand extends Command
 
     protected ?ConfigInterface $config = null;
 
-    protected ?Lexer $lexer = null;
-
     protected ?Parser $astParser = null;
 
     protected ?PrettyPrinterAbstract $printer = null;
@@ -60,14 +56,7 @@ class ModelCommand extends Command
     {
         $this->resolver = $this->container->get(ConnectionResolverInterface::class);
         $this->config = $this->container->get(ConfigInterface::class);
-        $this->lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
 
         return parent::run($input, $output);
@@ -197,7 +186,7 @@ class ModelCommand extends Command
         $traverser->addVisitor(new CloningVisitor());
 
         $originStmts = $this->astParser->parse(file_get_contents($path));
-        $originTokens = $this->lexer->getTokens();
+        $originTokens = $this->astParser->getTokens();
         $newStmts = $traverser->traverse($originStmts);
         $code = $this->printer->printFormatPreserving($newStmts, $originStmts, $originTokens);
 

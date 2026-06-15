@@ -163,7 +163,7 @@ return [
 
 效果如圖：
 
-![whoops](/imgs/whoops.png)
+![whoops](zh-hk/imgs/whoops.png)
 
 
 ## Error 監聽器
@@ -204,4 +204,3 @@ PHP Notice:  Undefined offset: 1 in IndexController.php on line 24
 Notice: Undefined offset: 1 in IndexController.php on line 24
 NULL
 ```
-

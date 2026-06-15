@@ -8,7 +8,7 @@
 * Manajemen Versi
   * [Perencanaan Rilis](id/release-planning.md)
   * [Versi](id/versions.md)
-  * [Catatan Perubahan](id/changelog/3.1.md)
+  * [Catatan Perubahan](id/changelog/3.2.md)
 
 * Memulai
   * [Instalasi](id/quick-start/install.md)
@@ -135,6 +135,7 @@
   * [Mekanisme ConfigProvider](id/component-guide/configprovider.md)
 
 * Riwayat Perubahan
+  * [Perubahan 3.1](id/changelog/3.1.md)
   * [Perubahan 3.0](id/changelog/3.0.md)
   * [Perubahan 2.2](id/changelog/2.2.md)
   * [Perubahan 2.1](id/changelog/2.1.md)
@@ -149,3 +150,4 @@
   * [Panduan Upgrade 2.2](id/upgrade/2.2.md)
   * [Panduan Upgrade 3.0](id/upgrade/3.0.md)
   * [Panduan Upgrade 3.1](id/upgrade/3.1.md)
+  * [Panduan Upgrade 3.2](id/upgrade/3.2.md)

@@ -340,7 +340,7 @@ try{
 
 > Method ini hanya untuk development. Harus dihapus sebelum deployment ke production, jika tidak akan menyebabkan memory leak dan data kacau.
 
-Untuk mencatat `SQL` di production, silakan gunakan [Event Listening](/db/event)
+Untuk mencatat `SQL` di production, silakan gunakan [Event Listening](id/db/event.md)
 
 ```php
 <?php

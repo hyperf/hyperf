@@ -18,6 +18,7 @@ use Hyperf\Collection\ItemNotFoundException;
 use Hyperf\Collection\LazyCollection;
 use Hyperf\Collection\MultipleItemsFoundException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -25,8 +26,8 @@ use function Hyperf\Tappable\tap;
 
 /**
  * @internal
- * @coversNothing
  */
+#[CoversNothing]
 class LazyCollectionIsLazyTest extends TestCase
 {
     use Concerns\CountsEnumerations;

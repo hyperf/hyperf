@@ -63,20 +63,20 @@ namespace Lazy;
 class SomeClass extends \App\SomeClass
 {
     use \Hyperf\Di\LazyLoader\LazyProxyTrait;
-    const PROXY_TARGET = 'App\\SomeClass';
-    public function hope(bool $a) : int
+    const PROXY_TARGET = 'App\SomeClass';
+    public function hope(bool $a): int
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
-    public function it(\bar\ConfigInterface $a) : void
+    public function it(\bar\ConfigInterface $a): void
     {
         $this->__call(__FUNCTION__, func_get_args());
     }
-    public function works(bool $a, float $b = 1) : int
+    public function works(bool $a, float $b = 1): int
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
-    public function fluent(bool $a, float $b = 1) : \foo\foo
+    public function fluent(bool $a, float $b = 1): \foo\foo
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
@@ -86,7 +86,7 @@ CODETEMPLATE;
         $builder = new ClassLazyProxyBuilder();
         $builder->addClassBoilerplate('Lazy\SomeClass', 'App\SomeClass');
         $builder->addClassRelationship();
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));

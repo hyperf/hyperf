@@ -31,8 +31,6 @@ class JobMessage implements MessageInterface
         }
 
         return [
-            $this->job,  // Compatible with old version, will be removed at v3.2
-            $this->attempts,  // Compatible with old version, will be removed at v3.2
             'job' => $this->job,
             'attempts' => $this->attempts,
         ];
@@ -40,13 +38,6 @@ class JobMessage implements MessageInterface
 
     public function __unserialize(array $data): void
     {
-        if (array_is_list($data)) { // Compatible with old version, will be removed at v3.2
-            $data = [
-                'job' => $data[0],
-                'attempts' => $data[1],
-            ];
-        }
-
         $job = $data['job'];
 
         if ($job instanceof UnCompressInterface) {

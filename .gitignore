@@ -1,5 +1,6 @@
 .buildpath
 .settings/
+.claude/
 .project
 *.patch
 .idea/

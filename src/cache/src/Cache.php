@@ -24,7 +24,7 @@ class Cache implements CacheInterface
         $this->driver = $manager->getDriver();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->driver->{$name}(...$arguments);
     }

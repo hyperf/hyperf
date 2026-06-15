@@ -1000,7 +1000,7 @@ class Blueprint
     }
 
     /**
-     * Add a "deleted at" timestamp for the table.
+     * Add a "deleted at" dateTime for the table.
      *
      * @param string $column
      * @param int $precision
@@ -1008,11 +1008,11 @@ class Blueprint
      */
     public function softDeletes($column = 'deleted_at', $precision = 0)
     {
-        return $this->timestamp($column, $precision)->nullable();
+        return $this->dateTime($column, $precision)->nullable();
     }
 
     /**
-     * Add a "deleted at" timestampTz for the table.
+     * Add a "deleted at" dateTimeTz for the table.
      *
      * @param string $column
      * @param int $precision
@@ -1020,7 +1020,7 @@ class Blueprint
      */
     public function softDeletesTz($column = 'deleted_at', $precision = 0)
     {
-        return $this->timestampTz($column, $precision)->nullable();
+        return $this->dateTimeTz($column, $precision)->nullable();
     }
 
     /**

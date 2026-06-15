@@ -45,7 +45,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
- * @coversNothing
  */
 #[CoversNothing]
 class ClientTest extends TestCase
