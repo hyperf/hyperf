@@ -74,7 +74,7 @@ class Timer
                     $result = null;
 
                     try {
-                        $result = wait(fn () => $closure($isClosing));
+                        $result = wait(static fn () => $closure($isClosing));
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }

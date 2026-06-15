@@ -38,7 +38,7 @@ function parallel(array $callables, int $concurrent = 0): array
  */
 function wait(Closure $closure, ?float $timeout = null)
 {
-    if (ApplicationContext::hasContainer()) {
+    if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(Waiter::class)) {
         $waiter = ApplicationContext::getContainer()->get(Waiter::class);
         return $waiter->wait($closure, $timeout);
     }
