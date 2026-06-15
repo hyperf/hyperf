@@ -1,5 +1,9 @@
 # v3.1.70 - TBD
 
+## Optimized
+
+- [#7761](https://github.com/hyperf/hyperf/pull/7761) Optimized `Hyperf\Coordinator\Timer::tick()` to run the callback inside `Hyperf\Coroutine\wait()` so it executes in a properly managed coroutine context.
+
 # v3.1.69 - 2026-05-09
 
 ## Fixed
