@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\wait;
 
 class Timer
 {
@@ -61,8 +62,8 @@ class Timer
         $id = ++$this->id;
         $this->closures[$id] = true;
         go(function () use ($timeout, $closure, $identifier, $id) {
+            $round = 0;
             try {
-                $round = 0;
                 ++Timer::$count;
                 while (true) {
                     $isClosing = CoordinatorManager::until($identifier)->yield(max($timeout, 0.000001));
@@ -73,7 +74,7 @@ class Timer
                     $result = null;
 
                     try {
-                        $result = $closure($isClosing);
+                        $result = wait(fn () => $closure($isClosing));
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }
