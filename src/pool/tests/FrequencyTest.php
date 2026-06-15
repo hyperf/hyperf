@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Pool;
 use HyperfTest\Pool\Stub\ConstantFrequencyStub;
@@ -21,6 +23,7 @@ use HyperfTest\Pool\Stub\FrequencyStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -57,6 +60,10 @@ class FrequencyTest extends TestCase
 
     public function testConstantFrequency()
     {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnFalse();
+
         $pool = Mockery::mock(Pool::class);
         $channel = new Channel(100);
         $pool->shouldReceive('flushOne')->andReturnUsing(function () use ($channel) {
