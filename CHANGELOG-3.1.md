@@ -1,8 +1,11 @@
-# v3.1.70 - TBD
+# v3.1.71 - TBD
+
+# v3.1.70 - 2026-06-15
 
 ## Optimized
 
 - [#7761](https://github.com/hyperf/hyperf/pull/7761) Optimized `Hyperf\Coordinator\Timer::tick()` to run the callback inside `Hyperf\Coroutine\wait()` so it executes in a properly managed coroutine context.
+- [#7761](https://github.com/hyperf/hyperf/pull/7761) Optimize the `wait()` method to check whether `Hyperf\Coroutine\Waiter` exists in the `Container`.
 
 # v3.1.69 - 2026-05-09
 
