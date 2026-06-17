@@ -12,13 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Coordinator;
 
-
 use Hyperf\Coroutine\Waiter;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\go;
-use function Hyperf\Coroutine\wait;
 
 class Timer
 {
