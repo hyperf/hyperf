@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Coordinator;
 
+
+use Hyperf\Coroutine\Waiter;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -30,8 +32,11 @@ class Timer
 
     private static int $round = 0;
 
+    private Waiter $waiter;
+
     public function __construct(private ?LoggerInterface $logger = null)
     {
+        $this->waiter = new Waiter(-1);
     }
 
     public function after(float $timeout, callable $closure, string $identifier = Constants::WORKER_EXIT): int
@@ -74,7 +79,7 @@ class Timer
                     $result = null;
 
                     try {
-                        $result = wait(static fn () => $closure($isClosing), -1);
+                        $result = $this->waiter->wait(static fn () => $closure($isClosing), -1);
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }
