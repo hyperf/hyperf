@@ -2062,6 +2062,10 @@ trait ValidatesAttributes
      */
     protected function trim($value)
     {
+        if (is_float($value)) {
+            $value = (string) $value;
+        }
+
         return is_string($value) ? trim($value) : $value;
     }
 }

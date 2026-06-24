@@ -1,5 +1,9 @@
 # v3.2.2 - TBD
 
+## Fixed
+
+- [#7768](https://github.com/hyperf/hyperf/pull/7768) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf` cannot support `float`.
+
 # v3.2.1 - 2026-06-15
 
 ## Fixed
