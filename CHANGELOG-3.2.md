@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#7768](https://github.com/hyperf/hyperf/pull/7768) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf` cannot support `float`.
+- [#7771](https://github.com/hyperf/hyperf/pull/7771) Fixed bug that `gen:migration-from-database` cannot work.
 
 # v3.2.1 - 2026-06-15
 
