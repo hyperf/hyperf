@@ -160,10 +160,17 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
             new Node\Arg(new Node\Scalar\String_($column->getName())),
         ];
 
+        $items = [];
         foreach ($extra as $key => $value) {
-            $args[] = new Node\Arg(new Node\Scalar\String_($key));
-            $args[] = new Node\Arg(PhpParser::getInstance()->getExprFromValue($value));
+            $items[] = new Node\ArrayItem(
+                PhpParser::getInstance()->getExprFromValue($value),
+                new Node\Scalar\String_($key)
+            );
         }
+
+        $args[] = new Node\Expr\Array_($items, [
+            'kind' => Node\Expr\Array_::KIND_SHORT,
+        ]);
 
         return new Node\Expr\MethodCall(
             new Node\Expr\Variable('table'),
