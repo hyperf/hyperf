@@ -168,9 +168,9 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
             );
         }
 
-        $args[] = new Node\Expr\Array_($items, [
+        $args[] = new Node\Arg(new Node\Expr\Array_($items, [
             'kind' => Node\Expr\Array_::KIND_SHORT,
-        ]);
+        ]));
 
         return new Node\Expr\MethodCall(
             new Node\Expr\Variable('table'),
