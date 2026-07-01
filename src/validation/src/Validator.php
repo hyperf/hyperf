@@ -149,8 +149,8 @@ class Validator implements ValidatorContract
         'After', 'AfterOrEqual', 'AcceptedIf', 'Before', 'BeforeOrEqual', 'Confirmed',
         'DeclinedIf', 'Different', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout',
         'Gt', 'Gte', 'Lt', 'Lte', 'MissingIf', 'MissingUnless', 'MissingWith', 'MissingWithAll',
-        'Prohibits', 'RequiredIf', 'RequiredUnless', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
-        'RequiredWithoutAll', 'Same', 'Unique',
+        'Prohibited', 'ProhibitedIf', 'ProhibitedUnless', 'Prohibits', 'RequiredIf', 'RequiredUnless',
+        'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll', 'Same', 'Unique',
     ];
 
     /**
