@@ -1,87 +1,88 @@
 # Middleware
 
-The middleware here refers to the `middleware mode`, which is a main function in the [hyperf/http-server](https://github.com/hyperf/http-server) component. It is mainly used to weave the entire process from `Request` to `Response`. Based on [PSR-15](https://www.php-fig.org/psr/psr-15/) implementation.
+The middleware here refers to the "Middleware Pattern". This functionality is a major feature of the [hyperf/http-server](https://github.com/hyperf/http-server) component, primarily used to weave through the entire process from `Request` to `Response`. This feature is fully implemented based on [PSR-15](https://www.php-fig.org/psr/psr-15/).
 
 ## Principle
 
-*The middleware is mainly used to weave the entire process from `Request` to `Response`.* Through the organization of multiple middleware, the flow of data is carried out in the way we order. The essence of middleware is an `Onion model`. Explain it through a diagram:
+*Middleware is primarily used to weave through the entire process from `Request` to `Response`*. By organizing multiple middlewares, data flows in a predetermined manner. Middleware is essentially an `Onion Model`. Let's explain it with a diagram:
 
 ![middleware](middleware.jpg)
 
-The order in the figure is organized in the order of `Middleware 1 -> Middleware 2 -> Middleware 3`. We can notice that when the middle horizontal line passes through the `kernel`, ie `Middleware 3`, it returns to `Middleware 2 `, this is a nested model, then the actual order is actually:
+The order in the diagram is organized as `Middleware 1 -> Middleware 2 -> Middleware 3`. We can note that after the middle line passes through the `Kernel`, which is `Middleware 3`, it returns to `Middleware 2`, creating a nested model. The actual order is:
 `Request -> Middleware 1 -> Middleware 2 -> Middleware 3 -> Middleware 2 -> Middleware 1 -> Response`
-The focus is on the `kernal`, ie `Middleware 3`, which is the dividing point of the onion. The part before the demarcation point is actually processed based on the `Request`, and when the demarcation point is passed, the `kernel` generated the `Response` object, it is also the main code target of the `kernel`. After that, is handled the `Response` object by the rest of middlewares. The `kernel` is usually implemented by the framework, and the rest is up to you.
+Focus on the `Kernel`, which is `Middleware 3`. It is the dividing point of the onion. The part before the dividing point is all handled based on the `Request`, and when it passes through the dividing point, the `Kernel` produces the `Response` object, which is also the main code target of the `Kernel`. After that, the `Response` is handled. The `Kernel` is usually implemented by the framework, while the rest is up to you to arrange.
 
-## Define global middleware
+## Defining Global Middleware
 
-The global middleware can ONLY be configured through the configuration file. The configuration file is located in `config/autoload/middlewares.php` and the configuration is as follows:   
+Global middleware can only be configured via configuration files. The configuration file is located at `config/autoload/middlewares.php` and is configured as follows:
+
 ```php
 <?php
 return [
-    // `http` corresponds to the value corresponding to the name attribute of each server in config/autoload/server.php. This configuration is only applied to the server you configured.
+    // 'http' corresponds to the value of the name attribute of each server in config/autoload/server.php. This configuration only applies to that Server.
     'http' => [
-        // Configure your global middleware in an array, in order according to the order of the array
+        // Configure your global middleware in the array, the order depends on the order of this array.
         YourMiddleware::class
     ],
 ];
 ```
-Simply configure your global middleware in the file and the corresponding `Server Name`, it means all requests under the `Server` will apply the configured global middleware.
+Simply configure your global middleware in this file and within the corresponding `Server Name`, and all requests under that `Server` will apply the configured global middleware.
 
-## Define local middleware
+## Defining Local Middleware
 
-When some of our middleware is only for certain requests or controllers, we can define them as local middleware, which can be defined by configuration file or defined by annotation.
+When some middleware is only targeted at certain requests or controllers, it can be defined as local middleware, which can be defined via configuration files or annotations.
 
-### Defined by configuration file
+### Defining via Configuration Files
 
-When defining a route using a configuration file, it is recommended to define the corresponding middleware through the configuration file. The configuration of the local middleware will be completed on the routing configuration.   
-The last parameter `$options` of each method defining the route of the `Hyperf\HttpServer\Router\Router` class will receive an array, which can be defined by passing the key value `middleware` and an array value to define the middleware of the route. We demonstrate this through several route definitions:
+When using configuration files to define routes, you can only define corresponding middleware via configuration files. Local middleware configuration will be completed on the route configuration.
+The last parameter `$options` of each route definition method in the `Hyperf\HttpServer\Router\Router` class will receive an array. You can define the middleware for that route by passing the key `middleware` and an array value. Let's demonstrate this with a few route definitions:
 
 ```php
 <?php
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
-// Each route definition method can accept a $options parameter
-Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
-Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [ForMiddleware::class]]);
+// Each route definition method can receive an $options parameter
+Router::get('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::post('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::put('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::patch('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::delete('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::head('/', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
+Router::addRoute(['GET', 'POST', 'HEAD'], '/index', [\App\Controller\IndexController::class, 'index'], ['middleware' => [FooMiddleware::class]]);
 
-// All routings under the group will apply the configured middleware
+// All routes under this Group will apply the configured middleware
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
     },
-    ['middleware' => [ForMiddleware::class]]
+    ['middleware' => [FooMiddleware::class]]
 );
-
 ```
 
-### Defined by annotation
+### Defining via Annotations
 
-When defining routes through annotations, we recommend defining middleware by means of annotations. There are two annotations for the definition of middleware, namely:
-  - `#[Middleware]` annotation are used when defining a single middleware. Only one annotation can be defined in one place, and cannot be defined repeatedly.
-  - `#[Middlewares]` annotation are used when defining multiple middleware. Only one annotation can be defined in one place, and then multiple middleware definitions can be implemented by defining multiple `#[Middleware]` annotations within the annotation.
-  
-> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace;   
-> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace;
+When defining routes via annotations, you can only define middleware via annotations. There are two annotations for defining middleware:
+  - The `#[Middleware]` annotation is used when defining a single middleware. Only one such annotation can be defined in one place, and it cannot be redefined.
+  - The `#[Middlewares]` annotation is used when defining multiple middlewares. Only one such annotation can be defined in one place, and then multiple middlewares can be defined by defining multiple `#[Middleware]` annotations within it.
 
-***Notice: It must be used with `#[AutoController]` or `#[Controller]`.***
+> Use `use Hyperf\HttpServer\Annotation\Middleware;` namespace when using `#[Middleware]` annotation;
+> Use `use Hyperf\HttpServer\Annotation\Middlewares;` namespace when using `#[Middlewares]` annotation;
 
-Define a single middleware:
+***Note: Must be used in conjunction with `#[AutoController]` or `#[Controller]`***
+
+Defining single middleware:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
- #[AutoController]
- #[Middleware(FooMiddleware::class)]
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -91,10 +92,11 @@ class IndexController
 }
 ```
 
-Define multiple middlewares:
+Defining multiple middlewares via `#[Middlewares]` annotation:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -113,13 +115,11 @@ class IndexController
 }
 ```
 
-#### Define method level middleware
-
-It is very simple to define the method level when configuring the middleware through the configuration file. How about defined by  annotations? You only need to define the annotation directly on the method.
-The method level middleware takes precedence over the class level middleware. Let's take a look at the code:
+Defining multiple middlewares via `#[Middleware]` annotation:
 
 ```php
 <?php
+namespace App\Controller;
 
 use App\Middleware\BarMiddleware;
 use App\Middleware\FooMiddleware;
@@ -129,9 +129,35 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
 #[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
 class IndexController
 {
-    
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+#### Defining Method-Level Middleware
+
+When configuring middleware via configuration files, it is simple to define it at the method level. But how to define it at the method level via annotations? You just need to define the annotation directly on the method.
+Class-level middleware has priority over method-level middleware. Let's give an example with code:
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middlewares([FooMiddleware::class])]
+class IndexController
+{
     #[Middleware(BarMiddleware::class)]
     public function index()
     {
@@ -139,9 +165,10 @@ class IndexController
     }
 }
 ```
-#### Related
 
-Generate a middleware by command:
+#### Middleware Related Code
+
+Generate middleware:
 
 ```
 php ./bin/hyperf.php gen:middleware Auth/FooMiddleware
@@ -164,20 +191,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FooMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var HttpResponse
-     */
-    protected $response;
+    protected HttpResponse $response;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {
@@ -188,7 +206,7 @@ class FooMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // According to the specific business judgment logic, it is assumed that the token carried by the user is valid here.
+        // Judge logic flow based on specific business, assuming the token carried by the user is valid here
         $isValidToken = true;
         if ($isValidToken) {
             return $handler->handle($request);
@@ -198,23 +216,24 @@ class FooMiddleware implements MiddlewareInterface
             [
                 'code' => -1,
                 'data' => [
-                    'error' => 'The token is invalid, preventing further execution.',
+                    'error' => 'Middleware token verification invalid, block continuing to execute downwards',
                 ],
             ]
         );
     }
 }
 ```
-The order of execution of the middleware is `FooMiddleware -> BarMiddleware`.
+The execution order of middleware is `FooMiddleware -> BarMiddleware`.
 
-## The order of Middleware execution
+## Middleware Execution Order
 
-We can see from the above that there are a total of 3 levels of middleware, namely `global middleware`, `class level middleware`, `method level middleware`. If these middlewares are defined, the order of execution is :`Global Middleware -> Method Level Middleware -> Class Level Middleware`.
+We can understand from the above that there are `3` levels of middleware, namely `Global Middleware`, `Class-level Middleware`, and `Method-level Middleware`. If all these middlewares are defined, the execution order is: `Global Middleware -> Class-level Middleware -> Method-level Middleware`.
 
-In version `>=3.0.34`, a new priority configuration has been added, which allows you to change the execution order of the middleware when configuring methods and routing middleware, the higher the priority, the higher the execution order.
+
+In versions `>=3.0.34`, priority configuration has been added. You can change the execution order of middleware when configuring methods or route middleware. The higher the priority, the earlier the execution order.
 
 ```php
-// middleware.php
+// Global middleware configuration file middleware.php
 return [
     'http' => [
         YourMiddleware::class,
@@ -223,6 +242,7 @@ return [
 ];
 ```
 ```php
+// Route middleware configuration
 Router::addGroup(
     '/v2', function () {
         Router::get('/index', [\App\Controller\IndexController::class, 'index']);
@@ -236,6 +256,7 @@ Router::addGroup(
 );
 ```
 ```php
+// Annotation middleware configuration
 #[AutoController]
 #[Middleware(FooMiddleware::class)]
 #[Middleware(FooMiddlewareB::class, 3)]
@@ -246,24 +267,24 @@ class IndexController
 }
 ```
 
-## Change request and response objects globally
+## Globally Changing Request and Response Objects
 
-First, there is a storage of the most primitive PSR-7 `request object` and `response object` within the context of the coroutine, and the `immutable` required by the PSR-7 for the related object means The `$response` we called by calling `$response = $response->with***()` is not a rewrite of the original object, but a new object from `Clone`, which means the `request object` and `response object` which stored in the context of the coroutine will not change, then when we have some logic in the middleware changed the `request object` or `response object`, and we hope for the follow-up * Non-transitive * code to get the changed `request object` or `response object`, then we can set the new object to the context after changing the object, as shown in the code:
+First, in the coroutine context, the original PSR-7 `Request Object` and `Response Object` are stored. And according to the `immutability` required for related objects by PSR-7, it means that the `$response` obtained by calling `$response = $response->with***()` is not overwriting the original object, but a new `Clone` object. This also means that the `Request Object` and `Response Object` stored in the coroutine context will not change. So, when some logic in our middleware changes the `Request Object` or `Response Object`, and we want subsequent *non-passing* code to get the changed `Request Object` or `Response Object`, we can set the new object into the context after changing the object, as shown in the code:
 
 ```php
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-// $request and $response are the modified objects
+// $request and $response are modified objects
 $request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
 $response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
 
-## Customize the behavior of CoreMiddleWare
+## Customizing CoreMiddleware Behavior
 
-By default, when Hyperf handles a route that cannot be found or the HTTP method is not allowed, that is, when the HTTP status code is `404` or `405`, `CoreMiddleware` directly handles it and returns the corresponding response object. Due to the design of Hyperf dependency injection, you can point `CoreMiddleware` to the `CoreMiddleware` implemented by yourself by replacing the object.
+By default, when Hyperf handles route not found or HTTP method not allowed, that is, when the HTTP status code is `404` or `405`, it is directly handled by `CoreMiddleware` and returns the corresponding response object. Thanks to Hyperf's dependency injection design, you can point `CoreMiddleware` to a `CoreMiddleware` implemented by yourself by replacing the object.
 
-For example, we want to define an `App\Middleware\CoreMiddleware` class to override the default behavior. We can first define an `App\Middleware\CoreMiddleware` class as follows. Here we only take HTTP Server as an example. Other servers can also use the same method. practices to achieve the same purpose.
+For example, if we want to define a `App\Middleware\CoreMiddleware` class to override the default behavior, we can first define an `App\Middleware\CoreMiddleware` class as follows. Here we only take HTTP Server as an example, and other Servers can also use the same method to achieve the same purpose.
 
 ```php
 <?php
@@ -285,7 +306,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
      */
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        // Rewrite the processing logic for route not found
+        // Override the processing logic for route not found
         return $this->response()->withStatus(404);
     }
 
@@ -296,13 +317,13 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
      */
     protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        // Rewrite processing logic that is not allowed by HTTP methods
+        // Override the processing logic for HTTP method not allowed
         return $this->response()->withStatus(405);
     }
 }
 ```
 
-Then define the object relationship in `config/autoload/dependencies.php` and rewrite the CoreMiddleware object:
+Then define the object relationship in `config/autoload/dependencies.php` to override the CoreMiddleware object:
 
 ```php
 <?php
@@ -311,13 +332,13 @@ return [
 ];
 ```
 
-> The method of directly rewriting CoreMiddleware here needs to be effective in version 1.1.0+. Version 1.0.x still requires you to rewrite the upper-level calls of CoreMiddleware through DI, and then replace the value passed by CoreMiddleware with the middleware you define. kind.
+> This method of directly overriding CoreMiddleware only takes effect in versions 1.1.0+. In version 1.0.x, you still need to override the upper-layer calls of CoreMiddleware through DI, and then replace the passing value of CoreMiddleware with the middleware class you defined.
 
-## Commonly used middleware
+## Common Middleware
 
-### Cross-domain middleware
+### CORS Middleware
 
-If you need to solve cross-domain in the framework, you can implement the following middleware as per your needs
+If you need to solve cross-domain issues in the framework, you can implement the following middleware according to your needs
 
 ```php
 <?php
@@ -339,7 +360,7 @@ class CorsMiddleware implements MiddlewareInterface
         $response = Context::get(ResponseInterface::class);
         $response = $response->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Credentials', 'true')
-            // Headers can be rewritten according to actual conditions.
+            // Headers can be modified according to actual conditions.
             ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization');
 
         Context::set(ResponseInterface::class, $response);
@@ -367,15 +388,15 @@ location / {
 }
 ```
 
-### Post-middleware
+### Post-Middleware
 
-Normally, we execute last
+Usually, we execute it at the end
 
 ```
 return $handler->handle($request);
 ```
 
-Therefore, it is equivalent to front-end middleware. If you want to make the middleware logic post-end, you only need to change the execution order.
+So, it is equivalent to pre-middleware. If you want to make the middleware logic post-process, you just need to change the execution order.
 
 ```php
 <?php
@@ -399,11 +420,11 @@ class OpenApiMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // TODO: pre-operation
+        // TODO: Pre-operation
         try{
             $result = $handler->handle($request);
         } finally {
-            // TODO: post operation
+            // TODO: Post-operation
         }
         return $result;
     }

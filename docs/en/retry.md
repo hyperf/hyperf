@@ -1,11 +1,11 @@
 # Retry
 
-Network communication is inherently unstable, so in a distributed system, a good fault-tolerant design is required. Indiscriminate retry is very dangerous. When there is a problem with communication, each request is retried once, which is equivalent to a 100% increase in system IO load, which is easy to induce avalanche accidents. Retrying also considers the cause of the error. If it is a problem that cannot be solved by retrying, then retrying is just a waste of resources. In addition, if the retrying interface is not idempotent, it may also cause data inconsistency and other problems.
+Network communication is inherently unstable, so in distributed systems, good fault-tolerant design is necessary. Indiscriminate retries are very dangerous. When a communication problem occurs, if every request is retried once, it is equivalent to an increase of 100% in system IO load, which can easily induce an avalanche. Retries must also consider the cause of the error. If it is a problem that cannot be solved by retrying, retrying is just a waste of resources. In addition, if the retry interface is not idempotent, it may also cause problems such as data inconsistency.
 
-This component provides a rich retry mechanism to meet the retry requirements of various scenarios.
+This component provides a rich set of retry mechanisms to meet retry requirements in various scenarios.
 
 
-## Install
+## Installation
 
 ```bash
 composer require hyperf/retry
@@ -13,30 +13,30 @@ composer require hyperf/retry
 
 ## Hello World
 
-Add the annotation `#[Retry]` to the method that needs to be retried.
+Add the `#[Retry]` annotation to the method that needs retrying.
 
 ```php
 /**
- * Retry the method on exception
+ * Retry the method when an exception occurs
  */
 #[Retry]
 public function foo()
 {
-    // make a remote call
+    // Initiate a remote call
 }
 ```
 
-The default Retry strategy can meet most daily retry needs without excessive retries causing avalanches.
+The default Retry strategy can meet most daily retry needs and will not cause an avalanche due to excessive retries.
 
-## Deep customization
+## Deep Customization
 
-This component achieves pluggability by combining multiple retry strategies. Each strategy focuses on different aspects of the retry process, such as retry judgment, retry interval, and result processing. By adjusting the strategy used in the annotation, you can configure the retry aspect suitable for any scenario.
+This component achieves pluggability by combining multiple retry strategies. Each strategy focuses on different aspects of the retry process, such as retry judgment, retry interval, result processing, etc. By adjusting the strategies used in the annotation, you can configure retry aspects adapted to any scenario.
 
-It is recommended to construct your own annotation aliases according to specific business needs. Below we demonstrate how to make a new annotation with a maximum number of attempts of 3.
+It is recommended to construct your own annotation aliases according to specific business needs. Below we demonstrate how to create a new annotation with a maximum number of attempts of 3.
 
-> In the default `Retry` annotation, you can control the maximum number of retries with `#[Retry(maxAttempts=3)]`. For the sake of demonstration, pretend it doesn't exist.
+> In the default `Retry` annotation, you can control the maximum number of retries via `#[Retry(maxAttempts=3)]`. For demonstration purposes, pretend it does not exist.
 
-First you need to create an `annotation class` and inherit `\Hyperf\Retry\Annotations\AbstractRetry`.
+First, you need to create a new `annotation class` and inherit `\Hyperf\Retry\Annotations\AbstractRetry`.
 
 ```php
 <?php
@@ -53,7 +53,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Override the `$policies` property according to your needs. To limit the number of retries, use `MaxAttemptsRetryPolicy` . `MaxAttemptsRetryPolicy` also needs a parameter, which is the limit of the maximum number of attempts, `$maxAttempts`. Add these two properties to the above class.
+According to your needs, override the `$policies` property. To limit the number of retries, you need to use `MaxAttemptsRetryPolicy`. `MaxAttemptsRetryPolicy` also requires a parameter, which is the maximum attempt limit, `$maxAttempts`. Add these two properties to the above class.
 
 ```php
 <?php
@@ -74,7 +74,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Now that the `#[MyRetry]` annotation will cause any method to be executed three times in a loop, we also need to add a new policy `ClassifierRetryPolicy` to control what errors can be retried. Adding `ClassifierRetryPolicy` will only retry after throwing `Throwable` by default.
+Now, the `#[MyRetry]` annotation will cause any method to be looped three times. We also need to add a new strategy, `ClassifierRetryPolicy`, to control what kind of errors can be retried. After adding `ClassifierRetryPolicy`, it will default to retrying only after throwing a `Throwable`.
 
 ```php
 <?php
@@ -96,7 +96,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-You can continue to refine the annotation until it meets your customized needs. For example, configure to retry only user-defined `TimeoutException` , and use retry to sleep at least 100ms of variable length interval, as follows:
+You can continue to refine this annotation until it meets your customized needs. For example, configure it to retry only user-defined `TimeoutException`, and use a variable-length interval where the retry sleeps for at least 100 milliseconds. The method is as follows:
 
 ```php
 <?php
@@ -122,11 +122,11 @@ class MyRetry extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-Just make sure the file is scanned by Hyperf, you can use the `#[MyRetry]` annotation in the method to retry timeout errors.
+As long as you ensure that the file is scanned by Hyperf, you can use the `#[MyRetry]` annotation in the method to retry timeout errors.
 
-## default allocation
+## Default Configuration
 
-The full annotation default properties of `#[Retry]` are as follows:
+The complete default properties of the `#[Retry]` annotation are as follows:
 
 ```php
 /**
@@ -147,7 +147,7 @@ public $policies = [
 public string $sleepStrategyClass = SleepStrategyInterface::class;
 
 /**
- * Max Attampts.
+ * Max Attempts.
  */
 public int $maxAttempts = 10;
 
@@ -166,7 +166,7 @@ public $retryBudget = [
 ];
 
 /**
- * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
+ * Base time interval (ms) for each try. For backoff strategy this is the interval for the first try
  * while for flat strategy this is the interval for every try.
  */
 public int $base = 0;
@@ -180,7 +180,7 @@ public int $base = 0;
 public $retryOnThrowablePredicate = '';
 
 /**
- * Configures a Predicate which evaluates if an result should be retried.
+ * Configures a Predicate which evaluates if a result should be retried.
  * The Predicate must return true if the result should be retried, otherwise it must return false.
  *
  * @var callable|string
@@ -191,7 +191,7 @@ public $retryOnResultPredicate = '';
  * Configures a list of Throwable classes that are recorded as a failure and thus are retried.
  * Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions.
  *
- * Ignoring an Throwable has priority over retrying an exception.
+ * Ignoring a Throwable has priority over retrying an exception.
  *
  * @var array<string|\Throwable>
  */
@@ -213,97 +213,97 @@ public $ignoreThrowables = [];
 public $fallback = '';
 ```
 
-## optional strategies
+## Optional Strategies
 
-### Maximum Attempts Policy `MaxAttemptsRetryPolicy`
+### Max Attempts Policy `MaxAttemptsRetryPolicy`
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
 | maxAttempts | int | Maximum number of attempts |
 
 
-### Error classification policy `ClassifierRetryPolicy`
+### Error Classifier Policy `ClassifierRetryPolicy`
 
-Pass the classifier to determine if the error can be retried.
+Determine whether an error can be retried through a classifier.
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
-| ignoreThrowables | array | `Throwable` class names to ignore. takes precedence over `retryThrowables` |
-| retryThrowables | array | `Throwable` class names to retry. takes precedence over `retryOnThrowablePredicate` |
-| retryOnThrowablePredicate | callable | Pass a function to determine if `Throwable` can be retried. Returns true if retry is possible, false otherwise. |
-| retryOnResultPredicate | callable | Use a function to determine whether the return value can be retried. Returns true if it is possible to retry, false otherwise. |
+| ignoreThrowables | array | Ignored `Throwable` class names. Takes priority over `retryThrowables` |
+| retryThrowables | array | `Throwable` class names that need to be retried. Takes priority over `retryOnThrowablePredicate` |
+| retryOnThrowablePredicate | callable | Determine whether `Throwable` can be retried through a function. If it can be retried, return true, otherwise return false. |
+| retryOnResultPredicate | callable | Determine whether the return value can be retried through a function. If it can be retried, return true, otherwise return false. |
 
-### Fallback policy `FallbackRetryPolicy`
+### Fallback Policy `FallbackRetryPolicy`
 
-Execute alternate method after retrying resource exhaustion.
+Execute alternative methods after retry resources are exhausted.
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
 | fallback | callable | fallback method |
 
-In addition to the code recognized by `is_callable`, `fallback` can also fill in the format of `class@method`, the framework will get the corresponding `class` from `Container`, and then execute its `method` method .
+In addition to code that can be identified by `is_callable`, `fallback` can also be filled in the format of `class@method`. The framework will get the corresponding `class` from the `Container` and then execute its `method` method.
 
-### Sleep policy `SleepRetryPolicy`
+### Sleep Policy `SleepRetryPolicy`
 
-Provides two retry intermittent strategies. Equal retry interval (FlatStrategy) and variable retry interval (BackoffStrategy).
+Provides two retry interval strategies: Flat Retry Interval (FlatStrategy) and Variable-Length Retry Interval (BackoffStrategy).
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
-| base | int | Base sleep time (ms) |
+| base | int | Base sleep time (milliseconds) |
 | strategy | string | Any class name that implements `Hyperf\Retry\SleepStrategyInterface`, such as `Hyperf\Retry\BackoffStrategy` |
 
-### Timeout policy `TimeoutRetryPolicy`
+### Timeout Policy `TimeoutRetryPolicy`
 
 Exit the retry session after the total execution time exceeds the time.
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
-| timeout | float | timeout (seconds) |
+| timeout | float | Timeout time (seconds) |
 
-### Circuit breaker policy `CircuitBreakerRetryPolicy`
+### Circuit Breaker Policy `CircuitBreakerRetryPolicy`
 
-After the retry fails, the retry session is directly marked as circuit breaker for a period of time, and no more attempts will be made.
+After retrying fails and exiting the retry session, it is directly marked as fused for a period of time, and no further attempts are made.
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
 | circuitBreakerState.resetTimeout | float | Time required for recovery (seconds) |
 
 ### Budget Policy `BudgetRetryPolicy`
 
-Each `#[Retry]` annotation will generate a corresponding token bucket, and whenever the annotation method is called, a token with an expiration time (ttl) is placed in the token bucket. If a retryable error occurs, the corresponding number of tokens (percentCanRetry) must be consumed before retrying, otherwise it will not be retried (the error continues to pass down). For example, when percentCanRetry=0.2, each retry consumes 5 tokens. In this way, when the peer is down, at most 20% of the additional retry consumption will be incurred, which should be acceptable for most systems.
+Each `#[Retry]` annotation generates a corresponding token bucket. Whenever the annotated method is called, a token with an expiration time (ttl) is placed in the token bucket. If a retryable error occurs, the corresponding number of tokens (percentCanRetry) must be consumed before retrying, otherwise it will not retry (the error continues to be passed down). For example, when percentCanRetry=0.2, 5 tokens are consumed for each retry. Thus, when the peer crashes, it will only cause a maximum of 20% extra retry consumption, which should be acceptable for most systems.
 
-To take care of some less frequently used methods, a certain number of "mini-guarantee" tokens (minRetriesPerSec) are also generated per second to ensure system stability.
+To accommodate some methods with lower usage frequency, a certain number of "minimum" tokens (minRetriesPerSec) are generated every second to ensure system stability.
 
-| Parameters | Type | Description |
+| Parameter | Type | Description |
 | ---------- | --- | --- |
-| retryBudget.ttl | int | Recovery token expiration time (seconds) |
-| retryBudget.minRetriesPerSec | int | Minimum number of retries per second for "mini-guarantee" |
-| retryBudget.percentCanRetry | float | Retry times do not exceed the percentage of total requests |
+| retryBudget.ttl | int | Token expiration time (seconds) |
+| retryBudget.minRetriesPerSec | int | Minimum number of retries guaranteed per second |
+| retryBudget.percentCanRetry | float | Percentage of retries not exceeding the total number of requests |
 
-> The token bucket of the retry component is not shared among workers, so the final number of retries is multiplied by the number of workers.
+> The token bucket of the retry component is not shared between workers, so the final number of retries must be multiplied by the number of workers.
 
-## Annotation alias
+## Annotation Aliases
 
-Because the retry annotation configuration is more complicated, some preset aliases are provided here for easy writing.
+Because retry annotation configuration is relatively complex, some preset aliases are provided here for ease of writing.
 
-* `#[RetryThrowable]` only retry `Throwable`. Same as default `#[Retry]`.
+* `#[RetryThrowable]` retries only `Throwable`. Same as the default `#[Retry]`.
 
-* `#[RetryFalsy]` only retry errors whose return value is weakly equal to false ($result == false), not exceptions.
+* `#[RetryFalsy]` retries only errors where the return value is loosely equal to false ($result == false), and does not retry exceptions.
 
-* `#[BackoffRetryThrowable]` A variable length retry interval version of `#[RetryThrowable]`, with a retry interval of at least 100ms.
+* `#[BackoffRetryThrowable]` The variable-length retry interval version of `#[RetryThrowable]`, with a retry interval of at least 100 milliseconds.
 
-* `#[BackoffRetryFalsy]` Variable length retry interval version of `#[【]RetryFalsy]`, retry interval is at least 100ms.
+* `#[BackoffRetryFalsy]` The variable-length retry interval version of `#[RetryFalsy]`, with a retry interval of at least 100 milliseconds.
 
-## Fluent chain call
+## Fluent Chained Calls
 
-In addition to using this component with annotated methods, you can also use it with regular PHP functions.
+In addition to using this component with annotation methods, you can also use it through regular PHP functions.
 
 ```php
 <?php
 
 $result = \Hyperf\Retry\Retry::with(
-    new \Hyperf\Retry\Policy\ClassifierRetryPolicy(), // Retry all Throwables by default
-    new \Hyperf\Retry\Policy\MaxAttemptsRetryPolicy(5) //Retry up to 5 times
+    new \Hyperf\Retry\Policy\ClassifierRetryPolicy(), // Default retry all Throwable
+    new \Hyperf\Retry\Policy\MaxAttemptsRetryPolicy(5) // Retry up to 5 times
 )->call(function(){
     if (rand(1, 100) >= 20){
         return true;
@@ -311,15 +311,15 @@ $result = \Hyperf\Retry\Retry::with(
     throw new Exception;
 });
 ```
-To enhance readability, the following fluent writing can also be used.
+To enhance readability, you can also use the following fluent syntax.
 
 ```php
 <?php
 
-$result = \Hyperf\Retry\Retry::whenReturns(false) // Retry when false is returned
-    ->max(3) // up to 3 times
-    ->inSeconds(5) // up to 5 seconds
-    ->sleep(1) // 1ms interval
+$result = \Hyperf\Retry\Retry::whenReturns(false) // Retry when returning false
+    ->max(3) // Up to 3 times
+    ->inSeconds(5) // Maximum 5 seconds
+    ->sleep(1) // Interval 1 millisecond
     ->fallback(function(){return true;}) // fallback function
     ->call(function(){
         if (rand(1, 100) >= 20){

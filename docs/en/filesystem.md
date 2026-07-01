@@ -1,16 +1,16 @@
-# File system
+# File System
 
-The file system component integrates the famous `League\Flysystem` in the PHP ecosystem (this is also the underlying library of many well-known frameworks such as Laravel). Through reasonable abstraction, the program does not have to perceive whether the storage engine is a local hard disk or a cloud server, realizing decoupling. This component provides coroutine support for common cloud storage services.
+The file system component integrates the well-known `League\Flysystem` in the PHP ecosystem (which is also the underlying library for many well-known frameworks like Laravel). Through reasonable abstraction, the program does not need to perceive whether the storage engine is a local hard disk or a cloud server, achieving decoupling. This component provides coroutine support for commonly used cloud storage services.
 
-## Install
+## Installation
 
 ```shell
 composer require hyperf/filesystem
 ```
 
-The versions of `League\Flysystem` components `v1.0`, `v2.0` and `v3.0` have changed greatly, so you need to install the corresponding adapters according to different versions
+The version changes of the `League\Flysystem` component `v1.0`, `v2.0`, and `v3.0` are quite large, so you need to install the corresponding adapter based on different versions.
 
-- Alibaba Cloud OSS adapter
+- Aliyun OSS Adapter
 
 `Flysystem v1.0` version
 
@@ -24,7 +24,7 @@ composer require xxtime/flysystem-aliyun-oss
 composer require hyperf/flysystem-oss
 ```
 
-- S3 adapter
+- S3 Adapter
 
 `Flysystem v1.0` version
 
@@ -37,13 +37,6 @@ composer require hyperf/guzzle
 
 ```shell
 composer require "league/flysystem-aws-s3-v3:^2.0"
-composer require hyperf/guzzle
-```
-
-`Flysystem v3.0` version
-
-```shell
-composer require "league/flysystem-aws-s3-v3:^3.0"
 composer require hyperf/guzzle
 ```
 
@@ -67,7 +60,7 @@ composer require "overtrue/flysystem-qiniu:^2.0"
 composer require "overtrue/flysystem-qiniu:^3.0"
 ```
 
-- memory adapter
+- Memory Adapter
 
 `Flysystem v1.0` version
 
@@ -85,7 +78,7 @@ composer require "league/flysystem-memory:^2.0"
 
 `Flysystem v1.0` version
 
-> flysystem-cos v2.0 version is deprecated, please modify it to 3.0 version according to the latest documentation
+> flysystem-cos v2.0 version is no longer recommended, please modify to version 3.0 according to the latest documentation.
 
 ```shell
 composer require "overtrue/flysystem-cos:^3.0"
@@ -103,21 +96,21 @@ composer require "overtrue/flysystem-cos:^4.0"
 composer require "overtrue/flysystem-cos:^5.0"
 ```
 
-After the installation is complete, execute
+After the installation is complete, execute:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/filesystem
 ```
 
-The `config/autoload/file.php` file will be generated. Set the default driver in this file, and configure the access key, access secret and other information of the corresponding driver, and you can use it.
+This will generate the `config/autoload/file.php` file. In this file, set the default driver and configure the access key, access secret, etc., of the corresponding driver to use it.
 
-## use
+## Usage
 
-It can be used by injecting `League\Flysystem\Filesystem` through DI.
+You can use it by injecting `League\Flysystem\Filesystem` via DI.
 
 The API is as follows:
 
-> The following example is Flysystem v1.0 version, please refer to the official documentation for v2.0 version
+> The following example is for Flysystem v1.0 version. For v2.0 version, please refer to the official documentation.
 
 ```php
 <?php
@@ -173,7 +166,7 @@ class IndexController extends AbstractController
 }
 ```
 
-At some point, you will need to use multiple storage media at the same time. At this point, you can inject `Hyperf\Filesystem\FilesystemFactory` to dynamically choose which driver to use.
+Sometimes, you will need to use multiple storage media at the same time. In this case, you can inject `Hyperf\Filesystem\FilesystemFactory` to dynamically select which driver to use.
 
 ```php
 <?php
@@ -197,34 +190,33 @@ class IndexController
 }
 ```
 
-### Configure static resources
+### Configure Static Resources
 
-If you want to access files uploaded locally via http, please add the following configuration to the `config/autoload/server.php` configuration.
+If you want to access files uploaded to the local disk via http, please add the following configuration to your `config/autoload/server.php` configuration.
 
 ```php
 return [
     'settings' => [
         ...
-        // Replace public with the upload directory
+        // Replace public with your upload directory
         'document_root' => BASE_PATH . '/public',
         'enable_static_handler' => true,
     ],
 ];
-
 ```
 
-## Precautions
+## Notes
 
-1. Please make sure to install the `hyperf/guzzle` component for S3 storage to provide coroutine support. For Alibaba Cloud, Qiniu Cloud, and Tencent Cloud, please [Open Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level) to use coroutines. Due to the parameter support of Curl Hook, please use Swoole 4.4.13 or later.
+1. For S3 storage, please make sure to install the `hyperf/guzzle` component to provide coroutine support. For Aliyun OSS, Qiniu Cloud, and Tencent Cloud storage, please [enable Curl Hook](/en/coroutine?id=swoole-runtime-hook-level) to use coroutines. Due to Curl Hook's parameter support issues, please use Swoole version 4.4.13 or higher.
 2. Private object storage solutions such as minIO and ceph radosgw all support the S3 protocol and can use the S3 adapter.
-3. When using the Local driver, the root directory is the configured address, not the root directory of the operating system. For example, if the local driver `root` is set to `/var/www`, then `/var/www/public/file.txt` on the local disk should be accessed through the flysystem API using `/public/file.txt` or ` public/file.txt` .
-4. Taking Alibaba Cloud OSS as an example, the read operation performance comparison of 1 core and 1 process:
+3. When using the Local driver, the root directory is the configured address, not the root directory of the operating system. For example, if the Local driver `root` is set to `/var/www`, then `/var/www/public/file.txt` on the local disk should be accessed via `/public/file.txt` or `public/file.txt` when accessed via the flysystem API.
+4. Taking Aliyun OSS as an example, read performance comparison for 1 core 1 process:
 
 ```bash
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
 
-CURL HOOK is not enabled:
+Before enabling CURL HOOK:
 
 ```
 Concurrency Level:      10
@@ -256,7 +248,7 @@ Time per request:       9.252 [ms] (mean, across all concurrent requests)
 Transfer rate:          15.41 [Kbytes/sec] received
 ```
 
-## Detailed configuration
+## Detailed Configuration
 
 ```php
 return [
@@ -331,17 +323,17 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
-            // overtrue/flysystem-cos ^2.0 The configuration is as follows
+            // overtrue/flysystem-cos ^2.0 configuration as follows
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
-            // overtrue/flysystem-cos ^3.0 The configuration is as follows
+            // overtrue/flysystem-cos ^3.0 configuration as follows
             'app_id' => env('COS_APPID'),
             'secret_id' => env('COS_SECRET_ID'),
             'secret_key' => env('COS_SECRET_KEY'),
-            // Optional, please turn this on if the bucket has private access
+            // Optional, please turn on if the bucket is for private access
             // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,

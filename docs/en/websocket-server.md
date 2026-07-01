@@ -1,6 +1,6 @@
-# WebSocket server
+# WebSocket Server
 
-Hyperf provides an encapsulation of WebSocket Server. A WebSocket application can be quickly built based on [hyperf/websocket-server](https://github.com/hyperf/websocket-server).
+Hyperf provides a wrapper for the WebSocket Server, allowing you to quickly build a WebSocket application based on the [hyperf/websocket-server](https://github.com/hyperf/websocket-server) component.
 
 ## Installation
 
@@ -10,7 +10,7 @@ composer require hyperf/websocket-server
 
 ## Configure Server
 
-Modify `config/autoload/server.php` and add the following configuration.
+Modify `config/autoload/server.php` and add the following configuration:
 
 ```php
 <?php
@@ -33,12 +33,11 @@ return [
 ];
 ```
 
-## Configure Router
+## Configure Routes
 
-> So far, only the config file way is supported. The annotation way will come soon.
+> Currently, only the configuration file mode is supported for routing; annotation mode will be provided in the future.
 
-In the `config/routes.php` file, add the router configuration of the Server of corresponding `ws`, where `ws` is the `name` of the WebSocket Server in `config/autoload/server.php`.
-
+In the `config/routes.php` file, add the routing configuration for the corresponding `ws` Server. The `ws` value here depends on the `name` value of the WebSocket Server you configured in `config/autoload/server.php`.
 
 ```php
 <?php
@@ -50,8 +49,7 @@ Router::addServer('ws', function () {
 
 ## Configure Middleware
 
-In the `config/autoload/middlewares.php` file, add the middleware configuration of the Server of corresponding `ws`, where `ws` is the `name` of the WebSocket Server in `config/autoload/server.php`.
-
+In the `config/autoload/middlewares.php` file, add the global middleware configuration for the corresponding `ws` Server. The `ws` value here depends on the `name` value of the WebSocket Server you configured in `config/autoload/server.php`.
 
 ```php
 <?php
@@ -63,7 +61,7 @@ return [
 ];
 ```
 
-## Create corresponding controller
+## Create Controller
 
 ```php
 <?php
@@ -74,16 +72,24 @@ namespace App\Controller;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
-use Swoole\Http\Request;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
+use Hyperf\WebSocketServer\Constant\Opcode;
 use Swoole\Server;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
-        $server->push($frame->fd, 'Recv: ' . $frame->data);
+        $response = (new Response($server))->init($frame);
+        if($frame->opcode == Opcode::PING) {
+            // If using a coroutine Server, you need to handle it manually and return a PONG frame after identifying a PING frame.
+            // For asynchronous style Servers, you can handle it directly via Swoole configuration. For details, please refer to https://wiki.swoole.com/#/websocket_server?id=open_websocket_ping_frame
+            $response->push(new Frame(opcode: Opcode::PONG));
+            return;
+        }
+        $response->push(new Frame(payloadData: 'Recv: ' . $frame->data));
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -91,14 +97,15 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
         var_dump('closed');
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
-        $server->push($request->fd, 'Opened');
+        $response = (new Response($server))->init($request);
+        $response->push(new Frame(payloadData: 'Opened'));
     }
 }
 ```
 
-Start the Server, then you can see a WebSocket Server is started and listen to port of 9502. You can then use any WebSocket Client to communicate with this WebSocket Server.
+Next, start the Server, and you will see that a WebSocket Server has been started and is listening on port 9502. You can then use various WebSocket Clients to connect and transmit data.
 
 ```
 $ php bin/hyperf.php start
@@ -108,17 +115,16 @@ $ php bin/hyperf.php start
 [INFO] HTTP Server listening at 0.0.0.0:9501
 ```
 
-!> When we listen the 9501 of the HTTP Server and the 9502 of the WebSocket Server at the same time, the WebSocket Client can connect to the WebSocket Server through the two ports 9501 and 9502, that is, connecting to `ws://0.0.0.0:9501` and `ws:/ /0.0.0.0:9502` both works.
+!> When we listen to both the 9501 port of the HTTP Server and the 9502 port of the WebSocket Server, the WebSocket Client can connect to the WebSocket Server via both ports, i.e., connecting to `ws://0.0.0.0:9501` and `ws://0.0.0.0:9502` will both succeed.
 
-Due to the `Swoole\WebSocket\Server` inherits from `Swoole\Http\Server`, you can use HTTP to perform all WebSocket pushes. For more details, please refer the callback of `onRequest` in [Swoole Doc](https://wiki.swoole.com/#/websocket_server?id=websocketserver)
+Because `Swoole\WebSocket\Server` inherits from `Swoole\Http\Server`, you can use HTTP to trigger all WebSocket pushes. For more details, you can view the `onRequest` callback section of the [Swoole documentation](https://wiki.swoole.com/#/websocket_server?id=websocketserver).
 
-If you need to close it, you can add the `open_websocket_protocol` configuration item to the `http` service in `config/autoload/server.php` file.
-
+If you need to disable it, you can modify the `config/autoload/server.php` file and add the `open_websocket_protocol` configuration item to the `http` service.
 
 ```php
 <?php
 return [
-    // Unrelated configs are ignored
+    // Other configurations of this file are omitted
     'servers' => [
         [
             'name' => 'http',
@@ -137,9 +143,9 @@ return [
 ];
 ```
 
-## Connected Context
+## Connection Context
 
-Callbacks for onOpen, onMessage, and onClose of WebSocket are not triggered in the same coroutine, so that they cannot directly use the stored information of context. **Connected Context** is provided by WebSocket Server component, and API is same as coroutine context's.
+The onOpen, onMessage, and onClose callbacks of the WebSocket service are not triggered in the same coroutine, so you cannot directly use the coroutine context to store state information. The WebSocket Server component provides a **connection-level** context, and the API is exactly the same as the coroutine context.
 
 ```php
 <?php
@@ -149,19 +155,20 @@ namespace App\Controller;
 
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
 use Hyperf\WebSocketServer\Context;
-use Swoole\Http\Request;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
-        $server->push($frame->fd, 'Username: ' . Context::get('username'));
+        $response = (new Response($server))->init($frame);
+        $response->push(new Frame(payloadData: 'Username: ' . Context::get('username')));
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         Context::set('username', $request->cookie['username']);
     }
@@ -172,7 +179,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface
 
 ```
 # /etc/nginx/conf.d/ng_socketio.conf
-# multiple ws server
+# Multiple ws servers
 upstream io_nodes {
     server ws1:9502;
     server ws2:9502;
@@ -186,19 +193,19 @@ server {
     # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     # proxy_set_header Host $host;
     # proxy_http_version 1.1;
-    # Forward to multiple ws server
+    # Forward to multiple ws servers
     proxy_pass http://io_nodes;
   }
 }
 ```
 
-## Sender
+## Message Sender
 
-When you want to close `WebSocket` connection in `HTTP` service, you can used`Hyperf\WebSocketServer\Sender`.
+When we want to close a `WebSocket` connection in an `HTTP` service, we can directly use `Hyperf\WebSocketServer\Sender`.
 
-`Sender` will check if `fd` is carried by the current `Worker`, if so, then directly send the message, otherwise, send message to all other `Worker` through `PipeMessage`. Other `Worker`s will do the same as mentioned above.
+The `Sender` determines whether the `fd` is held by the current `Worker`. If it is, it will send the data directly; if not, it will send it via `PipeMessage` to all `Workers` except itself, and then other `Workers` will make a determination. If it is the `fd` held by itself, it will send the corresponding data to the client.
 
-`Sender` supports `push` and `disconnect`. 
+The `Sender` supports two APIs: `push` and `disconnect`, as follows:
 
 ```php
 <?php
@@ -235,15 +242,13 @@ class ServerController
         return '';
     }
 }
-
 ```
 
+## Handling HTTP Requests in WebSocket Service
 
-## Handle Http Request in Websocket Server
+Besides separating the HTTP service and WebSocket service through ports, we can also listen for HTTP requests in WebSocket.
 
-In addition to separating HTTP services and WebSocket services through ports, we can also listen for HTTP requests in WebSocket.
-
-Because `server.servers.*.callbacks` configuration items are all singleton，so we need define a new singleton config in `dependencies`.
+Because the configuration items in `server.servers.*.callbacks` are singletons, we need to configure a separate instance in `dependencies`.
 
 ```php
 <?php
@@ -252,7 +257,7 @@ return [
 ];
 ```
 
-Then modify the `callbacks` configuration in our `WebSocket` service. The following hides irrelevant configurations
+Then modify the `callbacks` configuration in our `WebSocket` service. The irrelevant configuration is hidden below.
 
 ```php
 <?php
@@ -280,7 +285,6 @@ return [
         ],
     ],
 ];
-
 ```
 
-Finally, we can add `HTTP` routing in `ws`.
+Finally, we can add `HTTP` routes in `ws`.

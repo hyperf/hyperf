@@ -1,7 +1,13 @@
 
-`hyperf/nano` is a package that scales Hyperf down to a single file.
+With `hyperf/nano`, you can quickly build Hyperf applications without scaffolding and with zero configuration.
 
-## Example
+## Installation
+
+```php
+composer install hyperf/nano
+```
+
+## Quick Start
 
 ```php
 <?php
@@ -27,28 +33,29 @@ $app->get('/', function () {
 $app->run();
 ```
 
-Run
+Start:
 
 ```bash
 php index.php start
 ```
 
-That's all you need.
+It's that simple.
 
-## Feature
+## Features
 
-* No skeleton.
-* Fast startup.
-* Zero config.
-* Closure style.
-* Support all Hyperf features except annotations.
-* Compatible with all Hyperf components.
+* No scaffolding
+* Zero configuration
+* Fast startup
+* Closure style
+* Supports all Hyperf features except annotations
+* Compatible with all Hyperf components
+* Phar friendly
 
 ## More Examples
 
 ### Routing
 
-$app inherits all methods from hyperf router.
+$app integrates all methods of the Hyperf router.
 
 ```php
 <?php
@@ -70,7 +77,7 @@ $app->addGroup('/nano', function () use ($app) {
 $app->run();
 ```
 
-### DI Container 
+### DI Container
 ```php
 <?php
 use Hyperf\Nano\ContainerProxy;
@@ -95,7 +102,7 @@ $app->get('/', function () {
 
 $app->run();
 ```
-> As a convention, $this is bind to ContainerProxy in all closures managed by nano, including middleware, exception handler and more.
+> In all closure callbacks managed by $app, `$this` is bound to `Hyperf\Nano\ContainerProxy`.
 
 ### Middleware
 ```php
@@ -118,9 +125,9 @@ $app->addMiddleware(function ($request, $handler) {
 $app->run();
 ```
 
-> In addition to closure, all $app->addXXX() methods also accept class name as argument. You can pass any corresponding hyperf classes.
+> Except for closures, all $app->addXXX() methods accept class names as parameters. You can pass in the corresponding Hyperf class.
 
-### ExceptionHandler
+### Exception Handling
 
 ```php
 <?php
@@ -143,7 +150,7 @@ $app->addExceptionHandler(function ($throwable, $response) {
 $app->run();
 ```
 
-### Custom Command
+### Command Line
 
 ```php
 <?php
@@ -161,12 +168,14 @@ $app->addCommand('echo', function(){
 $app->run();
 ```
 
-To run this command, execute
+Execute
+
 ```bash
 php index.php echo
 ```
 
 ### Event Listener
+
 ```php
 <?php
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -204,7 +213,7 @@ $app->addProcess(function(){
 $app->run();
 ```
 
-### Crontab
+### Cron Job
 
 ```php
 <?php
@@ -222,8 +231,7 @@ $app->addCrontab('* * * * * *', function(){
 $app->run();
 ```
 
-### Use Hyperf Component.
-
+### Using Hyperf Components
 ```php
 <?php
 use Hyperf\DB\DB;

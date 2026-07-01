@@ -1,17 +1,18 @@
-# Call link tracking
+# Trace
 
-In the microservice architecture, there will be a lot of services by splitting, which means that a business request may go through 3 or 4 services at least, even dozens or more. Under this architecture, it is extremely difficult when we need to debug a certain problem. Then we need a call link tracking system to help us dynamically display the service call link so that we can quickly locate the problem, and also optimize the service based on the link information.
-In `Hyperf`, we provide the [hyperf/tracer](https://github.com/hyperf/tracer) component to track and analyze the call of each cross-network request. Currently, the [Zipkin](https://zipkin.io/) system and the [Jaeger](https://www.jaegertracing.io/) system are docked according to the [OpenTracing](https://opentracing.io) protocol. Users can also customize this by following the OpenTracing protocol.
+In microservice scenarios, a single business request may span 3-4 services at a minimum, and dozens or even more at a maximum. Debugging a problem in such an architecture is extremely difficult. We need a call chain tracing system to dynamically display the service call link, so that we can quickly locate the problem point, and also tune the service according to the link information.
+
+In `Hyperf`, we provide the [hyperf/tracer](https://github.com/hyperf/tracer) component to track and analyze calls across network requests. Currently, it integrates with [Zipkin](https://zipkin.io/) and [Jaeger](https://www.jaegertracing.io/) systems based on the [OpenTracing](https://opentracing.io) protocol. Users can also customize implementations based on the OpenTracing protocol.
 
 ## Installation
 
-### By Composer
+### Install component via Composer
 
 ```bash
 composer require hyperf/tracer
 ```
 
-The [hyperf/tracer](https://github.com/hyperf/tracer) component has installed [Zipkin](https://zipkin.io/) related dependencies by default. If you want to use [Jaeger](https://www.jaegertracing.io/), you need to execute the following command to install the corresponding dependencies:
+The [hyperf/tracer](https://github.com/hyperf/tracer) component installs [Zipkin](https://zipkin.io/) dependencies by default. If you want to use [Jaeger](https://www.jaegertracing.io/), you also need to execute the following command to install the corresponding dependencies:
 
 ```bash
 composer require jonahgeorge/jaeger-client-php
@@ -19,40 +20,40 @@ composer require jonahgeorge/jaeger-client-php
 
 ### Add component configuration
 
-If the file does not exist, execute the following command to add the `config/autoload/opentracing.php` configuration file:
+If the file does not exist, you can execute the following command to add the `config/autoload/opentracing.php` configuration file:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/tracer
 ```
 
-## usage
+## Usage
 
-### Config
+### Configuration
 
-#### Enable tracking
+#### Configure tracing switches
 
-By default, it provides monitoring of `Guzzle HTTP` calls, `Redis` calls, and `DB` calls or `AOP` aspect processing to achieve the propagation and tracking of the call link. These tracings are not enabled by default. You need to modify `enable` items in the `config/autoload/opentracing.php` configuration file to enable the tracing of certain remote calls.
+By default, monitoring or `AOP` aspect processing is provided for `Guzzle HTTP` calls, `Redis` calls, and `DB` calls to implement the propagation and tracing of the call chain. By default, these traces are not enabled. You need to enable tracing for certain remote calls by changing the switches in the `enable` item within the `config/autoload/opentracing.php` configuration file.
 
 ```php
 <?php
 
 return [
     'enable' => [
-        // enable the tracing of Guzzle HTTP calls
+        // Enable or disable tracing for Guzzle HTTP calls
         'guzzle' => false,
-        // enable the tracing of Redis calls
+        // Enable or disable tracing for Redis calls
         'redis' => false,
-        // enable the tracing of DB calls
+        // Enable or disable tracing for DB calls
         'db' => false,
     ],
 ];
 ```
 
-Before starting to trace, we need to select the Tracer driver to be used and configure the Tracer.
+Before starting to trace, we also need to choose the Tracer driver to be used and configure the Tracer.
 
-#### Select tracker driver
+#### Choose Tracer driver
 
-The value corresponding to `default` in the configuration file is the name of the used driver. The specific configuration of the driver is defined under the `tracer` item, using the same driver as the `key`.
+The value corresponding to `default` in the configuration file is the name of the driver used. The specific configuration of the driver is defined under the `tracer` item, using the same driver as the `key`.
 
 ```php
 <?php
@@ -61,19 +62,19 @@ return [
     // Select the default Tracer driver, the selected Tracer name corresponds to the key defined under tracers
     'default' => env('TRACER_DRIVER', 'staging_zipkin'),
 
-    // Other configurations are omitted here in this example
+    // Other configurations omitted here
     'enable' => [],
 
     'tracer' => [
-        // Zipkin config
+        // Zipkin configuration
         'staging_zipkin' => [
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
-        // another Zipkin config
+        // Another Zipkin configuration
         'producton_zipkin' => [
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
         ],
-        // Jaeger config
+        // Jaeger configuration
         'jaeger' => [
             'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
         ],
@@ -81,7 +82,7 @@ return [
 ];
 ```
 
-Note that as shown in the example configuration, you can configure multiple sets of Zipkin drivers or Jaeger drivers. Although the underlying systems used are the same, their specific configurations can be different. A common scenario is that we want 100% sampling rate in the test environment, but with 1% sampling rate in the production environment, two sets of drivers can be configured, and then different drivers can be selected according to the environment variables under the `default` item.
+Note, as shown in the example configuration, you can configure multiple Zipkin drivers or Jaeger drivers. Although they use the same underlying system, their specific configurations can be different. A common scenario is that we want 100% sampling in the staging environment, but 1% sampling in the production environment. You can configure two drivers and then choose different drivers based on the environment variable under the `default` item.
 
 #### Configure Zipkin
 
@@ -92,31 +93,31 @@ When using Zipkin, add the specific configuration of Zipkin to the `tracer` item
 use Zipkin\Samplers\BinarySampler;
 
 return [
-    // default Tracer
+    // Select the default Tracer
     'default' => env('TRACER_DRIVER', 'zipkin'),
 
-    // Other configurations are omitted here in this example
+    // Demonstration does not expand the configuration within enable
     'enable' => [],
 
     'tracer' => [
-        // Zipkin drive config
+        // Zipkin driver configuration
         'zipkin' => [
-            // current app config
+            // Current application configuration
             'app' => [
                 'name' => env('APP_NAME', 'skeleton'),
-                // If ipv6 and ipv6 are null, the component will automatically detect from the Server
+                // If ipv4 and ipv6 are empty, the component will automatically detect them from Server
                 'ipv4' => '127.0.0.1',
                 'ipv6' => null,
                 'port' => 9501,
             ],
             'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
             'options' => [
-                // the endpoint address of Zipkin service
+                // Zipkin service endpoint URL
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
-                // Request timeout (in seconds)
+                // Request timeout in seconds
                 'timeout' => env('ZIPKIN_TIMEOUT', 1),
             ],
-            // Sampler, track all requests by default
+            // Sampler, defaults to tracing all requests
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
     ],
@@ -133,25 +134,25 @@ use Hyperf\Tracer\Adapter\JaegerTracerFactory;
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 return [
-    // default Tracer
+    // Select the default Tracer
     'default' => env('TRACER_DRIVER', 'jaeger'),
 
-    // Other configurations are omitted here in this example
+    // Demonstration does not expand the configuration within enable
     'enable' => [],
 
     'tracer' => [
-        // Jaeger drive config
+        // Jaeger driver configuration
         'jaeger' => [
             'driver' => JaegerTracerFactory::class,
-            // project name
+            // Project name
             'name' => env('APP_NAME', 'skeleton'),
             'options' => [
-                // Sampler, track all requests by default
+                // Sampler, defaults to tracing all requests
                 'sampler' => [
                     'type' => SAMPLER_TYPE_CONST,
                     'param' => true,
                 ],
-                // the address which should report to
+                // Reporting agent
                 'local_agent' => [
                     'reporting_host' => env('JAEGER_REPORTING_HOST', 'localhost'),
                     'reporting_port' => env('JAEGER_REPORTING_PORT', 5775),
@@ -162,15 +163,15 @@ return [
 ];
 ```
 
-More configurations about Jaeger can be found in [here](https://github.com/jonahgeorge/jaeger-client-php)].
+For more configuration about Jaeger, you can view it [[here](https://github.com/jonahgeorge/jaeger-client-php)].
 
-#### Configure JsonRPC tracking enabling
+#### Configure JsonRPC tracing switch
 
-JsonRPC's link tracking is not in the unified configuration, and temporarily belongs to the `Beta` version.
+JsonRPC link tracing is not in the unified configuration and is currently a `Beta` version feature.
 
-We only need to configure `aspects.php`, and add the following `Aspect` to enable it.
+We just need to configure `aspects.php` and add the following `Aspect` to enable it.
 
-> Tip: Don’t forget to add the corresponding TraceMiddleware on the opposite site.
+> Tip: Do not forget to add the corresponding TraceMiddleware on the peer side.
 
 ```php
 <?php
@@ -180,11 +181,11 @@ return [
 ];
 ```
 
-#### Configure coroutine tracking enabling
+#### Configure Coroutine tracing switch
 
-Coroutine link tracking is not included in the unified configuration, it is an optional version of the function.
+Coroutine link tracing is not in the unified configuration and is an optional feature.
 
-We only need to configure `aspects.php` and add the following `Aspect` to enable it.
+We just need to configure `aspects.php` and add the following `Aspect` to enable it.
 
 ```php
 <?php
@@ -196,11 +197,11 @@ return [
 
 ### Configure middleware or listener
 
-After configuring the driver, you need to configure the middleware or request cycle event listener to collect information to enable the collection function.
+After configuring the driver, to collect information, you also need to configure the middleware or request cycle event listener to enable the collection function.
 
 - Add middleware
 
-Open the `config/autoload/middlewares.php` file and enable the middleware on the `http` node.
+Open the `config/autoload/middlewares.php` file and enable the middleware in the `http` node.
 
 ```php
 <?php
@@ -208,13 +209,13 @@ Open the `config/autoload/middlewares.php` file and enable the middleware on the
 declare(strict_types=1);
 
 return [
-     'http' => [
-         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
-     ],
+    'http' => [
+        \Hyperf\Tracer\Middleware\TraceMiddleware::class,
+    ],
 ];
 ```
 
-- or add a listener
+- Or add listener
 
 Open the `config/autoload/listeners.php` file and add the listener.
 
@@ -224,29 +225,29 @@ Open the `config/autoload/listeners.php` file and add the listener.
 declare(strict_types=1);
 
 return [
-     \Hyperf\Tracer\Listener\RequestTraceListener::class,
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 
 ### Configure Span tag
 
-For some Span Tag names that Hyperf automatically collects tracking information for, you can change the corresponding name by changing the Span Tag configuration. Just add the `tags` configuration in the configuration file `config/autolaod/opentracing.php`. The reference configuration is as follows. If the configuration item exists, the value of the configuration item shall prevail. If the configuration item does not exist, the default value of the component shall prevail.
+For some Span Tag names that Hyperf automatically collects, you can change the corresponding name by changing the Span Tag configuration. You only need to add the `tags` configuration in the `config/autoload/opentracing.php` configuration file. Refer to the configuration below. If the configuration item exists, the value of the configuration item shall prevail. If the configuration item does not exist, the component's default value shall prevail.
 
 ```php
 return [
     'tags' => [
-        // HTTP client (Guzzle)
+        // HTTP Client (Guzzle)
         'http_client' => [
             'http.url' => 'http.url',
             'http.method' => 'http.method',
             'http.status_code' => 'http.status_code',
         ],
-        // Redis client
+        // Redis Client
         'redis' => [
             'arguments' => 'arguments',
             'result' => 'result',
         ],
-        // database client (hyperf/database)
+        // Database Client (hyperf/database)
         'db' => [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
@@ -256,20 +257,21 @@ return [
 ];
 ```
 
-### Replace the sampler
+### Replace Sampler
 
-The default sampler records the call link for all requests, which will have a certain impact on performance, especially memory usage. So we only need to track the call link when we want, then we need to replace the sampler. It's easy to replace the sampler, take the Zipkin as an example, just change the corresponding value of the configuration item `opentracing.zipkin.sampler` to your sampler object instance, as long as your sampler object implements the `Zipkin\Sampler` interface class.
+The default sampler records the call chain for all requests, which has a certain impact on performance, especially memory usage. Therefore, we only need to trace the call chain when we want to. Then we need to replace the sampler. Replacing it is also very simple. Taking Zipkin as an example, just change the value corresponding to the configuration item `opentracing.zipkin.sampler` to your sampler object instance, as long as your sampler object implements the `Zipkin\Sampler` interface class.
 
-### Access to Alibaba Cloud link tracking service
+### Access Alibaba Cloud Link Tracing Service
 
-When we are using Alibaba Cloud’s link tracking service, since the opposite end also supports the `Zipkin` protocol, you can directly modify the value of `endpoint_url` in the `config/autoload/opentracing.php` configuration file to your corresponding address of Aliyun `region`. The specific address can be obtained in Alibaba Cloud's link tracking service. For more details, please refer to [Alibaba Cloud Link Tracking Service Help Document](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)
+When we use Alibaba Cloud's link tracing service, because the peer end also supports the `Zipkin` protocol, we can directly modify the `endpoint_url` in the `config/autoload/opentracing.php` configuration file to the address of your corresponding Alibaba Cloud `region`. The specific address can be obtained in Alibaba Cloud's link tracing service. For more details, please refer to [Alibaba Cloud Link Tracing Service Help Document](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv).
 
 ### Use other Tracer drivers
 
-You can also use any other Tracer drivers which follows the OpenTracing protocol.  In the Driver field, fill any class that implements `Hyperf\Tracer\Contract\NamedFactoryInterface`. This interface has only one `make()` function, the parameter is the driver name, and it needs to return an instance that implements OpenTracing\Tracer.
+You can also use any other Tracer driver that complies with the OpenTracing protocol. In the Driver item, fill in any class that implements `Hyperf\Tracer\Contract\NamedFactoryInterface`. This interface has only one make function, the parameter is the driver name, and it needs to return an instance that implements OpenTracing\Tracer.
 
 ## Reference
+
 - [Opentracing](https://opentracing.io)
 - [Zipkin](https://zipkin.io/)
 - [Jaeger](https://www.jaegertracing.io/)
-- [Dapper, tracking system for large-scale distributed systems](https://bigbully.github.io/Dapper-translation/)
+- [Dapper, A Large-Scale Distributed Systems Tracing System](https://bigbully.github.io/Dapper-translation/)

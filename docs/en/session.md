@@ -1,6 +1,6 @@
-# Session management
+# Session Management
 
-HTTP is a stateless protocol, meaning that the server does not retain any state during transactions with clients. However, when developing web applications there's often a need to share information between multiple requests, which is usually done via session storage. You can implement the session functionality with [hyperf/session](https://github.com/hyperf/session). The session component currently only implements two storage drivers, namely `file` and `Redis`. The default is `file` driver. In a production environment, we strongly recommend that you use `Redis` as it has much better performance compared to the `file` alternative and is also better suited for cluster architecture.
+HTTP is a stateless protocol, meaning that the server does not retain any state during transactions with the client. Therefore, when developing HTTP Server applications, we usually use Session to achieve the sharing of user data between multiple requests. You can implement Session functionality through [hyperf/session](https://github.com/hyperf/session). The Session component currently only adapts to two storage drivers: `File` and `Redis`. The default is the `File` driver. In a production environment, we strongly recommend that you use `Redis` as the storage driver, as it performs better and is more suitable for use under cluster architectures.
 
 # Installation
 
@@ -10,42 +10,42 @@ composer require hyperf/session
 
 # Configuration
 
-The configuration of the session component is stored in the `config/autoload/session.php` file. If the file does not exist, you can use the `php bin/hyperf.php vendor:publish hyperf/session` command to publish the configuration file of the session component.
+The configuration of the Session component is stored in the `config/autoload/session.php` file. If the file does not exist, you can publish the Session component's configuration file to the Skeleton via the `php bin/hyperf.php vendor:publish hyperf/session` command.
 
-## Configure session middleware
+## Configuring Session Middleware
 
-Before using session, you need to configure the `Hyperf\Session\Middleware\SessionMiddleware` middleware as the global middleware of the HTTP Server so that the component can intercept the request for processing. You can define middlewares in `config/autoload/middlewares.php` configuration file. Example configuration:
+Before using Session, you need to configure the `Hyperf\Session\Middleware\SessionMiddleware` middleware as a global middleware for the HTTP Server, so that the component can intervene in the request process and perform corresponding processing. The `config/autoload/middlewares.php` configuration file example is as follows:
 
 ```php
 <?php
 
 return [
-    // Here http corresponds to the default server name. If you need to use session on other servers, you need to configure the corresponding global middleware
+    // 'http' here corresponds to the default server name. If you need to use Session on other servers, you need corresponding global middleware configuration
     'http' => [
         \Hyperf\Session\Middleware\SessionMiddleware::class,
     ],
 ];
 ```
 
-## Configure storage driver
+## Configuring Storage Driver
 
-Modify different session storage drivers by changing the `handler` configuration in the configuration file, and the specific configuration items of the corresponding handler are determined by the different configuration items in the `options`.
+Change the `handler` configuration in the configuration file to modify different Session storage drivers, and the specific configuration items of the corresponding Handler are determined by different configuration items in `options`.
 
-### Use file storage driver
+### Using File Storage Driver
 
-> The file storage driver is the default storage driver, but it is recommended to use the Redis driver in a production environment
+> The file storage driver is the default storage driver, but it is recommended to use the Redis driver in a production environment.
 
-When the value of `handler` is `Hyperf\Session\Handler\FileHandler`, it indicates that the `file` storage driver is used and all session data files will be generated and stored in the folder corresponding to the `options.path` configuration value. The default configuration folder is in the `runtime/session` folder under the root directory.
+When the value of `handler` is `Hyperf\Session\Handler\FileHandler`, it means the `File` storage driver is used. All Session data files will be generated and stored in the folder corresponding to the `options.path` configuration value. The default configured folder is within the `runtime/session` folder under the root directory.
 
-### Use Redis driver
+### Using Redis Driver
 
-Before using the `Redis` storage driver, you need to install the [hyperf/redis](https://github.com/hyperf/redis) component. To use this storage driver set the value of `handler` to `Hyperf\Session\Handler\RedisHandler`. You can adjust the `Redis` connection used by the driver by configuring the `options.connection` configuration value. The connections are defined in `config/autoload/redis.php` of the [hyperf/redis](https://github.com/hyperf/redis) component.
+Before using the `Redis` storage driver, you need to install the [hyperf/redis](https://github.com/hyperf/redis) component. When the value of `handler` is `Hyperf\Session\Handler\RedisHandler`, it means the `Redis` storage driver is used. You can adjust the `Redis` connection to be used by the driver by configuring the `options.connection` configuration value. This connection matches the key naming in the `config/autoload/redis.php` configuration of the [hyperf/redis](https://github.com/hyperf/redis) component.
 
-# Use
+# Usage
 
-## Get session object
+## Obtaining Session Object
 
-The session object can be accessed by injecting `Hyperf\Contract\SessionInterface`:
+You can obtain the Session object by injecting `Hyperf\Contract\SessionInterface`, and then call the methods defined by the interface to use it:
 
 ```php
 <?php
@@ -63,23 +63,23 @@ class IndexController
     public function index()
     {
         // Use directly via $this->session
-    }
+    } 
 }
 ```
 
-## Store data
+## Storing Data
 
-When you want to store data in the session, you can do so by calling the `set(string $name, $value): void` method:
+When you wish to store data in the Session, you can implement it by calling the `set(string $name, $value): void` method:
 
 ```php
 <?php
 
-$this->session->set('foo','bar');
+$this->session->set('foo', 'bar');
 ```
 
-## Retrieve data
+## Obtaining Data
 
-When you want to get data from the session, you can do so by calling the `get(string $name, $default = null)` method:
+When you wish to obtain data from the Session, you can implement it by calling the `get(string $name, $default = null)` method:
 
 ```php
 <?php
@@ -87,9 +87,9 @@ When you want to get data from the session, you can do so by calling the `get(st
 $this->session->get('foo', $default = null);
 ```
 
-### Get all data
+### Obtaining All Data
 
-You can get all the stored data from the session at once by calling the `all(): array` method:
+You can obtain all stored data from the Session at once by calling the `all(): array` method:
 
 ```php
 <?php
@@ -97,9 +97,9 @@ You can get all the stored data from the session at once by calling the `all(): 
 $data = $this->session->all();
 ```
 
-## Determine whether there is a value in the session
+## Determining Whether a Value Exists in Session
 
-To determine whether a value exists in the session, you can use the `has(string $name): bool` method. If the value exists and is not null, the `has` method will return `true`:
+To determine whether a value exists in the Session, you can use the `has(string $name): bool` method. If the value exists and is not null, the `has` method returns `true`:
 
 ```php
 <?php
@@ -109,9 +109,9 @@ if ($this->session->has('foo')) {
 }
 ```
 
-## Get and delete a piece of data
+## Obtaining and Deleting a Piece of Data
 
-By calling the `remove(string $name)` method, you can retrieve and delete a piece of data from the session using only one method:
+By calling the `remove(string $name)` method, you can obtain and delete a piece of data from the Session using only one method:
 
 ```php
 <?php
@@ -119,20 +119,20 @@ By calling the `remove(string $name)` method, you can retrieve and delete a piec
 $data = $this->session->remove('foo');
 ```
 
-## Delete one or more pieces of data
+## Deleting One or More Pieces of Data
 
-By calling the `forget(string|array $name): void` method, one or more pieces of data can be deleted from the session using only one method. When a string is passed, it means that only one piece of data is deleted. When a key string array is passed, it means to delete multiple pieces of data:
+By calling the `forget(string|array $name): void` method, you can delete one or more pieces of data from the Session using only one method. When a string is passed, it means only one piece of data is deleted. When an array of key strings is passed, it means multiple pieces of data are deleted:
 
 ```php
 <?php
 
 $this->session->forget('foo');
-$this->session->forget(['foo','bar']);
+$this->session->forget(['foo', 'bar']);
 ```
 
-## Clear the current session data
+## Clearing Current Session Data
 
-You can clear  all the data in the current session by calling the `clear(): void` method:
+When you wish to clear all data in the current Session, you can implement it by calling the `clear(): void` method:
 
 ```php
 <?php
@@ -140,9 +140,9 @@ You can clear  all the data in the current session by calling the `clear(): void
 $this->session->clear();
 ```
 
-## Get the current session ID
+## Obtaining Current Session ID
 
-When you want to get the current session ID to handle some logic by yourself, you can get the current session ID by calling the `getId(): string` method:
+When you wish to obtain the current Session ID to handle some logic yourself, you can obtain the current Session ID by calling the `getId(): string` method:
 
 ```php
 <?php

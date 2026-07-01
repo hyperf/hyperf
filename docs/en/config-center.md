@@ -1,96 +1,262 @@
-Hyperf provides you with external configuration support for distributed systems, which is adapted by default:
+# Introduction
 
-- [ctripcorp/apollo](https://github.com/ctripcorp/apollo) An open source project by Ctrip, by [hyperf/config-apollo](https://github.com/hyperf/config-apollo) component Provide functional support.
-- Aliyun provides a free configuration center service [ACM (Application Config Manager)](https://help.aliyun.com/product/59604.html) by [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) component provides feature support.
+Hyperf provides support for externalized configuration in distributed systems, and natively adapts to:
 
-## Why use the Configuration Center?
+- [ctripcorp/apollo](https://github.com/ctripcorp/apollo), an open-source project by Trip.com, supported by the [hyperf/config-apollo](https://github.com/hyperf/config-apollo) component.
+- [Application Config Manager (ACM)](https://help.aliyun.com/product/59604.html), a free configuration center service provided by Alibaba Cloud, supported by the [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) component.
+- ETCD
+- Nacos
+- Zookeeper
 
-With the development of services, the upgrade of micro-service architecture, the number of services and the configuration of applications (various micro-services, various server addresses, various parameters), the traditional configuration file method and database method may not be satisfied. Developers' requirements for configuration management, as well as configuration management, may also involve ACL rights management, configuration version management and rollback, format verification, configuration grayscale publishing, cluster configuration isolation, etc., as well as:
+## Why use a Configuration Center?
 
-- Security: Configuration follows the source code saved in the version management system, which is easy to cause configuration leakage
-- Timeliness: Modify the configuration, each server needs to modify and restart the service for each application.
-- Limitations: Dynamic adjustments cannot be supported, such as log switches, function switches, etc.
+With the development of business and the upgrade of microservice architecture, the number of services and application configurations is increasing (various microservices, server addresses, parameters). Traditional configuration file methods and database methods may no longer meet the needs of developers for configuration management. At the same time, configuration management may involve ACL permission management, configuration version management and rollback, format validation, configuration canary releases, cluster configuration isolation, and more, as well as:
 
-Therefore, we can manage the relevant configuration in a scientific management manner through a configuration center.
+- Security: Configurations are stored in version control systems along with source code, which can easily lead to configuration leaks.
+- Timeliness: Modifying configurations requires each server and each application to be modified and the service restarted.
+- Limitations: Dynamic adjustment is not supported, such as log switches, feature switches, etc.
+
+Therefore, we can use a configuration center to uniformly manage related configurations in a scientific way.
 
 ## Installation
 
-### Apollo
+### Unified Configuration Center Access Layer
+
+```bash
+composer require hyperf/config-center
+```
+
+### For Apollo
 
 ```bash
 composer require hyperf/config-apollo
 ```
 
-### Aliyun ACM
+### For Aliyun ACM
 
 ```bash
 composer require hyperf/config-aliyun-acm
 ```
 
-## Use Apollo
+### For Etcd
 
-If you have not replace the default configuration component, still use [hyperf/config](https://github.com/hyperf/config) component, adapte the Apollo Configuration Center is a breeze.
-- By composer [hyperf/config-apollo](https://github.com/hyperf/config-apollo) , execute the command `composer require hyperf/config-apollo`
-- Add a `apollo.php` configuration file to the `config/autoload` folder. The configuration is as follows:
+```bash
+composer require hyperf/config-etcd
+```
+
+### For Nacos
+
+```bash
+composer require hyperf/config-nacos
+```
+
+#### gRPC Bidirectional Stream
+
+Traditional Nacos configuration center is based on short polling for configuration synchronization, which causes services to be unable to obtain the latest configuration within the polling interval. `Nacos V2` added support for gRPC bidirectional streams. If you want Nacos to push configuration changes to relevant services in a timely manner after discovering them, you can enable the gRPC bidirectional stream function by following these steps.
+
+- First, install the necessary components:
+
+```shell
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
+```
+
+- Modify configuration:
+
+Modify `config_center.drivers.nacos.client.grpc.enable` to `true`, as follows:
 
 ```php
 <?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigApollo\PullMode;
+use Hyperf\ConfigCenter\Mode;
+
 return [
-    // Whether to enable the process of the configuration center. When true, a ConfigFetcherProcess process is automatically started to update the configuration
-    'enable' => true,
-    // Apollo Server
-    'server' => 'http://127.0.0.1:8080',
-    // Your AppId
-    'appid' => 'test',
-    // The cluster where the current application is located
-    'cluster' => 'default',
-    // Namespace that the current application needs to access, can be configured multiple namespcaes
-    'namespaces' => [
-        'application',
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'nacos'),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+            ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+                // Only support for nacos v2.
+                'grpc' => [
+                    'enable' => true,
+                    'heartbeat' => 10,
+                ],
+            ],
+        ],
     ],
-    // Strict mode. When the value is false, the configuration value that pulled from Apollo will always is string type, when the value is true, the configuration value will transfer to the suitable type according to the original value type on config container.
-    'strict_mode' => false,
-    // The interval of update configuration (seconds)
-    'interval' => 5,
 ];
+
 ```
 
-## Use Aliyun ACM
+- Next, start the service.
 
-Accessing the Aliyun ACM Configuration Center is as easy as Apollo, just two steps.
-- Execute the command `composer require hyperf/config-aliyun-acm` by Composer to install [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm)
-- Add a `aliyun_acm.php` configuration file to the `config/autoload` folder. The configuration is as follows:
+### For Zookeeper
+
+```bash
+composer require hyperf/config-zookeeper
+```
+
+## Accessing Configuration Center
+
+### Configuration File
 
 ```php
 <?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigCenter\Mode;
+
 return [
-    // Whether to enable the process of the configuration center. When true, a ConfigFetcherProcess process is automatically started to update the configuration
-    'enable' => true,
-    // The interval of update configuration (seconds)
-    'interval' => 5,
-    // ACM endpoint address, depending on your Availability Zone
-    'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
-    // Namespace that the current application needs to access
-    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
-    // The Data ID of your configuration
-    'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
-    // The Group of your configuration
-    'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
-    // Your Access Key of aliyun account
-    'access_key' => env('ALIYUN_ACM_AK', ''),
-    // Your Secret Key of aliyun account
-    'secret_key' => env('ALIYUN_ACM_SK', ''),
+    // Whether to enable the configuration center
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    // The driver type used, corresponding to the key under the drivers configuration at the same level
+    'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
+    // The operating mode of the configuration center, PROCESS mode is recommended for multi-process models, and COROUTINE mode is recommended for single-process models
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'apollo' => [
+            'driver' => Hyperf\ConfigApollo\ApolloDriver::class,
+            // Apollo Server
+            'server' => 'http://127.0.0.1:9080',
+            // Your AppId
+            'appid' => 'test',
+            // The cluster where the current application is located
+            'cluster' => 'default',
+            // The namespace that the current application needs to access, multiple can be configured
+            'namespaces' => [
+                'application',
+            ],
+            // Configuration update interval (seconds)
+            'interval' => 5,
+            // Strict mode, when false, the pulled configuration values are all string types; when true, the pulled configuration values will be converted to the original data type
+            'strict_mode' => false,
+            // Client IP
+            'client_ip' => \Hyperf\Support\Network::ip(),
+            // Pull configuration timeout
+            'pullTimeout' => 10,
+            // Pull configuration interval
+            'interval_timeout' => 1,
+        ],
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            // Configuration merging method, supports overwrite and merge
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            // If the corresponding mapping key is not set, use the default key
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                // dataId, group, tenant, type, content
+                // Mapped configuration KEY => Actual configuration in Nacos
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+                'nacos_config.data' => [
+                    'data_id' => 'hyperf-service-config-yml',
+                    'group' => 'DEFAULT_GROUP',
+                    'type' => 'yml',
+                ],
+            ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+            ],
+        ],
+        'aliyun_acm' => [
+            'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
+            // Configuration update interval (seconds)
+            'interval' => 5,
+            // Aliyun ACM endpoint, depends on your availability zone
+            'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+            // Namespace that the current application needs to access
+            'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+            // Data ID corresponding to your configuration
+            'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+            // Group corresponding to your configuration
+            'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+            // Access Key for your Aliyun account
+            'access_key' => env('ALIYUN_ACM_AK', ''),
+            // Secret Key for your Aliyun account
+            'secret_key' => env('ALIYUN_ACM_SK', ''),
+            'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
+        ],
+        'etcd' => [
+            'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
+            // Prefix of data to be synchronized
+            'namespaces' => [
+                '/application',
+            ],
+            // The mapping relationship between `Etcd` and `Config`. Keys that do not exist in the mapping will not be synchronized to `Config`
+            'mapping' => [
+                // etcd key => config key
+                '/application/test' => 'test',
+            ],
+            // Configuration update interval (seconds)
+            'interval' => 5,
+            'client' => [
+                # Etcd Client
+                'uri' => 'http://127.0.0.1:2379',
+                'version' => 'v3beta',
+                'options' => [
+                    'timeout' => 10,
+                ],
+            ],
+        ],
+        'zookeeper' => [
+            'driver' => Hyperf\ConfigZookeeper\ZookeeperDriver::class,
+            'server' => env('ZOOKEEPER_SERVER', '127.0.0.1:2181'),
+            'path' => env('ZOOKEEPER_CONFIG_PATH', '/conf'),
+            'interval' => 5,
+        ],
+    ],
 ];
 ```
 
-## The scope of the configuration update
+If the configuration file does not exist, you can execute the `php bin/hyperf.php vendor:publish hyperf/config-center` command to generate it.
 
-In the default feature implementation, a `ConfigFetcherProcess` process pulls the corresponding `namespace` configuration from Configuration Center according to the configured `interval`, and passes the new configuration pulled to each worker through IPC communication, and Update to the object corresponding to `Hyperf\Contract\ConfigInterface`.
-It should be noted that the updated configuration will only update the `Config` object, so it is only applicable to the application layer or business layer configuration. It does not involve the configuration changes of the framework layer. Because the configuration changes of the framework layer need to restart the service, if you have such a Requirements can also be achieved by implementing `ConfigFetcherProcess` on its own.
+## Scope of Configuration Updates
 
-## Configure update event
+In the default implementation, a `ConfigFetcherProcess` process pulls the configuration of the corresponding `namespace` from the Configuration Center Server according to the configured `interval`, and passes the new configuration to each Worker through IPC communication, updating it into the corresponding object within `Hyperf\Contract\ConfigInterface`.
 
-During the running of the configuration center, if the configuration changes, the `Hyperf\ConfigCenter\Event\ConfigChanged` event will be triggered correspondingly. You can monitor these events to meet your needs.
+It should be noted that updated configurations will only update the `Config` object, so this is limited to application-level or business-level configurations. It does not involve configuration changes at the framework level because framework-level configuration changes require restarting the service. If you have such requirements, you can also achieve this by implementing `ConfigFetcherProcess` yourself.
+
+## Configuration Update Events
+
+During the operation of the configuration center, when the configuration changes, it will trigger the `Hyperf\ConfigCenter\Event\ConfigChanged` event. You can listen to these events to meet your needs.
 
 ```php
 <?php

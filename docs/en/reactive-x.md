@@ -1,60 +1,60 @@
-# ReactiveX integration
+# ReactiveX Integration
 
 The [hyperf/reactive-x](https://github.com/hyperf/reactive-x) component provides ReactiveX integration in the Swoole/Hyperf environment.
 
 ## History of ReactiveX
 
-ReactiveX is the abbreviation of Reactive Extensions, generally abbreviated as Rx. It was originally an extension of LINQ. It was developed by a team led by Microsoft architect Erik Meijer. It was open sourced in November 2012. Rx is a programming model. The goal is to provide consistent programming Interface to help developers handle asynchronous data streams more easily. Rx library supports .NET, JavaScript and C++. Rx has become more and more popular in recent years, and now it supports almost all popular programming languages. Most of Rx The language library is maintained by the ReactiveX organization, the more popular ones are RxJava/RxJS/Rx.NET, and the community website is [reactivex.io](http://reactivex.io).
+ReactiveX is an abbreviation for Reactive Extensions, generally abbreviated as Rx. It was originally an extension of LINQ, developed by a team led by Microsoft architect Erik Meijer, and open-sourced in November 2012. Rx is a programming model that aims to provide a consistent programming interface to help developers handle asynchronous data streams more conveniently. Rx libraries support .NET, JavaScript, and C++. Rx has become increasingly popular in recent years and now supports almost all popular programming languages. Most of the language libraries for Rx are maintained by the ReactiveX organization. Popular ones include RxJava, RxJS, and Rx.NET. The community website is [reactivex.io](http://reactivex.io).
 
 ## What is ReactiveX
 
-Microsoft's definition is that Rx is a function library that allows developers to write asynchronous and event-based programs using observable sequences and LINQ-style query operators. Using Rx, developers can use Observables to represent asynchronous data streams, and LINQ Operators query asynchronous data streams, and use Schedulers to parameterize concurrent processing of asynchronous data streams. Rx can be defined as follows: Rx = Observables + LINQ + Schedulers.
+Microsoft defines Rx as a function library that allows developers to write asynchronous and event-based programs using observable sequences and LINQ-style query operators. Using Rx, developers can represent asynchronous data streams with Observables, query asynchronous data streams with LINQ operators, and parameterize the concurrent processing of asynchronous data streams with Schedulers. Rx can be defined as: Rx = Observables + LINQ + Schedulers.
 
-The definition given by [Reactivex.io](http://reactivex.io) is that Rx is a programming interface for asynchronous programming using observable data streams. ReactiveX combines the essence of observer pattern, iterator pattern and functional programming .
+[Reactivex.io](http://reactivex.io) defines Rx as a programming interface for asynchronous programming using observable data streams. ReactiveX combines the essence of the Observer pattern, the Iterator pattern, and functional programming.
 
-> The above two sections are taken from [RxDocs](https://github.com/mcxiaoke/RxDocs).
+> The above two sections are excerpted from [RxDocs](https://github.com/mcxiaoke/RxDocs).
 
-## Please consider before using
+## Considerations before use
 
-### front
+### Pros
 
-- By thinking of reactive programming, some complex asynchronous problems can be simplified.
+- Through the thinking mode of reactive programming, some complex asynchronous problems can be simplified.
 
-- If you already have reactive programming experience in other languages ​​(such as RxJS/RxJava), this component can help you port this experience to Hyperf.
+- If you have experience with reactive programming in other languages (such as RxJS/RxJava), this component can help you port this experience to Hyperf.
 
-- Although Swoole recommends writing asynchronous programs like synchronous programs through coroutines, Swoole still contains a large number of events, and handling events is the strength of Rx.
+- Although it is recommended in Swoole to write asynchronous programs like synchronous programs through coroutines, Swoole still contains a large number of events, and processing events is exactly the strong point of Rx.
 
-- Rx can also play an important role if your business includes stream processing like WebSocket, gRPC streaming, etc.
+- If your business contains stream processing, such as WebSocket, gRPC streaming, etc., Rx can also play an important role.
 
-### Negative
+### Cons
 
-- The way of thinking of reactive programming is quite different from the traditional object-oriented way of thinking, which requires developers to adapt.
+- The thinking mode of reactive programming is quite different from the traditional object-oriented thinking mode, and developers need time to adapt.
 
-- Rx just provides the way of thinking, no additional magic. Problems that can be solved by reactive programming can be solved by traditional means.
+- Rx only provides a thinking mode and has no extra magic. Problems that can be solved through reactive programming can also be solved through traditional methods.
 
 - RxPHP is not the best in the Rx family.
 
-## Install
+## Installation
 
 ```bash
 composer require hyperf/reactive-x
 ```
 
-## Package
+## Encapsulation
 
-Let us introduce some encapsulations of this component with examples and demonstrate the powerful capabilities of Rx. All examples can be found in this component under `src/Example`.
+Below, we combine examples to introduce some encapsulations of this component and demonstrate the powerful capabilities of Rx. All examples can be found under `src/Example` of this component.
 
 ### Observable::fromEvent
 
 `Observable::fromEvent` converts PSR standard events into observable sequences.
 
-The event listener for printing SQL statements is provided by default in the hyperf-skeleton skeleton package, and the default location is `app/Listener/DbQueryExecutedListener.php`. Let's make some optimizations to this monitor:
+In the hyperf-skeleton skeleton package, an event listener for printing SQL statements is provided by default, located at `app/Listener/DbQueryExecutedListener.php` by default. Below, we perform some optimizations on this listener:
 
-1. Only print SQL queries that take more than 100ms.
+1. Only print SQL queries that exceed 100ms.
 
-2. Each connection can print up to 1 time per second to avoid the hard disk being overrun by the problem program.
+2. Print at most once per second for each connection to avoid the hard drive being flooded by problematic programs.
 
-Without ReactiveX, question 1 would be fine, but question 2 would require some brainstorming. With ReactiveX, these requirements can be easily solved by means of the following sample code:
+Without ReactiveX, issue 1 is fine, but issue 2 would require some effort. With ReactiveX, you can easily solve these requirements using the example code below:
 
 ```php
 <?php
@@ -92,19 +92,13 @@ class SqlListener implements ListenerInterface
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {
@@ -117,9 +111,7 @@ class SqlListener implements ListenerInterface
                     return [$event->connectionName, $event->time, $sql];
                 }
             )->subscribe(
-                function ($message) {
-                    $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message));
-                }
+                fn ($message) => $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message))
             );
     }
 }
@@ -127,11 +119,11 @@ class SqlListener implements ListenerInterface
 
 ### Observable::fromChannel
 
-Turn the Channel in the Swoole coroutine into an observable sequence.
+Converts a Channel in Swoole coroutines to an observable sequence.
 
-The Channel in the Swoole coroutine is one-to-one read and write. What if we want to do many-to-many subscriptions and publishing through Channels under ReactiveX?
+Channels in Swoole coroutines are one-to-one for reading and writing. If we want to implement multi-to-multi subscription and publishing using Channels in ReactiveX, how should we do it?
 
-See the example below.
+Please refer to the example below.
 
 ```php
 <?php
@@ -163,9 +155,9 @@ $chan->push('world');
 
 ### Observable::fromCoroutine
 
-Create one or more coroutines and turn the execution results into an observable sequence.
+Creates one or more coroutines and converts the execution results into an observable sequence.
 
-We now let two functions compete in concurrent coroutines, and whichever finishes executing first returns the result. The effect is similar to `Promise.race` in JavaScript.
+Now we let two functions compete in concurrent coroutines and return the result of whichever finishes first. The effect is similar to `Promise.race` in JavaScript.
 
 ```php
 <?php
@@ -193,11 +185,11 @@ echo $result->pop(); // 2;
 
 ### Observable::fromHttpRoute
 
-All HTTP requests are actually event-driven. So HTTP request routing can also be taken over with ReactiveX.
+All HTTP requests are actually event-driven. Therefore, HTTP request routing can also be managed by ReactiveX.
 
-> Since we are going to add a route, it must be executed before the Server starts, such as in the `BootApplication` event listener.
+> Since we are adding routes, be sure to execute this before the Server starts, such as in the `BootApplication` event listener.
 
-Suppose we have an upload route with a lot of traffic, which needs to be buffered in memory and uploaded in batches after ten uploads.
+Assume we have an upload route with heavy traffic that needs to be buffered in memory and processed in batches after ten uploads.
 
 ```php
 <?php
@@ -242,25 +234,25 @@ class BatchSaveRoute implements ListenerInterface
 }
 ```
 
-After taking over the route, if you need to control the returned Response, you can add a third parameter to fromHttpRoute, which is the same as the normal route, such as
+After taking over the routing, if you need to control the returned Response, you can add a third parameter in `fromHttpRoute`, which is the same as the normal route writing method, such as:
 
 ```php
 $observable = Observable::fromHttpRoute('GET', '/hello-hyperf', 'App\Controller\IndexController::hello');
 ```
 
-At this point, `Observable` acts like middleware. After obtaining the observable sequence of the request object, it will continue to pass the request object to the real `Controller`.
+At this time, `Observable` acts like a middleware. After obtaining the observable sequence of the request object, it will continue to pass the request object to the real `Controller`.
 
 ### IpcSubject
 
-Swoole's inter-process communication is also event-driven. This component additionally provides the corresponding cross-process Subject version on the basis of the four [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) provided by RxPHP, which can be used to share information between processes .
+Swoole's inter-process communication is also event-driven. On the basis of the four [Subject](https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html) provided by RxPHP, this component additionally provides corresponding cross-process Subject versions, which can be used to share information between processes.
 
-For example, we need to make a WebSocket-based chat room, the requirements are as follows:
+For example, we need to create a WebSocket-based chat room with the following requirements:
 
 1. Chat room messages need to be shared between `Worker processes`.
 
-2. The last 5 messages are displayed when the user logs in for the first time.
+2. The latest 5 messages are displayed when the user logs in for the first time.
 
-We do this via a cross-process version of `ReplaySubject`.
+We implement this through the cross-process version of `ReplaySubject`.
 
 ```php
 <?php
@@ -290,8 +282,8 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
     {
         $relaySubject = make(ReplaySubject::class, ['bufferSize' => 5]);
         // The first parameter is the original RxPHP Subject object.
-        // The second parameter is the broadcast mode, the default is the whole process broadcast
-        // The third parameter is the channel ID, each channel can only receive messages from the same channel.
+        // The second parameter is the broadcast method, which defaults to full-process broadcasting
+        // The third parameter is the channel ID. Each channel can only receive messages from the same channel.
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
@@ -312,26 +304,26 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
         });
     }
 }
-
 ```
 
-For convenience, this component uses `IpcSubject` to encapsulate a "message bus" `MessageBusInterface`. Just inject `MessageBusInterface` to send and receive information shared by all processes (including custom processes). Functions such as configuration center can be easily implemented through it.
+For ease of use, this component uses `IpcSubject` to encapsulate a "message bus" `MessageBusInterface`. You only need to inject `MessageBusInterface` to send and receive information shared across all processes (including custom processes). Features such as configuration centers can be easily implemented through it.
 
 ```php
 <?php
 $bus = make(Hyperf\ReactiveX\MessageBusInterface::class);
-// whole process broadcast information
+// Broadcast information across all processes
 $bus->onNext('Hello Hyperf');
-// subscription info
+// Subscribe to information
 $bus->subscribe(function($message){
     echo $message;
 });
 ```
 
-> Since ReactiveX needs to use the event loop, please note that the ReactiveX related API must be called after the Swoole Server is started.
+> Since ReactiveX needs to use the event loop, please be sure to call ReactiveX-related APIs only after the Swoole Server is started.
 
 ## References
 
 * [Rx Chinese Documentation](https://mcxiaoke.gitbooks.io/rxdocs/content/)
-* [Rx documentation in English](http://reactivex.io/)
-* [RxPHP repository](https://github.com/ReactiveX/RxPHP)
+* [Rx English Documentation](http://reactivex.io/)
+* [RxPHP Repository](https://github.com/ReactiveX/RxPHP)
+
