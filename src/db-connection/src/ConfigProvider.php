@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Hyperf\Database\Commands\PruneCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
@@ -31,6 +32,9 @@ class ConfigProvider
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
                 MigrationRepositoryInterface::class => DatabaseMigrationRepositoryFactory::class,
+            ],
+            'commands' => [
+                PruneCommand::class,
             ],
             'listeners' => [
                 RegisterConnectionResolverListener::class,
