@@ -1,0 +1,12 @@
+# Versões
+
+## Regras de Versionamento
+
+O Hyperf usa a regra de numeração de versão `x.y.z` para nomear cada versão, como na versão 1.2.3, onde 1 é `x`, 2 é `y` e 3 é `z`. Você pode planejar suas atualizações do framework Hyperf de acordo com essas regras de versionamento.
+- `x` indica uma versão major. Quando o núcleo do Hyperf passa por um grande número de refatorações, ou quando há um grande número de mudanças destrutivas na API, será lançada uma versão `x`. Em geral, as mudanças de uma versão x não podem ser comparadas com a versão x anterior em termos de compatibilidade, mas isso não significa necessariamente que seja totalmente incompatível. A identificação específica é feita de acordo com o guia de atualização da versão correspondente.
+- `y` representa uma versão iterativa de uma funcionalidade principal. Quando algumas APIs públicas passam por mudanças destrutivas, incluindo alterações ou remoções de APIs públicas, que podem tornar a versão anterior incompatível, será lançada uma versão `y`.
+- `z` significa uma versão de correção totalmente compatível. Quando correções de bugs ou correções de segurança são feitas nas funcionalidades já existentes de cada componente, uma versão `z` é escolhida para o lançamento. Quando um BUG faz com que uma funcionalidade fique completamente inutilizável, também é possível que, ao corrigir esse BUG na versão `z`, sejam feitas mudanças destrutivas na API, mas como as funcionalidades estavam completamente indisponíveis antes, tais mudanças não serão lançadas na versão y. Além de correções de bugs, a versão `z` também pode incluir novas funcionalidades ou componentes, que não afetarão o uso do código anterior.
+
+## Atualização
+
+Quando você quiser atualizar a versão do Hyperf, se for uma atualização para as versões `x` ou `y`, siga o guia de atualização da versão correspondente na documentação. Se você quiser atualizar a versão `z`, pode executar diretamente o comando `composer update hyperf` no diretório raiz do seu projeto para atualizar os pacotes dependentes. Não recomendamos que você atualize a versão de um determinado componente separadamente, mas sim que atualize todos os componentes juntos para obter uma experiência de desenvolvimento mais consistente.
