@@ -565,6 +565,16 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine if a table exists.
+     *
+     * @deprecated will be removed in a future Laravel version
+     */
+    public function compileTableExists(): string
+    {
+        return "select * from sys.sysobjects where id = object_id(?) and xtype in ('U', 'V')";
+    }
+
+    /**
      * Create the column definition for a char type.
      */
     protected function typeChar(Fluent $column): string
