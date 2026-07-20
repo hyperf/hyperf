@@ -280,14 +280,6 @@ class GrpcClient
         }
     }
 
-    /**
-     * @deprecated since 3.1, use handleNaming instead.
-     */
-    protected function hanldeNaming(NotifySubscriberRequest $response)
-    {
-        $this->handleNaming($response);
-    }
-
     protected function serverCheck(): bool
     {
         $request = new ServerCheckRequest();

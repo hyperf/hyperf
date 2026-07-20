@@ -143,17 +143,6 @@ class PgSQLConnection extends AbstractConnection
         return $closure->call($this, $this->connection);
     }
 
-    /**
-     * @param string $needle
-     * @param string $replace
-     * @param string $haystack
-     * @deprecated ,using `strReplaceOnce` instead
-     */
-    public function str_replace_once($needle, $replace, $haystack): array|string
-    {
-        return $this->strReplaceOnce($needle, $replace, $haystack);
-    }
-
     public function strReplaceOnce(string $needle, string $replace, string $haystack): array|string
     {
         // Looks for the first occurence of $needle in $haystack
