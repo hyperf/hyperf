@@ -27,7 +27,7 @@ class LockManager
      */
     public static function initialize(string $identifier, int $type = SWOOLE_RWLOCK, string $filename = ''): void
     {
-        if ($type === SWOOLE_FILELOCK) {
+        if (defined('SWOOLE_FILELOCK') && $type === SWOOLE_FILELOCK) {
             static::$container[$identifier] = new Lock($type, $filename);
         } else {
             static::$container[$identifier] = new Lock($type);
