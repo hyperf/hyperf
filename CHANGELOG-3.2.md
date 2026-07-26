@@ -1,5 +1,9 @@
 # v3.2.2 - TBD
 
+## Removed
+
+- [#7778](https://github.com/hyperf/hyperf/pull/7778) Removed deprecated code, including `ConsumerProcess::$queue` backward compatibility, `forceIndexes()` (use `forceIndex()`), `str_replace_once()` (use `strReplaceOnce()`), `ClassLoader::loadDotenv()`, `GrpcClient::hanldeNaming()`, the watcher legacy config fallback, and the deprecated `RuleCollector`, `Tracer\Adapter\HttpClientFactory`, `Tracer\Aspect\JsonRpcAspect`, and `ViewEngine\Contract\Enumerable` aliases.
+
 ## Fixed
 
 - [#7768](https://github.com/hyperf/hyperf/pull/7768) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf` cannot support `float`.
