@@ -196,7 +196,7 @@ function test(
 
 class User extends Model
 {
-    /** @return HasMany<Post, $this> */
+    /** @return HasMany<Post, static> */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
@@ -205,13 +205,13 @@ class User extends Model
 
 class Post extends Model
 {
-    /** @return BelongsTo<User, $this> */
+    /** @return BelongsTo<User, static> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Model, static> */
     public function taggable(): MorphTo
     {
         return $this->morphTo();
