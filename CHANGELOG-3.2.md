@@ -1,5 +1,9 @@
 # v3.2.3 - TBD
 
+## Fixed
+
+- [#7782](https://github.com/hyperf/hyperf/pull/7782) Fixed incorrect @property type in generated models, such as `@property int $id` -> `@property ?int $id`.
+
 # v3.2.2 - 2026-07-26
 
 ## Removed
