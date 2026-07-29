@@ -415,14 +415,14 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
 
         if (enum_exists($cast)) {
-            return '\\' . $cast;
+            return '?\\' . $cast;
         }
 
         return match ($cast) {
-            'integer' => 'int',
-            'date', 'datetime' => $this->uses['Carbon\Carbon'] ?? '\Carbon\Carbon',
-            'json' => 'array',
-            default => $cast,
+            'integer' => '?int',
+            'date', 'datetime' => '?' . ($this->uses['Carbon\Carbon'] ?? '\Carbon\Carbon'),
+            'json' => '?array',
+            default => '?' . $cast,
         };
     }
 
