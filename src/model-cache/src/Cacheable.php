@@ -19,9 +19,6 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
 
-/**
- * @uses \Hyperf\Database\Model\Model
- */
 trait Cacheable
 {
     protected bool $useCacheBuilder = false;
