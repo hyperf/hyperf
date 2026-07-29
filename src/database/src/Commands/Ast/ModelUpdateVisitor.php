@@ -387,6 +387,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
 
         $type = $this->formatPropertyType($column['data_type'], $column['cast'] ?? null);
+        if ($this->option->isPropertyNullable()) {
+            $type = '?' . $type;
+        }
 
         $comment = $this->option->isWithComments() ? $column['column_comment'] ?? '' : '';
 
@@ -415,14 +418,14 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
 
         if (enum_exists($cast)) {
-            return '?\\' . $cast;
+            return '\\' . $cast;
         }
 
         return match ($cast) {
-            'integer' => '?int',
-            'date', 'datetime' => '?' . ($this->uses['Carbon\Carbon'] ?? '\Carbon\Carbon'),
-            'json' => '?array',
-            default => '?' . $cast,
+            'integer' => 'int',
+            'date', 'datetime' => ($this->uses['Carbon\Carbon'] ?? '\Carbon\Carbon'),
+            'json' => 'array',
+            default => $cast,
         };
     }
 
