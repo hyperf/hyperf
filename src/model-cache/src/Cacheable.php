@@ -19,6 +19,9 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
 
+/**
+ * @uses \Hyperf\Database\Model\Model
+ */
 trait Cacheable
 {
     protected bool $useCacheBuilder = false;
@@ -138,7 +141,7 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
-     * @return Builder|static
+     * @return Builder<static>
      */
     public static function query(bool $cache = false): Builder
     {
