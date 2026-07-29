@@ -106,7 +106,7 @@ trait HasRelationships
      * @param class-string<TRelatedModel> $related
      * @param string $foreignKey
      * @param string $localKey
-     * @return HasOne<TRelatedModel, $this>
+     * @return HasOne<TRelatedModel, static>
      */
     public function hasOne($related, $foreignKey = null, $localKey = null)
     {
@@ -131,7 +131,7 @@ trait HasRelationships
      * @param null|string $secondKey
      * @param null|string $localKey
      * @param null|string $secondLocalKey
-     * @return HasOneThrough<TRelatedModel, TThroughModel, $this>
+     * @return HasOneThrough<TRelatedModel, TThroughModel, static>
      */
     public function hasOneThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
     {
@@ -162,7 +162,7 @@ trait HasRelationships
      * @param string $type
      * @param string $id
      * @param string $localKey
-     * @return MorphOne<TRelatedModel, $this>
+     * @return MorphOne<TRelatedModel, static>
      */
     public function morphOne($related, $name, $type = null, $id = null, $localKey = null)
     {
@@ -186,7 +186,7 @@ trait HasRelationships
      * @param string $foreignKey
      * @param string $ownerKey
      * @param string $relation
-     * @return BelongsTo<TRelatedModel, $this>
+     * @return BelongsTo<TRelatedModel, static>
      */
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null)
     {
@@ -227,7 +227,7 @@ trait HasRelationships
      * @param string $type
      * @param string $id
      * @param string $ownerKey
-     * @return MorphTo<Model, $this>
+     * @return MorphTo<Model, static>
      */
     public function morphTo($name = null, $type = null, $id = null, $ownerKey = null)
     {
@@ -269,7 +269,7 @@ trait HasRelationships
      * @param class-string<TRelatedModel> $related
      * @param string $foreignKey
      * @param string $localKey
-     * @return HasMany<TRelatedModel, $this>
+     * @return HasMany<TRelatedModel, static>
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)
     {
@@ -299,7 +299,7 @@ trait HasRelationships
      * @param null|string $secondKey
      * @param null|string $localKey
      * @param null|string $secondLocalKey
-     * @return HasManyThrough<TRelatedModel, TThroughModel, $this>
+     * @return HasManyThrough<TRelatedModel, TThroughModel, static>
      */
     public function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
     {
@@ -330,7 +330,7 @@ trait HasRelationships
      * @param string $type
      * @param string $id
      * @param string $localKey
-     * @return MorphMany<TRelatedModel, $this>
+     * @return MorphMany<TRelatedModel, static>
      */
     public function morphMany($related, $name, $type = null, $id = null, $localKey = null)
     {
@@ -751,7 +751,7 @@ trait HasRelationships
      * @param string $foreignKey
      * @param string $ownerKey
      * @param string $relation
-     * @return BelongsTo<TRelatedModel, $this>
+     * @return BelongsTo<TRelatedModel, static>
      */
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
@@ -765,7 +765,7 @@ trait HasRelationships
      * @param string $type
      * @param string $id
      * @param string $ownerKey
-     * @return MorphTo<Model, $this>
+     * @return MorphTo<Model, static>
      */
     protected function morphEagerTo($name, $type, $id, $ownerKey)
     {
@@ -787,7 +787,7 @@ trait HasRelationships
      * @param string $type
      * @param string $id
      * @param string $ownerKey
-     * @return MorphTo<Model, $this>
+     * @return MorphTo<Model, static>
      */
     protected function morphInstanceTo($target, $name, $type, $id, $ownerKey)
     {

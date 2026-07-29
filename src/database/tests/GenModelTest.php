@@ -73,7 +73,7 @@ declare (strict_types=1);
         $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
-        $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
+        $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption()->setPropertyNullable(true));
         $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = (new Standard())->prettyPrintFile($stms);
@@ -138,11 +138,11 @@ namespace HyperfTest\\Database\\Stubs\\Model;
 
 use Carbon\\Carbon;
 /**
- * @property ?int \$id 
- * @property ?string \$name 
- * @property ?\\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
- * @property ?Carbon \$created_at 
- * @property ?Carbon \$updated_at 
+ * @property int \$id 
+ * @property string \$name 
+ * @property \\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
+ * @property Carbon \$created_at 
+ * @property Carbon \$updated_at 
  * @property-read null|Book \$book 
  */
 class UserEnum extends Model

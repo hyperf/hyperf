@@ -8,6 +8,7 @@
 
 - [#7782](https://github.com/hyperf/hyperf/pull/7782) Fixed incorrect @property type in generated models, such as `@property int $id` -> `@property ?int $id`.
 - [#7784](https://github.com/hyperf/hyperf/pull/7784) [#7785](https://github.com/hyperf/hyperf/pull/7785) Fixed phpdoc for `Hyperf\ModelCache\Cacheable`.
+- [#7786](https://github.com/hyperf/hyperf/pull/7786) Fixed phpdocs for `Hyperf\Database\Model\Builder`.
 
 # v3.2.2 - 2026-07-26
 
