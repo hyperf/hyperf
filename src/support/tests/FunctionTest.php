@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Support;
 
+use Hyperf\Support\Exception\InvalidArgumentException;
 use HyperfTest\Support\Exception\RetryException;
 use HyperfTest\Support\Stub\Bar;
 use HyperfTest\Support\Stub\Foo;
@@ -24,19 +25,15 @@ use PHPUnit\Framework\TestCase;
 use function Hyperf\Support\call;
 use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\env;
+use function Hyperf\Support\existent;
 use function Hyperf\Support\retry;
 use function Hyperf\Support\swoole_hook_flags;
 use function Hyperf\Support\value;
 
 /**
  * @internal
- * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class FunctionTest extends TestCase
 {
     public function testCall()
@@ -170,5 +167,18 @@ class FunctionTest extends TestCase
             ],
             class_uses_recursive(Bar::class)
         );
+    }
+
+    public function testExistent()
+    {
+        $this->assertSame('foo', existent('foo'));
+        $this->assertSame(0, existent(0));
+        $this->assertFalse(existent(false));
+        $this->assertSame('', existent(''));
+        $this->assertSame([], existent([]));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The value cannot be null');
+        existent(null);
     }
 }
