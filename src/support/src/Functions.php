@@ -21,6 +21,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Backoff\ArrayBackoff;
+use Hyperf\Support\Exception\InvalidArgumentException;
 use Throwable;
 use UnitEnum;
 
@@ -335,4 +336,27 @@ function enum_value($value, $default = null)
 
         default => $value ?? value($default),
     };
+}
+
+/**
+ * Ensure the given value is not null.
+ *
+ * This method is used to narrow a possibly-null value to a non-null value
+ * by throwing an exception when null is encountered.
+ *
+ * @template T
+ * @param null|T $value
+ * @return T
+ *
+ * @phpstan-assert !null $value
+ *
+ * @throws InvalidArgumentException if $value is null
+ */
+function existent(mixed $value): mixed
+{
+    if ($value === null) {
+        throw new InvalidArgumentException('The value cannot be null');
+    }
+
+    return $value;
 }
