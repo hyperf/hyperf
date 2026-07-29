@@ -361,7 +361,7 @@ trait HasRelationships
      * @param string $relatedKey
      * @param string $relation
      *
-     * @return BelongsToMany<TRelatedModel, $this, Pivot, 'pivot'>
+     * @return BelongsToMany<TRelatedModel, static, Pivot, 'pivot'>
      */
     public function belongsToMany(
         $related,
@@ -420,7 +420,7 @@ trait HasRelationships
      * @param string $parentKey
      * @param string $relatedKey
      * @param bool $inverse
-     * @return MorphToMany<TRelatedModel, $this, MorphPivot, 'pivot'>
+     * @return MorphToMany<TRelatedModel, static, MorphPivot, 'pivot'>
      */
     public function morphToMany(
         $related,
@@ -480,7 +480,7 @@ trait HasRelationships
      * @param string $relatedPivotKey
      * @param string $parentKey
      * @param string $relatedKey
-     * @return MorphToMany<TRelatedModel, $this, MorphPivot, 'pivot'>
+     * @return MorphToMany<TRelatedModel, static, MorphPivot, 'pivot'>
      */
     public function morphedByMany(
         $related,
