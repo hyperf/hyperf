@@ -341,7 +341,7 @@ class Builder
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
-     * @return $this
+     * @return static<TModel>
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
@@ -362,7 +362,7 @@ class Builder
      * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
-     * @return $this
+     * @return static<TModel>
      */
     public function orWhere($column, $operator = null, $value = null)
     {
@@ -379,7 +379,7 @@ class Builder
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param string $column
-     * @return $this
+     * @return static<TModel>
      */
     public function latest($column = null)
     {
@@ -396,7 +396,7 @@ class Builder
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param string $column
-     * @return $this
+     * @return static<TModel>
      */
     public function oldest($column = null)
     {
@@ -1093,7 +1093,7 @@ class Builder
      * Set the relationships that should be eager loaded.
      *
      * @param mixed $relations
-     * @return $this
+     * @return static<TModel>
      */
     public function with($relations)
     {
@@ -1108,7 +1108,7 @@ class Builder
      * Prevent the specified relations from being eager loaded.
      *
      * @param mixed $relations
-     * @return $this
+     * @return static<TModel>
      */
     public function without($relations)
     {
@@ -1156,7 +1156,7 @@ class Builder
      * Set the underlying query builder instance.
      *
      * @param QueryBuilder $query
-     * @return $this
+     * @return static<TModel>
      */
     public function setQuery($query)
     {
@@ -1188,7 +1188,7 @@ class Builder
     /**
      * Set the relationships being eagerly loaded.
      *
-     * @return $this
+     * @return static<TModel>
      */
     public function setEagerLoads(array $eagerLoad)
     {
