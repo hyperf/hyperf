@@ -81,13 +81,13 @@ declare (strict_types=1);
 namespace HyperfTest\Database\Stubs\Model;
 
 /**
- * @property int $id 
- * @property int $count 
- * @property string $float_num 
- * @property string $str 
- * @property string $json 
- * @property \Carbon\Carbon $created_at 
- * @property string $updated_at 
+ * @property ?int $id 
+ * @property ?int $count 
+ * @property ?string $float_num 
+ * @property ?string $str 
+ * @property ?string $json 
+ * @property ?\Carbon\Carbon $created_at 
+ * @property ?string $updated_at 
  */
 class UserExtEmpty extends Model
 {
@@ -138,11 +138,11 @@ namespace HyperfTest\\Database\\Stubs\\Model;
 
 use Carbon\\Carbon;
 /**
- * @property int \$id 
- * @property string \$name 
- * @property \\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
- * @property Carbon \$created_at 
- * @property Carbon \$updated_at 
+ * @property ?int \$id 
+ * @property ?string \$name 
+ * @property ?\\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
+ * @property ?Carbon \$created_at 
+ * @property ?Carbon \$updated_at 
  * @property-read null|Book \$book 
  */
 class UserEnum extends Model
