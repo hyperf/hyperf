@@ -16,6 +16,7 @@ use Exception;
 use Hyperf\Support\Exception\InvalidArgumentException;
 use HyperfTest\Support\Exception\RetryException;
 use HyperfTest\Support\Stub\Bar;
+use HyperfTest\Support\Stub\BarInterface;
 use HyperfTest\Support\Stub\Foo;
 use HyperfTest\Support\Stub\FooClosure;
 use HyperfTest\Support\Stub\Traits\BarTrait;
@@ -199,6 +200,10 @@ class FunctionTest extends TestCase
     {
         $exception = new Exception();
         $this->assertSame($exception, assert_instanceof($exception, Throwable::class));
+
+        assert_instanceof(new Bar(), Foo::class);
+        assert_instanceof(new Bar(), BarInterface::class);
+        assert_instanceof(new Foo(), BarInterface::class);
     }
 
     public function testAssertInstanceofThrowsExceptionForNonInstance()
