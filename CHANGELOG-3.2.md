@@ -1,5 +1,9 @@
 # v3.2.4 - TBD
 
+## Added
+
+- [#7792](https://github.com/hyperf/hyperf/pull/7792) Added function `Hyperf\Support\assert_instanceof()`.
+
 # v3.2.3 - 2026-07-29
 
 ## Added
