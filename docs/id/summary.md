@@ -15,6 +15,7 @@
   * [Mulai Cepat](id/quick-start/overview.md)
   * [FAQ](id/quick-start/questions.md)
   * [Hal Penting](id/quick-start/important.md)
+* [Plugin IDE](id/quick-start/plugins.md)
   * [Video Tutorial](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * Arsitektur Inti
