@@ -4,6 +4,10 @@
 
 - [#7792](https://github.com/hyperf/hyperf/pull/7792) Added function `Hyperf\Support\assert_instanceof()`.
 
+## Optimized
+
+- [#7790](https://github.com/hyperf/hyperf/pull/7790) Support nacos v1 v2 and v3 for reading hosts from instance list.
+
 # v3.2.3 - 2026-07-29
 
 ## Added
