@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#7764](https://github.com/hyperf/hyperf/pull/7764) Fixed bug that `Hyperf\Coordinator\Timer::tick()` caps the callback by the default 10s timeout of `Hyperf\Coroutine\wait()`.
+- [#7791](https://github.com/hyperf/hyperf/pull/7791) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf()` cannot support the latest version for `brick/math`.
 
 ## Optimized
 
