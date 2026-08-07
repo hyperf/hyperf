@@ -360,3 +360,24 @@ function existent(mixed $value): mixed
 
     return $value;
 }
+
+/**
+ * Assert that a value implements a given interface or class.
+ *
+ * @template T of object
+ * @param mixed $value the value to check
+ * @param class-string<T> $interface fully qualified interface or class name
+ *
+ * @return T ensured instance of the given interface/class
+ * @throws InvalidArgumentException if $value is not an instance of $interface
+ */
+function assert_instanceof(mixed $value, string $interface): mixed
+{
+    if (! $value instanceof $interface) {
+        throw new InvalidArgumentException(
+            sprintf('Expected instance of %s, got %s', $interface, get_debug_type($value))
+        );
+    }
+
+    return $value;
+}
