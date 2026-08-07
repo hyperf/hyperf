@@ -1,8 +1,15 @@
-# v3.1.71 - TBD
+# v3.1.72 - TBD
+
+# v3.1.71 - 2026-08-07
 
 ## Fixed
 
 - [#7764](https://github.com/hyperf/hyperf/pull/7764) Fixed bug that `Hyperf\Coordinator\Timer::tick()` caps the callback by the default 10s timeout of `Hyperf\Coroutine\wait()`.
+- [#7791](https://github.com/hyperf/hyperf/pull/7791) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf()` cannot support the latest version for `brick/math`.
+
+## Optimized
+
+- [#7791](https://github.com/hyperf/hyperf/pull/7791) Optimized the type of `Content-Type` to `string` from `int` for `Hyperf\Tracer\Adapter\Reporter\HttpClientFactory`.
 
 # v3.1.70 - 2026-06-15
 
