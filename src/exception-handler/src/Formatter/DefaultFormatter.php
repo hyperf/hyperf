@@ -18,6 +18,10 @@ class DefaultFormatter implements FormatterInterface
 {
     public function format(Throwable $throwable): string
     {
+        $lineMapFixer = 'Hyperf\Di\Aop\LineMapFixer';
+        if (class_exists($lineMapFixer)) {
+            return $lineMapFixer::format($throwable);
+        }
         return (string) $throwable;
     }
 }

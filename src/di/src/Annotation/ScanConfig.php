@@ -31,7 +31,8 @@ class ScanConfig
         private array $ignoreAnnotations = [],
         private array $globalImports = [],
         private array $collectors = [],
-        private array $classMap = []
+        private array $classMap = [],
+        private bool $lineMap = true
     ) {
     }
 
@@ -93,8 +94,27 @@ class ScanConfig
             $config['ignore_annotations'] ?? [],
             $config['global_imports'] ?? [],
             $config['collectors'] ?? [],
-            $config['class_map'] ?? []
+            $config['class_map'] ?? [],
+            static::resolveLineMap($config['line_map'] ?? true)
         );
+    }
+
+    public function getLineMap(): bool
+    {
+        return $this->lineMap;
+    }
+
+    /**
+     * Resolve the line map config value. The boolean value is wrapped
+     * into an array by the `allocateConfigValue()`, so it should be
+     * unwrapped first.
+     */
+    private static function resolveLineMap(array|bool $lineMap): bool
+    {
+        if (is_array($lineMap)) {
+            $lineMap = end($lineMap);
+        }
+        return (bool) $lineMap;
     }
 
     private static function initConfigByFile(string $configDir): array
