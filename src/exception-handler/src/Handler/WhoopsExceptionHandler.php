@@ -16,6 +16,7 @@ use Hyperf\Context\Context;
 use Hyperf\Context\RequestContext;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
+use Hyperf\ExceptionHandler\Whoops\LineMapInspectorFactory;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Stringable\Str;
 use Swow\Psr7\Message\ResponsePlusInterface;
@@ -40,6 +41,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         $whoops = new Run();
+        $whoops->setInspectorFactory(new LineMapInspectorFactory());
         [$handler, $contentType] = $this->negotiateHandler();
 
         $whoops->pushHandler($handler);
@@ -47,6 +49,10 @@ class WhoopsExceptionHandler extends ExceptionHandler
         ob_start();
         $whoops->{RunInterface::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
+        $lineMapFixer = 'Hyperf\Di\Aop\LineMapFixer';
+        if (class_exists($lineMapFixer)) {
+            $content = $lineMapFixer::formatText($throwable, (string) $content);
+        }
         return $response
             ->setStatus(500)
             ->addHeader('Content-Type', $contentType)

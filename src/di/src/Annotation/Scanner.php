@@ -85,7 +85,9 @@ class Scanner
         }
 
         $lastCacheModified = file_exists($this->path) ? $this->filesystem->lastModified($this->path) : 0;
-        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
+        if ($lastCacheModified > 0
+            && $this->scanConfig->isCacheable()
+            && ProxyManager::isLineMapCacheValid($proxyDir, $this->scanConfig->getLineMap())) {
             return $this->deserializeCachedScanData($collectors);
         }
 
@@ -127,7 +129,7 @@ class Scanner
 
         // Get the class map of Composer loader
         $classMap = array_merge($reflectionClassMap, $classMap);
-        $proxyManager = new ProxyManager($classMap, $proxyDir);
+        $proxyManager = new ProxyManager($classMap, $proxyDir, $this->scanConfig->getLineMap());
         $proxies = $proxyManager->getProxies();
         $aspectClasses = $proxyManager->getAspectClasses();
 

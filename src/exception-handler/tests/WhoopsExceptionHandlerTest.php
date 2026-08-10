@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 use function json_decode;
 
@@ -39,6 +40,38 @@ class WhoopsExceptionHandlerTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeader('Content-Type')[0]);
+    }
+
+    public function testPlainTextWhoopsResolvesProxyLocationWithoutModifyingThrowable(): void
+    {
+        Context::set(ServerRequestInterface::class, new Request('GET', '/'));
+        $directory = sys_get_temp_dir() . '/hyperf-whoops-line-map-' . uniqid();
+        mkdir($directory);
+        $proxyFile = $directory . '/App_WhoopsLineMapStub.proxy.php';
+        $originFile = $directory . '/WhoopsLineMapStub.php';
+        file_put_contents($proxyFile, "<?php\n\nthrow new \\RuntimeException('line map');\n");
+        file_put_contents($directory . '/line-map.php', sprintf(
+            "<?php\nreturn ['maps' => ['App\\\\WhoopsLineMapStub' => ['file' => %s, 'ranges' => [[3, 3, 42, 42]], 'methods' => []]]];\n",
+            var_export($originFile, true)
+        ));
+
+        try {
+            require $proxyFile;
+            $this->fail('The proxy fixture must throw an exception.');
+        } catch (RuntimeException $exception) {
+            $handler = new WhoopsExceptionHandler();
+            $response = $handler->handle($exception, new Response());
+            $content = (string) $response->getBody();
+
+            $this->assertStringContainsString($originFile . ' on line 42', $content);
+            $this->assertStringNotContainsString('WhoopsLineMapStub.proxy.php', $content);
+            $this->assertSame(realpath($proxyFile), $exception->getFile());
+            $this->assertSame(3, $exception->getLine());
+        } finally {
+            @unlink($proxyFile);
+            @unlink($directory . '/line-map.php');
+            @rmdir($directory);
+        }
     }
 
     public function testHtmlWhoops()

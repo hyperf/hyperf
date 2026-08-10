@@ -33,9 +33,11 @@ use HyperfTest\Di\Stub\FooAspect;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
+use HyperfTest\Di\Stub\ThrowingStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * @internal
@@ -78,6 +80,56 @@ class Foo
     }
     use \Hyperf\Di\Aop\ProxyTrait;
 }', $code);
+    }
+
+    public function testLineMapOnlyCollectsMethodsFromTheTargetClass(): void
+    {
+        $ast = new Ast();
+        $stmts = $ast->parse(
+            <<<'PHP'
+<?php
+namespace App;
+
+class First
+{
+    public function duplicated() {}
+    public function firstOnly() {}
+}
+
+class Second
+{
+    public function duplicated() {}
+    public function secondOnly() {}
+}
+PHP
+        );
+        $collectMethods = new ReflectionMethod(Ast::class, 'collectMethods');
+
+        $methods = $collectMethods->invoke($ast, $stmts, 'App\First');
+
+        $this->assertSame(['duplicated', 'firstOnly'], array_keys($methods));
+    }
+
+    public function testLineMapSupportsPhpParserV5ThrowExpression(): void
+    {
+        $ast = new Ast();
+        $proxyCode = $ast->proxy(ThrowingStub::class);
+        $map = $ast->buildLineMap(ThrowingStub::class, $proxyCode);
+        $originLines = file((new ReflectionClass(ThrowingStub::class))->getFileName());
+        $throwLine = 0;
+        foreach ($originLines as $index => $line) {
+            if (str_contains($line, 'throw new RuntimeException')) {
+                $throwLine = $index + 1;
+                break;
+            }
+        }
+
+        $this->assertStringNotContainsString('__hyperf_exception__', $proxyCode);
+        $this->assertGreaterThan(0, $throwLine);
+        $this->assertNotEmpty(array_filter(
+            $map['ranges'],
+            static fn (array $range) => $range[2] <= $throwLine && $range[3] >= $throwLine
+        ));
     }
 
     public function testMagicConstDirAndFile()
