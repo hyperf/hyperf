@@ -13,15 +13,20 @@ declare(strict_types=1);
 namespace HyperfTest\Logger\Handler;
 
 use DateTimeImmutable;
+use ErrorException;
 use Hyperf\Logger\Handler\StreamHandler;
 use LogicException;
 use Monolog\Level;
 use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use RuntimeException;
 use stdClass;
+use Throwable;
 use UnexpectedValueException;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
@@ -275,6 +280,43 @@ class StreamHandlerTest extends TestCase
     {
         $handler = new StreamHandler($this->tmpDir . '/test_chunk.log');
         $this->assertGreaterThan(0, $handler->getStreamChunkSize());
+    }
+
+    /**
+     * Under coroutine concurrency, several coroutines may pass the `is_dir()`
+     * guard inside `createDir()` before any of them actually creates the
+     * directory. The losing coroutines then fail `mkdir()` with a "File exists"
+     * error. When a warning-to-exception error handler is active, that failure
+     * surfaces as a thrown exception which `createDir()` must swallow.
+     */
+    public function testCreateDirSwallowsFileExistsExceptionUnderConcurrency(): void
+    {
+        set_error_handler(static function ($level, $message, $file = '', $line = 0): bool {
+            throw new ErrorException($message, 0, $level, $file, $line);
+        });
+        try {
+            $dir = $this->tmpDir . '/race_exists';
+            $file = $dir . '/test.log';
+            $this->assertDirectoryDoesNotExist($dir);
+
+            $fns = [];
+            for ($i = 0; $i < 10; ++$i) {
+                $handler = new StreamHandler($file);
+
+                $method = new ReflectionMethod(StreamHandler::class, 'createDir');
+                $method->setAccessible(true);
+
+                $fn = fn () => $method->invoke($handler, $file);
+
+                $fns[] = $fn;
+            }
+
+            parallel($fns);
+
+            $this->assertTrue(is_dir($dir));
+        } finally {
+            restore_error_handler();
+        }
     }
 
     private function removeDir(string $dir): void

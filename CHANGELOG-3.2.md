@@ -7,6 +7,7 @@
 ## Optimized
 
 - [#7790](https://github.com/hyperf/hyperf/pull/7790) Support nacos v1 v2 and v3 for reading hosts from instance list.
+- [#7796](https://github.com/hyperf/hyperf/pull/7796) Optimized race condition in StreamHandler when creating log directory under coroutine concurrency.
 
 # v3.2.3 - 2026-07-29
 
