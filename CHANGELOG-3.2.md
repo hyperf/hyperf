@@ -1,5 +1,9 @@
 # v3.2.5 - TBD
 
+## Added
+
+- [#7301](https://github.com/hyperf/hyperf/issues/7301) Added option `session.options.cookie_secure` to configure the Secure attribute of session cookies.
+
 # v3.2.4 - 2026-08-10
 
 ## Added
