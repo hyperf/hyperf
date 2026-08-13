@@ -1,18 +1,18 @@
-# I18n
+# Internationalization
 
-Hyperf's internationalization support is very friendly, allowing your project to support multiple languages.
+Hyperf provides very friendly support for internationalization, allowing your project to support multiple languages.
 
-# Install
+# Installation
 
 ```bash
 composer require hyperf/translation
 ```
 
-> This component is an independent component with no framework-related dependencies, and can be independently reused for other projects or frameworks.
+> This component is an independent component with no framework-related dependencies and can be independently reused in other projects or frameworks.
 
-# Language file
+# Language Files
 
-The language files of Hyperf are placed under `storage/languages` by default, you can also change the folder of language files in `config/autoload/translation.php`, each language corresponds to a subfolder, such as `en ` refers to the English language file, `zh_CN` refers to the simplified Chinese language file, you can create a new language folder and the language file in it according to your actual needs. An example is as follows:
+By default, Hyperf's language files are placed under `storage/languages`. You can also change the folder for language files in `config/autoload/translation.php`. Each language corresponds to a subdirectory, for example, `en` refers to the English language file, and `zh_CN` refers to the Simplified Chinese language file. You can create new language folders and language files in them according to your actual needs. An example is as follows:
 
 ```
 /storage
@@ -23,7 +23,7 @@ The language files of Hyperf are placed under `storage/languages` by default, yo
             messages.php
 ```
 
-All language files return an array whose keys are strings:
+All language files return an array, where the keys of the array are strings:
 
 ```php
 <?php
@@ -34,27 +34,27 @@ return [
 ];
 ```
 
-## Configure locale
+## Configure Language Environment
 
-### Configure default locale
+### Configure Default Language Environment
 
-The relevant configuration of the internationalization component is set in the `config/autoload/translation.php` configuration file, you can modify it according to your actual needs.
+All configurations related to the internationalization component are set in the `config/autoload/translation.php` configuration file, which you can modify according to your actual needs.
 
 ```php
 <?php
 // config/autoload/translation.php
 
 return [
-    // default language
+    // Default language
     'locale' => 'zh_CN',
-    // Fallback language, when the language text of the default language is not provided, the corresponding language text of the fallback language will be used
+    // Fallback language, used when the language text of the default language is not provided
     'fallback_locale' => 'en',
     // Folder where language files are stored
     'path' => BASE_PATH . '/storage/languages',
 ];
 ```
 
-### Configure a temporary locale
+### Configure Temporary Language Environment
 
 ```php
 <?php
@@ -69,17 +69,17 @@ class FooController
     
     public function index()
     {
-        // Only valid for the current request or coroutine lifetime
+        // Only valid within the current request or coroutine lifecycle
         $this->translator->setLocale('zh_CN');
     }
 }
 ```
 
-# Translate string
+# Translating Strings
 
 ## Translate via TranslatorInterface
 
-String translation can be done directly by injecting `Hyperf\Contact\TranslatorInterface` and calling the instance's `trans` method:
+You can directly inject `Hyperf\Contract\TranslatorInterface` and call the `trans` method of the instance to implement string translation:
 
 ```php
 <?php
@@ -99,19 +99,19 @@ class FooController
 }
 ```
 
-## Translate via global function
+## Translate via Global Function
 
-You can also translate strings through the global functions `__()` or `trans()`.
-The first parameter of the function takes the form of `key` (referring to the key using the translation string as the key) or `file.key`.
+You can also use the global functions `__()` or `trans()` to translate strings.
+The first argument of the function uses the `key` (referring to the key used as the translated string) or the `file.key` format.
 
 ```php
 echo __('messages.welcome');
 echo trans('messages.welcome');
 ```
 
-# Define placeholders in translation strings
+# Defining Placeholders in Translated Strings
 
-You can also define placeholders in language strings, all placeholders are prefixed with `:`. For example, using the username as a placeholder:
+You can also define placeholders in language strings, where all placeholders are prefixed with `:`. For example, use the username as a placeholder:
 
 ```php
 <?php
@@ -122,34 +122,34 @@ return [
 ];
 ```
 
-Replace the placeholder using the second parameter of the function:
+Use the second argument of the function to replace the placeholder:
 
 ```php
 echo __('messages.welcome', ['name' => 'Hyperf']);
 ```
 
-If the placeholder is all capital letters, or the first letter is capitalized. Then the translated string will also be in the corresponding uppercase form:
+If the placeholder is all uppercase, or the first letter is uppercase, the translated string will also be in the corresponding uppercase form:
 
 ```php
 'welcome' => 'Welcome, :NAME', // Welcome, HYPERF
 'goodbye' => 'Goodbye, :Name', // Goodbye, Hyperf
 ```
 
-# Handle complex numbers
+# Handling Plurals
 
-Plural rules are different in different languages, which may not be of great concern in Chinese, but when translating other languages, we need to deal with plural forms of words. We can use the `"pipe"` character, which can be used to distinguish singular and plural forms of strings:
+Different languages have different plural rules. In Chinese, we might not pay much attention to this, but we need to handle plural forms when translating other languages. We can use the `「pipe」` character to distinguish between the singular and plural forms of a string:
 
 ```php
 'apples' => 'There is one apple|There are many apples',
 ```
 
-You can also specify a range of numbers to create more complex plural rules:
+You can also specify numerical ranges to create more complex plural rules:
 
 ```php
 'apples' => '{0} There are none|[1,19] There are some|[20,*] There are many',
 ```
 
-Using the `"pipe"` character, once the plural rules have been defined, the global function `trans_choice` can be used to obtain a string literal for a given `"amount"`. In the following example, since the number is greater than `1`, the plural form of the translation string is returned:
+After defining the plural rules using the `「pipe」` character, you can use the global function `trans_choice` to obtain the string text for a given `「quantity」`. In the example below, because the quantity is greater than `1`, the plural form of the translated string is returned:
 
 ```php
 echo trans_choice('messages.apples', 10);

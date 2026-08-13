@@ -2,43 +2,43 @@
 
 ## Foreword
 
-> [hyperf/validation](https://github.com/hyperf/validation) is derived from [illuminate/validation](https://github.com/illuminate/validation), we've made some modifications to it, but kept the same validation rules. Thanks to the Laravel development team for implementing such a powerful and easy-to-use validator component.
+> [hyperf/validation](https://github.com/hyperf/validation) is derived from [illuminate/validation](https://github.com/illuminate/validation). We have made some modifications to it but kept the same validation rules. Here, we would like to thank the Laravel development team for implementing such a powerful and easy-to-use validator component.
 
 ## Installation
 
-### Import component package
+### Introduce Component Package
 
 ```bash
 composer require hyperf/validation
 ```
 
-### Add middleware
+### Add Middleware
 
-You need to add a global middleware `Hyperf\Validation\Middleware\ValidationMiddleware` configuration to the `config/autoload/middlewares.php` configuration file for the server that uses the validator component. The following is `http` server plus the corresponding examples of global middleware:
+You need to add a global middleware configuration of `Hyperf\Validation\Middleware\ValidationMiddleware` to the `config/autoload/middlewares.php` configuration file for the Server using the validator component. Below is an example of adding the corresponding global middleware to the `http` Server:
 
 ```php
 <?php
 return [
-    // The following http string corresponds to the value corresponding to the name attribute of each server in config/autoload/server.php, which means that the corresponding middleware configuration is only applied to the server
+    // The http string below corresponds to the value of the name attribute of each server in config/autoload/server.php, meaning the corresponding middleware configuration only applies to that Server
     'http' => [
-        // Configure your global middleware in the array, the order is based on the order of the array
+        // Configure your global middleware in the array, the order depends on the order of this array
         \Hyperf\Validation\Middleware\ValidationMiddleware::class
-        // Other middleware goes here
+        // Other middleware hidden here
     ],
 ];
 ```
 
-> If the global middleware is not set correctly, the use of `FormRequest` may be invalid.
+> If the global middleware is not set correctly, the usage of `FormRequest` may be invalid.
 
-### Add exception handler
+### Add Exception Handler
 
-The exception handler mainly deals with `Hyperf\Validation\ValidationException` exceptions. We provide a `Hyperf\Validation\ValidationExceptionHandler` for processing. You need to manually configure this exception handler to your project’s by adding it to the `config/autoload/exceptions.php` file, of course, you can also customize your exception handler.
+The exception handler mainly handles the `Hyperf\Validation\ValidationException` exception. We provide a `Hyperf\Validation\ValidationExceptionHandler` to handle it. You need to manually configure this exception handler into your project's `config/autoload/exceptions.php` file. Of course, you can also customize your exception handler.
 
 ```php
 <?php
 return [
     'handler' => [
-        // This corresponds to your current server name
+        // Corresponds to your current Server name
         'http' => [
             \Hyperf\Validation\ValidationExceptionHandler::class,
         ],
@@ -46,25 +46,25 @@ return [
 ];
 ```
 
-### Publish validator language files
+### Publish Validator Language Files
 
-Due to the multi-language function, this component relies on the [hyperf/translation](https://github.com/hyperf/translation) component. If you have not added the configuration file of the translation component, you can execute the following command to publish the configuration file of the translation component. If the configuration already exists, you only need to publish the language file of the validator component:
+Due to the existence of multi-language functionality, this component depends on the [hyperf/translation](https://github.com/hyperf/translation) component. If you have not added a configuration file for the Translation component, please execute the following command to publish the configuration file for the Translation component. If you have already published or manually added it, just publish the language files for the validator component:
 
-Publish the files of the translation component:
+Publish Translation component files:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/translation
 ```
 
-Publish the files of the validator component:
+Publish validator component files:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/validation
 ```
 
-Executing the above command will publish the validator's language file `validation.php` to the corresponding language file directory, `en` refers to the English language file, and `zh_CN` refers to the simplified Chinese language file. You can customize the contents of the file.
+Executing the above command will publish the validator's language file `validation.php` to the corresponding language file directory, where `en` refers to the English language file and `zh_CN` refers to the Simplified Chinese language file. You can modify and customize the content of the `validation.php` file according to your actual needs.
 
-```
+```shell
 /storage
     /languages
         /en
@@ -74,18 +74,18 @@ Executing the above command will publish the validator's language file `validati
 
 ```
 
-## Use
+## Usage
 
-### Form request validation
+### Form Request Validation
 
-For complex validation scenarios, you can create a `FormRequest`. The form request is a custom request class that contains validation logic. You can create a form validation class called FooRequest by executing the following command:
+For complex validation scenarios, you can create a `FormRequest`. A Form Request is a custom request class that contains validation logic. You can create a form validation class named `FooRequest` by executing the following command:
 
 ```bash
 php bin/hyperf.php gen:request FooRequest
 ```
 
-The form validation class will be generated in the `app\Request` directory. If the directory does not exist, the directory will be created automatically when running the command.
-Next we add some validation rules to the `rules` method of this class:
+The form validation class will be generated in the `app\Request` directory. If the directory does not exist, it will be automatically created when running the command.
+Next, we add some validation rules to the `rules` method of that class:
 
 ```php
 /**
@@ -100,7 +100,7 @@ public function rules(): array
 }
 ```
 
-So, how does the validation rule take effect? All you have to do is to declare the request class as a parameter through type hints in the controller method. This way, the incoming form request will be validated before the controller method is called, which means you don’t need to write any validation logic in the controller and decouple the two parts of the code well:
+So, how does the validation rule take effect? All you need to do is declare the request class as a parameter in the controller method using type hinting. This way, the incoming form request will be validated before the controller method is called, meaning you don't need to write any validation logic in the controller, which decouples these two parts of the code very well:
 
 ```php
 <?php
@@ -112,36 +112,36 @@ class IndexController
 {
     public function index(FooRequest $request)
     {
-        // The incoming request is verified...
-
-        // Get the verified data...
+        // Incoming request passed validation...
+        
+        // Get validated data...
         $validated = $request->validated();
     }
 }
 ```
 
-If the validation fails, the validator will throw a `Hyperf\Validation\ValidationException` exception. You can handle the exception by adding a custom exception handling class. At the same time, we also provide a `Hyperf\Validation\ValidationExceptionHandler` exception handler to handle the exception, you can also directly configure the exception handler provided by us to handle it. However, the default exception handler may not be able to meet your needs. You can customize the behavior after validation failure by customizing the exception handler according to the situation.
+If validation fails, the validator will throw a `Hyperf\Validation\ValidationException` exception. You can handle this exception by adding a custom exception handling class. At the same time, we also provide a `Hyperf\Validation\ValidationExceptionHandler` exception handler to handle this exception, which you can also directly configure. However, the default exception handler may not meet your needs, so you can customize the behavior after validation failure by customizing the exception handler as needed.
 
-#### Custom error message
+#### Custom Error Messages
 
-You can customize the error messages used by the form request by overriding the `messages` method. This method should return an array of attribute/rule pairs and their corresponding error messages:
+You can customize the error messages used by the form request by overriding the `messages` method, which should return an array of attribute/rule pairs and their corresponding error messages:
 
 ```php
 /**
- * Get the error message of the defined validation rule
+ * Get custom error messages for defined validation rules
  */
 public function messages(): array
 {
     return [
         'foo.required' => 'foo is required',
-        'bar.required' => 'bar is required',
+        'bar.required'  => 'bar is required',
     ];
 }
 ```
 
-#### Custom authentication attributes
+#### Custom Validation Attributes
 
-If you want to replace the `:attribute` part of the authentication message with a custom attribute name, you can override the `attributes` method to specify a custom name. This method will return an array of attribute names and corresponding custom name key-value pairs:
+If you want to replace the `:attribute` part in the validation message with a custom attribute name, you can specify a custom name by overriding the `attributes` method. This method returns an array of attribute name and custom name key-value pairs:
 
 ```php
 /**
@@ -155,9 +155,9 @@ public function attributes(): array
 }
 ```
 
-### Creating a validator manually
+### Manually Creating Validators
 
-If you don't want to use the automatic validation function of `FormRequest`, you can obtain the validator factory class by injecting the `ValidatorFactoryInterface` interface class, and then manually create a validator instance through the `make` method:
+If you do not want to use the automatic validation function of `FormRequest`, you can obtain the validator factory class by injecting the `ValidatorFactoryInterface` interface class, and then manually create a validator instance using the `make` method:
 
 ```php
 <?php
@@ -189,18 +189,18 @@ class IndexController
 
         if ($validator->fails()){
             // Handle exception
-            $errorMessage = $validator->errors()->first();
+            $errorMessage = $validator->errors()->first();  
         }
         // Do something
     }
 }
 ```
 
-The first parameter passed to the `make` method is the data to be verified, and the second parameter is the validation rule for the data.
+The first argument passed to the `make` method is the data that needs to be validated, and the second argument is the validation rule for that data.
 
-#### Custom error message
+#### Custom Error Messages
 
-If necessary, you can also use custom error messages instead of default values ​​for validation. There are several ways to specify custom information. First, you can pass custom information as the third parameter to the `make` method:
+If necessary, you can also use custom error messages to replace the default values for validation. There are several ways to specify custom messages. First, you can pass the custom message as the third argument to the `make` method:
 
 ```php
 <?php
@@ -211,20 +211,20 @@ $messages = [
 $validator = $this->validationFactory->make($request->all(), $rules, $messages);
 ```
 
-In this example, the `:attribute` placeholder will be replaced by the actual name of the field under validation. In addition, you can also use other placeholders in the validation message. E.g:
+In this example, the `:attribute` placeholder will be replaced by the actual name of the validation field. In addition, you can use other placeholders in the validation message. For example:
 
 ```php
 $messages = [
-    'same' => 'The :attribute and :other must match.',
-    'size' => 'The :attribute must be exactly :size.',
-    'between' => 'The :attribute value :input is not between :min-:max.',
-    'in' => 'The :attribute must be one of the following types: :values',
+    'same'    => 'The :attribute and :other must match.',
+    'size'    => 'The :attribute must be exactly :size.',
+    'between' => 'The :attribute value :input is not between :min - :max.',
+    'in'      => 'The :attribute must be one of the following types: :values',
 ];
 ```
 
-#### Specify custom information for a given attribute
+#### Specify Custom Message for a Given Attribute
 
-Sometimes you may only want to customize error messages for specific fields. Just add `.` after the field name to specify the validation rules with custom messages:
+Sometimes you may only want to customize the error message for a specific field. Just use a "dot" after the attribute name to specify the validation rule:
 
 ```php
 $messages = [
@@ -232,13 +232,13 @@ $messages = [
 ];
 ```
 
-#### Specify custom information in the PHP file
+#### Specify Custom Messages in PHP Files
 
-In most cases, you may specify custom information in the file instead of passing them directly to the `Validator`. To do this, you need to put your information in the `custom` array in the `storage/languages/xx/validation.php` language file.
+In most cases, you might specify custom messages in a file rather than passing them directly to the `Validator`. To do this, place your messages in the `custom` array within the `storage/languages/xx/validation.php` language file.
 
-#### Specify custom attributes in PHP files
+#### Specify Custom Attributes in PHP Files
 
-If you want to replace the `:attribute` part of the validation information with a custom attribute name, you can specify the custom name in the `attributes` array of the `storage/languages/xx/validation.php` language file:
+If you wish to replace the `:attribute` part of the validation message with a custom attribute name, you can specify a custom name in the `attributes` array of the `storage/languages/xx/validation.php` language file:
 
 ```php
 'attributes' => [
@@ -246,9 +246,9 @@ If you want to replace the `:attribute` part of the validation information with 
 ],
 ```
 
-### Post-validation hook
+### After Validation Hooks
 
-The validator also allows you to add callback functions that are allowed after the validation is successful, so that you can perform the next step of validation, and even add more error messages to the message collection. To use it, just use the `after` method on the validation instance:
+The validator also allows you to add callback functions that are allowed after successful validation, so that you can perform further validation, or even add more error messages to the message collection. Simply use the `after` method on the validation instance:
 
 ```php
 <?php
@@ -280,10 +280,10 @@ class IndexController
 
         $validator->after(function ($validator) {
             if ($this->somethingElseIsInvalid()) {
-                $validator->errors()->add('field','Something is wrong with this field!');
+                $validator->errors()->add('field', 'Something is wrong with this field!');
             }
         });
-
+        
         if ($validator->fails()) {
             //
         }
@@ -291,11 +291,11 @@ class IndexController
 }
 ```
 
-## Handling error messages
+## Handling Error Messages
 
-Calling the `errors` method through the `Validator` instance returns a `Hyperf\Support\MessageBag` instance, which has various convenient methods for handling error messages.
+By calling the `errors` method through the `Validator` instance, a `Hyperf\Support\MessageBag` instance is returned, which has various convenient methods for handling error messages.
 
-### View the first error message of a specific field
+### View the First Error Message for a Specific Field
 
 To view the first error message for a specific field, you can use the `first` method:
 
@@ -305,7 +305,7 @@ $errors = $validator->errors();
 echo $errors->first('foo');
 ```
 
-### View all error messages for a specific field
+### View All Error Messages for a Specific Field
 
 If you need to get an array of all error messages for a specified field, you can use the `get` method:
 
@@ -315,7 +315,7 @@ foreach ($errors->get('foo') as $message) {
 }
 ```
 
-If you want to validate the array fields of the form, you can use `*` to get all error messages for each array element:
+If you are validating an array field of a form, you can use `*` to get all error messages for each array element:
 
 ```php
 foreach ($errors->get('foo.*') as $message) {
@@ -323,7 +323,7 @@ foreach ($errors->get('foo.*') as $message) {
 }
 ```
 
-### View all error messages for all fields
+### View All Error Messages for All Fields
 
 If you want to get all error messages for all fields, you can use the `all` method:
 
@@ -333,9 +333,9 @@ foreach ($errors->all() as $message) {
 }
 ```
 
-### Determine whether a specific field contains an error message
+### Determine If a Specific Field Has an Error Message
 
-The `has` method can be used to determine whether there is an error message in the specified field:
+The `has` method can be used to determine whether an error message exists for a specified field:
 
 ```php
 if ($errors->has('foo')) {
@@ -343,24 +343,31 @@ if ($errors->has('foo')) {
 }
 ```
 
-### Scene
+### Scenes
 
-The validator adds a scenario function, so we can easily modify the validation rules on demand.
+The validator adds a scene function, which allows us to easily modify validation rules on demand.
 
-> This feature requires a version of this component greater than or equal to 2.2.7
+> This functionality requires the version of this component to be greater than or equal to 2.2.7
+
 Create a `SceneRequest` as follows:
 
 ```php
 <?php
+
 declare(strict_types=1);
+
 namespace App\Request;
+
 use Hyperf\Validation\Request\FormRequest;
+
 class SceneRequest extends FormRequest
 {
     protected array $scenes = [
         'foo' => ['username'],
         'bar' => ['username', 'password'],
+        'tar' => ['username' => 'string|required', 'password'],
     ];
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -368,6 +375,7 @@ class SceneRequest extends FormRequest
     {
         return true;
     }
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -381,20 +389,22 @@ class SceneRequest extends FormRequest
 }
 ```
 
-When we use it normally, all validation rules are used, i.e. `username` and `gender` are required.
+When we use it normally, all validation rules will be used, meaning `username` and `gender` are both mandatory.
 
-We can set the scenario so that this request only validates the `username` mandatory field.
+We can set a scene to make this request only validate `username` as mandatory.
 
-If we configure `Hyperf\Validation\Middleware\ValidationMiddleware` and inject `SceneRequest` to the method,
-it will cause the entry to be validated directly in the middleware,
-so we need to get the `SceneRequest` from the container in the method to switch the scene.
+If we have configured `Hyperf\Validation\Middleware\ValidationMiddleware` and injected `SceneRequest` into the method,
+it will cause the input parameter to be directly validated in the middleware, so the scene value will not take effect. Therefore, we need to obtain the corresponding `SceneRequest` from the container in the method and perform scene switching.
 
 ```php
 <?php
+
 namespace App\Controller;
+
 use App\Request\DebugRequest;
 use App\Request\SceneRequest;
 use Hyperf\HttpServer\Annotation\AutoController;
+
 #[AutoController(prefix: 'foo')]
 class FooController extends Controller
 {
@@ -402,12 +412,13 @@ class FooController extends Controller
     {
         $request = $this->container->get(SceneRequest::class);
         $request->scene('foo')->validateResolved();
+
         return $this->response->success($request->all());
     }
 }
 ```
 
-But, we can use annotation `Scene` to switch it.
+Of course, we can also switch scenes via the `Scene` annotation
 
 ```php
 <?php
@@ -428,20 +439,20 @@ class FooController extends Controller
         return $this->response->success($request->all());
     }
 
-    #[Scene(scene:'bar2', argument: 'request')] // bind $request
+    #[Scene(scene:'bar2', argument: 'request')] // Bind to $request
     public function bar2(SceneRequest $request)
     {
         return $this->response->success($request->all());
     }
 
-    #[Scene(scene:'bar3', argument: 'request')] // bind $request
-    #[Scene(scene:'bar3', argument: 'req')] // bind $req
+    #[Scene(scene:'bar3', argument: 'request')]
+    #[Scene(scene:'bar3', argument: 'req')] // Support multiple parameters
     public function bar3(SceneRequest $request, DebugRequest $req)
     {
         return $this->response->success($request->all());
     }
 
-    #[Scene()] // the default scene is method name, The effect is equivalent to #[Scene(scene: 'bar1')]
+    #[Scene()] // Default scene is method name, equivalent to #[Scene(scene: 'bar1')]
     public function bar1(SceneRequest $request)
     {
         return $this->response->success($request->all());
@@ -449,27 +460,36 @@ class FooController extends Controller
 }
 ```
 
-## Validation rules
+## Validation Rules
 
-The following is a list of valid rules and their functions:
+Below is the list of valid rules and their functions:
 
 ##### accepted
 
-The value of the validation field must be `yes`, `on`, `1` or `true`, which is useful when "agreeing to the service agreement".
+The validated field must be `yes`, `on`, `1`, or `true`, which is useful when "agreeing to service agreements".
+
+##### accepted_if:anotherfield,value,…
+If another field being validated is equal to the specified value, the field being validated must be `yes`, `on`, `1`, or `true`, which is useful for validating "Terms of Service" acceptance or similar fields.
+
+##### declined
+The field being validated must be `no`, `off`, `0`, or `false`.
+
+##### declined_if:anotherfield,value,…
+If the value of another validation field is equal to the specified value, the value of the validation field must be `no`, `off`, `0`, or `false`.
 
 ##### active_url
 
-The validation field must be based on the `PHP` function `dns_get_record`, with the value recorded by `A` or `AAAA`.
+The field being validated must be a valid value with `A` or `AAAA` records based on the PHP function `dns_get_record`.
 
 ##### after:date
 
-The field under validation must be a value after the given date, and the date will be passed through the PHP function `strtotime`:
+The field being validated must be a value after the given date. The date will be passed through the PHP function strtotime:
 
 ```php
 'start_date' => 'required|date|after:tomorrow'
 ```
 
-Instead of passing a date string to `strtotime`, you can specify another field to compare with the date:
+You can specify another field to compare with the date instead of passing a date string to strtotime for execution:
 
 ```php
 'finish_date' => 'required|date|after:start_date'
@@ -477,146 +497,289 @@ Instead of passing a date string to `strtotime`, you can specify another field t
 
 ##### after_or_equal:date
 
-The field under validation must be a value greater than or equal to the given date. For more information, please refer to the `after:date` rule.
+The field being validated must be a value greater than or equal to the given date. For more information, please refer to the after:date rule.
 
 ##### alpha
 
-The validation field must be letters (including Chinese).
+The field being validated must be letters (including Chinese). To limit this validation rule to characters within the ASCII range (a-z and A-Z), you can provide the ascii option to the validation rule:
+
+```php
+'username' => 'alpha:ascii',
+```
 
 ##### alpha_dash
 
-The validation field can contain letters (including Chinese) and numbers, as well as dashes and underscores.
+The field being validated can contain letters (including Chinese) and numbers, as well as dashes and underscores. To limit this validation rule to characters within the ASCII range (a-z and A-Z), you can provide the ascii option to the validation rule:
+
+```php
+'username' => 'alpha_dash:ascii',
+```
 
 ##### alpha_num
 
-The validation field must be letters (including Chinese) or numbers.
+The field being validated must be letters (including Chinese) or numbers. To limit this validation rule to characters within the ASCII range (a-z and A-Z), you can provide the ascii option to the validation rule:
+
+```php
+'username' => 'alpha_num:ascii',
+```
+
+#### ascii
+
+The field being validated must be entirely 7-bit ASCII characters.
 
 ##### array
 
-The validation field must be a PHP array.
+The field being validated must be a PHP array.
+
+##### required_array_keys:foo,bar,…
+
+The field being validated must be an array and must contain at least the specified keys.
 
 ##### bail
 
-If the first validation rule fails to verify, stop running other validation rules.
+Stop running other validation rules if the first validation rule fails.
 
 ##### before:date
 
-Contrary to `after:date,` the validation field must be a value before the specified date, and the date will be passed to the PHP `strtotime` function.
+Relative to after:date, the field being validated must be a value before the specified date. The date will be passed to the PHP strtotime function.
 
 ##### before_or_equal:date
 
-The field under validation must be less than or equal to the given date. The date will be passed to PHP's `strtotime` function.
+The field being validated must be less than or equal to the given date. The date will be passed to the PHP strtotime function.
 
 ##### between:min,max
 
-Verify that the field size is between the given minimum and maximum values. Strings, numbers, arrays, and files can all use this rule like the size rule:
+The size of the field being validated must be between the given minimum and maximum values. Strings, numbers, arrays, and files can all use this rule just like using the size rule:
 
-'name' =>'required|between:1,20'
+'name' => 'required|between:1,20'
 
 ##### boolean
 
-The field under validation must be able to be converted to a boolean value and accept input such as true, false, 1, 0, "1" and "0".
+The field being validated must be convertible to a boolean value, receiving input such as true, false, 1, 0, "1", and "0".
+
+##### boolean:strict
+
+The field being validated must be convertible to a boolean value, only receiving true and false.
 
 ##### confirmed
 
-The validation field must have a matching field foo_confirmation. For example, if the validation field is password, you must enter a matching password_confirmation field.
+The field being validated must have a matching field foo_confirmation. For example, if the validation field is password, you must input a matching password_confirmation field.
 
 ##### date
 
-The field under validation must be a valid date based on the PHP `strtotime` function
+The field being validated must be a valid date based on the PHP strtotime function
 
- ##### date_equals:date
+##### date_equals:date
 
- The field under validation must be equal to the given date, and the date will be passed to the PHP `strtotime` function.
+The field being validated must be equal to the given date. The date will be passed to the PHP strtotime function.
 
- ##### date_format:format
+##### date_format:format
 
- The field under validation must match the specified format. You can use the PHP function `date` or `date_format` to validate the field.
+The field being validated must match the specified format. You can use the PHP function date or date_format to validate the field.
 
- ##### different:field
+##### decimal:min,max
 
- The field under validation must be a different value from the specified field.
+The field being validated must be of numerical type and must contain the specified number of decimal places:
 
- ##### digits:value
+```php
+// Must have exactly two decimal places (e.g., 9.99)...
+'price' => 'decimal:2'
 
- The field under validation must be numeric and the length must be the value specified by value.
+// Must have 2 to 4 decimal places...
+'price' => 'decimal:2,4'
+```
 
- ##### digits_between:min,max
+##### lowercase
 
- The length of the field under validation must be between the minimum and maximum values.
+The field being validated must be lowercase.
 
- ##### dimensions
+##### uppercase
 
- The size of the verified image must meet the constraints specified by the specified parameters:
+The field being validated must be uppercase.
 
- ```php
- 'avatar' => 'dimensions:min_width=100,min_height=200'
- ```
+##### mac_address
 
- Valid constraints include: `min_width`, `max_width`, `min_height`, `max_height`, `width`, `height`, `ratio`.
+The field being validated must be a MAC address.
 
- `ratio` constrains the width/height ratio, which can be expressed by the expression `3/2` or the floating point number `1.5`:
+##### max_digits:value
 
- ```php
- 'avatar' => 'dimensions:ratio=3/2'
- ```
+The validated integer must have a maximum length of value.
 
- Since this rule requires multiple parameters, you can use the `Rule::dimensions` method to construct the rule:
+##### min_digits:value
 
- ```php
- use Hyperf\Validation\Rule;
+The validated integer must have at least value digits.
 
- public function rules(): array
- {
- return [
-            'avatar' => [
-               'required',
-               Rule::dimensions()->maxWidth(1000)->maxHeight(500)->ratio(3 / 2),
-            ],
-        ];
- }
- ```
- ##### distinct
+##### exclude
 
- When processing arrays, the validation field cannot contain duplicate values:
+The current validated field will be excluded from the `validate` and `validated` methods.
 
- ```php
- 'foo.*.id' => 'distinct'
- ```
+##### exclude_if:anotherfield,value
+If `anotherfield` equals `value`, the current validated field will be excluded from the `validate` and `validated` methods.
 
- ##### email
+In some complex scenarios, you can also use the `Rule::excludeIf` method, which needs to return a boolean value or an anonymous function. If an anonymous function is returned, it should return `true` or `false` to decide whether the validated field should be excluded:
 
- The validation field must be a properly formatted email address.
+```php
+use Hyperf\Validation\Rule;
 
- ##### exists:table,column
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf($request->user()->is_admin),
+]);
 
- The validation field must exist in the specified data table.
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf(fn () => $request->user()->is_admin),
+]);
+```
 
- Basic use:
+##### prohibited
 
- ```php
- 'state' => 'exists:states'
+The field requiring validation must not exist or be empty. If it meets any of the following conditions, the field is considered "empty":
+
+1. Value is `null`.
+2. Value is an empty string.
+3. Value is an empty array or an empty Countable object.
+4. Value is an uploaded file, but the file path is empty.
+
+##### prohibited_if:anotherfield,value,…
+
+If the `anotherfield` field equals any `value`, the field requiring validation must not exist or be empty. If it meets any of the following conditions, the field is considered "empty":
+
+1. Value is `null`.
+2. Value is an empty string.
+3. Value is an empty array or an empty Countable object.
+4. Value is an uploaded file, but the file path is empty.
+
+If complex conditional prohibited logic is needed, the `Rule::prohibitedIf` method can be used. This method accepts a boolean value or a closure. When given a closure, the closure should return `true` or `false` to indicate whether the validation field should be prohibited:
+
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf(fn () => $request->user()->is_admin),
+]);
+```
+
+
+##### missing
+
+The field being validated must not exist in the input data.
+
+##### missing_if:anotherfield,value,…
+
+If the `anotherfield` field equals any `value`, then the field being validated must not exist.
+
+##### missing_unless:anotherfield,value
+
+The field being validated must not exist unless the `anotherfield` field equals any `value`.
+
+##### missing_with:foo,bar,…
+
+The field being validated must not exist if any other specified field exists.
+
+##### missing_with_all:foo,bar,…
+
+The field being validated must not exist if all other specified fields exist.
+
+##### multiple_of:value
+
+The field being validated must be a multiple of `value`.
+
+##### doesnt_start_with:foo,bar,…
+
+The field being validated cannot start with any of the given values.
+
+##### doesnt_end_with:foo,bar,…
+
+The field being validated cannot end with any of the given values.
+
+##### different:field
+
+The field being validated must be a value different from the specified field.
+
+##### digits:value
+
+The field being validated must be a number and have the length specified by `value`.
+
+##### digits_between:min,max
+
+The numerical length of the field being validated must be between the minimum and maximum values.
+
+##### dimensions
+
+The dimensions of the validated image must satisfy the constraints specified by this rule's parameters:
+
+```php
+'avatar' => 'dimensions:min_width=100,min_height=200'
+```
+
+Valid constraints include: `min_width`, `max_width`, `min_height`, `max_height`, `width`, `height`, `ratio`.
+
+The `ratio` constraint restricts the width/height ratio, which can be expressed by an expression like `3/2` or a floating-point number `1.5`:
+
+```php
+'avatar' => 'dimensions:ratio=3/2'
+```
+
+Since this rule requires multiple parameters, you can use the `Rule::dimensions` method to construct this rule:
+
+```php
+use Hyperf\Validation\Rule;
+
+public function rules(): array
+{
+return [
+           'avatar' => [
+              'required',
+              Rule::dimensions()->maxWidth(1000)->maxHeight(500)->ratio(3 / 2),
+           ],
+       ];
+}
+```
+##### distinct
+
+When processing arrays, the field being validated cannot contain duplicate values:
+
+```php
+'foo.*.id' => 'distinct'
+```
+
+##### email
+
+The field being validated must be a correctly formatted email address.
+
+##### exists:table,column
+
+The field being validated must exist in the specified data table.
+
+Basic usage:
+
+```php
+'state' => 'exists:states'
 ```
 
 If the `column` option is not specified, the field name will be used.
 
-Specify a custom column name:
+Specify custom column name:
 
 ```php
 'state' => 'exists:states,abbreviation'
 ```
 
-Sometimes, you may need to specify the database connection to be used for the `exists` query. This can be achieved by using the `.` pre-database connection before the table name or automatically resolve by specifying the model class name:
+Sometimes, you may need to specify the database connection to be used for the `exists` query, which can be achieved by prefixing the table name with the database connection followed by a ".", or by specifying the model class name for automatic resolution:
 
 ```php
-// Pre-database connection method
+// Prefix database connection approach
 'email' => 'exists:connection.staff,email'
 
-// Automatically resolve model class names
+// Model class name automatic resolution approach
 'email' => 'exists:StaffModel::class,email'
 ```
 
-If you want to customize the query executed by the validation rules, you can use the `Rule` class to define the rules. In this example, we also specify the validation rules in the form of an array, instead of using `|` characters to qualify them:
+If you want to customize the query executed by the validation rule, you can use the `Rule` class to define the rule. In this example, we also specified validation rules in the form of an array instead of using the `|` character to delimit them:
 
 ```php
 use Hyperf\Validation\Rule;
@@ -633,27 +796,27 @@ $validator = $this->validationFactory->make($data, [
 
 ##### file
 
-The validation field must be a successfully uploaded file.
+The field being validated must be a successfully uploaded file.
 
 ##### filled
 
-The validation field cannot be empty if it exists.
+The field being validated must not be empty if it exists.
 
 ##### gt:field
 
-The field under validation must be larger than the given `field` field, and the two field types must be the same, applicable to strings, numbers, arrays and files, similar to the `size` rule
+The field being validated must be greater than the given `field` field. These two fields must be of the same type and it is applicable to strings, numbers, arrays, and files, similar to the `size` rule.
 
 ##### gte:field
 
-The field under validation must be greater than or equal to the given `field` field, and the two field types must be the same, applicable to strings, numbers, arrays and files, similar to the `size` rule
+The field being validated must be greater than or equal to the given `field` field. These two fields must be of the same type and it is applicable to strings, numbers, arrays, and files, similar to the `size` rule.
 
 ##### image
 
-The validation file must be an image (`jpeg`, `png`, `bmp`, `gif` or `svg`)
+The file being validated must be an image (`jpeg`, `png`, `bmp`, `gif`, or `svg`).
 
-##### in:foo,bar...
+##### in:foo,bar…
 
-The field value under validation must be in the given list. Since this rule often requires us to implode the array, we can use Rule::in to construct this rule:
+The field being validated must be within the given list. Since this rule often requires us to `implode` an array, we can use `Rule::in` to construct this rule:
 
 ```php
 use Hyperf\Validation\Rule;
@@ -661,76 +824,80 @@ use Hyperf\Validation\Rule;
 $validator = $this->validationFactory->make($data, [
     'zones' => [
         'required',
-        Rule::in(['first-zone','second-zone']),
+        Rule::in(['first-zone', 'second-zone']),
     ],
 ]);
 ```
 
 ##### in_array:anotherfield
 
-The field under validation must exist in another field value.
+The field being validated must exist in another field value.
 
 ##### integer
 
-The field under validation must be an integer.
+The field being validated must be an integer (both String and Integer types can pass validation).
+
+##### integer:strict
+
+The field being validated must be an integer (only Integer type can pass validation).
 
 ##### ip
 
-The validation field must be an IP address.
+The field being validated must be an IP address.
 
 ##### ipv4
 
-The validation field must be an IPv4 address.
+The field being validated must be an IPv4 address.
 
 ##### ipv6
 
-The validation field must be an IPv6 address.
+The field being validated must be an IPv6 address.
 
 ##### json
 
-The validation field must be a valid JSON string
+The field being validated must be a valid JSON string.
 
 ##### lt:field
 
-The field under validation must be smaller than the given `field` field, and the two field types must be the same, applicable to strings, numbers, arrays and files, similar to the `size` rule
+The field being validated must be less than the given `field` field. These two fields must be of the same type and it is applicable to strings, numbers, arrays, and files, similar to the `size` rule.
 
 ##### lte:field
 
-The validation field must be less than or equal to the given `field` field, and the two field types must be the same, applicable to strings, numbers, arrays and files, similar to the `size` rule
+The field being validated must be less than or equal to the given `field` field. These two fields must be of the same type and it is applicable to strings, numbers, arrays, and files, similar to the `size` rule.
 
 ##### max:value
 
-The field under validation must be less than or equal to the maximum value, which is the same as the use of the `size` rules for string, numeric, array, and file fields.
+The field being validated must be less than or equal to the maximum value, and the usage is the same as the `size` rule for string, numeric, array, and file fields.
 
-##### mimetypes: text/plain...
+##### mimetypes：text/plain…
 
-The validation file must match one of the given `MIME` file types:
+The file being validated must match one of the given `MIME` file types:
 
 ```php
 'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime'
 ```
 
-In order to determine the `MIME` type of the uploaded file, the component will read the file content to guess the `MIME` type, which may be different from the client's `MIME` type.
+To determine the `MIME` type of the uploaded file, the component will read the file content to guess the `MIME` type, which may be different from the client-side `MIME` type.
 
-##### mimes:foo,bar,...
+##### mimes:foo,bar,…
 
-The `MIME` type of the validation file must be one of the extension types listed in the rule
-Basic usage of `MIME` rules:
+The `MIME` type of the file being validated must be one of the extension types listed by this rule.
+Basic usage of `MIME` rule:
 
 ```php
 'photo' => 'mimes:jpeg,bmp,png'
 ```
 
-Although you only specify the extension, this rule actually verifies the file `MIME` type obtained by reading the file content.
-The complete list of `MIME` types and their corresponding extensions can be found here: [mime types](http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
+Although you only specified the extension, this rule actually validates the file `MIME` type obtained by reading the file content.
+A complete list of `MIME` types and their corresponding extensions can be found here: [mime types](http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
 
 ##### min:value
 
-In contrast to `max:value`, the validation field must be greater than or equal to the minimum value. For string, numeric, array, and file fields, it is consistent with the use of the `size` rule.
+Relative to `max:value`, the field being validated must be greater than or equal to the minimum value. For string, numeric, array, and file fields, the usage is consistent with the `size` rule.
 
-##### not_in:foo,bar,...
+##### not_in:foo,bar,…
 
-The field value under validation cannot be in the given list. Similar to the `in` rule, we can use the `Rule::notIn` method to construct the rule:
+The field being validated cannot be in the given list. Similar to the `in` rule, we can use the `Rule::notIn` method to construct the rule:
 
 ```php
 use Hyperf\Validation\Rule;
@@ -738,52 +905,52 @@ use Hyperf\Validation\Rule;
 $validator = $this->validationFactory->make($data, [
     'toppings' => [
         'required',
-        Rule::notIn(['sprinkles','cherries']),
+        Rule::notIn(['sprinkles', 'cherries']),
     ],
 ]);
 ```
 
 ##### not_regex:pattern
 
-The field under validation cannot match the given regular expression
+The field being validated cannot match the given regular expression.
 
-Note: When using the `regex/not_regex` mode, the rules must be placed in an array instead of pipe separators, especially when the regular expression contains pipe symbols.
+Note: When using `regex/not_regex` patterns, the rule must be placed in an array and cannot use a pipe delimiter, especially when the regular expression contains a pipe symbol.
 
 ##### nullable
 
-The validation field can be `null`, which is useful when validating some primitive data that can be `null` such as integers or strings.
+The field being validated can be `null`, which is useful when validating some raw data that can be `null`, such as integer or string.
 
 ##### numeric
 
-The field under validation must be numeric
+The field being validated must be numeric.
 
 ##### present
 
-The validation field must appear in the input data but can be empty.
+The field being validated must appear in the input data but can be empty.
 
 ##### regex:pattern
 
-The field under validation must match the given regular expression.
-The bottom layer of this rule is the `preg_match` function of `PHP`. Therefore, the specified pattern needs to follow the format required by the `preg_match` function and contain a valid separator. E.g:
+The field being validated must match the given regular expression.
+This rule uses the `PHP` `preg_match` function under the hood. Therefore, the specified pattern needs to follow the format required by the `preg_match` function and contain valid delimiters. For example:
 
 ```php
  'email' => 'regex:/^.+@.+$/i'
 ```
 
-Note: When using the `regex/not_regex` mode, the rules must be placed in an array instead of pipe separators, especially when the regular expression contains pipe symbols.
+Note: When using `regex/not_regex` patterns, the rule must be placed in an array and cannot use a pipe delimiter, especially when the regular expression contains a pipe symbol.
 
 ##### required
 
-The validation field value cannot be empty, and the field value is empty in the following cases:
+The field being validated cannot be empty. In the following cases, the field value is empty:
 - Value is `null`
 - Value is an empty string
-- The value is an empty array or an empty `Countable` object
-- The value is uploaded file but the path is empty
+- Value is an empty array or empty `Countable` object
+- Value is an uploaded file but the path is empty
 
 ##### required_if:anotherfield,value,…
 
-The validation field must exist when `anotherfield` is equal to the specified value `value` and cannot be empty.
-If you want to construct more complex conditions for the `required_if` rule, you can use the `Rule::requiredIf` method, which accepts a boolean or closure. When passing a closure, it will return `true` or `false` to indicate whether the validation field is required:
+The field being validated must exist and cannot be empty when `anotherfield` equals the specified value `value`.
+If you want to construct more complex conditions for the `required_if` rule, you can use the `Rule::requiredIf` method, which receives a boolean value or a closure. When passing a closure, it returns `true` or `false` to indicate whether the validated field is mandatory:
 
 ```php
 use Hyperf\Validation\Rule;
@@ -801,69 +968,69 @@ $validator = $this->validationFactory->make($request->all(), [
 
 ##### required_unless:anotherfield,value,…
 
-Unless the `anotherfield` field is equal to `value`, the validation field cannot be empty.
+Unless the `anotherfield` field equals `value`, the field being validated cannot be empty.
 
 ##### required_with:foo,bar,…
 
-The validation field is only necessary if any other specified field exists.
+The field being validated is mandatory only if any of the other specified fields exist.
 
 ##### required_with_all:foo,bar,…
 
-The validation field is only necessary if all the specified fields exist.
+The field being validated is mandatory only if all specified fields exist.
 
 ##### required_without:foo,bar,…
 
-The validation field is only necessary if any specified field does not exist.
+The field being validated is mandatory only if any of the specified fields do not exist.
 
 ##### required_without_all:foo,bar,…
 
-The validation field is only necessary if all the specified fields do not exist.
+The field being validated is mandatory only if all specified fields do not exist.
 
 ##### same:field
 
-The given field and the validation field must match.
+The given field and the validated field must match.
 
 ##### size:value
 
-The validation field must have a size/size that matches the given value `value`. For strings, `value` is the number of characters; for numbers, `value` is a given integer value; for arrays In terms of `value` is the length of the array; for files, `value` is the number of kilobytes (KB) of the corresponding file.
+The field being validated must have a size/size that matches the given value `value`. For strings, `value` is the corresponding number of characters; for numbers, `value` is the given integer value; for arrays, `value` is the length of the array; for files, `value` is the corresponding file size in kilobytes (KB).
 
 ##### starts_with:foo,bar,...
 
-The field under validation must start with a given value.
+The field being validated must start with a given value.
 
 ##### string
 
-The validation field must be a string. If the field is allowed to be empty, you need to assign the `nullable` rule to the field.
+The field being validated must be a string. If the field is allowed to be empty, you need to assign the `nullable` rule to that field.
 
 ##### timezone
 
-The validation character must be a valid time zone identifier based on the `PHP` function `timezone_identifiers_list`
+The field being validated must be a valid timezone identifier based on the `PHP` function `timezone_identifiers_list`.
 
 ##### unique:table,column,except,idColumn
 
-The field under validation must be unique on a given data table. If the `column` option is not specified, the field name will be used as the default `column`.
+The field being validated must be unique in the given data table. If the `column` option is not specified, the field name will be used as the default `column`.
 
-1. Specify the custom column name:
+1. Specify custom column name:
 
 ```php
 'email' => 'unique:users,email_address'
 ```
 
 2. Custom database connection:
-Sometimes, you may need to customize the database connection generated by the validator. As you can see above, setting `unique:users` as the authentication rule will use the default database connection to query the database. To override the default connection, use "." after the data table name to specify the connection or automatically resolve by specifying the model class name:
+   Sometimes, you may need to customize the database connection generated by the validator, as seen above, setting `unique:users` as the validation rule will use the default database connection to query the database. To override the default connection, specify the connection after the table name with a ".", or automatically resolve it by specifying the model class name:
 
 ```php
-// Pre-database connection method
+// Prefix database connection approach
 'email' => 'unique:connection.users,email_address'
 
-// Automatically resolve model class names
+// Model class name automatic resolution approach
 'email' => 'unique:UserModel::class,email_address'
 ```
 
 3. Force a unique rule that ignores a given `ID`:
-Sometimes, you may wish to ignore a given `ID` during the unique check. For example, consider an "update properties" interface that includes a user name, email address, and location. You will want to verify that the email address is unique. Changing the username field does not change the email field. You don't want to throw a validation error because the user already has the email address. You only want to throw a validation error when the email provided by the user has been used by others.
+   Sometimes, you may want to ignore a given `ID` when checking for uniqueness. For example, consider an "Update Attribute" interface that includes username, email address, and location. You want to validate that the email address is unique. However, if the user only changes the username field and does not change the email field, you don't want to throw a validation error because the user already owns that email address. You only want to throw a validation error if the email provided by the user has already been used by someone else.
 
-To tell the validator to ignore the user ID, you can use the Rule class to define this rule. We also need to specify the validation rule in an array instead of using the `|` to define the rule:
+   To tell the validator to ignore a user `ID`, you can use the `Rule` class to define this rule. We should also specify the validation rules in the form of an array, instead of using `|` to delimit the rules:
 
 ```php
 use Hyperf\Validation\Rule;
@@ -876,27 +1043,27 @@ $validator = $this->validationFactory->make($data, [
 ]);
 ```
 
-In addition to passing the primary key value of the model instance to the `ignore` method, you can also pass the entire model instance. The component will automatically parse out the primary key value from the model instance:
+In addition to passing the model instance primary key value to the `ignore` method, you can also pass the entire model instance. The component will automatically resolve the primary key value from the model instance:
 
 ```php
 Rule::unique('users')->ignore($user)
 ```
 
-If your data table uses a primary key field other than `id`, you can specify the field name when calling the `ignore` method:
+If the primary key field used by your data table is not `id`, you can specify the field name when calling the `ignore` method:
 
 ```php
-'email' => Rule::unique('users')->ignore($user->id,'user_id')
+'email' => Rule::unique('users')->ignore($user->id, 'user_id')
 ```
 
-By default, the `unique` rule checks the uniqueness of the column matching the attribute name to be verified. However, you can specify different column names as the second parameter of the unique method:
+By default, the `unique` rule checks for uniqueness in the column that matches the attribute name to be validated. However, you can specify a different column name as the second argument of the `unique` method:
 
 ```php
-Rule::unique('users','email_address')->ignore($user->id),
+Rule::unique('users', 'email_address')->ignore($user->id),
 ```
 
-4. Add an additional `where` clause:
+4. Add additional `where` clauses:
 
-You can also specify additional query constraints when using the `where` method to customize the query. For example, let's add a constraint that verifies that `account_id` is 1:
+When using the `where` method to customize a query, you can also specify additional query constraints. For example, we add a constraint to validate that `account_id` is 1:
 
 ```php
 'email' => Rule::unique('users')->where(function ($query) {
@@ -906,18 +1073,18 @@ You can also specify additional query constraints when using the `where` method 
 
 ##### url
 
-The validation field must be a valid URL.
+The field being validated must be a valid URL.
 
 ##### uuid
 
-The validation field must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID).
+The field being validated must be a valid RFC 4122 (version 1, 3, 4, or 5) globally unique identifier (UUID).
 
 ##### sometimes
 
 Add conditional rules
-Verify when it exists
+Validate when present
 
-In some scenarios, you may want to perform validation checks when only a certain field exists. To quickly implement this, add the `sometimes` rule to the rule list:
+In some scenarios, you might want to perform validation checks only if a certain field exists. To quickly implement this, add the `sometimes` rule to the rule list:
 
 ```php
 $validator = $this->validationFactory->make($data, [
@@ -925,13 +1092,13 @@ $validator = $this->validationFactory->make($data, [
 ]);
 ```
 
-In the above example, the `email` field will only be validated if it exists in the `$data` array.
+In the example above, the `email` field will only be validated if it exists in the `$data` array.
 
-Note: If you try to verify a field that always exists but may be empty, refer to the optional field considerations.
+Note: If you are trying to validate a field that always exists but might be empty, refer to the optional field notes.
 
-Complex condition validation
+Complex conditional validation
 
-Sometimes you may want to add validation rules based on more complex conditional logic. For example, you may want to require a given field to be required only when the value of another field is greater than 100, or you may need to require both fields to have a given value only when the other field exists. Adding this validation rule is not a headache. First, create a static rule that will never change to the `Validator` instance:
+Sometimes you might want to add validation rules based on more complex conditional logic. For example, you might want a given field to be required only if another field value is greater than 100, or you might need both fields to have given values only when another field exists. Adding this validation rule is not a headache. First, create a static rule that will never change in the `Validator` instance:
 
 ```php
 $validator = $this->validationFactory->make($data, [
@@ -940,27 +1107,27 @@ $validator = $this->validationFactory->make($data, [
 ]);
 ```
 
-Let us assume that our web application serves game collectors. If a game collector signs up for our app and owns more than 100 games, we want them to explain why they have so many games. For example, maybe they are running a second-hand game store, or they just like collecting. To add this condition, we can use the `sometimes` method on the `Validator` instance:
+Let's assume our Web application serves game collectors. If a game collector registers for our application and owns more than 100 games, we want them to explain why they have so many games, for example, perhaps they are running a used game store, or maybe they just like to collect. To add this condition, we can use the `sometimes` method on the `Validator` instance:
 
 ```php
-$v->sometimes('reason','required|max:500', function($input) {
+$v->sometimes('reason', 'required|max:500', function($input) {
     return $input->games >= 100;
 });
 ```
 
-The first parameter passed to the `sometimes` method is the name field we need to conditionally validate, and the second parameter is the rule we want to add. If the closure as the third parameter returns `true`, the rule is added . This method makes it easy to build complex conditional validation, and you can even add conditional validation for multiple fields at once:
+The first argument passed to the `sometimes` method is the name field we need conditional validation for, the second argument is the rule we want to add, and the rule is added if the closure passed as the third argument returns `true`. This method makes building complex conditional validation simple, and you can even add conditional validation for multiple fields at once:
 
 ```php
-$v->sometimes(['reason','cost'],'required', function($input) {
+$v->sometimes(['reason', 'cost'], 'required', function($input) {
     return $input->games >= 100;
 });
 ```
 
-Note: The `$input` parameter passed to the closure is an instance of `Hyperf\Support\Fluent` and can be used to access inputs and files.
+Note: The `$input` parameter passed to the closure is an instance of `Hyperf\Support\Fluent`, which can be used to access inputs and files.
 
-### Validate array input
+### Validating Array Input
 
-It is no longer a pain to verify the input fields of the form array. For example, if the incoming HTTP request contains the `photos[profile]` field, you can verify it like this:
+Validating form array input fields is no longer a painful thing. For example, if the incoming HTTP request contains the `photos[profile]` field, you can validate it like this:
 
 ```php
 $validator = $this->validationFactory->make($request->all(), [
@@ -968,7 +1135,7 @@ $validator = $this->validationFactory->make($request->all(), [
 ]);
 ```
 
-We can also verify each element of the array. For example, to verify that each email in a given array input is unique, we can do so (this kind of submitted array field is a two-dimensional array, such as `person[][email ]` or `person[test][email]`):
+We can also validate each element of an array. For example, to validate if each email in the given array input is unique, you can do this (this is for cases where submitted array fields are two-dimensional arrays, such as `person[][email]` or `person[test][email]`):
 
 ```php
 $validator = $this->validationFactory->make($request->all(), [
@@ -977,21 +1144,21 @@ $validator = $this->validationFactory->make($request->all(), [
 ]);
 ```
 
-Similarly, in the language file, you can also use the `*` character to specify the validation message, so that you can use a single validation message to define validation rules based on array fields:
+Similarly, you can also use the `*` character in language files to specify validation messages, thus allowing you to use a single validation message definition for validation rules based on array fields:
 
 ```php
 'custom' => [
     'person.*.email' => [
-        'unique' => 'E-mail address of each person must be unique',
+        'unique' => 'The email address of each person must be unique',
     ]
 ],
 ```
 
 ### Custom Validation Rules
 
-#### Register custom validation rules
+#### Register Custom Validation Rules
 
-The `Validation` component uses an event mechanism to implement custom validation rules. We have defined the `ValidatorFactoryResolved` event. All you need to do is define a listener for `ValidatorFactoryResolved` and implement the registration of the validator in the listener. The example is as follows.
+The `Validation` component uses an event mechanism to implement custom validation rules. We have defined the `ValidatorFactoryResolved` event. What you need to do is define a listener for `ValidatorFactoryResolved` and implement validator registration in the listener. An example is as follows:
 
 ```php
 namespace App\Listener;
@@ -1015,13 +1182,13 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        /** @var ValidatorFactoryInterface $validatorFactory */
+        /**  @var ValidatorFactoryInterface $validatorFactory */
         $validatorFactory = $event->validatorFactory;
-        // registered foo validator
+        // Registered the foo validator
         $validatorFactory->extend('foo', function (string $attribute, mixed $value, array $parameters, Validator $validator): bool {
             return $value == 'foo';
         });
-        // When creating a custom validation rule, you may sometimes need to define a custom placeholder for error messages. Here is an extension of the :foo placeholder
+        // When creating a custom validation rule, you might sometimes need to define a custom placeholder for the error message, here the :foo placeholder is extended
         $validatorFactory->replacer('foo', function (string $message, string $attribute, string $rule, array $parameters): array|string {
             return str_replace(':foo', $attribute, $message);
         });
@@ -1029,23 +1196,23 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 }
 ```
 
-#### Custom error message
+#### Custom Error Message
 
-You also need to define error messages for custom rules. You can use inline custom message arrays or add entries in the validation language file to achieve this functionality. The message should be placed in the first dimension of the array, not in the custom array, which is only used to store the attribute-specified error information. Take the `foo` custom validator in the previous section as an example:
+You also need to define an error message for your custom rule. You can achieve this by using an inline custom message array or by adding an entry in the validation language file. The message should be placed in the first dimension of the array, rather than within the custom array used only for storing attribute-specific error messages. Taking the `foo` custom validator from the previous section as an example:
 
-`storage/languages/en/validation.php` add the following content to the file array
+Add the following content to the array in `storage/languages/en/validation.php`:
 
 ```php
     'foo' => 'The :attribute must be foo',
 ```
 
-`storage/languages/zh_CN/validation.php` add the following content to the file array
+Add the following content to the array in `storage/languages/zh_CN/validation.php`:
 
-```php
-    'foo' => ':attribute must be foo',
+```php    
+    'foo' => ' :attribute must be foo',
 ```
 
-#### Custom validator usage
+#### Custom Validator Usage
 
 ```php
 <?php
@@ -1072,7 +1239,7 @@ class DemoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // use foo validator
+            // Use the foo validator
             'name' => 'foo'
         ];
     }

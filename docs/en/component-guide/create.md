@@ -1,8 +1,8 @@
-# create new component
+# Creating a New Component
 
-`Hyperf` officially provides tools to quickly create component packages.
+`Hyperf` provides tools to quickly create component packages.
 
-```
+```bash
 # Create a component package that adapts to the latest version of Hyperf
 composer create-project hyperf/component-creator your_component dev-master
 
@@ -10,32 +10,32 @@ composer create-project hyperf/component-creator your_component dev-master
 composer create-project hyperf/component-creator your_component "2.0.*"
 ```
 
-## Use unpublished component packages in the project
+## Using Unpublished Component Packages in a Project
 
-Suppose the project directory is as follows
+Suppose the project directory is as follows:
 
 ```
-/opt/project // project directory
-/opt/your_component // component package directory
+/opt/project // Project directory
+/opt/your_component // Component package directory
 ```
 
-Assuming the component is named `your_component/your_component`
+Assume the component name is `your_component/your_component`.
 
-Modify /opt/project/composer.json
+Modify `/opt/project/composer.json`:
 
-> Other irrelevant configurations are omitted below
+> Other irrelevant configurations are omitted below.
 
 ```json
 {
-     "require": {
-         "your_component/your_component": "dev-master"
-     },
-     "repositories": {
-         "your_component": {
-             "type": "path",
-             "url": "/opt/your_component"
-         }
-     }
+    "require": {
+        "your_component/your_component": "dev-master"
+    },
+    "repositories": {
+        "your_component": {
+            "type": "path",
+            "url": "/opt/your_component"
+        }
+    }
 }
 ```
 

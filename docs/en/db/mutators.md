@@ -1,14 +1,14 @@
-# Modifier
+# Mutators
 
-> This document borrows heavily from [LearnKu](https://learnku.com) Many thanks to LearnKu for contributing to the PHP community.
+> This documentation draws heavily from [LearnKu](https://learnku.com). Many thanks to LearnKu for their contributions to the PHP community.
 
-Accessors and modifiers allow you to format model property values when you get or set certain property values on a model instance.
+Accessors and mutators allow you to format model attribute values when you get or set attributes on model instances.
 
-## Accessors & Modifiers
+## Accessors & Mutators
 
-### Define an accessor
+### Defining an Accessor
 
-To define an accessor, you need to create a `getFooAttribute` method on the model, and the `Foo` field to be accessed needs to be named in "camel case". In this example, we will define an accessor for the `first_name` property. This accessor is automatically called when the model tries to get the `first_name` property:
+To define an accessor, create a `getFooAttribute` method on your model, where `Foo` is the "camel-cased" name of the column you wish to access. In this example, we will define an accessor for the `first_name` attribute. When the model attempts to retrieve the `first_name` attribute, this accessor will be automatically called:
 
 ```php
 <?php
@@ -20,7 +20,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Get the user's name.
+     * Get the user's first name.
      *
      * @param  string  $value
      * @return string
@@ -32,7 +32,7 @@ class User extends Model
 }
 ```
 
-As you can see, the raw value of the field is passed into the accessor, allowing you to process it and return the result. To get the modified value, you can access the `first_name` property on the model instance:
+As you can see, the original value of the column is passed to the accessor, allowing you to process it and return the result. To retrieve the modified value, you can access the `first_name` attribute on the model instance:
 
 ```php
 $user = App\User::find(1);
@@ -40,7 +40,7 @@ $user = App\User::find(1);
 $firstName = $user->first_name;
 ```
 
-Of course, you can also pass an existing property value and use an accessor to return a new computed value:
+Of course, you can also use existing attribute values to return new calculated values via an accessor:
 
 ```php
 namespace App;
@@ -50,7 +50,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Get the user's name.
+     * Get the user's full name.
      *
      * @return string
      */
@@ -61,9 +61,9 @@ class User extends Model
 }
 ```
 
-### Define a modifier
+### Defining a Mutator
 
-To define a modifier, define the `setFooAttribute` method on the model. The `Foo` fields to be accessed are named using "camel case". Let's define a modifier for the `first_name` property again. This modifier will be called automatically when we try to set the value of the `first_name` property on the schema:
+To define a mutator, define a `setFooAttribute` method on your model. The `Foo` field to be accessed should use "camel-cased" naming. Let's define a mutator for the `first_name` attribute. When we attempt to set the `first_name` attribute value on the model, this mutator will be automatically called:
 
 ```php
 <?php
@@ -75,7 +75,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Set the user's name.
+     * Set the user's first name.
      *
      * @param  string  $value
      * @return void
@@ -87,7 +87,7 @@ class User extends Model
 }
 ```
 
-Modifiers take the value of an attribute that has already been set, allowing you to modify and set its value to the `$attributes` property inside the model. For example, if we try to set the value of the `first_name` property to `Sally`:
+The mutator will receive the value being set on the attribute, allowing you to modify it and set the value on the model's internal `$attributes` attribute. For example, if we attempt to set the value of the `first_name` attribute to `Sally`:
 
 ```php
 $user = App\User::find(1);
@@ -95,11 +95,11 @@ $user = App\User::find(1);
 $user->first_name = 'Sally';
 ```
 
-In this example, the `setFirstNameAttribute` method is called with the value `Sally` as a parameter. The modifier then applies the `strtolower` function and sets the result of the processing to the internal `$attributes` array.
+In this example, the `setFirstNameAttribute` method is called with `Sally` as the argument. The mutator then applies the `strtolower` function and sets the processed result into the internal `$attributes` array.
 
-## date converter
+## Date Mutators
 
-By default, the model converts the `created_at` and `updated_at` fields to `Carbon` instances, which inherit the `PHP` native `DateTime` class and provide various useful methods. You can add other date properties by setting the model's `$dates` property:
+By default, the model will convert the `created_at` and `updated_at` columns into `Carbon` instances, which extend the native PHP `DateTime` class and provide various useful methods. You can add other date attributes by setting the `$dates` property of the model:
 
 ```php
 <?php
@@ -111,7 +111,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be converted to date format.
+     * The attributes that should be converted to date format.
      *
      * @var array
      */
@@ -119,14 +119,13 @@ class User extends Model
         'seen_at',
     ];
 }
-
 ```
 
-> Tip: You can disable the default created_at and updated_at timestamps by setting the model's public $timestamps value to false.
+> Tip: You can disable the default `created_at` and `updated_at` timestamps by setting the model's public `$timestamps` property to `false`.
 
-When a field is in date format, you can set the value to a `UNIX` timestamp, a datetime `(Y-m-d)` string, or a `DateTime` / `Carbon` instance. The date value will be properly formatted and saved to your database:
+When a column is a date format, you can set the value to a `UNIX` timestamp, a date-time `(Y-m-d)` string, or a `DateTime` / `Carbon` instance. The date value will be correctly formatted and saved to your database.
 
-As mentioned above, when the fetched property is contained in the `$dates` property, it is automatically converted to a `Carbon` instance, allowing you to use any `Carbon` method on the property:
+As mentioned above, when retrieved attributes are included in the `$dates` property, they are automatically converted to `Carbon` instances, allowing you to use any `Carbon` methods on the attribute:
 
 ```php
 $user = App\User::find(1);
@@ -134,9 +133,9 @@ $user = App\User::find(1);
 return $user->deleted_at->getTimestamp();
 ```
 
-### Time format
+### Date Format
 
-Timestamps will all be formatted as `Y-m-d H:i:s`. If you need a custom timestamp format, set the `$dateFormat` property in the model. This property determines how the date property will be stored in the database, and the format when the model is serialized into an array or `JSON`:
+Timestamps are formatted as `Y-m-d H:i:s`. If you need to customize the timestamp format, you can set the `$dateFormat` property in the model. This property determines how date attributes are stored in the database, as well as their format when the model is serialized to an array or `JSON`:
 
 ```php
 <?php
@@ -148,7 +147,7 @@ use Hyperf\DbConnection\Model\Model;
 class Flight extends Model
 {
     /**
-     * This property should be cast to the native type.
+     * The storage format of the model's date columns.
      *
      * @var string
      */
@@ -156,12 +155,12 @@ class Flight extends Model
 }
 ```
 
-## Attribute type conversion
+## Attribute Casting
 
-The `$casts` property on the model provides a convenience method to cast properties to common data types. The `$casts` property should be an array whose keys are the names of the properties to be cast, and the values are the data types you wish to cast.
-The supported data types are: `integer`, `real`, `float`, `double`, `decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection` , `date`, `datetime` and `timestamp`. When converting to `decimal` type, you need to define the number of decimal places, such as: `decimal:2`.
+The `$casts` property on the model provides a convenient method to cast attributes to common data types. The `$casts` property should be an array where the key is the name of the attribute to be cast, and the value is the data type you wish to cast to.
+Supported data types for casting are: `integer`, `real`, `float`, `double`, `decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection`, `date`, `datetime`, and `timestamp`. When casting to the `decimal` type, you need to define the number of decimal places, e.g., `decimal:2`.
 
-As an example, let's convert the `is_admin` property stored in the database as an integer ( `0` or `1` ) to a boolean value:
+For example, let's cast the `is_admin` attribute, which is stored in the database as an integer (`0` or `1`), to a boolean:
 
 ```php
 <?php
@@ -183,7 +182,7 @@ class User extends Model
 }
 ```
 
-Now when you access the `is_admin` property, although the value stored in the database is an integer type, the return value is always converted to a boolean type:
+Now, when you access the `is_admin` attribute, although the value stored in the database is an integer, the returned value will always be cast to a boolean type:
 
 ```php
 $user = App\User::find(1);
@@ -193,11 +192,11 @@ if ($user->is_admin) {
 }
 ```
 
-### Custom type conversion
+### Custom Casting
 
-Models have several common type conversions built into them. However, users occasionally need to convert data into custom types. Now, this requirement can be accomplished by defining a class that implements the `CastsAttributes` interface
+Models have many built-in common types of casting. However, users occasionally need to cast data to custom types. Now, this requirement can be met by defining a class that implements the `CastsAttributes` interface.
 
-Classes that implement this interface must define a `get` and `set` method in advance. The `get` method is responsible for converting the raw data obtained from the database into the corresponding type, while the `set` method converts the data into the corresponding database type for storing in the database. For example, let's reimplement the built-in `json` type conversion as a custom type conversion:
+Classes that implement this interface must define a `get` and `set` method. The `get` method is responsible for converting the raw data fetched from the database into the corresponding type, while the `set` method converts the data into the corresponding database type to be stored. For example, let's re-implement the built-in `json` casting as a custom type casting:
 
 ```php
 <?php
@@ -209,7 +208,7 @@ use Hyperf\Contract\CastsAttributes;
 class Json implements CastsAttributes
 {
     /**
-     * Convert the extracted data
+     * Transform the data retrieved from the database.
      */
     public function get($model, $key, $value, $attributes)
     {
@@ -217,7 +216,7 @@ class Json implements CastsAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transform the value to be stored in the database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -226,7 +225,7 @@ class Json implements CastsAttributes
 }
 ```
 
-Once a custom type cast is defined, it can be attached to a model property using its class name:
+After defining the custom type casting, you can attach it to a model attribute using its class name:
 
 ```php
 <?php
@@ -239,7 +238,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * The attributes that should be cast.
      *
      * @var array
      */
@@ -249,11 +248,11 @@ class User extends Model
 }
 ```
 
-#### Value object type conversion
+#### Value Object Casting
 
-Not only can you convert data to native data types, but you can also convert data to objects. The two custom type conversions are defined in a very similar way. But the `set` method in the custom conversion class that converts the data to an object needs to return an array of key-value pairs, which are used to set the original, storable value into the corresponding model.
+You can not only cast data to native data types but also cast data to objects. The definition method for both types of custom casting is very similar. However, the `set` method in the custom casting class that converts data to an object needs to return an array of key-value pairs, which is used to set the raw, storable values to the corresponding model.
 
-As an example, define a custom type conversion class to convert multiple model property values into a single `Address` value object, assuming that the `Address` object has two public properties `lineOne` and `lineTwo`:
+For example, define a custom casting class to convert multiple model attributes into a single `Address` value object. Assume the `Address` object has two public properties, `lineOne` and `lineTwo`:
 
 ```php
 <?php
@@ -266,7 +265,7 @@ use Hyperf\Contract\CastsAttributes;
 class AddressCaster implements CastsAttributes
 {
     /**
-     * Convert the extracted data
+     * Transform the data retrieved from the database.
      */
     public function get($model, $key, $value, $attributes): Address
     {
@@ -277,7 +276,7 @@ class AddressCaster implements CastsAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transform the value to be stored in the database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -289,7 +288,7 @@ class AddressCaster implements CastsAttributes
 }
 ```
 
-After the value object type conversion, any data changes to the value object will be automatically synced back to the model before the model is saved:
+After performing value object casting, any data changes to the value object will be automatically synchronized back to the model before it is saved:
 
 ```php
 <?php
@@ -307,7 +306,7 @@ var_dump($user->getAttributes());
 //];
 ```
 
-**The implementation here is different from Laravel, if the following usage occurs, please pay special attention**
+**Implementation here differs from Laravel. If the following usage occurs, please pay extra attention:**
 
 ```php
 $user = App\User::find(1);
@@ -321,14 +320,14 @@ var_dump($user->getAttributes());
 $user->address->lineOne = 'Updated Address Value';
 $user->address->lineTwo = '#20000';
 
-// After directly modifying the field of address, it cannot take effect in attributes immediately, but you can get the modified data directly through $user->address.
+// After directly modifying the fields of 'address', it cannot immediately take effect in 'attributes', but you can get the modified data directly through $user->address.
 var_dump($user->getAttributes());
 //[
 //    'address_line_one' => 'Address Value',
 //    'address_line_two' => '#10000'
 //];
 
-// When we save the data or delete the data, the attributes will be changed to the modified data.
+// When we save or delete data, 'attributes' will be changed to the modified data.
 $user->save();
 var_dump($user->getAttributes());
 //[
@@ -337,7 +336,7 @@ var_dump($user->getAttributes());
 //];
 ```
 
-If after modifying `address`, you don't want to save it or get the data of `address_line_one` through `address->lineOne`, you can also use the following method
+If you modify `address` but do not want to save it, and do not want to fetch the data of `address_line_one` through `address->lineOne`, you can also use the following method:
 
 ```php
 $user = App\User::find(1);
@@ -346,7 +345,7 @@ $user->syncAttributes();
 var_dump($user->getAttributes());
 ```
 
-Of course, if you still need to modify the function of `attributes` synchronously after modifying the corresponding `value`, you can try the following methods. First, we implement a `UserInfo` and inherit `CastsValue`.
+Of course, if you still need the functionality to synchronize modifications to `attributes` after modifying the corresponding `value`, you can try using the following method. First, we implement `UserInfo` and inherit from `CastsValue`.
 
 ```php
 namespace App\Caster;
@@ -362,7 +361,7 @@ class UserInfo extends CastsValue
 }
 ```
 
-Then implement the corresponding `UserInfoCaster`
+Then implement the corresponding `UserInfoCaster`:
 
 ```php
 <?php
@@ -389,10 +388,9 @@ class UserInfoCaster implements CastsAttributes
         ];
     }
 }
-
 ```
 
-When we modify UserInfo in the following way, we can synchronize the data modified to attributes.
+When we modify `UserInfo` in the following way, we can synchronize the data to `attributes`.
 
 ```php
 /** @var User $user */
@@ -401,9 +399,9 @@ $user->userInfo->name = 'John1';
 var_dump($user->getAttributes()); // ['name' => 'John1']
 ```
 
-#### Inbound type conversion
+#### Inbound Casting
 
-Sometimes, you may only need to typecast property values written to the model without doing any processing on property values fetched from the model. A typical example of inbound type conversion is "hashing". Inbound type conversion classes need to implement the `CastsInboundAttributes` interface, and only need to implement the `set` method.
+Sometimes, you may only need to cast the value being written to the model without processing the value retrieved from the model. A typical example of inbound casting is "hashing". Inbound casting classes need to implement the `CastsInboundAttributes` interface; you only need to implement the `set` method.
 
 ```php
 <?php
@@ -415,14 +413,14 @@ use Hyperf\Contract\CastsInboundAttributes;
 class Hash implements CastsInboundAttributes
 {
     /**
-     * hash algorithm
+     * Hashing algorithm.
      *
      * @var string
      */
     protected $algorithm;
 
     /**
-     * Create a new instance of the typecast class
+     * Create a new casting class instance.
      */
     public function __construct($algorithm = 'md5')
     {
@@ -430,7 +428,7 @@ class Hash implements CastsInboundAttributes
     }
 
     /**
-     * Convert to the value to be stored
+     * Transform the value to be stored in the database.
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -439,21 +437,21 @@ class Hash implements CastsInboundAttributes
 }
 ```
 
-#### Type conversion parameters
+#### Casting Parameters
 
-When attaching a custom cast to a model, you can specify the cast parameter passed in. To pass in type conversion parameters, use `:` to separate the parameters from the class name, and use commas to separate multiple parameters. These parameters will be passed to the constructor of the type conversion class:
+When attaching custom casting to a model, you can specify incoming casting parameters. To pass casting parameters, use `:` to separate the parameters from the class name, and use commas to separate multiple parameters. These parameters will be passed to the constructor of the casting class:
 
 ```php
 <?php
 namespace App;
 
-use App\Casts\Json;
+use App\Casts\Hash;
 use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * The attributes that should be cast.
      *
      * @var array
      */
@@ -463,9 +461,9 @@ class User extends Model
 }
 ```
 
-### Array & `JSON` conversion
+### Array & JSON Casting
 
-`array` type conversions are very useful when you store serialized `JSON` data in the database. For example: if your database has a `JSON` or `TEXT` field type that is serialized to `JSON`, and you add an `array` type conversion to the model, it will be automatically converted to ` when you access it PHP` array:
+The `array` cast type is very useful when you store serialized `JSON` data in your database. For example: if your database has a `JSON` or `TEXT` column type that is serialized as `JSON`, and you add the `array` cast type to your model, it will be automatically converted to a `PHP` array when you access it:
 
 ```php
 <?php
@@ -477,7 +475,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * The attributes that should be cast.
      *
      * @var array
      */
@@ -487,7 +485,7 @@ class User extends Model
 }
 ```
 
-一Once the conversion is defined, it will be automatically deserialized from the `JSON` type to a `PHP` array when you access the `options` property. When you set the value of the `options` property, the given array is also automatically serialized to `JSON` type storage:
+Once defined, when you access the `options` attribute, it will automatically be deserialized from `JSON` type to a `PHP` array. When you set the value of the `options` attribute, the given array will also be automatically serialized to `JSON` type for storage:
 
 ```php
 $user = App\User::find(1);
@@ -501,9 +499,9 @@ $user->options = $options;
 $user->save();
 ```
 
-### Date type conversion
+### Date Casting
 
-When using the `date` or `datetime` attributes, you can specify the format of the date. This format will be used when models are serialized as arrays or `JSON`:
+When using `date` or `datetime` attributes, you can specify the date format. This format is used when the model is serialized to an array or `JSON`:
 
 ```php
 <?php
@@ -515,7 +513,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * Properties that should be typecast
+     * The attributes that should be cast.
      *
      * @var array
      */
@@ -525,9 +523,9 @@ class User extends Model
 }
 ```
 
-### Query-time type conversion
+### Casting During Query
 
-There are times when you need to typecast specific properties during query execution, such as when you need to fetch data from a database table. As an example, consider the following query:
+Sometimes you need to cast specific attributes during the query execution process, such as when you need to fetch data from the database table. For example, please refer to the following query:
 
 ```php
 use App\Post;
@@ -540,7 +538,7 @@ $users = User::select([
 ])->get();
 ```
 
-In the result set obtained by this query, the `last_posted_at` attribute will be a string. It would be more convenient if we did a `date` type conversion when executing the query. You can do this by using the `withCasts` method:
+In the result set obtained by this query, the `last_posted_at` attribute will be a string. It would be more convenient if we performed a `date` cast when executing the query. You can complete the above operation by using the `withCasts` method:
 
 ```php
 $users = User::select([
@@ -551,4 +549,3 @@ $users = User::select([
     'last_posted_at' => 'date'
 ])->get();
 ```
-

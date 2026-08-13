@@ -1,10 +1,10 @@
-# Custom process
+# Custom Process
 
-[hyperf/process](https://github.com/hyperf/process) allows you to add user-defined processes. This feature is usually used to create a special process for monitoring, reporting or other special tasks. When the server starts, it will automatically create a process and execute the specified subprocess. If the process exits unexpectedly, the server will automatically restart the process.
+[hyperf/process](https://github.com/hyperf/process) allows you to add user-defined worker processes. This is typically used to create special worker processes for monitoring, reporting, or other specific tasks. The process is automatically created when the Server starts, and the specified child process function is executed. If the process exits unexpectedly, the Server will restart it.
 
-## Create a custom process
+## Creating a custom process
 
-Implement a subclass that inherits `Hyperf\Process\AbstractProcess` and implement the interface method `handle(): void`, with your logic code in the method. Let's take this code as an example:
+To create a custom process, implement a subclass that extends `Hyperf\Process\AbstractProcess` and implement the `handle(): void` interface method, where you can put your logic. Here is an example:
 
 ```php
 <?php
@@ -18,16 +18,16 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Your code ...
     }
 }
 ```
 
-This defines a custom process class, but the class has not been registered in the `ProcessManager`. We can register it using one of the two ways: `configuration file` or `annotation`.
+This completes the custom process class, but it has not yet been registered with the `ProcessManager`. You can register it using either a `configuration file` or an `annotation`.
 
-### Register via configuration file
+### Registering via configuration file
 
-Just add your custom process class in `config/autoload/processes.php`:
+Simply add your custom process class to `config/autoload/processes.php`:
 
 ```php
 // config/autoload/processes.php
@@ -36,9 +36,9 @@ return [
 ];
 ```
 
-### Register via annotation
+### Registering via Annotation
 
-Just define the #[Process] annotation on the custom process class, and Hyperf will collect and automatically complete the registration work:
+Simply define the `#[Process]` annotation on your custom process class, and Hyperf will collect and register it automatically:
 
 ```php
 <?php
@@ -54,16 +54,16 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Your code ...
     }
 }
 ```
 
-> When using `#[Process]` annotation, `use Hyperf\Process\Annotation\Process;` namespace is required;
+> When using the `#[Process]` annotation, ensure you `use Hyperf\Process\Annotation\Process;`.
 
-## Add conditions for process startup
+## Setting launch conditions
 
-Sometimes a custom process should not be started at all times. Whether a custom process is started or not may be determined according to certain configurations or conditions by overriding `isEnable(): bool` method in the custom process class. The method is implemented by default with the return value of `true`, which will start with the service. If the method returns `false`, the custom process will not be started when the service starts.
+Sometimes, you may not want to start a custom process every time. Whether or not to start a custom process might depend on certain configurations or conditions. You can achieve this by overriding the `isEnable(): bool` method within your custom process class. It returns `true` by default, meaning it will start with the service. If it returns `false`, the custom process will not start when the service starts.
 
 ```php
 <?php
@@ -79,20 +79,20 @@ class FooProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        // Your code...
+        // Your code ...
     }
-
+    
     public function isEnable($server): bool
     {
-        // Do not start with service startup
-        return false;
+        // Do not follow the service startup
+        return false;   
     }
 }
 ```
 
 ## Configuring a custom process
 
-There are some configurable parameters in the custom process, which can be defined by overriding the attributes corresponding to the parameters on the subclass or defining the corresponding attributes in the `#[Process]` annotation.
+A custom process has several configurable parameters. These can be defined either by overriding the corresponding properties in the subclass or by defining the corresponding attributes within the `#[Process]` annotation.
 
 ```php
 <?php
@@ -103,44 +103,39 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-#[Process(name: "foo_process", name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
-     * Number of processes
-     * @var int
+     * Process count
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * Process name
-     * @var string
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
-     * Redirect the standard input and output of a custom process
-     * @var bool
+     * Redirect standard input and output of the custom process
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
      * Pipe type
-     * @var int
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
-     * Whether to enable coroutine
-     * @var bool
+     * Whether to enable coroutines
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 
-## Usage example
+## Usage Example
 
-We create a child process to monitor the number of failure queues, and report a warning when there is data in the failure queue.
+We will create a child process that monitors the number of failed tasks in a queue and reports a warning when there is data in the failed queue.
 
 ```php
 <?php
@@ -167,6 +162,35 @@ class DemoProcess extends AbstractProcess
                 $logger->warning('The num of failed queue is ' . $count);
             }
 
+            sleep(1);
+        }
+    }
+}
+```
+
+If you are using asynchronous I/O and cannot put the logic directly into a loop, you can try the following approach:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+use Swoole\Timer;
+
+#[Process(name: "demo_process")]
+class DemoProcess extends AbstractProcess
+{
+    public function handle(): void
+    {
+        Timer::tick(1000, function(){
+            var_dump(1);
+            // Do something...
+        });
+
+        while (true) {
             sleep(1);
         }
     }

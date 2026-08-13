@@ -1,20 +1,28 @@
-# Automated testing
+# Automated Testing
 
-Testing in Hyperf is implemented by `phpunit` by default, but because Hyperf is a coroutine framework, the default `phpunit` script does not work very well, so we provide a `co-phpunit` script. You can call the script directly or use the corresponding composer command. There are no specific components for automated testing, but there will be corresponding implementations in the [skeleton package](https://github.com/hyperf/hyperf-skeleton) provided by Hyperf.
+In Hyperf, testing is implemented via `phpunit` by default, and starting from 3.1, the `pest` framework based on phpunit is supported [Documentation](https://pestphp.com/docs/installation).
 
-```
-composer require hyperf/testing
+
+```shell
+composer require hyperf/testing --dev
+composer require pestphp/pest --dev
 ```
 
 ```json
 "scripts": {
+    "pest": "pest --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
 
+| package         | version |
+| --------------- | ------- |
+| phpunit/phpunit | ^10.1   |
+| pestphp/pest    | ^2.8  |
+
 ## Bootstrap
 
-Hyperf provides a default `bootstrap.php` file, which allows users to scan and load the corresponding libraries into memory when running unit tests.
+Hyperf provides a default `bootstrap.php` file, which allows users to scan and load corresponding libraries into memory when running unit tests.
 
 ```php
 <?php
@@ -27,27 +35,33 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
+// Enabled by default. Should be commented out when using pest --parallel feature or other native parallel operations.
 Swoole\Runtime::enableCoroutine(true);
 
-require BASE_PATH.'/vendor/autoload.php';
+require BASE_PATH . '/vendor/autoload.php';
 
 Hyperf\Di\ClassLoader::init();
 
-$container = require BASE_PATH.'/config/container.php';
+$container = require BASE_PATH . '/config/container.php';
 
 $container->get(Hyperf\Contract\ApplicationInterface::class);
 
 ```
 
-Run unit tests
+Running unit tests
 
 ```
 composer test
 ```
 
-## HTTP testing
+## Notes
 
-When developing an interface, we usually need an automated test script to ensure that the interface we provide is running as expected. The Hyperf framework provides the `Hyperf\Testing\Client` class, which allows you to simulate HTTP request processing without starting the HTTP server.
+- `hyperf/testing` provides the Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php). Just use this class in specific `Test` cases to enable the coroutine environment.
+- When using the `--parallel` parameter feature in pest, `Swoole\Runtime::enableCoroutine(true)` in `test/bootstrap.php` needs to be commented out.
+
+## Mocking HTTP Requests
+
+When developing interfaces, we usually need automated test scripts to ensure that the interfaces we provide are running as expected. The Hyperf framework provides the `Hyperf\Testing\Client` class, which allows you to simulate HTTP service requests without starting a Server:
 
 ```php
 <?php
@@ -58,22 +72,22 @@ $client = make(Client::class);
 $result = $client->get('/');
 ```
 
-Because Hyperf supports multi-port configuration in addition to testing the default port interface, how do we test other request processing for other ports?
+Because Hyperf supports multi-port configuration, in addition to verifying default port interfaces, what if we want to verify interfaces on other ports?
 
 ```php
 <?php
 
 use Hyperf\Testing\Client;
 
-$client = make(Client::class, ['server' =>'adminHttp']);
+$client = make(Client::class, ['server' => 'adminHttp']);
 
 $result = $client->json('/user/0',[
-    'nickname' =>'Hyperf'
+    'nickname' => 'Hyperf'
 ]);
 
 ```
 
-By default, the framework uses `JsonPacker` and will directly parse `request body` as `array`. If you return `string` directly, you need to set the corresponding `Packer`
+By default, the framework uses `JsonPacker`, which will directly parse `Body` into an `array`. If you return a `string` directly, you need to set the corresponding `Packer`.
 
 ```php
 <?php
@@ -96,8 +110,25 @@ $client = make(Client::class, [
 ]);
 
 $result = $client->json('/user/0',[
-    'nickname' =>'Hyperf'
+    'nickname' => 'Hyperf'
 ]);
+```
+
+### Using Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
 ```
 
 ## Example
@@ -120,12 +151,9 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
-    public function __construct($name = null, array $data = [], $dataName ='')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->client = make(Client::class);
@@ -142,26 +170,26 @@ class ExampleTest extends TestCase
         $this->assertSame('GET', $res['data']['method']);
         $this->assertSame('Hyperf', $res['data']['user']);
 
-        $res = $this->client->get('/', ['user' =>'developer']);
+        $res = $this->client->get('/', ['user' => 'developer']);
 
         $this->assertSame(0, $res['code']);
         $this->assertSame('developer', $res['data']['user']);
 
         $res = $this->client->post('/', [
-            'user' =>'developer',
+            'user' => 'developer',
         ]);
         $this->assertSame('Hello Hyperf.', $res['data']['message']);
         $this->assertSame('POST', $res['data']['method']);
         $this->assertSame('developer', $res['data']['user']);
 
         $res = $this->client->json('/', [
-            'user' =>'developer',
+            'user' => 'developer',
         ]);
         $this->assertSame('Hello Hyperf.', $res['data']['message']);
         $this->assertSame('POST', $res['data']['method']);
         $this->assertSame('developer', $res['data']['user']);
 
-        $res = $this->client->file('/', ['name' =>'file','file' => BASE_PATH.'/README.md']);
+        $res = $this->client->file('/', ['name' => 'file', 'file' => BASE_PATH . '/README.md']);
 
         $this->assertSame('Hello Hyperf.', $res['data']['message']);
         $this->assertSame('POST', $res['data']['method']);
@@ -170,11 +198,13 @@ class ExampleTest extends TestCase
 }
 ```
 
-## Debugging code
+## Debugging Code
 
-Manually debugging code using methods like `dd()` and `var_dump` and opening the corresponding interface in the browser becomes less efficient compared to traditional `php fpm` because in addition to the code changes, you also need to restart the `server` on the command line to apply those changes. Therefore it's more convenient to do this sort of debugging using automated testing.
+In an FPM scenario, we usually modify code and then open a browser to access the corresponding interface, so we usually need two functions, `dd` and `dump`. But Hyperf runs in `CLI` mode. Even if these two functions are provided, we need to restart the `Server` in the `CLI`, and then call the corresponding interface in the browser to view the results. This actually doesn't simplify the process, but makes it more troublesome.
 
-Suppose we implement a function to query user information in `UserDao`
+Next, I will introduce how to quickly debug code by cooperating with `testing` and complete unit testing by the way.
+
+Suppose we implemented a function to query user information in `UserDao`:
 ```php
 namespace App\Service\Dao;
 
@@ -200,14 +230,13 @@ class UserDao extends Dao
 }
 ```
 
-Then we write the corresponding unit test
+Then we write the corresponding unit test:
 
 ```php
 namespace HyperfTest\Cases;
 
 use HyperfTest\HttpTestCase;
 use App\Service\Dao\UserDao;
-
 /**
  * @internal
  * @coversNothing
@@ -225,23 +254,23 @@ class UserTest extends HttpTestCase
 }
 ```
 
-Then perform our single test
+Then execute our unit test:
 
 ```
-composer test - --filter=testUserDaoFirst
+composer test -- --filter=testUserDaoFirst
 ```
 
 ## Test Doubles
 
-`Gerard Meszaros` defined this type of test in `Meszaros2007` based on the concept of a stand-in:
+`Gerard Meszaros` introduced the concept of test doubles in `Meszaros2007`:
 
-Sometimes it is difficult to test the `system under test (SUT)` because it relies on other components that cannot be used in the test environment. This may be because these components are not available, they will not return the results required by the test, or executing them will have undesirable side effects. In other cases, the testing strategy requires more control or more visibility into the internal behavior of the system under test.
+Sometimes it is difficult to test the `System Under Test (SUT)` because it relies on other components that cannot be used in the test environment. This may be because these components are unavailable, they do not return the results required for the test, or executing them has adverse side effects. In other cases, our testing strategy requires more control or more visibility into the internal behavior of the system under test.
 
-If you cannot use (or choose not to use) the actual dependent component (DOC) when writing a test, you can use a test double instead. The test double does not need to behave in exactly the same way as the real dependent component; it only needs to provide the same API as the real component, so that the system under test will think it is a real component!
+If you cannot (or choose not to) use the actual dependent component (DOC) while writing a test, you can use a test double as a substitute. A test double does not need to behave exactly like the real dependent component; it only needs to provide the same API as the real component, so that the system under test will think it is the real component!
 
-The following shows the test doubles of injecting dependencies through the constructor and injecting dependencies through the #[Inject] annotation.
+The following shows test doubles injected via constructor and via `#[Inject]` annotation, respectively.
 
-### Inject dependency test doubles through constructor
+### Test Double with Dependency Injected via Constructor
 
 ```php
 <?php
@@ -252,10 +281,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -300,7 +326,7 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }
@@ -332,7 +358,7 @@ class DemoLogicTest extends HttpTestCase
 }
 ```
 
-### Inject dependency test doubles through Inject annotations
+### Test Double with Dependency Injected via `Inject` Annotation
 
 ```php
 <?php
@@ -386,7 +412,10 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownAfterMethod()
     {
         Mockery::close();
     }
@@ -416,17 +445,17 @@ class DemoLogicTest extends HttpTestCase
         $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
-
+        
         return $container;
     }
 }
 ```
 
-# Unit test coverage
+# Unit Test Coverage
 
-## Use phpdbg to generate unit test coverage
+## Use phpdbg to Generate Unit Test Coverage
 
-Modify the content of the `phpunit.xml` file as follows:
+Modify the `phpunit.xml` file as follows:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -439,27 +468,42 @@ Modify the content of the `phpunit.xml` file as follows:
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // Directory for test cases that need to be executed
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // Need to generate a file for unit test coverage
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // Files for which unit test coverage needs to be calculated
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // Files to be ignored when generating unit test coverage
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
-</phpunit>
 
+</phpunit>
 ```
 
 
-Execute the following command:
+Execute the following command
 
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always

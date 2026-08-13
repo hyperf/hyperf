@@ -1,18 +1,18 @@
 # gRPC Service
 
-The quickstart-php in the official gRPC documentation is easy to mislead PHPer. According to the documentation on the official website, it is very complex to run the gRPC service, not to mention the entire set of RPC services.
+The official quickstart for gRPC in PHP is easily misleading for PHP developers. Following the official documentation, running a gRPC service is cumbersome, let alone a complete RPC service.
 
-[tech| 再探 grpc](https://www.jianshu.com/p/f3221df39e6f) is recommended to have a read, which explains the basic knowledge of implementing gRPC in PHP.
+It is recommended to read [tech| Revisiting gRPC](https://www.jianshu.com/p/f3221df39e6f), which explains the basic knowledge of implementing gRPC in PHP.
 
-Hyperf has further encapsulated gRPC support. The hyperf-skeleton project is taken as an example to explain the entire steps in detail:
+Hyperf has further encapsulated gRPC support. Taking the hyperf-skeleton project as an example, the entire process is explained in detail:
 
 - .proto file and related configuration examples
 - gRPC server example
 - gRPC client example
 
-## .proto file and related configuration examples
+## .proto File and Related Configuration Examples
 
-- Define proto file - `grpc.proto`
+- Define the proto file `grpc.proto`
 
 ```proto3
 syntax = "proto3";
@@ -35,10 +35,10 @@ message HiReply {
 }
 ```
 
-- Use protoc to generate sample code
+- Use protoc to generate example code
 
 ```
-# Use the linux package management tool to install protoc. Let's take alpine as an example. You can also refer to the Dockerfile under hyperf-skeleton
+# Use Linux package management tool to install protoc, alpine is used below as an example. You can also refer to the Dockerfile under hyperf-skeleton
 apk add protobuf
 
 # Use protoc to automatically generate code
@@ -47,13 +47,13 @@ protoc --php_out=grpc/ grpc.proto
 # tree grpc
 grpc
 ├── GPBMetadata
-│   └── Grpc.php
+│   └── Grpc.php
 └── Grpc
     ├── HiReply.php
     └── HiUser.php
 ```
 
-- Configure composer.json, use the automatic loading of the code under `grpc/`. If different `package` settings are used in the proto file, or a different directory is used, adjust accordingly. And then, execute `composer dump-autoload after adding` make it active.
+- Configure `composer.json` to use the autoloader for code under `grpc/`. If different `package` settings are used in the proto file, or different directories are used, make adjustments accordingly. After adding, execute `composer dump-autoload` to make the autoloader take effect.
 
 ```json
 "autoload": {
@@ -67,11 +67,17 @@ grpc
 },
 ```
 
-## gRPC server example
+## gRPC Server Example
+
+- Install component
+
+```shell
+composer require hyperf/grpc-server
+```
 
 - gRPC server configuration
 
-`server.php` file(refer to [config](zh-cn/config.md)):
+`server.php` file (refer to [Configuration](config.md)):
 
 ```php
 'servers' => [
@@ -91,17 +97,17 @@ grpc
 
 - gRPC server routing configuration
 
-`routes.php` file(refer to [router](zh-cn/router.md)):
+`routes.php` file (refer to [Routing](router.md)):
 
 ```php
 Router::addServer('grpc', function () {
-    Router::addGroup('/grpc.hi', function () {
-        Router::post('/sayHello', 'App\Controller\HiController@sayHello');
+    Router::addGroup('/grpc.Hi', function () {
+        Router::post('/SayHello', 'App\Controller\HiController@sayHello');
     });
 });
 ```
 
-`sayHello` method in `HiController.php` file:
+`sayHello` method in the `HiController.php` file:
 
 ```php
 public function sayHello(HiUser $user) 
@@ -111,20 +117,25 @@ public function sayHello(HiUser $user)
     $message->setUser($user);
     return $message;
 }
-
 ```
 
-Correspondence between the definition in the .proto file and gRPC server routing: `/{package}.{service}/{rpc}`
+The correspondence between the definition in the .proto file and the gRPC server routing is: `/{package}.{service}/{rpc}`
 
-- If you would like to go further in this
+- If you want to go deeper
 
-How gRPC server processes gRPC requests(`vendor/hyperf/grpc-server/src/CoreMiddleware.php)`: `\Hyperf\GrpcServer\CoreMiddleware::process()` parse the `request_uri` and get the `/{package}.{service}/{rpc}` information, and then call the encapsulated gRPC decode class `\Hyperf\Grpc\Parser::deserializeMessage`, you can get the requested plaintext information
+How the gRPC server processes gRPC requests (`vendor/hyperf/grpc-server/src/CoreMiddleware.php`): `\Hyperf\GrpcServer\CoreMiddleware::process()` parses the `request_uri` to get the `/{package}.{service}/{rpc}` information, and then calls the encapsulated gRPC codec class `\Hyperf\Grpc\Parser::deserializeMessage` to obtain the plaintext information of the request.
 
-How gRPC server responds to gRPC? You may get the answer through provided information above.
+How the gRPC server responds to gRPC, I believe you can discover it yourself based on the information above.
 
-## gRPC client example
+## gRPC Client Example
 
-The sample code can be found in `GrpcController`:
+Install component
+
+```shell
+composer require hyperf/grpc-client
+```
+
+Example code can be found in `GrpcController`:
 
 ```php
 public function hello()
@@ -139,8 +150,8 @@ public function hello()
     $request->setSex(1);
 
     /**
-        * @var \Grpc\HiReply $reply
-        */
+     * @var \Grpc\HiReply $reply
+     */
     list($reply, $status) = $client->sayHello($request);
 
     $message = $reply->getMessage();
@@ -151,7 +162,7 @@ public function hello()
 }
 ```
 
-Hyperf has already encapsulated `\Hyperf\GrpcClient\BaseClient`, expand it if needed according to the definition in .proto file:
+Hyperf has encapsulated `\Hyperf\GrpcClient\BaseClient`. Just extend it as needed according to the definition in the .proto file:
 
 ```php
 class HiClient extends BaseClient
@@ -159,7 +170,7 @@ class HiClient extends BaseClient
     public function sayHello(HiUser $argument)
     {
         return $this->_simpleRequest(
-            '/grpc.hi/sayHello',
+            '/grpc.Hi/SayHello',
             $argument,
             [HiReply::class, 'decode']
         );
@@ -167,10 +178,9 @@ class HiClient extends BaseClient
 }
 ```
 
-The gRPC client also supports gRPC's Streaming mode. Take two-way flow as an example:
+The gRPC client also supports gRPC's Streaming mode. Taking bidirectional streaming as an example:
 
 ```php
-<?
 public function hello()
 {
     $client = new RouteGuideClient('127.0.0.1:50051');
@@ -187,8 +197,8 @@ public function hello()
 }
 ```
 
-> Note that in streaming mode, you must manually catch the disconnected exception (`Hyperf\GrpcClient\Exception\GrpcClientException`) and choose whether to retry or not.
+> Please note that in streaming mode, you must manually catch exceptions of disconnected connections (`Hyperf\GrpcClient\Exception\GrpcClientException`) and choose whether to retry as needed.
 
-## At the end
+## Afterword
 
-If you are a high-frequency user of gRPC, you are welcome to pay attention to the follow-up developer tools of hyperf, which can generate a full set of gRPC code based on the .proto file.
+If you are a heavy user of gRPC, you are welcome to pay attention to Hyperf's subsequent developer tools, which can generate a full set of gRPC code based on .proto files.

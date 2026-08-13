@@ -1,8 +1,8 @@
-# Consul Client
+# Consul Coroutine Client
 
-Hyperf provides a coroutine [Consul](https://www.consul.io/api/index.html) client. Since Consul's own API is relatively simple and supports HTTP request methods, this component is only make some abstraction for The Consul API, and the coroutine HTTP client support provided by [hyperf/guzzle](https://github.com/hyperf/guzzle).
+Hyperf provides a coroutine client for [Consul](https://www.consul.io/api/index.html). Since the Consul API itself is relatively simple and also supports HTTP request methods, this component only simplifies the encapsulation of the API, based on the coroutine HTTP client support provided by [hyperf/guzzle](https://github.com/hyperf/guzzle).
 
-> `ConsulResponse` means `Hyperf\Consul\ConsulResponse`
+> `ConsulResponse` class refers to the `Hyperf\Consul\ConsulResponse` class.
 
 ## Installation
 
@@ -10,9 +10,62 @@ Hyperf provides a coroutine [Consul](https://www.consul.io/api/index.html) clien
 composer require hyperf/consul
 ```
 
+## Usage
+
+- Get the corresponding Consul client. Below is an example of the KV client:
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Context\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+    ]);
+});
+```
+
+### Consul ACL Token
+
+#### Adding Token via Header
+
+You can set it by passing a Header with the Key `X-Consul-Token` to the Client when calling the method, as follows:
+
+```php
+use Hyperf\Consul\KV;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Context\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
+$clientFactory = $container->get(ClientFactory::class);
+
+$consulServer = 'http://127.0.0.1:8500';
+$kv = new KV(function () use ($clientFactory, $consulServer) {
+    return $clientFactory->create([
+        'base_uri' => $consulServer,
+        'headers' => [
+            'X-Consul-Token' => 'your-token'
+        ],
+    ]);
+});
+```
+
+#### Adding Token via Query
+
+You can also set it by passing a parameter with Key `token` to the `$options` parameter when calling the method. This way, the Token will be passed to the Server along with the Query, as follows:
+
+```php
+$response = $kv->get($namespace, ['token' => 'your-token'])->json();
+```
+
 ## KV
 
-The `Hyperf\Consul\KVInterface` interface implemented by `Hyperf\Consul\KV`.
+Implemented by `Hyperf\Consul\KV` and providing support via `Hyperf\Consul\KVInterface`.
 
 - get($key, array $options = []): ConsulResponse
 - put($key, $value, array $options = []): ConsulResponse
@@ -20,7 +73,7 @@ The `Hyperf\Consul\KVInterface` interface implemented by `Hyperf\Consul\KV`.
 
 ## Agent
 
-The `Hyperf\Consul\AgentInterface` interface implemented by `Hyperf\Consul\Agent`.
+Implemented by `Hyperf\Consul\Agent` and providing support via `Hyperf\Consul\AgentInterface`.
 
 - checks(): ConsulResponse
 - services(): ConsulResponse
@@ -38,7 +91,7 @@ The `Hyperf\Consul\AgentInterface` interface implemented by `Hyperf\Consul\Agent
 
 ## Catalog
 
-The `Hyperf\Consul\CatalogInterface` interface implemented by `Hyperf\Consul\Catalog`.
+Implemented by `Hyperf\Consul\Catalog` and providing support via `Hyperf\Consul\CatalogInterface`.
 
 - register($node): ConsulResponse
 - deregister($node): ConsulResponse
@@ -50,7 +103,7 @@ The `Hyperf\Consul\CatalogInterface` interface implemented by `Hyperf\Consul\Cat
 
 ## Health
 
-The `Hyperf\Consul\HealthInterface` interface implemented by `Hyperf\Consul\Health`.
+Implemented by `Hyperf\Consul\Health` and providing support via `Hyperf\Consul\HealthInterface`.
 
 - node($node, array $options = []): ConsulResponse
 - checks($service, array $options = []): ConsulResponse
@@ -59,7 +112,7 @@ The `Hyperf\Consul\HealthInterface` interface implemented by `Hyperf\Consul\Heal
 
 ## Session
 
-The `Hyperf\Consul\SessionInterface` interface implemented by `Hyperf\Consul\Session`.
+Implemented by `Hyperf\Consul\Session` and providing support via `Hyperf\Consul\SessionInterface`.
 
 - create($body = null, array $options = []): ConsulResponse
 - destroy($sessionId, array $options = []): ConsulResponse

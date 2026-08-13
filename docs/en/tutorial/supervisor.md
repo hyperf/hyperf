@@ -1,39 +1,41 @@
-# Supervisor deploy application
+# Supervisor Deployment
 
-[Supervisor](http://www.supervisord.org/) is a process management tool under `Linux/Unix` system. One or more processes can be easily monitored, started, stopped and restarted. Processes managed by [Supervisor](http://www.supervisord.org/), when the process is accidentally `Kill`, [Supervisor](http://www.supervisord.org/) will automatically restart it, It is very convenient to achieve the purpose of automatic process recovery without having to write a `shell` script to manage the process.
+[Supervisor](http://www.supervisord.org/) is a process management tool for `Linux/Unix` systems. It can easily monitor, start, stop, and restart one or more processes. Processes managed by [Supervisor](http://www.supervisord.org/) will be automatically restarted by [Supervisor](http://www.supervisord.org/) when they are accidentally `Killed`, making it easy to achieve automatic process recovery without having to write `shell` scripts yourself to manage processes.
 
-## Installation Supervisor
+## Installing Supervisor
 
-Here is just an example of the installation method under the `CentOS` system:
+The following is an example of the installation method on `CentOS`:
 
 ```bash
-# Install the epel source, if it has been installed before, skip this step
+# Install epel source; skip this step if installed previously
 yum install -y epel-release
 yum install -y supervisor  
 ```
 
-## create a configuration file
+## Creating a Configuration File
 
 ```bash
 cp /etc/supervisord.conf /etc/supervisord.d/supervisord.conf
 ```
 
-Edit the newly copied configuration file `/etc/supervisord.d/supervisord.conf` and save the file after adding the following at the end of the file:
+Edit the newly copied configuration file `/etc/supervisord.d/supervisord.conf`, and add the following content to the end of the file before saving:
 
 ```ini
-# Create a new application and set a name, here is set to hyperf
+# Create a new application and set a name, here set to hyperf
 [program:hyperf]
-# Here is the startup command of the project you want to manage, corresponding to the real path of your project
-command=php /var/www/hyperf/bin/hyperf.php start
-# Which user to run the process as
+# Set the command to execute in the specified directory
+directory=/var/www/hyperf/
+# This is the startup command for the project you want to manage
+command=php ./bin/hyperf.php start
+# Which user to run this process as
 user=root
-# automatically the app when supervisor starts
+# Automatically start this application when supervisor starts
 autostart=true
-# Automatically restart the process after the process exits
+# Automatically restart the process after it exits
 autorestart=true
-# retry interval in seconds
-startsecs=5
-# number of retries
+# How long the process must run to be considered successfully started
+startsecs=1
+# Number of retry attempts
 startretries=3
 # stderr log output location
 stderr_logfile=/var/www/hyperf/runtime/stderr.log
@@ -41,7 +43,9 @@ stderr_logfile=/var/www/hyperf/runtime/stderr.log
 stdout_logfile=/var/www/hyperf/runtime/stdout.log
 ```
 
-## Start Supervisor
+!> It is recommended to increase the `minfds` configuration item in the configuration file, which defaults to `1024`. You should also modify the system's [ulimit](https://wiki.swoole.com/#/other/sysctl?id=ulimit-settings) to prevent the `Failed to open stream: Too many open files` problem.
+
+## Starting Supervisor
 
 Run the following command to start the Supervisor program based on the configuration file:
 
@@ -49,15 +53,19 @@ Run the following command to start the Supervisor program based on the configura
 supervisord -c /etc/supervisord.d/supervisord.conf
 ```
 
-## Use `supervisorctl` to manage the application
+## Using supervisorctl to Manage Projects
 
 ```bash
-# start the hyperf application
+# Start hyperf application
 supervisorctl start hyperf
-# restart hyperf application
+# Restart hyperf application
 supervisorctl restart hyperf
-# stop hyperf application
-supervisorctl stop hyperf
+# Stop hyperf application
+supervisorctl stop hyperf  
 # View the running status of all managed projects
 supervisorctl status
+# Reload configuration file
+supervisorctl update
+# Restart all programs
+supervisorctl reload
 ```

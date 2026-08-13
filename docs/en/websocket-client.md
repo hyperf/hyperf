@@ -1,6 +1,6 @@
-# WebSocket coroutine client
+# WebSocket Coroutine Client
 
-Hyperf provides an encapsulation of WebSocket Client. The WebSocket Server could be accessed through [hyperf/websocket-client](https://github.com/hyperf/websocket-client) component.
+Hyperf provides an encapsulation for the WebSocket Client. You can access the WebSocket Server based on the [hyperf/websocket-client](https://github.com/hyperf/websocket-client) component;
 
 ## Installation
 
@@ -10,7 +10,7 @@ composer require hyperf/websocket-client
 
 ## Usage
 
-`Hyperf\WebSocketClient\ClientFactory` is provided to create `Hyperf\WebSocketClient\Client` objects.
+The component provides a `Hyperf\WebSocketClient\ClientFactory` to create a client object `Hyperf\WebSocketClient\Client`. Let's demonstrate it directly through code:
 
 ```php
 <?php
@@ -29,14 +29,13 @@ class IndexController
 
     public function index()
     {
-        // The address of the peer service. If there is no prefix like ws:// or wss://, then the ws:// would be used as default.
+        // Address of the peer service. If the ws:// or wss:// prefix is not provided, ws:// is added by default.
         $host = '127.0.0.1:9502';
-        // Create Client object through ClientFactory. Short-lived objects will be created.
+        // Create a Client object through ClientFactory. The created object is a short-lived object.
         $client = $this->clientFactory->create($host);
         // Send a message to the WebSocket server
-        $client->push('Use WebSocket Client to send data in HttpServer.');
-        // Get a response from the server. The server should use 'push()' to send messages to fd of the client, only in this way, can the response be received.
-        // A Frame object is taken as an example in following with 2 seconds timeout.
+        $client->push('Send data using WebSocket Client in HttpServer.');
+        // Get the message responded by the server. The server needs to send a message to the fd of this client through push to get it; set the timeout to 2s, and the received data type is Frame object.
         /** @var Frame $msg */
         $msg = $client->recv(2);
         // Get text data: $res_msg->data
@@ -45,9 +44,9 @@ class IndexController
 }
 ```
 
-## Close the $autoClose
+## Turn off automatic closing
 
-By default, the created `Client` object will be closed by `defer`. If it is not wished, the auto-close could be closed by setting the `$autoClose` as `false` when a `Client` is in instantiating.
+By default, the created `Client` object will automatically `close` the connection through `defer`. If you do not want to `close` it automatically, you can pass the second parameter `$autoClose` as `false` when creating the `Client` object:
 
 ```php
 $autoClose = false;

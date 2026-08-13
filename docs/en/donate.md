@@ -1,22 +1,22 @@
-# Donate
+# Donations and Sponsorship
 
-Hyperf is an MIT licensed open source project and is completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support Hyperf's development via the following methods:
+Hyperf is an open-source project licensed under MIT and is completely free to use. However, as the project grows, funding is needed to maintain and develop it. You can sponsor the development of Hyperf through the following methods.
 
-## Sponsor the development of Hyperf
+## Sponsoring Hyperf's R&D
 
-If you run a business and are using Hyperf in a revenue-generating product, it makes business sense to sponsor Hyperf's development: it ensures the project that your product relies on stays healthy and actively maintained. It can also help your exposure in the Hyperf community that makes it easier to attract Hyperf developers.
+### One-time Sponsorship
 
-If you are an individual user and have enjoyed the productivity of using Hyperf, consider donating as a sign of appreciation - like buying us coffee once in a while :)
+If you are an individual developer and enjoy the high development efficiency brought by Hyperf, you can express your gratitude with a one-time sponsorship — just like buying us a cup of coffee occasionally :)
 
-### One-time Donations
+We accept sponsorships through the following methods:
 
-We accept donations through these channels:
+![alipay](imgs/alipay.jpg ':size=375x562')
+![wechat](imgs/wechatpay.jpg ':size=375x562')
 
-![alipay](imgs/alipay.jpg ':size=375')
-![wechat](imgs/wechatpay.jpg ':size=375')
+### Periodic Sponsorship
 
-### Recurring Pledges
+If you are a business owner and use Hyperf in commercial products, then sponsoring Hyperf has business benefits: it keeps the framework your product relies on healthy and actively upgraded/maintained, and it also helps you gain higher visibility in the Hyperf community, making it easier to attract Hyperf developers.
 
-Recurring pledges come with exclusive perks, e.g. having your name listed in the Hyperf GitHub repository, or have your company logo placed on this website.
+Periodic sponsorship can earn extra rewards, such as your name or your organization/company logo and link appearing in the Hyperf GitHub repository.
 
-> If you wish to provide recurring sponsorship for the Hyperf team, you can join the official WeChat group or QQ group and contact the group owner, or email h@hyperf.io
+> If you wish to provide periodic sponsorship to the Hyperf team, please join the official WeChat group or QQ group and contact the group owner, or email h@hyperf.io

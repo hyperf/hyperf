@@ -1,8 +1,8 @@
-# Request object
+# Request Object
 
-`Request object (Request)` is completely implemented based on the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard and is implemented by [hyperf/http-message](https://github.com/hyperf/http-message).
+The `Request Object` is implemented entirely based on the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard, and its implementation is supported by the [hyperf/http-message](https://github.com/hyperf/http-message) component.
 
-> Note that the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard `Request (Request)` is designed with `immutable mechanism`, all methods starting with the `with` prefix return a new object and will not modify the value of the original object
+> Note: The [PSR-7](https://www.php-fig.org/psr/psr-7/) standard is designed with an `immutable mechanism` for `Request`. The return values of all methods starting with `with` are new objects and will not modify the value of the original object.
 
 ## Installation
 
@@ -12,11 +12,11 @@ This component is completely independent and suitable for any framework project.
 composer require hyperf/http-message
 ```
 
-> If used in other framework projects, only the API provided by PSR-7 is supported. For details, you can refer directly to the relevant specifications of PSR-7. The usage described in this document is limited to usage when using Hyperf.
+> If used in other framework projects, only the APIs provided by PSR-7 are supported. Please refer to the relevant specifications of PSR-7 for details. The usage described in this document is limited to when using Hyperf.
 
-## Get the request object
+## Obtaining the Request Object
 
-You can inject `Hyperf\HttpServer\Contract\RequestInterface` through the container to obtain the corresponding `Hyperf\HttpServer\Request`. The actual injected object is a proxy object implementing `PSR-7 request object (Request)` for each request, which means that this object can only be obtained during the life cycle of `onRequest`. The following is an example of how to obtain the request object:
+You can obtain the corresponding `Hyperf\HttpServer\Request` by injecting `Hyperf\HttpServer\Contract\RequestInterface` through the container. The actual injected object is a proxy object, and the proxied object is the `PSR-7 Request Object` for each request. This means that this object can only be obtained within the `onRequest` lifecycle. Below is an example of obtaining it:
 
 ```php
 declare(strict_types=1);
@@ -36,21 +36,20 @@ class IndexController
 }
 ```
 
-### Dependency injection and parameters
+### Dependency Injection and Parameters
 
-If you want to obtain routing parameters through controller method parameters, you can list the corresponding parameters after the dependencies, and the framework will automatically inject the corresponding parameters into the method parameters. For example, if your route is defined as follows:
+If you wish to obtain route parameters via controller method parameters, you can list the corresponding parameters after the dependencies. The framework will automatically inject the corresponding parameters into the method parameters. For example, if your route is defined as follows:
 
 ```php
-// Route definition using annotation method
+// Annotation mode
 #[GetMapping(path: "/user/{id:\d+}")]
-
-// Route definition using configuration method
+// Configuration mode
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET','HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
+Router::addRoute(['GET', 'HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
-Then you can get the `query` parameter `id` by declaring the `$id` parameter on the method parameter, as shown below:
+You can obtain the `Query` parameter `id` by declaring the `$id` parameter in the method parameters, as shown below:
 
 ```php
 declare(strict_types=1);
@@ -70,7 +69,7 @@ class IndexController
 }
 ```
 
-In addition to obtaining route parameters through dependency injection, you can also obtain route parameters through the `route` method of the request object, as shown below:
+In addition to obtaining route parameters via dependency injection, you can also obtain them via the `route` method, as shown below:
 
 ```php
 declare(strict_types=1);
@@ -85,29 +84,28 @@ class IndexController
 {
     public function info(RequestInterface $request)
     {
-        // Returns the route parameter id if defined or null if the value is missing
+        // Returns if exists, otherwise returns default value null
         $id = $request->route('id');
-
-        // Returns the route parameter id if defined or 0 if the value is missing
+        // Returns if exists, otherwise returns default value 0
         $id = $request->route('id', 0);
         // ...
     }
 }
 ```
 
-### Request path & method
+### Request Path & Method
 
-In addition to using the `APIs` defined by the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard `Hyperf\HttpServer\Contract\RequestInterface`, the request object also provides a variety of methods for accessing request data. Below is a list of some examples of methods:
+In addition to using the `APIs` defined by the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard, `Hyperf\HttpServer\Contract\RequestInterface` also provides multiple methods to check the request. Below we provide examples of some methods:
 
-#### Get the request path
+#### Obtaining Request Path
 
-The `path()` method returns the requested path information. In other words, if the destination address of the incoming request is `http://domain.com/foo/bar?baz=1`, then `path()` will return `foo/bar`:
+The `path()` method returns the path information of the request. In other words, if the target address of the incoming request is `http://domain.com/foo/bar?baz=1`, then `path()` will return `foo/bar`:
 
 ```php
 $uri = $request->path();
 ```
 
-The `is(...$patterns)` method can verify whether the incoming request path matches the specified rule. When using this method, you can also pass a `*` character as a wildcard:
+The `is(...$patterns)` method can verify if the incoming request path matches the specified rule. When using this method, you can also pass a `*` character as a wildcard:
 
 ```php
 if ($request->is('user/*')) {
@@ -115,9 +113,9 @@ if ($request->is('user/*')) {
 }
 ```
 
-#### Get the requested URL
+#### Obtaining Request URL
 
-You can use the `url()` or `fullUrl()` method to get the full `URL` of the incoming request. The `url()` method returns the `URL` without the `query parameters`, and the return value of the `fullUrl()` method contains the `query parameters`:
+You can use the `url()` or `fullUrl()` method to obtain the complete `URL` of the incoming request. The `url()` method returns the `URL` without `Query Parameters`, while the return value of the `fullUrl()` method contains `Query Parameters`:
 
 ```php
 // No query parameters
@@ -127,9 +125,9 @@ $url = $request->url();
 $url = $request->fullUrl();
 ```
 
-#### Get request method
+#### Obtaining Request Method
 
-The `getMethod()` method will return the request method of `HTTP`. You can also use the `isMethod(string $method)` method to verify whether the request method of `HTTP` matches the specified rules:
+The `getMethod()` method will return the `HTTP` request method. You can also use the `isMethod(string $method)` method to verify if the `HTTP` request method matches the specified rule:
 
 ```php
 $method = $request->getMethod();
@@ -139,124 +137,118 @@ if ($request->isMethod('post')) {
 }
 ```
 
-### PSR-7 request and method
+### PSR-7 Request and Methods
 
-The message component [hyperf/http-message](https://github.com/hyperf/http-message) itself is an implementation of [PSR-7](https://www.php-fig.org/psr/psr-7/) standard components and the interface methods can be called through the injected request object (Request).
-If the request is declared as `Psr\Http\Message\ServerRequestInterface` [PSR-7](https://www.php-fig.org/psr/psr-7/) standard  interface during injection, the framework will automatically convert to the equivalent `Hyperf\HttpServer\Request` object that implements `Hyperf\HttpServer\Contract\RequestInterface`.
+The [hyperf/http-message](https://github.com/hyperf/http-message) component itself is a component that implements the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard. Related methods can be called via the injected `Request Object`.
+If it is declared as the `Psr\Http\Message\ServerRequestInterface` interface of the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard during injection, the framework will automatically convert it to the `Hyperf\HttpServer\Request` object, which is equivalent to `Hyperf\HttpServer\Contract\RequestInterface`.
 
-> It is recommended to use `Hyperf\HttpServer\Contract\RequestInterface` for injection so that you can get the IDE's auto-completion reminder support for exclusive methods.
+> It is recommended to use `Hyperf\HttpServer\Contract\RequestInterface` for injection, so that you can get the IDE's auto-completion reminder support for dedicated methods.
 
-## Input preprocessing & normalization
+## Input Pre-processing & Normalization
 
-## Get input
+### Obtaining Input
 
-### Get all input
+#### Obtaining All Inputs
 
-You can use the `all()` method to get all the input data in the form of an `array`:
+You can use the `all()` method to obtain all input data in the form of an `array`:
 
 ```php
 $all = $request->all();
 ```
 
-### Get the specified input value
+#### Obtaining Specified Input Value
 
-Use `input(string $key, $default = null)` and `inputs(array $keys, $default = null): array` to obtain `one` or `multiple` input values of any form:
+Obtain `one` or `more` input values in any form via `input(string $key, $default = null)` and `inputs(array $keys, $default = null): array`:
 
 ```php
-// Returns the input value if it exists or null if it doesn't exist
+// Returns if exists, otherwise returns null
 $name = $request->input('name');
-
-// Return the input value if it exists or the default value of 'Hyperf' if it doesn't exist
-$name = $request->input('name','Hyperf');
+// Returns if exists, otherwise returns default value Hyperf
+$name = $request->input('name', 'Hyperf');
 ```
 
-If the transmission form data contains data in the form of an array, you can use the dot syntax to get a naster value from the array:
+If the transmitted form data contains data in the form of an「array」, then you can use「dot」syntax to obtain the array:
 
 ```php
 $name = $request->input('products.0.name');
 
 $names = $request->input('products.*.name');
 ```
-### Get input from query string
 
-Use the `input` or `inputs` method to get the input data from the entire request (including the `query parameters`), and the `query(?string $key = null, $default = null)` method to get input only from the query string:
+#### Obtaining Input from Query String
+
+Using the `input`, `inputs` methods can obtain input data (including `Query Parameters`) from the entire request, while the `query(?string $key = null, $default = null)` method can only obtain input data from the query string:
 
 ```php
-// Return the query parameter if it exists, return null if it doesn't exist
+// Returns if exists, otherwise returns null
 $name = $request->query('name');
-
-// Return the query parameter if it exists, return default value of 'Hyperf' if it doesn't exist
-$name = $request->query('name','Hyperf');
-
-// If no parameters are passed, all query parameters are returned as an associative array
+// Returns if exists, otherwise returns default value Hyperf
+$name = $request->query('name', 'Hyperf');
+// Returns all Query parameters in the form of an associative array if no parameters are passed
 $name = $request->query();
 ```
 
-### Get `JSON` input information
+#### Obtaining `JSON` Input Information
 
-If the request `body` data format is `JSON`, as long as the `Content-Type` header value of the `Request object (Request)` is set correctly to `application/json`, you can use the `input(string $key , $default = null)` method to access the `JSON` data and you can even use the dot syntax to read the `JSON` array:
+If the data format of the request `Body` is `JSON`, as long as the `Content-Type` `Header Value` of the `Request Object` is correctly set to `application/json`, you can access `JSON` data through the `input(string $key, $default = null)` method, and you can even use「dot」syntax to read `JSON` arrays:
 
 ```php
-// Return value or null if it does not exist
+// Returns if exists, otherwise returns null
 $name = $request->input('user.name');
-
-// Return value or default value of 'Hyperf' if it does not exist
-$name = $request->input('user.name','Hyperf');
-
-// Return all Json data as an array
+// Returns if exists, otherwise returns default value Hyperf
+$name = $request->input('user.name', 'Hyperf');
+// Returns all Json data in the form of an array
 $name = $request->all();
 ```
 
-### Determine if input value exists
+#### Determining Existence of Input Value
 
-To determine whether a value exists in the request, you can use the `has($keys)` method. If the value exists in the request, it will return `true`, if it does not exist, it will return `false`. The first parameter can be either a string or an array containing multiple strings. In the latter case, the method will return `true` only if all of the keys exist:
+To determine whether a value exists in the request, you can use the `has($keys)` method. If the value exists in the request, it returns `true`, otherwise it returns `false`. `$keys` can be a string, or an array containing multiple strings. It will only return `true` if all of them exist:
 
 ```php
 // Only judge a single value
 if ($request->has('name')) {
     // ...
 }
-
 // Judge multiple values at the same time
-if ($request->has(['name','email'])) {
+if ($request->has(['name', 'email'])) {
     // ...
 }
 ```
 
-## Cookies
+### Cookies
 
-### Get Cookies from the request
+#### Obtaining Cookies from Request
 
-Use the `getCookieParams()` method to get all the `Cookies` from the request as an associative array.
+Use the `getCookieParams()` method to obtain all `Cookies` from the request, which will return an associative array.
 
 ```php
 $cookies = $request->getCookieParams();
 ```
 
-You can use the `cookie(string $key, $default = null)` method to get the value of the corresponding cookie:
+If you wish to obtain a certain `Cookie` value, you can obtain the corresponding value through the `cookie(string $key, $default = null)` method:
 
  ```php
-// Return value if the cookie exists or return null if it doesn't exist
+// Returns if exists, otherwise returns null
 $name = $request->cookie('name');
-
-// Return value if the cookie exists or return a default value of 'Hyperf' if it doesn't exist
-$name = $request->cookie('name','Hyperf');
+// Returns if exists, otherwise returns default value Hyperf
+$name = $request->cookie('name', 'Hyperf');
  ```
 
-## File
+### Files
 
-### Get uploaded files
+#### Obtaining Uploaded Files
 
-You can use the `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` method to get the uploaded file object from the request. If the uploaded file exists, this method returns an instance of `Hyperf\HttpMessage\Upload\UploadedFile` class, which inherits the `SplFileInfo` class of `PHP` and also provides various methods for interacting with the file:
+You can use the `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` method to obtain the uploaded file object from the request. If the uploaded file exists, this method returns an instance of the `Hyperf\HttpMessage\Upload\UploadedFile` class. This class inherits `PHP`'s `SplFileInfo` class and also provides various methods to interact with the file:
 
 ```php
-// Returns a Hyperf\HttpMessage\Upload\UploadedFile object if the file exists, or null if it does not exist
+// Returns a Hyperf\HttpMessage\Upload\UploadedFile object if it exists, otherwise returns null
 $file = $request->file('photo');
 ```
 
-### Check if the file exists
+#### Checking if File Exists
 
-You can use the `hasFile(string $key): bool` method to confirm whether there is a file in the request:
+You can use the `hasFile(string $key): bool` method to confirm whether a file exists in the request:
 
 ```php
 if ($request->hasFile('photo')) {
@@ -264,7 +256,7 @@ if ($request->hasFile('photo')) {
 }
 ```
 
-### Verify successful upload
+#### Verifying Successful Upload
 
 In addition to checking whether the uploaded file exists, you can also verify whether the uploaded file is valid through the `isValid(): bool` method:
 
@@ -274,28 +266,80 @@ if ($request->file('photo')->isValid()) {
 }
 ```
 
-### File path & extension
+#### File Path & Extension
 
-The `UploadedFile` class also contains methods for accessing the full path of the file and its extension. The `getExtension()` method will determine the extension of the file based on the content of the file. The extension may be different from the extension provided by the client:
+The `UploadedFile` class also contains methods for accessing the full path and extension of the file. The `getExtension()` method determines the extension of the file based on the file content. This extension may be different from the extension provided by the client:
 
 ```php
-// The path is the temporary path of the uploaded file
+// This path is the temporary path of the uploaded file
 $path = $request->file('photo')->getPath();
 
-// Since the tmp_name of the uploaded file by Swoole does not retain the original file name, this method has been rewritten to obtain the suffix of the original file name
+// Since Swoole's uploaded file tmp_name does not keep the original file name, this method has been rewritten to get the suffix of the original file name
 $extension = $request->file('photo')->getExtension();
 ```
 
-### Store uploaded files
+#### Storing Uploaded Files
 
-The uploaded file is stored in a temporary location before it is manually stored. If you do not store the file, it will be removed from the temporary location after the request is completed. Use `moveTo(string $targetPath): void` to move temporary files to the location of `$targetPath` for persistent storage. The code example is as follows:
+Uploaded files exist in a temporary location before they are manually stored. If you do not perform storage processing on the file, it will be removed from the temporary location after the request ends. Therefore, we may need to perform persistent storage processing on the file. Persistently store the temporary file to the `$targetPath` location via `moveTo(string $targetPath): void`. The code example is as follows:
 
 ```php
 $file = $request->file('photo');
 $file->moveTo('/foo/bar.jpg');
 
-// Determine whether the method has moved through the isMoved(): bool method
+// Determine whether the method has been moved via the isMoved(): bool method
 if ($file->isMoved()) {
     // ...
 }
 ```
+
+
+## Related Events
+
+When we turn on `enable_request_lifecycle` in the service configuration, each request that comes in can trigger the following three events, respectively:
+
+### Configuration Instance
+
+> The following deletes other irrelevant code
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+use Hyperf\Server\ServerInterface;
+
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => ServerInterface::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'options' => [
+                // Whether to enable request lifecycle event
+                'enable_request_lifecycle' => false,
+            ],
+        ],
+    ],
+];
+```
+
+### Event List
+
+- Hyperf\HttpServer\Event\RequestReceived
+
+This event is triggered when a request is received.
+
+- Hyperf\HttpServer\Event\RequestHandled
+
+This event is triggered when the request is processed.
+
+- Hyperf\HttpServer\Event\RequestTerminated
+
+This event is triggered when the carrying coroutine of the current request is destroyed.

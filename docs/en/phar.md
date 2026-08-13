@@ -1,4 +1,4 @@
-# Phar packager
+# Phar Packager
 
 ## Installation
 
@@ -8,31 +8,31 @@ composer require hyperf/phar
 
 ## Usage
 
-- Packed by default
+- Default packaging
 
 ```shell
 php bin/hyperf.php phar:build
 ```
 
-- Set the package name
+- Specify package name
 
 ```shell
 php bin/hyperf.php phar:build --name=your_project.phar
 ```
 
-- Set the package version
+- Specify package version
 
 ```shell
 php bin/hyperf.php phar:build --phar-version=1.0.1
 ```
 
-- Set the startup file
+- Specify startup file
 
 ```shell
 php bin/hyperf.php phar:build --bin=bin/hyperf.php
 ```
 
-- Set the packaging directory
+- Specify packaging directory
 
 ```shell
 php bin/hyperf.php phar:build --path=BASE_PATH
@@ -42,60 +42,59 @@ php bin/hyperf.php phar:build --path=BASE_PATH
 
 > Requires hyperf/phar version >= v2.1.7
 
-The following command can allow the `phar` package to read the `.env` file in the same directory, so that `phar` can be distributed to various environments
+The following command allows the `phar` package to read the `.env` file in the same directory, which is convenient for distributing `phar` to various environments.
 
 ```shell
 php bin/hyperf.php phar:build -M .env
 ```
 
-## run
+## Running
 
 ```shell
 php your_project.phar start
 ```
 
-## Precautions
+## Considerations
 
-After packaging, it runs in the form of `phar` package, which is different from running in source code mode. The `runtime` directory in the `phar` package is not writable.
-So we need to override some writable directory locations.
+After packaging, it runs in the form of a `phar` package. Unlike running in source code mode, the `runtime` directory in the `phar` package is not writable, so we need to rewrite some writable directory locations.
 
-> Modify as appropriate according to the actual situation
+> Modify according to actual conditions.
 
 - pid_file
 
-Modify `server.php` configuration.
+Modify the `server.php` configuration:
 
 ```php
 <?php
 
 return [
-     'settings' => [
-         'pid_file' => '/tmp/runtime/hyperf.pid',
-     ],
+    'settings' => [
+        'pid_file' => '/tmp/runtime/hyperf.pid',
+    ],
 ];
 ```
 
 - logger
 
-Modify `logger.php` configuration
+Modify the `logger.php` configuration:
 
 ```php
 <?php
 return [
-     'default' => [
-         'handler' => [
-             'class' => Monolog\Handler\StreamHandler::class,
-             'constructor' => [
-                 'stream' => '/tmp/runtime/logs/hyperf.log',
-                 'level' => Monolog\Logger::INFO,
-             ],
-         ],
-     ],
+    'default' => [
+        'handler' => [
+            'class' => Monolog\Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => '/tmp/runtime/logs/hyperf.log',
+                'level' => Monolog\Logger::INFO,
+            ],
+        ],
+    ],
 ];
 ```
 
 - scan_cacheable
 
-The Phar packager will automatically set `scan_cacheable` to `true` in `config.php` configuration.
+The Phar packager will actively set `scan_cacheable` in the `config.php` configuration to `true`.
 
 Of course, it is also possible to actively modify this configuration to `true`.

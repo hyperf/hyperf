@@ -1,16 +1,17 @@
 # GraphQL
 
-The GraphQL component abstracts [thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite).
+The GraphQL component provides an abstraction over [thecodingmachine/graphqlite](https://github.com/thecodingmachine/graphqlite).
 
-## Install
+## Installation
 
 ```bash
 composer require hyperf/graphql
 ```
 
-## Quick start
+## Quick Start
 
-### Simple query
+### Simple Query
+
 ```php
 <?php
 
@@ -47,7 +48,8 @@ class GraphQLController
     }
 }
 ```
-Inquire:
+
+Query:
 ```graphql
 {
     hello(name: "graphql")
@@ -62,7 +64,7 @@ Response:
 }
 ```
 
-### Typemap
+### Type Mapping
 
 ```php
 <?php
@@ -97,7 +99,7 @@ class Product
 }
 ```
 
-Add in `GraphQLController`
+Add the following to `GraphQLController`:
 
 ```php
 <?php
@@ -111,7 +113,7 @@ public function product(string $name, float $price): Product
 }
 ```
 
-Inquire:
+Query:
 ```graphql
 {
     hello(name: "graphql")
@@ -122,7 +124,7 @@ Inquire:
 }
 ```
 
-response:
+Response:
 ```json
 {
     "data": {
@@ -135,4 +137,4 @@ response:
 }
 ```
 
-For more usage methods, see the documentation of [GraphQLite](https://graphqlite.thecodingmachine.io/docs/queries).
+For more usage examples, please refer to the [GraphQLite documentation](https://graphqlite.thecodingmachine.io/docs/queries).

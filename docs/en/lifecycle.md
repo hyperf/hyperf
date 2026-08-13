@@ -1,14 +1,11 @@
-# Life Cycle
+# Lifecycle
 
-## Life Cycle of Framework
+## Framework Lifecycle
 
-Hyperf is based on [Swoole](http://github.com/swoole/swoole-src). To understand the life cycle of Hyperf, then understand the life cycle of [Swoole](http://github.com/swoole/swoole-src) is also crucial.   
- 
-Hyperf's command management is supported by [symfony/console](https://github.com/symfony/console) by default * (if you wish to replace this component you can also change the entry file of skeleton to the component that you wish to use) *, after executing `php bin/hyperf.php start`, it will be taken over by the `Hyperf\Server\Command\StartServer` command class and started one by one according to the `Server` defined in the configuration file `config/autoload/server.php`.   
- 
-Regarding the initialization of the dependency injection container, we are not implemented by any component, because once it is implemented by some component, the coupling will be very obvious, so by default, the configuration file `config/container.php` is loaded by the entry file to initialize the container.
+Hyperf runs on top of [Swoole](http://github.com/swoole/swoole-src). To fully understand the lifecycle of Hyperf, it is essential to understand the lifecycle of [Swoole](http://github.com/swoole/swoole-src).
+Hyperf's command management is supported by [symfony/console](https://github.com/symfony/console) by default (if you wish to change this component, you can also change the skeleton's entry file to use the component you prefer). After executing `php bin/hyperf.php start`, the `Hyperf\Server\Command\StartServer` command class will take over and start each `Server` defined in the configuration file `config/autoload/server.php` one by one.
+The initialization of the dependency injection container is not implemented by a component because that would create significant coupling. By default, it is implemented by the entry file loading `config/container.php`.
 
-## Life Cycle of Request and Coroutine
+## Request and Coroutine Lifecycle
 
-When Swoole handles each connection, it will create a coroutine to handle by default, mainly in the `onRequest`, `onReceive`, `onConnect` events, so it can be understood that each request is a coroutine. Because of creates coroutines is also a normal operation, so a request coroutine may contain many coroutines, and the same intra-process coroutine is memory shared, but the scheduling order is non-sequential, and the coroutines are essentially independent of each other, no parent-child relationship, so the state processing for each coroutine needs to be managed by [Coroutine Context](en/coroutine.md#coroutine context).
-
+Swoole creates a coroutine to handle each connection by default, mainly reflected in the `onRequest`, `onReceive`, and `onConnect` events. Therefore, it can be understood that each request is a coroutine. Since creating coroutines is a common operation, a single request coroutine may contain many other coroutines. Within the same process, coroutines share memory, but their execution order is non-sequential. Coroutines are essentially independent of each other and have no parent-child relationship. Therefore, the state of each coroutine needs to be managed through [Coroutine Context](coroutine.md#coroutine-context).

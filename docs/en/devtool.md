@@ -1,4 +1,4 @@
-# Dev Tool
+# Developer Tools
 
 ## Installation
 
@@ -6,15 +6,15 @@
 composer require hyperf/devtool
 ```
 
-# Supported Commands
+## Supported commands
 
 ```bash
 php bin/hyperf.php
 ```
 
-All commands supported by Command can be listed by executing the above command. Series of commands under the `gen` and `vendor:publish` mainly provide support for the `devtool` component.
+You can get all the commands supported by Command by executing the above command. Among them, the `gen` series of commands and the `vendor:publish` command are mainly provided by the `devtool` component.
 
-```
+```bash
  gen
   gen:amqp-consumer  Create a new amqp consumer class
   gen:amqp-producer  Create a new amqp producer class
@@ -31,9 +31,9 @@ All commands supported by Command can be listed by executing the above command. 
 
 ## Quick Open
 
-Added a very simple function to quickly open created files with the built-in `gen` command, supporting `sublime`, `textmate`, `cursor`, `emacs`, `macvim`, `phpstorm`, `idea`, `vscode`, `vscode-insiders`, `vscode-remote`, `vscode-insiders-remote`, `atom`, `nova`, `netbeans`, `xdebug`.
+A very simple function has been added to quickly open the created files using the built-in `gen` command. It supports `sublime`, `textmate`, `cursor`, `emacs`, `macvim`, `phpstorm`, `idea`, `vscode`, `vscode-insiders`, `vscode-remote`, `vscode-insiders-remote`, `atom`, `nova`, `netbeans`, `xdebug`.
 
-You also need to add this configuration block on `config/autoload/devtool.php`:
+You also need to add this configuration block to `config/autoload/devtool.php`:
 
 ```php
 return [

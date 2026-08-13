@@ -1,61 +1,64 @@
-# Service monitoring
+# Service Monitoring
 
-A core requirement of microservice governance is service observability. As a shepherd of microservices, it is not easy to keep track of the health status of various services. Many solutions have emerged in this field in the cloud-native era. This component abstracts telemetry and monitoring, the important pillars of observability, to allow users to quickly integrate with existing infrastructure while avoiding vendor lock-in.
+A core requirement of microservice governance is service observability. As a shepherd of microservices, it is not easy to keep track of the health status of each service. Many solutions have emerged in this field in the cloud-native era. This component abstracts the important pillars of observability—telemetry and monitoring—making it convenient for users to combine quickly with existing infrastructure, while avoiding vendor lock-in.
 
-## Install
+## Installation
 
-### Install components via Composer
+### Install component via Composer
 
 ```bash
 composer require hyperf/metric
 ```
 
-The [hyperf/metric](https://github.com/hyperf/metric) component has [Prometheus](https://prometheus.io/) dependencies installed by default. If you want to use [StatsD](https://github.com/statsd/statsd) or [InfluxDB](http://influxdb.com), you also need to execute the following commands to install the corresponding dependencies:
+Metric supports [Prometheus](https://prometheus.io/), [StatsD](https://github.com/statsd/statsd), and [InfluxDB](http://influxdb.com). You can execute the following commands to install the corresponding dependencies:
 
 ```bash
-# StatsD required dependencies
+# Prometheus
+composer require promphp/prometheus_client_php
+# StatsD dependencies
 composer require domnikl/statsd
-# InfluxDB required dependencies
+# InfluxDB dependencies
 composer require influxdb/influxdb-php 
 ```
 
 ### Add component configuration
 
-If the file does not exist, execute the following command to add the `config/autoload/metric.php` configuration file:
+If the file does not exist, you can execute the following command to add the `config/autoload/metric.php` configuration file:
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/metric
 ```
 
-## use
+## Usage
 
 ### Configuration
 
-#### options
+#### Options
 
-`default`: The value corresponding to `default` in the configuration file is the driver name used. The specific configuration of the driver is defined under `metric`, using the same driver as `key`.
+`default`: The value corresponding to `default` in the configuration file is the name of the driver used. The specific configuration of the driver is defined under the `metric` item, using the same driver as the `key`.
 
 ```php
 'default' => env('METRIC_DRIVER', 'prometheus'),
 ```
 
-* `use_standalone_process`: Whether to use `standalone monitoring process`. It is recommended to enable. Metric collection and reporting will be handled in the `Worker process` after shutdown.
+* `use_standalone_process`: Whether to use a `standalone monitoring process`. Enabling it is recommended. If disabled, metric collection and reporting will be handled in the `Worker process`.
 
 ```php
 'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
 ```
 
-* `enable_default_metric`: Whether to count default metrics. Default metrics include memory usage, system CPU load, and Swoole Server and Swoole Coroutine metrics.
+* `enable_default_metric`: Whether to collect default metrics. Default metrics include memory usage, system CPU load, as well as Swoole Server metrics and Swoole Coroutine metrics.
 
 ```php
 'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
 ```
 
-`default_metric_interval`: The default metric push interval, in seconds, the same below.
+`default_metric_interval`: The push period for default metrics, in seconds (the same applies below).
 ```php
 'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
 ```
-#### Configuring Prometheus
+
+#### Configure Prometheus
 
 When using Prometheus, add the specific configuration of Prometheus to the `metric` item in the configuration file.
 
@@ -83,17 +86,17 @@ return [
 ];
 ```
 
-Prometheus has two working modes, crawl mode and push mode (via Prometheus Pushgateway ), which can be supported by this component.
+Prometheus has two operating modes: scrape mode and push mode (via Prometheus Pushgateway). This component supports both.
 
-When using the crawl mode (Prometheus official recommendation), you need to set:
+When using scrape mode (officially recommended by Prometheus), you need to set:
 
 ```php
 'mode' => Constants::SCRAPE_MODE
 ```
 
-And configure the crawling address `scrape_host`, the crawling port `scrape_port`, and the crawling path `scrape_path`. Prometheus can pull all metrics in the form of HTTP access under the corresponding configuration.
+And configure the scraping address `scrape_host`, scraping port `scrape_port`, and scraping path `scrape_path`. Prometheus can pull all metrics in HTTP access form under the corresponding configuration.
 
-> Note: In crawl mode, standalone process must be enabled, ie `use_standalone_process = true`.
+> Note: In asynchronous style, scrape mode must enable an independent process, i.e., `use_standalone_process = true`.
 
 When using push mode, you need to set:
 
@@ -101,14 +104,15 @@ When using push mode, you need to set:
 'mode' => Constants::PUSH_MODE
 ```
 
-And configure the push address `push_host`, push port `push_port`, push interval `push_interval`. Push mode is only recommended for offline tasks.
+And configure the pushing address `push_host`, pushing port `push_port`, and pushing interval `push_interval`. Push mode is only recommended for offline tasks.
 
-Because of the differences in basic settings, the above modes may not meet the needs. This component also supports custom mode. In the custom mode, the component is only responsible for the collection of indicators, and the specific reporting needs to be handled by the user.
+Because of the differences in basic settings, the above modes may not satisfy all requirements. This component also supports a custom mode. In custom mode, the component is only responsible for the collection of metrics, and specific reporting needs to be handled by the user.
 
 ```php
 'mode' => Constants::CUSTOM_MODE
 ```
-For example, you may want to report metrics through custom routes, or store metrics in Redis, and other independent services are responsible for centralized reporting of metrics, etc. The [custom escalation](#custom escalation) section contains corresponding examples.
+
+For example, you might want to report metrics via a custom route, or hope to store metrics in Redis, with other independent services responsible for centralized reporting of metrics. The [Custom Reporting](#custom-reporting) section contains corresponding examples.
 
 #### Configure StatsD
 
@@ -133,9 +137,9 @@ return [
 ];
 ```
 
-StatsD currently only supports UDP mode, you need to configure UDP address `udp_host`, UDP port `udp_port`, whether to batch push `enable_batch` (reduce the number of requests), batch push interval `push_interval` and sample rate `sample_rate` .
+StatsD currently only supports UDP mode. It requires configuring the UDP address `udp_host`, UDP port `udp_port`, whether to batch push `enable_batch` (to reduce the number of requests), batch push interval `push_interval`, and sample rate `sample_rate`.
 
-#### Configuring InfluxDB
+#### Configure InfluxDB
 
 When using InfluxDB, add the specific configuration of InfluxDB to the `metric` item in the configuration file.
 
@@ -159,15 +163,15 @@ return [
 ];
 ```
 
-InfluxDB uses the default HTTP mode, you need to configure the address `host`, UDP port `port`, username `username`, password `password`, `dbname` data table and batch push interval `push_interval`.
+InfluxDB uses the default HTTP mode. It requires configuring the address `host`, UDP port `port` (Note: InfluxDB usually uses HTTP port 8086), username `username`, password `password`, `dbname` table, and batch push interval `push_interval`.
 
-### Basic abstraction
+### Basic Abstraction
 
-The telemetry component abstracts three commonly used data types to ensure decoupling of concrete implementations.
+The telemetry component abstracts three commonly used data types to ensure decoupling from specific implementations.
 
 The three types are:
 
-Counter (Counter): An indicator used to describe one-way increments. Such as HTTP request count.
+Counter: Used to describe a metric that monotonically increases. E.g., HTTP request count.
 
 ```php
 interface CounterInterface
@@ -178,7 +182,7 @@ interface CounterInterface
 }
 ```
 
-Gauge: An indicator used to describe an increase or decrease over time. Such as the number of available connections in the connection pool.
+Gauge: Used to describe a metric that increases or decreases over time. E.g., the number of available connections in the connection pool.
 
 ```php
 interface GaugeInterface
@@ -186,12 +190,12 @@ interface GaugeInterface
     public function with(string ...$labelValues): self;
 
     public function set(float $value);
-
+    
     public function add(float $delta);
 }
 ```
 
-* Histogram: used to describe the statistical distribution produced by continuous observation of an event, usually expressed as percentiles or buckets. Such as HTTP request delay.
+Histogram: Used to describe the statistical distribution produced after continuous observation of an event, usually represented as percentiles or buckets. E.g., HTTP request latency.
 
 ```php
 interface HistogramInterface
@@ -204,8 +208,8 @@ interface HistogramInterface
 
 ### Configure middleware
 
-After configuring the driver, you only need to configure the middleware to enable the request Histogram statistics function.
-Open the `config/autoload/middlewares.php` file, the example is to enable middleware in `http` Server.
+After configuring the driver, just configure the middleware to enable the Histogram statistics function for requests.
+Open the `config/autoload/middlewares.php` file, the example shows enabling the middleware in the `http` Server.
 
 ```php
 <?php
@@ -218,11 +222,11 @@ return [
     ],
 ];
 ```
-> The statistics dimension in this middleware includes `request_status`, `request_path`, `request_method`. If your `request_path` is too large, it is recommended to rewrite this middleware to remove the `request_path` dimension, otherwise the high cardinality will cause memory overflow.
+> The statistics dimensions in this middleware include `request_status`, `request_path`, `request_method`. If you have too many `request_path`s, it is recommended to rewrite this middleware and remove the `request_path` dimension, otherwise excessive cardinality will lead to memory overflow.
 
-### Custom use
+### Custom Usage
 
-Telemetry via HTTP middleware is just the tip of the iceberg of what this component can do. You can inject the `Hyperf\Metric\Contract\MetricFactoryInterface` class to telemetry business data yourself. For example: the number of orders created, the number of clicks on ads, etc.
+Telemetry via HTTP middleware is just the tip of the iceberg of this component's purpose. You can inject the `Hyperf\Metric\Contract\MetricFactoryInterface` class to telemetry business data yourself. For example: the number of orders created, the number of ad clicks, etc.
 
 ```php
 <?php
@@ -244,13 +248,12 @@ class IndexController extends AbstractController
     {
         $counter = $this->metricFactory->makeCounter('order_created', ['order_type']);
         $counter->with($order->type)->add(1);
-        // order logic...
+        // Order logic...
     }
-
 }
 ```
 
-`MetricFactoryInterface` contains the following factory methods to generate the corresponding three basic statistic types.
+`MetricFactoryInterface` contains the following factory methods to generate the corresponding three basic statistical types.
 
 ```php
 public function makeCounter($name, $labelNames): CounterInterface;
@@ -260,7 +263,7 @@ public function makeGauge($name, $labelNames): GaugeInterface;
 public function makeHistogram($name, $labelNames): HistogramInterface;
 ```
 
-The above example is the generated metrics within the scope of the statistical request. Sometimes the indicators we need to count are for the complete life cycle, such as counting the length of asynchronous queues or the number of items in stock. In this scenario, you can listen to the `MetricFactoryReady` event.
+The above example is to collect metrics generated within the scope of a request. Sometimes the metrics we need to collect are oriented towards the complete lifecycle, such as counting the length of an asynchronous queue or the number of inventory products. In this scenario, you can listen to the `MetricFactoryReady` event.
 
 ```php
 <?php
@@ -306,19 +309,19 @@ class OnMetricFactoryReady implements ListenerInterface
 }
 ```
 
-> In terms of engineering, it is not suitable to query the queue length directly from Redis. The queue length should be obtained through the `info()` method under the `DriverInterface` interface of the queue driver. Just a simple demonstration here. You can find a complete example in the `src/Listener` folder of the component's source code.
+> From an engineering perspective, it is not very appropriate to query the queue length directly from Redis. You should use the `info()` method under the queue driver's `DriverInterface` interface to get the queue length. This is only a simple demonstration. You can find the complete example in the `src/Listener` folder of this component's source code.
 
-### Notes
+### Annotation
 
-You can use `#[Counter(name="stat_name_here")]` and `#[Histogram(name="stat_name_here")]` to count the invocation and running time of the aspect.
+You can use `#[Counter(name="stat_name_here")]` and `#[Histogram(name="stat_name_here")]` to count the invocation times and runtime of aspects.
 
-For the use of annotations, please refer to the [Annotation Chapter](zh-cn/annotation).
+For the use of annotations, please refer to the [Annotation Chapter](annotation.md).
 
 ### Custom Histogram Bucket
 
-> This section only applies to Prometheus drivers
+> This section only applies to the Prometheus driver
 
-When you are using Prometheus's Histogram, sometimes there is a need for a custom Bucket. Before starting the service, you can inject the dependency into the Registry and register the Histogram by yourself, and set the required Bucket . When you use it later, `MetricFactory` will call you to register the Histogram of the same name. An example is as follows:
+When you are using Histogram in Prometheus, there are sometimes requirements for custom Buckets. You can rely on injecting Registry and registering Histogram by yourself before the service starts, and set the required Buckets. Later, when using `MetricFactory`, it will call the Histogram of the same name you registered. An example is as follows:
 
 ```php
 <?php
@@ -358,17 +361,17 @@ class OnMainServerStart implements ListenerInterface
     }
 }
 ```
-After that, when you use `$metricFactory->makeHistogram('test')`, the returned Histogram is your pre-registered Histogram.
+After that, when you use `$metricFactory->makeHistogram('test')`, it will return the Histogram you registered in advance.
 
-### Custom report
+### Custom Reporting
 
-> This section only applies to Prometheus drivers
+> This section only applies to the Prometheus driver
 
-After setting the component's Promethues driver working mode to the custom mode ( `Constants::CUSTOM_MODE` ), you can freely handle indicator reporting. In this section, we show how to store metrics in Redis, then add a new HTTP route to the Worker that returns Prometheus-rendered metrics.
+After setting the Prometheus driver operating mode of the component to custom mode (`Constants::CUSTOM_MODE`), you can freely handle metric reporting. In this section, we show how to store metrics in Redis, and then add a new HTTP route in the Worker to return the metrics rendered by Prometheus.
 
-#### Storing metrics with Redis
+#### Use Redis to store metrics
 
-The storage medium for metrics is defined by the `Prometheus\Storage\Adapter` interface. Memory storage is used by default. We can change to Redis storage in `config/autoload/dependencies.php`.
+The storage medium for metrics is defined by the `Prometheus\Storage\Adapter` interface. In-memory storage is used by default. We can change it to Redis storage in `config/autoload/dependencies.php`.
 
 ```php
 <?php
@@ -378,11 +381,11 @@ return [
 ];
 ```
 
-#### Add /metrics route to Worker
+#### Add /metrics route in Worker
 
-Add Prometheus routes in config/routes.php.
+Add Prometheus route in config/routes.php.
 
-> Note that if you want to get metrics under Workers, you need to handle the state sharing between Workers yourself. One way is to store the state in Redis as described above.
+> Note that if you want to get metrics in the Worker, you need to handle the state sharing problem between Workers yourself. One way is to store the state in Redis as described above.
 
 ```php
 <?php
@@ -396,15 +399,14 @@ Router::get('/metrics', function(){
 });
 ```
 
-## Create console in Grafana
+## Create Console in Grafana
 
-> This section only applies to Prometheus drivers
+> This section only applies to the Prometheus driver
 
-If you have default metrics enabled, `Hyperf/Metric` prepares a Grafana console for you out of the box. Download the console [json file](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json), import it into Grafana and use it.
+If you enable default metrics, `Hyperf/Metric` has prepared an out-of-the-box Grafana console for you. Download the console [json file](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json) and import it into Grafana to use it.
 
 ![grafana](imgs/grafana.png)
 
 ## Precautions
 
-- To use this component to collect metrics in a `hyperf/command` custom command, you need to add the command line parameter: `--enable-event-dispatcher` when starting the command.
-
+- If you need to use this component to collect metrics in `hyperf/command` custom commands, you need to add the command line argument when starting the command: `--enable-event-dispatcher`.

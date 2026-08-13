@@ -1,114 +1,114 @@
 # Alibaba Cloud Log Service
 
-Collecting logs can be a troublesome problem when deploying a project in a `Docker cluster`, but Alibaba Cloud provides a very useful `log collection system`. This document briefly introduces how to use Alibaba Cloud log collection.
+When deploying projects in a `Docker Swarm` cluster, collecting logs can be a cumbersome task. However, Alibaba Cloud provides a very convenient `Log Collection System`. This document briefly introduces how to use Alibaba Cloud's log collection.
 
-* [Docker Swarm cluster building](zh-cn/tutorial/docker-swarm.md)
+* [Docker Swarm Cluster Setup](docker-swarm.md)
 
-## Enable log service
+## Enable Log Service
 
-The first step is to activate the `Log Service` on Alibaba Cloud.
+The first step is to enable `Log Service` on Alibaba Cloud.
 
 [Log Service Documentation](https://help.aliyun.com/product/28958.html)
 
-The following tutorial is a sequential, step-by-step guide on how to use the log service.
+The following tutorial is a step-by-step guide on how to use the Log Service.
 
-## Install the Logtail container
+## Install Logtail Container
 
-[Standard Docker log collection process document](https://help.aliyun.com/document_detail/66659.html)
+[Standard Docker Log Collection Process Documentation](https://help.aliyun.com/document_detail/66659.html)
 
-| Parameters | Description |
-| :-----------------------------------: | :------------ -------------------------------: |
-| ${your_region_name} | Region ID For example, the East China 1 region is cn-hangzhou |
-| ${your_aliyun_user_id} | User ID, please replace it with your Alibaba Cloud primary account user ID. |
-| ${your_machine_group_user_defined_id} | The machine group custom ID of the cluster The following uses Hyperf |
+| Parameter | Description |
+| :---: | :---: |
+| ${your_region_name} | Region ID, e.g., East China 1 region is cn-hangzhou |
+| ${your_aliyun_user_id} | User identifier, please replace with your Alibaba Cloud main account user ID. |
+| ${your_machine_group_user_defined_id} | Custom identifier for the cluster machine group. Hyperf is used below. |
 
-````
+```
 docker run -d -v /:/logtail_host:ro -v /var/run/docker.sock:/var/run/docker.sock \
 --env ALIYUN_LOGTAIL_CONFIG=/etc/ilogtail/conf/${your_region_name}/ilogtail_config.json \
 --env ALIYUN_LOGTAIL_USER_ID=${your_aliyun_user_id} \
 --env ALIYUN_LOGTAIL_USER_DEFINED_ID=${your_machine_group_user_defined_id} \
 registry.cn-hangzhou.aliyuncs.com/log-service/logtail
-````
+```
 
-## Configure log collection
+## Configure Log Collection
 
 ### Create Project
 
-Login to Alibaba Cloud Log Service, click `Create Project`, and fill in the following information
+Log in to Alibaba Cloud Log Service, click `Create Project`, and fill in the following information:
 
-| Parameters | Fill in the example |
-| :------------: | :------------------: |
-| Project name | hyperf |
-| Comments | For log system demonstration |
+| Parameter | Example |
+| :---: | :---: |
+| Project Name | hyperf |
+| Description | Used for log system demonstration |
 | Region | East China 1 (Hangzhou) |
-| Activate service | Detailed log |
+| Enable Service | Detailed Logs |
 | Log Storage Location | Current Project |
 
 ### Create Logstore
 
-Except for the following parameters, fill in as needed, others can use the default
+Except for the following parameters, fill in as needed, and keep the defaults for others.
 
-| Parameters | Fill in the example |
-| :------------: | :-------------: |
-| Logstore name | hyperf-demo-api |
-| save permanently | false |
-| Data retention time | 60 |
+| Parameter | Example |
+| :---: | :---: |
+| Logstore Name | hyperf-demo-api |
+| Permanent Storage | false |
+| Data Retention Time | 60 |
 
-### Access data
+### Access Data
 
-1. Select the Docker file
+1. Select Docker File
 
-2. Create a machine group
+2. Create Machine Group
 
-If you have already created a machine group, you can skip this step
+If you have already created a machine group, you can skip this step.
 
-| Parameters | Fill in the example |
-| :------------: | :------------: |
+| Parameter | Example |
+| :---: | :---: |
 | Machine Group Name | Hyperf |
-| Machine group ID | User-defined ID |
-| User Defined Logo | Hyperf |
+| Machine Group Identifier | User-defined identifier |
+| User-defined Identifier | Hyperf |
 
-3. Configure the machine group
+3. Configure Machine Group
 
-Apply the machine group you just created
+Apply the machine group just created.
 
 4. Configure Logtail
 
-`Label` whitelist, here you can fill in as needed, the following is configured according to the project name, and the project name will be set when the Docker container is running.
+`Label` whitelist can be filled in as needed. Configure according to the project name below, and the project name will be set when the Docker container runs.
 
-| Parameters | Fill in the example | Fill in the example |
-| :------------: | :-------------------------------- ----------------: | :-------------: |
+| Parameter | Example | Example |
+| :---: | :---: | :---: |
 | Configuration Name | hyperf-demo-api | |
 | Log Path | /opt/www/runtime/logs | *.log |
-| Label whitelist | app.name | hyperf-demo-api |
-| Pattern | Full Regular Pattern | |
-| single-line mode | false | |
-| Sample log | `[2019-03-07 11:58:57] hyperf.WARNING: xxx` | |
-| First line regular expression | `\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*` | |
-| Extract fields | true | |
-| Regular Expression | `\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*)` | |
-| Log extraction content | time name level content | |
+| Label Whitelist | app.name | hyperf-demo-api |
+| Mode | Full Regex Mode | |
+| Single-line Mode | false | |
+| Log Sample | `[2019-03-07 11:58:57] hyperf.WARNING: xxx` | |
+| First-line Regex | `\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*` | |
+| Extract Fields | true | |
+| Regex | `\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*)` | |
+| Log Extraction Content | time name level content | |
 
-5. Query analysis configuration
+5. Query Analysis Configuration
 
-field index property
+Field Index Attributes
 
-| Field name | Type | Alias ​​| Chinese word segmentation | Open statistics |
-| :------: | :---: | :-----: | :------: | :------: |
+| Field Name | Type | Alias | Chinese Word Segmentation | Enable Statistics |
+| :---: | :---: | :---: | :---: | :---: |
 | name | text | name | false | true |
 | level | text | level | false | true |
 | time | text | time | false | false |
 | content | text | content | true | false |
 
-### Run the image
+### Run Image
 
-When running the image, all you need to do is set the Container `labels`.
+When running the image, just set the Container `labels`.
 
 | name | value |
-| :------: | :-------------: |
+| :---: | :---: |
 | app.name | hyperf-demo-api |
 
-For example the following Dockerfile
+For example, the following Dockerfile:
 
 ```Dockerfile
 # Default Dockerfile
@@ -116,9 +116,9 @@ For example the following Dockerfile
 FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="hyperf-demo-api"
 
-#Other content omitted
-````
+# Other content omitted
+```
 
 ## Precautions
 
-- Docker storage driver limitation: Currently, only `overlay` and `overlay2` are supported. For other storage drivers, you need to `mount` the directory where the logs are located, and then collect the logs from the host `~/logtail_host/your_path` instead.
+- Docker storage driver limitation: Currently, only `overlay` and `overlay2` are supported. For other storage drivers, you need to `mount` the directory where the logs are located to the local machine, and then change it to collect logs under the host's `~/logtail_host/your_path`.

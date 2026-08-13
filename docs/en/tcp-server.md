@@ -1,10 +1,10 @@
-# TCP/UDP service
+# TCP/UDP Server
 
-The framework provides the ability to create `TCP/UDP` services by default. You only need to perform a simple configuration, you can use it.
+The framework provides the capability to create `TCP/UDP` services by default. You can use it with simple configuration.
 
-## Using TCP service
+## Using TCP Server
 
-### Create TcpServer class
+### Create TcpServer Class
 
 ```php
 <?php
@@ -22,7 +22,6 @@ class TcpServer implements OnReceiveInterface
         $server->send($fd, 'recv:' . $data);
     }
 }
-
 ```
 
 ### Create corresponding configuration
@@ -36,7 +35,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The following has removed other irrelevant configuration items
+    // Irrelevant configuration items removed
     'servers' => [
         [
             'name' => 'tcp',
@@ -48,15 +47,14 @@ return [
                 Event::ON_RECEIVE => [App\Controller\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
-                // Configure on demand
+                // Configure as needed
             ],
         ],
     ],
 ];
-
 ```
 
-### Implement the client
+### Implement Client
 
 ```php
 <?php
@@ -67,11 +65,16 @@ $client->send('Hello World.');
 $ret = $client->recv(); // recv:Hello World.
 ```
 
-## Using UDP service
+## Using UDP Service
 
-### Create UdpServer class
+> Docker uses the TCP protocol for communication by default. If you need to use the UDP protocol, you need to configure the Docker network.
+```shell
+docker run -p 9502:9502/udp <image-name>
+```
 
-> If there is no OnPacketInterface interface file, you can not implement this interface, and the running result is consistent with the implemented interface, as long as the configuration is correct.
+### Create UdpServer Class
+
+> If the `OnPacketInterface` interface file is not available, you do not need to implement this interface. The execution result will be the same as implementing the interface, as long as the configuration is correct.
 
 ```php
 <?php
@@ -87,10 +90,9 @@ class UdpServer implements OnPacketInterface
     public function onPacket($server, $data, $clientInfo): void
     {
         var_dump($clientInfo);
-        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server:' . $data);
+        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server：' . $data);
     }
 }
-
 ```
 
 ### Create corresponding configuration
@@ -104,7 +106,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The following has removed other irrelevant configuration items
+    // Irrelevant configuration items removed
     'servers' => [
         [
             'name' => 'udp',
@@ -116,20 +118,18 @@ return [
                 Event::ON_PACKET => [App\Controller\UdpServer::class, 'onPacket'],
             ],
             'settings' => [
-                // Configure on demand
+                // Configure as needed
             ],
         ],
     ],
 ];
-
 ```
 
-## event
+## Events
 
-| Events | Notes |
-| :---------------: | :---------------: |
-| Event::ON_CONNECT | Listen for connection incoming events |
-| Event::ON_RECEIVE | Monitor data reception event |
-| Event::ON_CLOSE | Listen for connection close events |
-| Event::ON_PACKET | UDP data receiving event |
-
+|       Event       |         Description         |
+| :---------------: | :-------------------------: |
+| Event::ON_CONNECT | Listen for connection establishment event |
+| Event::ON_RECEIVE | Listen for data reception event |
+|  Event::ON_CLOSE  | Listen for connection closure event |
+| Event::ON_PACKET  | UDP data reception event |

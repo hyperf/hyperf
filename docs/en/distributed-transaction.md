@@ -1,134 +1,133 @@
 # Distributed Transaction
 
-[dtm-client](https://github.com/dtm-php/dtm-client) is a DTM distributed transaction client component developed and maintained by the Hyperf team. It can realize distributed transaction management with DTM-Server. Stable can be used in production environment.   
-[seata/seata-php](https://github.com/seata/seata-php) is a Seata PHP client component developed by the Hyperf team and contributed to the Seata open source community. It can realize distributed transactions with Seata-Server Management is still in the development iteration and has not yet been used in the production environment. We hope that everyone can participate in it to accelerate incubation.
+[dtm-client](https://github.com/dtm-php/dtm-client) is a DTM distributed transaction client component developed and maintained by the Hyperf team. Used in conjunction with DTM-Server, it can implement distributed transaction management and can be stably used in production environments.
+[seata/seata-php](https://github.com/seata/seata-php) is a Seata PHP client component developed by the Hyperf team and contributed to the Seata open-source community. Used in conjunction with Seata-Server, it can implement distributed transaction management. It is currently under development and iteration and cannot yet be used in production environments. We hope everyone can participate in accelerating its incubation.
 
+# Introduction to DTM-Client
 
-# DTM-Client Introduction
-
-[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) is the PHP client of Distributed Transaction Manager [DTM](https://github.com/dtm-labs/dtm). It has supported distributed transaction patterns of TCC pattern, Saga pattern, XA pattern, and two-phase message pattern. In communicate protocol it has supported communicate with DTM Server through HTTP protocol or gRPC protocol. Also the client can safely run in PHP-FPM and Swoole coroutine environment, and it has also make support more easier for [Hyperf](https://github.com/hyperf/hyperf) framework.
+[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) is a PHP client for the distributed transaction manager [DTM](https://github.com/dtm-labs/dtm). It already supports TCC, Saga, XA, and two-phase message distributed transaction modes, and implements communication with DTM Server using either HTTP or gRPC protocols respectively. The client can run safely in PHP-FPM and Swoole coroutine environments, and provides even easier-to-use functional support for [Hyperf](https://github.com/hyperf/hyperf).
 
 # About DTM
 
-DTM is an open source distributed transaction manager based on Go language, which provides the powerful function of combining transactions across languages and storage engines. DTM elegantly solves distributed transaction problems such as interface idempotent, null compensation, and transaction suspension, and also provides a distributed transaction solutions that are easy to use, high performance, and easy to scale horizontally.
+DTM is an open-source distributed transaction manager implemented in Go, providing powerful capabilities for cross-language and cross-storage engine combined transactions. DTM elegantly solves difficult problems in distributed transactions such as idempotency, null compensation, and hanging, and also provides a simple-to-use, high-performance, and easily horizontally scalable distributed transaction solution.
 
-## Advantage
+## Highlights
 
-* Easy to start
-  - Start the service with zero configuration and provide a very simple and clear HTTP interface, which greatly reduces the difficulty of getting started with distributed transactions
-* Cross Programming language
-  - Can be used by companies with multiple language stacks. It is convenient to use in various languages such as Go, Python, PHP, NodeJs, Ruby, C#, etc.
+* Extremely easy to get started
+    - Zero-configuration service startup, provides very simple HTTP interfaces, greatly reducing the difficulty of getting started with distributed transactions.
+* Cross-language
+    - Suitable for companies with multi-language stacks. Convenient for various languages such as Go, Python, PHP, NodeJs, Ruby, C#, etc.
 * Simple to use
-  - Developers no longer worry about transaction suspension, null compensation, interface idempotent and other issues, and the first sub-transaction barrier technology handles it for you
+    - Developers no longer worry about problems such as hanging, null compensation, or idempotency. Sub-transaction barrier technology is pioneered to handle them on their behalf.
 * Easy to deploy and expand
-  - Depends only on MySQL/Redis, easy to deploy, easy to cluster, and easy to scale horizontally
-* Multiple distributed transaction protocol support
-  - TCC, SAGA, XA, two-stage message, one-stop solution to various distributed transaction problems
+    - Only depends on MySQL/Redis, deployment is simple, easy to cluster, and easy to horizontally expand.
+* Support for multiple distributed transaction protocols
+    - TCC, SAGA, XA, two-phase message, a one-stop solution to various distributed transaction problems.
 
 ## Comparison
 
-In non-Java languages, there is still no mature distributed transaction manager other than DTM, so here is a comparison between DTM and Seata, the most mature open source project in Java:
+For non-Java languages, there is currently no mature distributed transaction manager other than DTM. Therefore, here is a comparison between DTM and Seata, the most mature open-source project in Java:
 
-|                                          Features                                          |                                                DTM                                                |                                              SEATA                                               |                                      Memo                                       |
-|:------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|
-|              [language supports](https://dtm.pub/other/opensource.html#lang)               |                     <span style="color:green">Go、C#、Java、Python、PHP...</span>                     |                            <span style="color:orange">Java、Go</span>                             |             DTM is easier implemented the client to a new language              |
-|               [Storage Engine](https://dtm.pub/other/opensource.html#store)                |               <span style="color:green">Support Database, Redis, Mongo, etc.</span>               |                            <span style="color:orange">Database</span>                            ||
-|            [Exception Handle](https://dtm.pub/other/opensource.html#exception)             |        <span style="color:green"> Sub-transaction barrier is handled automatically </span>        |                           <span style="color:orange">By manual</span>                            | DTM solves transaction suspension, null compensation, interface idempotent etc. |
-|                     [SAGA](https://dtm.pub/other/opensource.html#saga)                     |                           <span style="color:green">Easy to use</span>                            |                     <span style="color:orange">Complex state machine</span>                      ||
-|               [Two-phase message](https://dtm.pub/other/opensource.html#msg)               |                                <span style="color:green">✓</span>                                 |                                 <span style="color:red">✗</span>                                 |                Minimal Message Eventual Consistency Architecture                |
-|                      [TCC](https://dtm.pub/other/opensource.html#tcc)                      |                                <span style="color:green">✓</span>                                 |                                <span style="color:green">✓</span>                                ||
-|                       [XA](https://dtm.pub/other/opensource.html#xa)                       |                                <span style="color:green">✓</span>                                 |                                <span style="color:green">✓</span>                                ||
-|                       [AT](https://dtm.pub/other/opensource.html#at)                       |                     <span style="color:orange">XA is more recommended</span>                      |                                <span style="color:green">✓</span>                                |                  AT is similar to XA, but with dirty rollback                   |
-| [Single service with multiple data sources](https://dtm.pub/other/opensource.html#multidb) |                                <span style="color:green">✓</span>                                 |                                 <span style="color:red">✗</span>                                 ||
-|           [Communicate protocol](https://dtm.pub/other/opensource.html#protocol)           |                                             HTTP、gRPC                                             |                                            Dubbo etc.                                            |                      DTM is more friendly to cloud native                       |
-|                   [Github Stargazers](https://dtm.pub/other/opensource.html#star)                    | <img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/> | <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> |          DTM released version 0.1 from 2021-06-04, developing rapidly           |
+| Feature | DTM | SEATA | Note |
+|:-----:|:----:|:------------------------------------------------------------------------------------------------:|:----:|
+| [Supported Languages](https://dtm.pub/other/opensource.html#lang) | <span style="color:green">Go, C#, Java, Python, PHP...</span> | <span style="color:orange">Java, Go</span> | DTM can easily integrate a new language |
+| [Storage Engine](https://dtm.pub/other/opensource.html#store) | <span style="color:green"> Supports databases, Redis, Mongo, etc. </span> | <span style="color:orange"> Database </span> | |
+| [Exception Handling](https://dtm.pub/other/opensource.html#exception) | <span style="color:green"> Sub-transaction barrier automatic handling </span> | <span style="color:orange"> Manual handling </span> | DTM solves idempotency, hanging, null compensation |
+| [SAGA Transaction](https://dtm.pub/other/opensource.html#saga) | <span style="color:green"> Minimalist and easy to use </span> | <span style="color:orange"> Complex state machine </span> | |
+| [Two-phase Message](https://dtm.pub/other/opensource.html#msg) | <span style="color:green">✓</span> | <span style="color:red">✗</span> | Simplest message eventual consistency architecture |
+| [TCC Transaction](https://dtm.pub/other/opensource.html#tcc) | <span style="color:green">✓</span> | <span style="color:green">✓</span> | |
+| [XA Transaction](https://dtm.pub/other/opensource.html#xa) | <span style="color:green">✓</span> | <span style="color:green">✓</span> | |
+| [AT Transaction](https://dtm.pub/other/opensource.html#at) | <span style="color:orange"> XA recommended </span> | <span style="color:green">✓</span> | AT is similar to XA, but has dirty rollback |
+| [Single Service Multi-Data Source](https://dtm.pub/other/opensource.html#multidb) | <span style="color:green">✓</span> | <span style="color:red">✗</span> | |
+| [Communication Protocol](https://dtm.pub/other/opensource.html#protocol) | HTTP, gRPC | Dubbo and other protocols | DTM is more cloud-native friendly |
+| [Star Count](https://dtm.pub/other/opensource.html#star) | <img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/> | <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> | DTM released version 0.1 on 2021-06-04 and is developing rapidly |
 
-From the characteristics of the comparison above, DTM has great advantages in many aspects. If you consider multi-language support and multi-storage engine support, then DTM is undoubtedly your first choice.
+Judging from the features compared above, DTM has great advantages in many aspects. If you consider multi-language support and multi-storage engine support, then DTM is undoubtedly your first choice.
 
 # Installation
 
-It is very convenient to install dtm-client through Composer
+dtm-client can be easily installed via Composer:
 
 ```bash
 composer require dtm/dtm-client
 ```
 
-* Don't forget to start DTM Server before you use it
+* Do not forget to start the DTM Server when using it.
 
 # Configuration
 
-## Configuration file
+## Configuration File
 
-If you are using the Hyperf framework, after installing the component, you can publish a configuration file to `./config/autoload/dtm.php` with the following `vendor:publish` command
+If you are using it in the Hyperf framework, after installing the component, you can use the following `vendor:publish` command to publish the configuration file to `./config/autoload/dtm.php` in one go:
 
 ```bash
 php bin/hyperf.php vendor:publish dtm/dtm-client
 ```
 
-If you are using a non-Hyperf framework, copy the `./vendor/dtm/dtm-client/publish/dtm.php` file to the corresponding configuration directory.
+If you are using it in a non-Hyperf framework, you can copy the `./vendor/dtm/dtm-client/publish/dtm.php` file to the corresponding configuration directory.
 
 ```php
 use DtmClient\Constants\Protocol;
 use DtmClient\Constants\DbType;
 
 return [
-    // The communication protocol between the client and the DTM Server, supports Protocol::HTTP and Protocol::GRPC
+    // The protocol for communication between client and DTM Server, supports Protocol::HTTP and Protocol::GRPC
     'protocol' => Protocol::HTTP,
-    // DTM Server address
+    // Address of DTM Server
     'server' => '127.0.0.1',
-    // DTM Server port
+    // Ports of DTM Server
     'port' => [
         'http' => 36789,
         'grpc' => 36790,
     ],
-    // Sub-transaction barrier
+    // Sub-transaction barrier configuration
     'barrier' => [
-        // Subtransaction barrier configuration in DB mode 
+        // Sub-transaction barrier configuration under DB mode
         'db' => [
             'type' => DbType::MySQL
         ],
-        // Subtransaction barrier configuration in Redis mode
+        // Sub-transaction barrier configuration under Redis mode
         'redis' => [
-            // Timeout for subtransaction barrier records
+            // Timeout period for sub-transaction barrier records
             'expire_seconds' => 7 * 86400,
         ],
-        // Classes that apply sub-transaction barriers in non-Hyperf frameworks or without annotation usage
+        // Classes to apply sub-transaction barrier in non-Hyperf framework
         'apply' => [],
     ],
-    // Options of Guzzle client under HTTP protocol
+    // General configuration for Guzzle client under HTTP protocol
     'guzzle' => [
         'options' => [],
     ],
 ];
 ```
 
-## Configure middleware
+## Configure Middleware
 
-Before using it, you need to configure the `DtmClient\Middleware\DtmMiddleware` middleware as the server's global middleware. This middleware supports the PSR-15 specification and is applicable to all frameworks that support this specification.
-For middleware configuration in Hyperf, please refer to [Hyperf Documentation - Middleware](https://www.hyperf.wiki/2.2/#/zh-cn/middleware/middleware) chapter.
+Before use, you need to configure the `DtmClient\Middleware\DtmMiddleware` middleware as a global middleware for the Server. This middleware supports the PSR-15 specification and can be applied to various frameworks that support this specification.
+For middleware configuration in Hyperf, you can refer to the [Hyperf Middleware](middleware.md) chapter.
 
 # Usage
 
-The usage of dtm-client is very simple, we provide a sample project [dtm-php/dtm-sample](https://github.com/dtm-php/dtm-sample) to help you better understand and debug.
-Before using this component, it is also strongly recommended that you read the [DTM official documentation](https://dtm.pub/) for a more detailed understanding.
+The usage of dtm-client is very simple. We provide an example project [dtm-php/dtm-sample](https://github.com/dtm-php/dtm-sample) to help you better understand and debug.
+Before using this component, it is also strongly recommended that you read the [DTM Official Documentation](https://dtm.pub/) for more detailed understanding.
 
-## TCC pattern
+## TCC Mode
 
-The TCC pattern is a very popular flexible distributed transaction solution. The concept of TCC is composed of the acronyms of the three words Try-Confirm-Cancel. It was first published in a paper named [Life beyond Distributed Transactions:an Apostate’s Opinion](https://www.ics.uci.edu/~cs223/papers/cidr07p15.pdf) by Pat Helland in 2007.
+TCC mode is a very popular flexible transaction solution, composed of the acronyms of Try-Confirm-Cancel. It was first proposed by Pat Helland in a paper published in 2007 titled "Life beyond Distributed Transactions: an Apostate’s Opinion".
 
-### Three stages of TCC
+### 3 Stages of TCC
 
-Try phase: try to execute, complete all business checks (consistency), reserve necessary business resources (pre-isolation)
-Confirm stage: If all branches of the Try are successful, go to the Confirm stage. Confirm actually executes the business without any business check, and only uses the business resources reserved in the Try phase
-Cancel stage: If one of the Try of all branches fails, go to the Cancel stage. Releases the business resources reserved in the Try phase.
+Try stage: Try to execute, complete all business checks (consistency), and reserve necessary business resources (quasi-isolation).
+Confirm stage: If the Try of all branches is successful, it goes to the Confirm stage. Confirm truly executes the business, makes no business checks, and only uses the business resources reserved in the Try stage.
+Cancel stage: If one of the Try of all branches fails, it goes to the Cancel stage. Cancel releases the business resources reserved in the Try stage.
 
-If we want to carry out a business similar to inter-bank transfer between banks, the transfer out (TransOut) and the transfer in (TransIn) are in different microservices, and a typical sequence diagram of a successfully completed TCC transaction is as follows:
+If we want to perform a business similar to bank cross-bank transfer, TransOut and TransIn are in different microservices respectively. A typical timing diagram for a successfully completed TCC transaction is as follows:
 
-<img src="https://en.dtm.pub/assets/tcc_normal.85ceb661.jpg" height=600 />
+<img src="https://dtm.pub/assets/tcc_normal.dea14fb3.jpg" height=600 />
 
-### Example
+### Code Example
 
-The following shows how to use it in the Hyperf framework, other frameworks are similar
+The following demonstrates the method of use in the Hyperf framework; other frameworks are similar:
 
 ```php
 <?php
@@ -156,18 +155,18 @@ class TccController
         try {
             
             $this->tcc->globalTransaction(function (TCC $tcc) {
-                // Create call data for subtransaction A
+                // Create call data for sub-transaction A
                 $tcc->callBranch(
-                    // Arguments for calling the Try method
+                    // Parameters for calling Try method
                     ['amount' => 30],
-                    // URL of Try stage
+                    // URL for Try method
                     $this->serviceUri . '/tcc/transA/try',
-                    // URL of Confirm stage
+                    // URL for Confirm method
                     $this->serviceUri . '/tcc/transA/confirm',
-                    // URL of Cancel stage
+                    // URL for Cancel method
                     $this->serviceUri . '/tcc/transA/cancel'
                 );
-                // Create call data for subtransaction B, and so on
+                // Create call data for sub-transaction B, and so on
                 $tcc->callBranch(
                     ['amount' => 30],
                     $this->serviceUri . '/tcc/transB/try',
@@ -178,41 +177,41 @@ class TccController
         } catch (Throwable $e) {
             var_dump($e->getMessage(), $e->getTraceAsString());
         }
-        // Get the global transaction ID through TransContext::getGid() and return it to the client
+        // Get the global transaction ID via TransContext::getGid() and return it
         return TransContext::getGid();
     }
 }
 ```
 
-## Saga pattern
+## Saga Mode
 
-The Saga pattern is one of the most well-known solutions in the field of distributed transactions, and it is also very popular in major systems. It first appeared in the paper [SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf) published by Hector Garcaa-Molrna & Kenneth Salem in 1987.
+The Saga mode is one of the most famous solutions in the field of distributed transactions and is also very popular in major systems. It first appeared in a paper published in 1987 by Hector Garcaa-Molrna & Kenneth Salem, [SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf).
 
-Saga is an eventual consistency transaction, also a flexible transaction, also known as a long-running transaction . Saga is composed of a series of local transactions. After each local transaction updates the database, it will publish a message or an event to trigger the execution of the next local transaction in the Saga global transaction. If a local transaction fails because some business rules cannot be satisfied, Saga performs compensating actions for all transactions that were successfully committed before the failed transaction. Therefore, when the Saga pattern is compared with the TCC pattern, it often becomes more troublesome to implement the rollback logic due to the lack of resource reservation steps.
+Saga is a form of eventual consistency transaction, also a flexible transaction, also called a Long-running-transaction. Saga consists of a series of local transactions. After each local transaction updates the database, it will publish a message or an event to trigger the execution of the next local transaction in the Saga global transaction. If a local transaction fails because certain business rules cannot be met, Saga will execute compensation operations for all transactions successfully submitted before this failed transaction. Therefore, when comparing the Saga mode with the TCC mode, because it lacks the step of resource reservation, implementing rollback logic often becomes more troublesome.
 
-### Sub-transaction split of Saga
+### Saga Sub-transaction Splitting
 
-For example, we want to carry out a business similar to inter-bank transfer between banks, and transfer 30 dollar in account A to account B. According to the principle of Saga transaction, we will split the entire global transaction into the following services:
-- Transfer out (TransOut) service, the account A will deduct 30 dollar
-- Transfer out compensation (TransOutCompensate) service, roll back the above transfer out operation, that is, increase the account A by 30 dollar
-- Transfer in (TransIn) service, the account B will be increased by 30 dollar
-- Transfer in compensation (TransInCompensate) service, roll back the above transfer in operation, that is, the account B is reduced by 30 dollar
+For example, if we want to perform a business similar to a bank cross-bank transfer, transfer 30 yuan from account A to account B. According to the principle of Saga transaction, we split the entire global transaction into the following services:
+- TransOut service, which will subtract 30 yuan from account A.
+- TransOutCompensate service, which rolls back the above transfer operation, i.e., add 30 yuan to account A.
+- TransIn service, which will add 30 yuan to account B.
+- TransInCompensate service, which rolls back the above transfer-in operation, i.e., subtract 30 yuan from account B.
 
 The logic of the entire transaction is:
 
-Execute the transfer out successfully => Execute the transfer in successfully => the global transaction is completed
+Transfer-out successful => Transfer-in successful => Global transaction completed
 
-If an error occurs in the middle, such as an error in transferring to the B account, the compensation operation of the executed branch will be called, namely:
+If an error occurs in the middle, such as an error in transferring to account B, the compensation operation of the executed branch will be called, i.e.:
 
-Execute transfer out successfully => execute transfer in failure => execute transfer in compensation successfully => execute transfer out compensation successfully => global transaction rollback completed
+Transfer-out successful => Transfer-in failed => Transfer-in compensation successful => Transfer-out compensation successful => Global transaction rollback completed
 
-The following is a typical sequence diagram of a successfully completed SAGA transaction:
+The following is a typical timing diagram for a successfully completed SAGA transaction:
 
-<img src="https://en.dtm.pub/assets/saga_normal.59a75c01.jpg" height=428 />
+<img src="https://dtm.pub/assets/saga_normal.a2849672.jpg" height=428 />
 
-### Example
+### Code Example
 
-The following shows how to use it in the Hyperf framework, other frameworks are similar
+The following demonstrates the method of use in the Hyperf framework; other frameworks are similar:
 
 ```php
 namespace App\Controller;
@@ -236,7 +235,7 @@ class SagaController
     public function successCase(): string
     {
         $payload = ['amount' => 50];
-        // Init Saga global transaction
+        // Initialize Saga transaction
         $this->saga->init();
         // Add TransOut sub-transaction
         $this->saga->add(
@@ -250,40 +249,31 @@ class SagaController
             $this->serviceUri . '/saga/transInCompensate', 
             $payload
         );
-        // Submit Saga global transaction
+        // Submit Saga transaction
         $this->saga->submit();
-        // Get the global transaction ID through TransContext::getGid() and return it to the client
+        // Get the global transaction ID via TransContext::getGid() and return it
         return TransContext::getGid();
     }
 }
 ```
-## XA pattern
-XA is a specification for distributed transactions proposed by the X/Open organization. The X/Open Distributed Transaction Processing (DTP) model envisages three software components:
 
-An application program (AP) defines transaction boundaries and specifies actions that constitute a transaction.
+## XA Mode
 
-Resource managers (RMs, such as databases or file access systems) provide access to shared resources.
+XA is a distributed transaction specification proposed by the X/Open organization. The XA specification mainly defines the interface between the (global) transaction manager (TM) and the (local) resource manager (RM). Local databases such as mysql play the RM role in XA.
 
-A separate component called a transaction manager (TM) assigns identifiers to transactions, monitors their progress, and takes responsibility for transaction completion and for failure recovery.
+XA is divided into two phases in total:
 
-The following figure illustrates the interfaces defined by the X/Open DTP model.
+Phase 1 (prepare): All participating RMs prepare to execute transactions and lock necessary resources. When the participants are ready, they report to the TM that they are ready. Phase 2 (commit/rollback): After the transaction manager (TM) confirms that all participants (RMs) are ready, it sends a commit command to all participants.
 
-<img src="https://en.dtm.pub/assets/xa-dtp.78622cb4.jpeg" />
+Currently, mainstream databases basically support XA transactions, including mysql, oracle, sqlserver, postgres.
 
-XA is divided into two phases.
+The following is a typical timing diagram for a successfully completed XA transaction:
 
-Phase 1 (prepare): All participating RMs prepare to execute their transactions and lock the required resources. When each participant is ready, it report to TM.
+<img src="https://dtm.pub/assets/xa_normal.5a0ce600.jpg" height=600/>
 
-Phase 2 (commit/rollback): When the transaction manager (TM) receives that all participants (RM) are ready, it sends commit commands to all participants. Otherwise, it sends rollback commands to all participants.
+### Code Example
 
-At present, almost all popular databases support XA transactions, including Mysql, Oracle, SqlServer, and Postgres
-
-<img src="https://en.dtm.pub/assets/xa_normal.ebc35054.jpg" height=600 />
-
-### Example code
-
-The following is shown in the Hyperf framework, similar to others
-
+The following demonstrates the method of use in the Hyperf framework; other frameworks are similar:
 ```php
 <?php
 
@@ -324,19 +314,19 @@ class XAController
     public function successCase(): string
     {
         $payload = ['amount' => 50];
-        // Open the Xa, the global thing
+        // Open XA global transaction
         $gid = $this->xa->generateGid();
         $this->xa->globalTransaction($gid, function () use ($payload) {
-            // Call the subthings interface
+            // Call sub-transaction interface
             $respone = $this->xa->callBranch($this->serviceUri . '/xa/api/transIn', $payload);
-            // Get subthings return structure in XA http mode
+            // Get sub-transaction return structure under XA http mode
             /* @var ResponseInterface $respone */
             $respone->getBody()->getContents();
-            // Call the subthings interface
+            // Call sub-transaction interface
             $payload = ['amount' => 10];
             $this->xa->callBranch($this->serviceUri . '/xa/api/transOut', $payload);
         });
-        // Return the global transaction ID via TransContext:: getGid()
+        // Get the global transaction ID via TransContext::getGid() and return it
         return TransContext::getGid();
     }
 
@@ -345,9 +335,9 @@ class XAController
     {
         $content = $request->post('amount');
         $amount = $content['amount'] ?? 50;
-        // The transIn method under the simulated distributed system
+        // Simulate transIn method under distributed system
         $this->xa->localTransaction(function (DBTransactionInterface $dbTransaction) use ($amount) {
-            // Please use the DBTransactionInterface to handle the local Mysql things
+            // Please use DBTransactionInterface to handle local Mysql transaction
             $dbTransaction->xaExecute('UPDATE `order` set `amount` = `amount` + ? where id = 1', [$amount]);
         });
 
@@ -363,15 +353,14 @@ class XAController
     {
         $content = $request->post('amount');
         $amount = $content['amount'] ?? 10;
-        // The transOut method under the simulated distributed system
+        // Simulate transOut method under distributed system
         $this->xa->localTransaction(function (DBTransactionInterface $dbTransaction) use ($amount) {
-            // Please use the DBTransactionInterface to handle the local Mysql things
+            // Please use DBTransactionInterface to handle local Mysql transaction
             $dbTransaction->xaExecute('UPDATE `order` set `amount` = `amount` - ? where id = 2', [$amount]);
         });
 
         return ['status' => 0, 'message' => 'ok'];
     }
 }
-
 ```
-The above code first registers a global XA transaction, and then calls two sub-transactions TransOut, TransIn. After all the sub-transactions are executed successfully, the global XA transaction is committed to DTM. DTM receives the commitment of the XA global transaction, then calls the XA commit of all the sub-transactions, and finally change the status of global transaction to succeeded.
+The above code first registers a global XA transaction, then adds two sub-transactions, transIn and transOut. After all sub-transactions are executed successfully, they are submitted to dtm. After dtm receives the submitted xa global transaction, it will call xa commit of all sub-transactions to complete the entire xa transaction.

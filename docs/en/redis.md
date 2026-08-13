@@ -8,17 +8,17 @@ composer require hyperf/redis
 
 ## Configuration
 
-| Config |  Type   |   Default Value    |   Comment    |
-|:------:|:-------:|:-----------:|:---------:|
-|  host  | string  | 'localhost' | The host of Redis Server |
-|  auth  | string  |     null      |   The password of Redis Server    |
-|  port  | integer |    6379     |   The port of Redis Server    |
-|   db   | integer |      0      |    The DB of Redis Server     |
-| cluster.enable | boolean |    false    |          Is it cluster mode ?          |
-|  cluster.name  | string  |    null     |             The cluster name             |
-| cluster.seeds  |  array  |     []      | The seeds of cluster, format: ['host:port'] |
-|      pool      | object  |     {}      |           The connection pool           |
-|    options     | object  |     {}      |         The options of Redis Client         |
+| Configuration | Type | Default | Remark |
+|:--------------:|:-------:|:-----------:|:------------------------------:|
+|      host      | string  | 'localhost' |           Redis host            |
+|      auth      | string  |     None    |              Password              |
+|      port      | integer |    6379     |              Port              |
+|       db       | integer |      0      |               DB               |
+| cluster.enable | boolean |    false    |          Whether cluster mode enabled         |
+|  cluster.name  | string  |    null     |             Cluster name             |
+| cluster.seeds  |  array  |     []      | Cluster connection addresses array ['host:port'] |
+|      pool      | object  |     {}      |           Connection pool configuration           |
+|    options     | object  |     {}      |         Redis configuration options         |
 
 ```php
 <?php
@@ -41,16 +41,15 @@ return [
             'heartbeat' => -1,
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
-        'options' => [ // Options of Redis Client, see https://github.com/phpredis/phpredis#setoption
+        'options' => [ // Redis client Options, refer to https://github.com/phpredis/phpredis#setoption
             \Redis::OPT_PREFIX => env('REDIS_PREFIX', ''),
-            // or 'prefix' => env('REDIS_PREFIX', ''), v3.0.38 or later
+            // or 'prefix' => env('REDIS_PREFIX', ''), for v3.0.38 or higher
         ],
     ],
 ];
-
 ```
 
-`publish` full configuration file using command
+To publish the complete configuration file, use the command:
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/redis
@@ -58,23 +57,21 @@ php bin/hyperf.php vendor:publish hyperf/redis
 
 ## Usage
 
-`hyperf/redis` implements the proxy of `ext-redis` and connection pool. Users can directly inject `\Hyperf\Redis\Redis` through the dependency injection container to use the Redis client. What they actually get is a proxy of `\Redis` object.
+`hyperf/redis` implements the `ext-redis` proxy and connection pool. Users can directly inject `\Hyperf\Redis\Redis` through the dependency injection container to use the Redis client. What you actually get is a proxy object of `\Redis`.
 
 ```php
 <?php
-
 use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
 $redis = $container->get(\Hyperf\Redis\Redis::class);
 $result = $redis->keys('*');
-
 ```
 
-## Multi-resource configuration
+## Multi-Database Configuration
 
-Sometimes, a single `Redis` resource can not meet the needs, and a project often needs to configure multiple resources. At this time, we could modify the configuration file `redis.php` as follows:
+Sometimes in actual use, a single `Redis` database is not enough, and a project often needs to configure multiple databases. At this time, we need to modify the configuration file `redis.php` as follows:
 
 ```php
 <?php
@@ -99,7 +96,7 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
-    // Add a Redis connection pool named foo
+    // Add a Redis connection pool named 'foo'
     'foo' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
@@ -115,16 +112,14 @@ return [
         ],
     ],
 ];
-
 ```
 
-### Use through proxy class
+### Using via Proxy Class
 
-We could rewrite a `FooRedis` class and inherit the `Hyperf\Redis\Redis` class, and modify the `poolName` property to the above `foo`, to complete the switch of the connection pool, for example:
+We can rewrite a `FooRedis` class and inherit the `Hyperf\Redis\Redis` class, and change the `poolName` to the above `foo`, which completes the switch of the connection pool. Example:
 
 ```php
 <?php
-
 use Hyperf\Redis\Redis;
 
 class FooRedis extends Redis
@@ -133,16 +128,15 @@ class FooRedis extends Redis
     protected $poolName = 'foo';
 }
 
-// Obtain or directly inject the current class through the DI container
+// Get the current class through the DI container or inject it directly
 $redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
-
 ```
 
-### Use through factory
+### Using Factory Class
 
-When each resource corresponds to a static scene, the proxy class is a good way to distinguish the resources, but sometimes the demand may be more dynamic. At this time, we could use the `Hyperf\Redis\RedisFactory` factory class to dynamically pass `poolName` argument to retrieve the client of the corresponding connection pool without creating a proxy class for each resource, for example:
+When each database corresponds to a fixed usage scenario, using a proxy class is a good way to distinguish them. But sometimes needs may be more dynamic. In this case, we can use the `Hyperf\Redis\RedisFactory` factory class to dynamically pass the `poolName` to get the client of the corresponding connection pool, without creating a proxy class for each database. Example:
 
 ```php
 <?php
@@ -151,24 +145,24 @@ use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-// Obtain or directly inject the RedisFactory class through the DI container
+// Get the RedisFactory class through the DI container or inject it directly
 $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
-## Sentinel mode
+## Sentinel Mode
 
-To enable sentinel mode, you can modify the `.env` or `redis.php` configuration file as follows
+To enable Sentinel mode, you can modify it in the `.env` or `redis.php` configuration file as follows:
 
-Use `;` to split multiple sentinel nodes
+Separate multiple sentinel nodes with `;`
 
 ```env
 REDIS_HOST=
-REDIS_AUTH="Redis instance password"
+REDIS_AUTH=Redis instance password
 REDIS_PORT=
 REDIS_DB=
 REDIS_SENTINEL_ENABLE=true
-REDIS_SENTINEL_PASSWORD="Redis sentinel password"
+REDIS_SENTINEL_PASSWORD=Redis sentinel password
 REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
 ```
 
@@ -204,11 +198,11 @@ return [
 ];
 ```
 
-## Cluster mode
+## Cluster Mode
 
-### Use `name`
+### Using `name`
 
-Configure `cluster`, modify `redis.ini`, or modify `Dockerfile`, as follows:
+Configure `cluster`, modify `redis.ini`, or you can also modify `Dockerfile` as follows:
 
 ```shell
     # - config PHP
@@ -224,11 +218,11 @@ Configure `cluster`, modify `redis.ini`, or modify `Dockerfile`, as follows:
     } | tee conf.d/99-overrides.ini \
 ```
 
-The corresponding PHP configuration is as follows
+The corresponding PHP configuration is as follows:
 
 ```php
 <?php
-// Ignore the other irrelevant configurations
+// Omitted other configurations
 return [
     'default' => [
         'cluster' => [
@@ -240,13 +234,13 @@ return [
 ];
 ```
 
-### Use seeds
+### Using `seeds`
 
-Of course, it is also available to use `seeds` directly without configuring the `name`, as follows:
+Of course, you can also use `seeds` directly without configuring `name`. As follows:
 
 ```php
 <?php
-// Ignore the other irrelevant configurations
+// Omitted other configurations
 return [
     'default' => [
         'cluster' => [
@@ -288,13 +282,13 @@ return [
         ],
         'options' => [
             \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
-            // or 'serializer' => \Redis::SERIALIZER_PHP, v3.0.38 or later
+            // or 'serializer' => \Redis::SERIALIZER_PHP, for v3.0.38 or higher
         ],
     ],
 ];
 ```
 
-For example, set the `Redis` never timeout:
+For example, set `Redis` to never timeout:
 
 ```php
 <?php
@@ -317,10 +311,10 @@ return [
         ],
         'options' => [
             \Redis::OPT_READ_TIMEOUT => -1,
-            // or 'read_timeout' => -1, v3.0.38 or later
+            // or 'read_timeout' => -1, for v3.1.3 or higher
         ],
     ],
 ];
 ```
 
-> Notice that, in some versions of `phpredis` extension, the value type of `options` has to `string`.
+> For some `phpredis` extension versions, the `value` of `option` must be of `string` type.

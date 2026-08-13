@@ -1,6 +1,6 @@
 # ETCD
 
-## Install
+## Installation
 
 ```
 composer require hyperf/etcd

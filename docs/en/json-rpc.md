@@ -1,35 +1,35 @@
-# JSON RPC Service
+# JSON-RPC Service
 
-JSON RPC is a lightweight RPC protocol standard based on the JSON format, which is easy to use and read. In Hyperf, it is implemented by the [hyperf/json-rpc](https://github.com/hyperf/json-rpc) component, which can be customized for transmission based on the HTTP protocol, or directly based on the TCP protocol for transmission.
+JSON-RPC is a lightweight RPC protocol standard based on JSON, easy to use and read. In Hyperf, it is implemented by the [hyperf/json-rpc](https://github.com/hyperf/json-rpc) component, which allows for custom transmission based on the HTTP protocol or directly based on the TCP protocol.
 
 ## Installation
 
 ```bash
 composer require hyperf/json-rpc
 ```
-  
-This is just a protoco processing component for JSON RPC, generally, you still need [hyperf/rpc-server](https://github.com/hyperf/rpc-server) or [hyperf/rpc-client](https://github.com/hyperf/rpc-client) component to satisfy scenarios for client and server. Both need to be installed if used at the same time: 
 
-For JSON RPC server:
+This component is only for protocol handling in JSON-RPC. Generally, you still need to combine it with [hyperf/rpc-server](https://github.com/hyperf/rpc-server) or [hyperf/rpc-client](https://github.com/hyperf/rpc-client) to satisfy server-side and client-side scenarios. If using both, both need to be installed:
+
+To use the JSON-RPC server:
 
 ```bash
 composer require hyperf/rpc-server
 ```
 
-For JSON RPC client:
+To use the JSON-RPC client:
 
 ```bash
 composer require hyperf/rpc-client
 ```
 
-## Instruction for use
+## Usage
 
-Services have two roles, one is `ServiceProvider`, which is a service that provides services for other services, and the other is `ServiceConsumer`, which is a service that depends on other services. A service may plays `ServiceProvider` and `ServiceConsumer` role at the same time. And these two can directly define and restrict the call of the interface through the `Service Contract`. In Hyperf, it can be directly understood as an interface class `Interface`. Generally speaking, this interface class will appear under both the provider and the consumer.
+There are two roles for services: `Service Provider`, which provides services to other services, and `Service Consumer`, which depends on other services. A service can be both a `Service Provider` and a `Service Consumer` simultaneously. The two can define and constrain interface calls through a `Service Contract`. In Hyperf, this can be directly understood as an `Interface`. Generally, this interface class will appear under both the provider and the consumer.
 
-### Define service provider
+### Defining a Service Provider
 
-So far, only the form of annotations is supported to define `ServiceProvider`, and subsequent editions will add more form of configuration.
-We can directly define a class through the `#[RpcService]` annotation and publish this service:
+Currently, defining a `Service Provider` is only supported via annotations; support for configuration-based definitions will be added in future iterations.
+We can directly define a class using the `#[RpcService]` annotation to publish this service:
 
 ```php
 <?php
@@ -39,31 +39,31 @@ namespace App\JsonRpc;
 use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
- * Note that if you want to manage the service through the service center, you need to add the publishTo attribute in the annotation
+ * Note: If you wish to manage services through a service center, you need to add the publishTo attribute in the annotation.
  */
 #[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
-    // Implement an addition method, simply consider that the parameters are int type
+    // Implement an addition method, simply assuming parameters are of type int
     public function add(int $a, int $b): int
     {
-        // The specific implementation of the service method
+        // Implementation of the service method
         return $a + $b;
     }
 }
 ```
- 
-`#[RpcService]` has `4` parameters:  
-The `name` attribute is the name that defines the service. Just define a globally unique name here. Hyperf will generate a corresponding ID based on this attribute and register it to the service center;
-The `protocol` attribute defines the protocol exposed by the service. Currently, only `jsonrpc-http`, `jsonrpc`, and `jsonrpc-tcp-length-check` are supported, which correspond to the HTTP protocol and two protocols under the TCP protocol respectively. The default value is `jsonrpc-http`, the value here corresponds to the `key` of the protocol registered in `Hyperf\Rpc\ProtocolManager`. They are essentially JSON RPC protocol, the difference lies in data formatting, data packaging, data transmitter.
-The `server` attribute is the `Server` carried by the binded publishing service class, the default value is `jsonrpc-http`. This attribute corresponds to the `name` under `servers` in the `config/autoload/server.php` file, which also means that we need to define a corresponding `Server`, we will elaborate on how to deal with this in the next chapter;
-The `publishTo` attribute defines the service center to be published. Currently only supports `consul` or null. When it is null, it means that the service will not be published to the service center, which also means that you need to manually deal with the service discovery. When the value is `consul`, you need to configure the relevant configuration of the [hyperf/consul](zh-cn/consul.md) component. To use this function, you need to install [hyperf/service-governance](https://github. com/hyperf/service-governance) component, please refer to [Service Registration](zh-cn/service-register.md) section for details.
 
-> To use the `#[RpcService]` annotation, the `use Hyperf\RpcServer\Annotation\RpcService;` namespace is required.
+`#[RpcService]` has `4` parameters:
+`name`: Defines the name of the service. Simply define a globally unique name here, and Hyperf will generate the corresponding ID based on this attribute to register to the service center.
+`protocol`: Defines the protocol exposed by the service. Currently, only `jsonrpc-http`, `jsonrpc`, and `jsonrpc-tcp-length-check` are supported, corresponding to the two protocols under the HTTP protocol and TCP protocol respectively. The default value is `jsonrpc-http`. The values here correspond to the `key` of the protocol registered in `Hyperf\Rpc\ProtocolManager`. They are essentially JSON-RPC protocols, differing in data formatting, data packaging, data transporters, etc.
+`server`: Binds the `Server` that will host the published service class. The default value is `jsonrpc-http`. This attribute corresponds to the `name` under `servers` in the `config/autoload/server.php` file, which means we need to define a corresponding `Server`.
+`publishTo`: Defines the service center to which the service is published. Currently, only `consul`, `nacos` or empty is supported. Empty means the service is not published to a service center, which means you need to manually handle service discovery. To use this feature, you need to install the [hyperf/service-governance](https://github.com/hyperf/service-governance) component and corresponding driver dependencies. For details, please refer to the [Service Registration](service-register.md) chapter.
 
-#### Define JSON RPC Server
+> To use the `#[RpcService]` annotation, you need to `use Hyperf\RpcServer\Annotation\RpcService;`.
 
-HTTP Server (`jsonrpc-http` protocol is adapted)
+#### Defining JSON-RPC Server
+
+HTTP Server (compatible with `jsonrpc-http` protocol)
 
 ```php
 <?php
@@ -72,7 +72,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Other configurations for this file are omitted
     'servers' => [
         [
             'name' => 'jsonrpc-http',
@@ -88,7 +88,7 @@ return [
 ];
 ```
 
-TCP Server (`jsonrpc` protocol is adapted)
+TCP Server (compatible with `jsonrpc` protocol)
 
 ```php
 <?php
@@ -97,7 +97,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Other configurations for this file are omitted
     'servers' => [
         [
             'name' => 'jsonrpc',
@@ -118,9 +118,9 @@ return [
 ];
 ```
 
-TCP Server (`jsonrpc-tcp-length-check` protocol is adapted)
+TCP Server (compatible with `jsonrpc-tcp-length-check` protocol)
 
-The current protocol is an extended protocol of `jsonrpc`, and users can easily modify the corresponding `settings` to use this protocol. The example is as follows:
+The current protocol is an extension of `jsonrpc`. Users can easily modify the corresponding `settings` to use this protocol. An example is as follows.
 
 ```php
 <?php
@@ -129,7 +129,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // The other configuration of the file is omitted here
+    // Other configurations for this file are omitted
     'servers' => [
         [
             'name' => 'jsonrpc',
@@ -152,62 +152,90 @@ return [
 ];
 ```
 
-### Publish to service center
-   
-Currently, only supports publishing services to `consul`, and other service centers will be added in the future.
-Publishing services to `consul` is also very easy in Hyperf. Load the Consul component through `composer require hyperf/consul` (if it is already installed, you can ignore this step), and then configure your `Consul` configuration in the `config/autoload/consul.php` configuration file, an example is as follows:
+### Publishing to Service Center
+
+Currently, only publishing services to `consul` and `nacos` is supported. Others will be added later.
+Publishing services to `consul` in Hyperf is also very easy. Reference the component via `composer require hyperf/service-governance-consul` (skip this step if already installed), then configure `drivers.consul` in the `config/autoload/services.php` configuration file.
+Publishing services to `nacos` is similar. Reference the component via `composer require hyperf/service-governance-nacos` (skip this step if already installed), then configure `drivers.nacos` in the `config/autoload/services.php` configuration file. An example is as follows:
 
 ```php
 <?php
-
 return [
-    'uri' => 'http://127.0.0.1:8500',
+    'enable' => [
+        'discovery' => true,
+        'register' => true,
+    ],
+    'consumers' => [],
+    'providers' => [],
+    'drivers' => [
+        'consul' => [
+            'uri' => 'http://127.0.0.1:8500',
+            'token' => '',
+        ],
+        'nacos' => [
+            // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+            // 'url' => '',
+            // The nacos host info
+            'host' => '127.0.0.1',
+            'port' => 8848,
+            // The nacos account info
+            'username' => null,
+            'password' => null,
+            'guzzle' => [
+                'config' => null,
+            ],
+            'group_name' => 'api',
+            'namespace_id' => 'namespace_id',
+            'heartbeat' => 5,
+        ],
+    ],
 ];
 ```
 
-After the configuration is completed, when the service is started, Hyperf will automatically register the service, which defined with `publishTo` attribute as `consul` by the `#[RpcService]`, to the service center.
+After configuration, when the service starts, Hyperf will automatically register services with the `publishTo` attribute defined as `consul` or `nacos` in `#[RpcService]` to the corresponding service center.
 
-> Currently, only the `jsonrpc` and `jsonrpc-http` protocols are supported to publish to the service center, other protocols have not yet implemented service registration
+> Currently, only `jsonrpc` and `jsonrpc-http` protocols are supported for publishing to service centers. Other protocols have not implemented service registration yet.
 
-### Define service consumers
+### Defining a Service Consumer
 
-A `ServiceConsumer` can be considered as a client class. In Hyperf, you don't need to deal with connection and request-related things, you only need to perform some authentication configuration.
+A `Service Consumer` can be understood as a client class, but in Hyperf, you do not need to handle connection and request-related matters. You only need to perform some identification configurations.
 
-#### Automatically create proxy consumer class
+#### Automatically Creating Proxy Consumer Classes
 
-You can automatically create consumer classes through dynamic proxy by doing some simple configuration in the `config/autoload/services.php` configuration file.
+You can automatically create consumer classes via dynamic proxy by making some simple configurations in the `config/autoload/services.php` configuration file.
 
 ```php
 <?php
 return [
+    // Other configurations at the same level are omitted
     'consumers' => [
         [
             // name must be the same as the name attribute of the service provider
             'name' => 'CalculatorService',
-            // Service interface name. It's optional and the default value is equal to the value configured by name. If name is directly defined as an interface class, you can ignore this configuration. If name is a string, you need to configure service to correspond to the interface class
+            // Service interface name, optional. The default value is equal to the configured value of name. If name is directly defined as the interface class, this configuration line can be ignored. If name is a string, then service needs to be configured to correspond to the interface class.
             'service' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // Corresponding container object. It's optional and the default value is equal to the value of the service configuration. To define the key of dependency injection.
+            // Corresponding container object ID, optional. The default value is equal to the configured value of service, used to define the key for dependency injection.
             'id' => \App\JsonRpc\CalculatorServiceInterface::class,
-            // The service agreement of the service provider. It's optional and the default value is jsonrpc-http
-            // jsonrpc-http, jsonrpc, and jsonrpc-tcp-length-check are available
+            // Service protocol of the service provider, optional. The default value is jsonrpc-http
+            // Optional jsonrpc-http jsonrpc jsonrpc-tcp-length-check
             'protocol' => 'jsonrpc-http',
-            // Load balancing algorithm, optional, the default value is random
+            // Load balancing algorithm, optional. The default value is random
             'load_balancer' => 'random',
-            // From which service center the consumer will obtain node information, if it is not configured, the node information will not be obtained from the service center
+            // From which service center does this consumer get node information? If not configured, it will not get node information from the service center.
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
             ],
-            // If the registry configuration above is not specified, it means to directly consume the specified node. Configure the node information of the service provider through the nodes parameter below
+            // If the above registry configuration is not specified, it means direct consumption of the specified node. Configure the service provider's node information through the nodes parameter below.
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9504],
             ],
-            // Configuration, this may affect Packer and Transporter
+            // Configuration items, will affect Packer and Transporter
             'options' => [
                 'connect_timeout' => 5.0,
                 'recv_timeout' => 5.0,
                 'settings' => [
-                    // Different protocol, different configuration
+                    // Configure differently according to the protocol
                     'open_eof_split' => true,
                     'package_eof' => "\r\n",
                     // 'open_length_check' => true,
@@ -215,11 +243,13 @@ return [
                     // 'package_length_offset' => 0,
                     // 'package_body_offset' => 4,
                 ],
-                // Retrie count, the default value is 2, no retry will be performed when the packet is received over time. Only supports JsonRpcPoolTransporter, currently.
+                // Retry count, default value is 2. No retry for packet timeout. Temporarily only supports JsonRpcPoolTransporter
                 'retry_count' => 2,
-                // Retry interval, in milliseconds
+                // Retry interval, milliseconds
                 'retry_interval' => 100,
-                // The following configuration will be used when using JsonRpcPoolTransporter
+                // Heartbeat interval when using multiplexed RPC, null means no heartbeat is triggered
+                'heartbeat' => 30,
+                // The following configuration is used when using JsonRpcPoolTransporter
                 'pool' => [
                     'min_connections' => 1,
                     'max_connections' => 32,
@@ -234,13 +264,13 @@ return [
 ];
 ```
 
-The proxy object of the client class is automatically created when the application starts, and the value of the configuration item `id` is used in the container (if not set, the value of the configuration item `service` will be used instead) to add the binding relationship. Like the hand-written client class, the client can be directly used by injecting the `CalculatorServiceInterface` interface.
+When the application starts, it will automatically create a proxy object for the client class and add a binding relationship in the container using the value of the configuration item `id` (if not set, the value of the configuration item `service` will be used instead). This is just like a manually written client class: you can directly use the client by injecting the `CalculatorServiceInterface` interface.
 
-> When the service provider uses the interface class name to publish the service name, only the configuration item `name` needs to be set as the interface class name on the service consumer, and there is no need to set the configuration items `id` and `service` repeatedly.
+> When the service provider uses the interface class name to publish the service name, on the service consumer side, you only need to set the configuration item `name` to the interface class name, without repeatedly setting the configuration items `id` and `service`.
 
-#### Manually create consumer classes
+#### Manually Creating Consumer Classes
 
-If you have more requirements for consumer classes, you can manually create a consumer class to achieve it. You only need to define a class and related attributes.
+If you have more requirements for the consumer class, you can implement it by manually creating a consumer class, simply by defining a class and its related attributes.
 
 ```php
 <?php
@@ -252,16 +282,14 @@ use Hyperf\RpcClient\AbstractServiceClient;
 class CalculatorServiceConsumer extends AbstractServiceClient implements CalculatorServiceInterface
 {
     /**
-     * Define the service name of the corresponding service provider
-     * @var string 
+     * Define the service name corresponding to the service provider
      */
-    protected $serviceName = 'CalculatorService';
+    protected string $serviceName = 'CalculatorService';
     
     /**
-     * Define the protocol of the corresponding service provider
-     * @var string 
+     * Define the service protocol corresponding to the service provider
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {
@@ -270,21 +298,22 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 }
 ```
 
-Then you need to define a tag in the configuration file for obtaining node information from which service center. The file located in `config/autoload/services.php` (if it does not exist, you can create it yourself)
+Then you also need to define a configuration in the configuration file to mark from which service center to obtain node information, located in `config/autoload/services.php` (create it yourself if it does not exist)
 
 ```php
 <?php
 return [
+    // Other configurations at the same level are omitted
     'consumers' => [
         [
-            // $serviceName corresponding to the consumer class
+            // Corresponds to $serviceName of the consumer class
             'name' => 'CalculatorService',
-            // From which service center the consumer will obtain node information. If it is not configured, the node information will not be obtained from the service center
+            // From which service center does this consumer get node information? If not configured, it will not get node information from the service center.
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
             ],
-            // If the registry configuration above is not specified, it means to directly consume the specified node. Configure the node information of the service provider through the nodes parameter below
+            // If the above registry configuration is not specified, it means direct consumption of the specified node. Configure the service provider's node information through the nodes parameter below.
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9504],
             ],
@@ -293,8 +322,7 @@ return [
 ];
 ```
 
-
-In this way, we can use the `CalculatorService` class to achieve service consumption. In order to make the relationship logic here more reasonable, the relationship between `CalculatorServiceInterface` and `CalculatorServiceConsumer` should also be defined in `config/autoload/dependencies.php`. Examples are as follow:
+This way, we can realize the consumption of services through the `CalculatorService` class. To make the relationship logic here more reasonable, the relationship between `CalculatorServiceInterface` and `CalculatorServiceConsumer` should also be defined in `config/autoload/dependencies.php`. An example is as follows:
 
 ```php
 return [
@@ -302,13 +330,13 @@ return [
 ];
 ```
 
-In this way, the client can be used by injecting the `CalculatorServiceInterface` interface.
+This allows you to use the client by injecting the `CalculatorServiceInterface` interface.
 
-#### Configuration reuse
+#### Reusing Configuration
 
-Generally, a service consumer will consume multiple service providers at the same time. When we discover service providers through the service center, the `registry` configuration in `config/autoload/services.php` file may be repeatedly configured, however, our service center may be unified, which means that multiple service consumers are configured to pull node information from the same service center. At this time, we can implement it through PHP codes such as `PHP variables` or `loops` to generate configuration file.
+Usually, a service consumer will consume multiple service providers at the same time. When we discover service providers through the service center, the `registry` configuration might be repeatedly configured many times in the `config/autoload/services.php` configuration file. But usually, our service center might be unified, which means multiple service consumer configurations are fetching node information from the same service center. At this time, we can realize the generation of configuration files through `PHP variables` or `loops` and other PHP code.
 
-##### Generate configuration by PHP variables
+##### Generating configuration via PHP variables
 
 ```php
 <?php
@@ -317,7 +345,7 @@ $registry = [
    'address' => 'http://127.0.0.1:8500',
 ];
 return [
-    // The following FooService and BarService are only examples of multi-services, and they do not actually exist in the document examples
+    // FooService and BarService below are only examples of multiple services, and they do not actually exist in the documentation examples.
     'consumers' => [
         [
             'name' => 'FooService',
@@ -331,15 +359,16 @@ return [
 ];
 ```
 
-##### Generate configuration by loop
+##### Generating configuration via loops
 
 ```php
 <?php
 return [
+    // Other configurations at the same level are omitted
     'consumers' => value(function () {
         $consumers = [];
-        // This example automatically creates the configuration form of the proxy consumer class. There are two configuration items - name and service. This is not the only method. Just to explain that the configuration can be generated through PHP code
-        // The following FooServiceInterface and BarServiceInterface are only examples of multi-services, and they do not actually exist in the document examples
+        // Here illustrates the configuration form of automatically creating proxy consumer classes. Therefore, there are two configuration items: name and service. The approach here is not unique, only illustrating that configuration can be generated through PHP code.
+        // FooServiceInterface and BarServiceInterface below are only examples of multiple services, and they do not actually exist in the documentation examples.
         $services = [
             'FooService' => App\JsonRpc\FooServiceInterface::class,
             'BarService' => App\JsonRpc\BarServiceInterface::class,
@@ -359,9 +388,9 @@ return [
 ];
 ```
 
-### Return PHP object
+### Returning PHP Objects
 
-When the framework imports `symfony/serializer (^5.0)` and `symfony/property-access (^5.0)`, configure the mapping relationship in `dependencies.php`
+When the framework imports `symfony/serializer (^5.0)` and `symfony/property-access (^5.0)`, and configures the mapping relationship in `dependencies.php`
 
 ```php
 use Hyperf\Serializer\SerializerFactory;
@@ -372,9 +401,9 @@ return [
 ];
 ```
 
-`NormalizerInterface` will support serialization and deserialization of objects. This type of `MathValue[]` object array is not supported, currently.
+`NormalizerInterface` will support the serialization and deserialization of objects. Such `MathValue[]` object arrays are temporarily not supported.
 
-Define the return object
+Define return object
 
 ```php
 <?php
@@ -394,7 +423,7 @@ class MathValue
 }
 ```
 
-Rewrite the interface file
+Rewrite interface file
 
 ```php
 <?php
@@ -409,7 +438,7 @@ interface CalculatorServiceInterface
 }
 ```
 
-Call in the controller
+Calling in the controller
 
 ```php
 <?php
@@ -426,11 +455,11 @@ $result = $client->sum(new MathValue(1), new MathValue(2));
 var_dump($result->value);
 ```
 
-### Use JsonRpcPoolTransporter
+### Using JsonRpcPoolTransporter
 
-The framework provides a `Transporter` based on the connection pool, which can effectively avoid the problem of establishing too many connections during high concurrency. Here you can use `JsonRpcPoolTransporter` to replace `JsonRpcTransporter`.
+The framework provides a `Transporter` based on a connection pool, which can effectively avoid the problem of establishing too many connections during high concurrency. Here, you can replace `JsonRpcTransporter` with `JsonRpcPoolTransporter`.
 
-Modify the `dependencies.php` file
+Modify `dependencies.php` file
 
 ```php
 <?php
@@ -443,7 +472,4 @@ use Hyperf\JsonRpc\JsonRpcTransporter;
 return [
     JsonRpcTransporter::class => JsonRpcPoolTransporter::class,
 ];
-
 ```
-
-

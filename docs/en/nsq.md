@@ -1,6 +1,6 @@
 # NSQ
 
-[NSQ](https://nsq.io) is a realtime distributed messaging platform, writting by Golang.
+[NSQ](https://nsq.io) is an open-source, lightweight, and high-performance real-time distributed message middleware written in the Go language.
 
 ## Installation
 
@@ -12,7 +12,7 @@ composer require hyperf/nsq
 
 ### Configuration
 
-The configuration file of the NSQ component is located in `config/autoload/nsq.php` by default. If the file does not exist, you could use the `php bin/hyperf.php vendor:publish hyperf/nsq` command to publish the corresponding configuration file.
+The configuration file for the NSQ component is located at `config/autoload/nsq.php` by default. If this file does not exist, you can publish it using the command `php bin/hyperf.php vendor:publish hyperf/nsq`.
 
 The default configuration file is as follows:
 
@@ -28,31 +28,32 @@ return [
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
-            'max_idle_time' => 60.0,
+            // Since the default idle time of the Nsq service is 60s, the maximum idle time maintained by the framework should be less than 60s
+            'max_idle_time' => 30.0,
         ],
     ],
 ];
 ```
 
-### Craete Consumer
+### Creating Consumers
 
-You can quickly generate a consumer to consume the message through the `gen:nsq-consumer` command, for example:
+You can quickly generate a Consumer to consume messages using the `gen:nsq-consumer` command.
 
 ```bash
 php bin/hyperf.php gen:nsq-consumer DemoConsumer
 ```
 
-You could also use the `Hyperf\Nsq\Annotation\Consumer` annotation to declare a subclass of the `Hyperf/Nsq/AbstractConsumer` abstract class to complete the definition of a consumer, where the annotation and the abstract classes both are contain the following properties:
- 
-|   Property  |  Type  |  Default Value |       Comment       |
-|:-------:|:------:|:------:|:----------------:|
-|  topic  | string |   ''   |  The topic that you want to listening to   |
-| channel | string |   ''   |  The channel that you want to listening to |
-|   name  | string | NsqConsumer |  The name of the consumer     |
-|   nums  |  int   |   1    |  The process numbers of the consumers   |
-|   pool  | string |   default   |  The connection pool resource corresponding to the consumer, corresponding to the key of the configuration file |
+You can also use the `Hyperf\Nsq\Annotation\Consumer` annotation to declare a subclass of the `Hyperf/Nsq/AbstractConsumer` abstract class to define a Consumer. Both the `Hyperf\Nsq\Annotation\Consumer` annotation and the abstract class contain the following properties:
 
-These annotation properties are optional, because the `Hyperf/Nsq/AbstractConsumer` class also defines the corresponding member properties and getter and setter respectively. When the annotation properties are not defined, the default value of the abstract class will be used.
+| Configuration | Type | Annotation or Abstract Class Default Value | Remark |
+| :--- | :--- | :--- | :--- |
+| topic | string | '' | Topic to listen to |
+| channel | string | '' | Channel to listen to |
+| name | string | NsqConsumer | Name of the consumer |
+| nums | int | 1 | Number of consumer processes |
+| pool | string | default | Connection used by the consumer, corresponds to the key in the configuration file |
+
+These annotation properties are optional because the `Hyperf/Nsq/AbstractConsumer` abstract class also defines corresponding member attributes as well as getters and setters. When annotation properties are not defined, the default values of the abstract class's attributes will be used.
 
 ```php
 <?php
@@ -66,12 +67,7 @@ use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
-#[Consumer(
-    topic: "hyperf", 
-    channel: "hyperf", 
-    name: "DemoNsqConsumer", 
-    nums: 1
-)]
+#[Consumer(topic: "hyperf", channel: "hyperf", name: "DemoNsqConsumer", nums: 1)]
 class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
@@ -83,19 +79,19 @@ class DemoNsqConsumer extends AbstractConsumer
 }
 ```
 
-### Disable self-starting of the comsumer process
+### Prohibit Consumer Process from Automatically Starting
 
-By default, after using the `#[Consumer]` annotation definition, the framework will automatically create a child process to start the consumer at startup, and will automatically re-pull it after the child process exits abnormally. However, if some debugging work is carried out in the development stage, it may be inconvenient to debug due to the automatic consumption of consumers.
+By default, after using the `#[Consumer]` annotation definition, the framework will automatically create sub-processes to start the consumer at startup, and will automatically restart them after the sub-processes exit abnormally. However, if you are doing some debugging work during the development stage, it may be inconvenient to debug due to the consumer's automatic consumption.
 
-In this situation, you could control the self-start of the consumption process through two forms to disable the feature, global shutdown and partial shutdown.
+In this case, you can control the automatic startup of the consumer process through global shutdown and partial shutdown.
 
-#### Global shutdown
+#### Global Shutdown
 
-You could set the `enable` option of the corresponding connection to `false` in the default configuration file `config/autoload/nsq.php`, which means that all consumer processes under this connection will disable the self-start feature.
+You can set the `enable` option for the corresponding connection to `false` in the default configuration file `config/autoload/nsq.php`, which means that all consumer processes under this connection will have the automatic startup function disabled.
 
-#### Partial shutdown
+#### Partial Shutdown
 
-When you only need to disable the self-start feature of individual consumer processes, you only need to override the parent method `isEnable()` in the corresponding consumer class and return `false` to disable the consumer's self-start feature.
+When you only need to close the automatic startup function of individual consumer processes, you only need to override the parent class method `isEnable()` in the corresponding consumer and return `false` to close the automatic startup function of this consumer.
 
 ```php
 <?php
@@ -110,12 +106,7 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
-#[Consumer(
-    topic: "demo_topic", 
-    channel: "demo_channel", 
-    name: "DemoConsumer", 
-    nums: 1
-)]
+#[Consumer(topic: "demo_topic", channel: "demo_channel", name: "DemoConsumer", nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
@@ -137,9 +128,9 @@ class DemoConsumer extends AbstractConsumer
 }
 ```
 
-### Publish message
+### Producing Messages
 
-You could publish a message to NSQ by calling the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method. The following is an example of publish message in Command:
+You can produce messages to NSQ by calling the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method. The following is an example of message production in Command:
 
 ```php
 <?php
@@ -170,9 +161,9 @@ class NsqCommand extends HyperfCommand
 }
 ```
 
-### Publish multiple messages at once
+### Delivering Multiple Messages at Once
 
-The second parameter of the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method can not just only pass a string value, but also an array of strings to achieve one-time publish multiple messages to a topic, an example is as follows:
+The second parameter of the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method can not only pass a string, but also an array of strings to achieve the function of delivering multiple messages to a Topic at once. An example is as follows:
 
 ```php
 <?php
@@ -207,9 +198,9 @@ class NsqCommand extends HyperfCommand
 }
 ```
 
-### Publish delay message
+### Producing Delayed Messages
 
-When you want the message you publish to be consumed after a specific time, you could also pass the third parameter of the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method the delay time corresponding to the publish message, in seconds, an example is as follows:
+When you want your delivered messages to be consumed after a specific time, you can also pass the corresponding delay duration to the third parameter of the `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` method, in seconds. An example is as follows:
 
 ```php
 <?php
@@ -245,9 +236,9 @@ class NsqCommand extends HyperfCommand
 
 > NSQD HTTP API Refer: https://nsq.io/components/nsqd.html
 
-The component encapsulates the NSQD HTTP API, and you could easily call the NSQD HTTP API by this component.
+The component encapsulates the NSQD HTTP API, allowing you to easily call the NSQD HTTP API.
 
-For example, when you need to delete a `Topic`, you could execute the following code:
+For example, when you need to delete a certain `Topic`, you can execute the following code:
 
 ```php
 <?php
@@ -261,22 +252,22 @@ $client = $container->get(Topic::class);
 $client->delete('hyperf.test');
 ```
 
-- `Hyperf\Nsq\Api\Topic` class corresponds to `topic` related API;
-- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API;
-- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API;
+- `Hyperf\Nsq\Api\Topic` class corresponds to `topic` related APIs;
+- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related APIs;
+- `Hyperf\Nsq\Api\Api` class corresponds to APIs related to `ping`, `stats`, `config`, `debug`, etc.;
 
 ## NSQ Protocol
 
 > https://nsq.io/clients/tcp_protocol_spec.html
 
-- Socket
+- Socket Basics
 
 ```plantuml
 @startuml
 
 autonumber
 hide footbox
-title **Socket**
+title **Socket Basics**
 
 participant "Client" as client
 participant "Server" as server #orange
@@ -284,11 +275,11 @@ participant "Server" as server #orange
 activate client
 activate server
 
-note right of server: Build Connection
+note right of server: Establish connection
 client -> server: socket->connect(ip, port)
 
 ...
-note right of server: Multiple communication send/recv
+note right of server: Multiple communications send/recv
 client -> server: socket->send()
 server-> client: socket->recv()
 ...
@@ -302,7 +293,7 @@ deactivate server
 @enduml
 ```
 
-- NSQ Protocol
+- NSQ Protocol Flow
 
 ```plantuml
 @startuml
@@ -318,54 +309,54 @@ activate client
 activate server
 
 == connect ==
-note left of client: after connect, the remaining calls are socket->send/recv
+note left of client: Everything after connect is socket->send/recv
 client -> server: socket->connect(ip, host)
 note left of client: protocol version
 client->server: magic: V2
 
 == auth ==
-note left of client: client metadatat
+note left of client: client metadata
 client->server: IDENTIFY
-note right of server: If need auth
+note right of server: If auth is required
 server->client: auth_required=true
 client->server: AUTH
 ...
 
 == pub ==
-note left of client: Send a message
+note left of client: Send one message
 client -> server: PUB <topic_name>
 note left of client: Send multiple messages
 client -> server: MPUB
-note left of client: Send a delay message
+note left of client: Send a delayed message
 client -> server: DPUB
 ...
 
 == sub ==
-note left of client: client follow a topic by channel
-note right of server: after SUB, client in RDY 0 stage
+note left of client: client uses channel to subscribe to topic
+note right of server: After SUB is successful, client is in RDY 0 stage
 client -> server: SUB <topic_name> <channel_name>
-note left of client: Tells server to ready receive <count> messages
+note left of client: Use RDY to tell server ready to consume <count> messages
 client -> server: RDY <count>
-note right of server: server response <count> messages to client
+note right of server: server returns client <count> messages
 server -> client: <count> msg
-note left of client: Finish a message (indicate successful processing)
+note left of client: Mark message as consumed (successful consumption)
 client -> server: FIN <message_id>
-note left of client: Re-queue a message (indicate failure to process)
+note left of client: Requeue message (failed consumption, requeue)
 client -> server: REQ <message_id> <timeout>
-note left of client: Reset the timeout for an in-flight message
+note left of client: Reset message timeout
 client -> server: TOUCH <message_id>
 ...
 
 == heartbeat ==
 server -> client: _heartbeat_
-note right of server: After 2 unanswered responses, nsqd will timeout and forcefully close a client connection that it has not heard from
+note right of server: If client does not respond to NOP twice, server will disconnect
 client -> server: NOP
 ...
 
 == close ==
-note left of client: Cleanly close your connection (no more messages are sent)
+note left of client: clean close connection, indicating no more messages, close connection
 client -> server: CLS
-note right of server: server response successful
+note right of server: server responds successfully
 server -> client: CLOSE_WAIT
 
 deactivate client

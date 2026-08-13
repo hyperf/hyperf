@@ -1,13 +1,8 @@
-# Watcher (Hot Reload)
+# Hot Update Watcher
 
-Since version `2.0` uses `BetterReflection` to collect the `abstract syntax tree (AST)` and `reflection data`, the scanning speed is much slower than version `1.1`.
+> The first time you start it, it will be relatively slow because there is no cache. The second time you start it, it will be dynamically collected according to the file modification time, so the startup time will still be relatively long.
 
-> The first startup of application will be slower because there is no scan cache exists. Subsequent startup speeds will be improved, but because `BetterReflection` needs to be instantiated, the startup time is still relatively long.
-
-
-In addition to solving the above startup problems, the `Watcher` component also handles restarting the application immediately after file modification.
-
-> This component is only suitable for development environment, please use it with caution in production environment.
+In addition to solving the above startup problems, the `Watcher` component also provides the function of restarting immediately after file modification.
 
 ## Installation
 
@@ -23,28 +18,29 @@ composer require hyperf/watcher --dev
 php bin/hyperf.php vendor:publish hyperf/watcher
 ```
 
-### Configuration instructions
+### Configuration description
 
-|      Name      |     Default      |                                     Description                                      |
-| :------------: | :--------------: | :----------------------------------------------------------------------------------: |
-|     driver     | `ScanFileDriver` |                           The default polling file watcher                           |
-|      bin       |   `PHP_BINARY`   | The script used to start the service, for example: `php -d swoole.use_shortname=Off` |
-|   watch.dir    | `app`, `config`  |                                 Watched directories                                  |
-|   watch.file   |      `.env`      |                                     Wached files                                     |
-| watch.interval |      `2000`      |                                Polling interval (ms)                                 |
-|      ext       |  `.php`, `.env`  |                      File extension in the listening directory                       |
+| Configuration | Default Value | Description |
+| :------------: | :--------------: | :-------------------------------------------------------: |
+| driver | `ScanFileDriver` | Default scheduled file scanning driver |
+| bin | `PHP_BINARY` | Script to start the service, e.g., `php -d swoole.use_shortname=Off` |
+| watch.dir | `app`, `config` | Watched directories |
+| watch.file | `.env` | Watched files |
+| watch.interval | `2000` | Scanning interval (milliseconds) |
+| ext | `.php`, `.env` | File extensions under the watched directory |
 
-## Driver support
+## Supported Drivers
 
-|                Driver                 |               Notes               |
-| :-----------------------------------: | :-------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver  |       no extension required       |
-|  Hyperf\Watcher\Driver\FswatchDriver  |         requires fswatch          |
-|   Hyperf\Watcher\Driver\FindDriver    | requires find, MAC requires gfind |
-| Hyperf\Watcher\Driver\FindNewerDriver |           requires find           |
+| Driver | Description |
+| :-----------------------------------: | :---------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver | No extension required |
+| Hyperf\Watcher\Driver\FswatchDriver | fswatch needs to be installed |
+| Hyperf\Watcher\Driver\FindDriver | find needs to be installed, gfind needs to be installed on MAC |
+| Hyperf\Watcher\Driver\FindNewerDriver | find needs to be installed |
 
 ### `fswatch` Installation
-Mac:
+
+Mac
 
 ```bash
 brew install fswatch
@@ -56,7 +52,7 @@ Ubuntu/Debian
 apt-get install fswatch
 ```
 
-Linux:
+Other
 
 ```bash
 wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.14.0.tar.gz \
@@ -69,20 +65,13 @@ wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.
 
 ## Startup
 
-Because of the directory structure, the start command has to be run in the root directory of project.
+Due to directory reasons, it needs to be run in the project root directory.
 
 ```bash
 php bin/hyperf.php server:watch
 ```
 
-## Startup with docker 
-When configuring a file watcher for hot-reloading in Docker, specify the entry point in the Dockerfile as follows:
+## Limitations
 
-```bash
-ENTRYPOINT ["php", "/opt/www/bin/hyperf.php", "server:watch"]
-```
-
-## Problems
-
-- For now, there is a slight problem in the Alpine Docker environment, which will be improved in the future version.
-- Deletion of files and modification of `.env` require a manual restart to take effect.
+- Currently, there are some minor issues in the Alpine Docker environment, which will be improved later.
+- Deleting files and modifying `.env` require a manual restart to take effect.

@@ -1,20 +1,20 @@
-# Quick start
+# Quick Start
 
-## Foreword
+## Preface
 
-> [hyperf/database](https://github.com/hyperf/database) is derived from [illuminate/database](https://github.com/illuminate/database), we have made some modifications to it but most methods remain the same. Thanks to the Laravel development team for implementing such a powerful and easy-to-use ORM component.
+> [hyperf/database](https://github.com/hyperf/database) is derived from [illuminate/database](https://github.com/illuminate/database). We have made some modifications to it, while keeping most of the functionality the same. We would like to thank the Laravel development team for implementing such a powerful and easy-to-use ORM component.
 
-The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements a database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
+The [hyperf/database](https://github.com/hyperf/database) component is derived from [illuminate/database](https://github.com/illuminate/database). We have modified it to allow it to be used in other PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, it's worth mentioning the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements a database connection pool based on [hyperf/pool](https://github.com/hyperf/pool) and provides a new abstraction for models. Acting as a bridge, it allows Hyperf to integrate the database component and event component.
 
 ## Installation
 
-### Hyperf framework
+### Hyperf Framework
 
 ```bash
 composer require hyperf/db-connection
 ```
 
-### Other frameworks
+### Other Frameworks
 
 ```bash
 composer require hyperf/database
@@ -22,41 +22,41 @@ composer require hyperf/database
 
 ## Configuration
 
-The default configuration is as follows, the configuration supports configuring multiple database connections. The default connection that is used when no connection is specified is called `default`.
+The default configuration is as follows. Database supports multiple database configurations, with `default` being the default.
 
-| Name                 | Type   | Default value   | Description                                          |
-| :------------------: | :----: | :-------------: | :--------------------------------------------------: |
-| driver               | string | none            | Database type                                        |
-| host                 | string | none            | Database host                                        |
-| database             | string | none            | Database name                                        |
-| username             | string | none            | Database username                                    |
-| password             | string | null            | Database password                                    |
-| charset              | string | utf8            | Database string charset                              |
-| collation            | string | utf8_unicode_ci | Database string collation                            |
-| prefix               | string | ''              | Database table prefix                                |
-| timezone             | string | null            | Database time zone                                   |
-| pool.min_connections | int    | 1               | Minimum number of connections in the connection pool |
-| pool.max_connections | int    | 10              | Maximum number of connections in the connection pool |
-| pool.connect_timeout | float  | 10.0            | Connection waiting timeout                           |
-| pool.wait_timeout    | float  | 3.0             | Timeout time in seconds                              |
-| pool.heartbeat       | int    | -1              | Connection heartbeat (-1 equals disabled)            |
-| pool.max_idle_time   | float  | 60.0            | Connection maximum idle time before closing          |
-| options              | array  |                 | PDO configuration options                            |
+| Config Item | Type | Default Value | Remark |
+| :---: | :---: | :---: | :---: |
+| driver | string | None | Database Engine |
+| host | string | None | Database Address |
+| database | string | None | Default DB |
+| username | string | None | Database Username |
+| password | string | null | Database Password |
+| charset | string | utf8 | Database Charset |
+| collation | string | utf8_unicode_ci | Database Collation |
+| prefix | string | '' | Model Prefix |
+| timezone | string | null | Database Timezone |
+| pool.min_connections | int | 1 | Min Connections |
+| pool.max_connections | int | 10 | Max Connections |
+| pool.connect_timeout | float | 10.0 | Connect Timeout |
+| pool.wait_timeout | float | 3.0 | Wait Timeout |
+| pool.heartbeat | int | -1 | Heartbeat |
+| pool.max_idle_time | float | 60.0 | Max Idle Time |
+| options | array | | PDO Options |
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER','mysql'),
-        'host' => env('DB_HOST','localhost'),
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
         'port' => env('DB_PORT', 3306),
-        'database' => env('DB_DATABASE','hyperf'),
-        'username' => env('DB_USERNAME','root'),
-        'password' => env('DB_PASSWORD',''),
-        'charset' => env('DB_CHARSET','utf8'),
-        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX',''),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -69,22 +69,22 @@ return [
 ];
 ```
 
-Sometimes users need to modify the default PDO configuration. For example, if you want to return all fields as strings, you need to set the PDO configuration item `ATTR_STRINGIFY_FETCHES` to `true`.
+Sometimes users need to modify the default PDO configuration, for example, if all fields need to be returned as strings. In this case, you need to modify the PDO option `ATTR_STRINGIFY_FETCHES` to true.
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER','mysql'),
-        'host' => env('DB_HOST','localhost'),
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
         'port' => env('DB_PORT', 3306),
-        'database' => env('DB_DATABASE','hyperf'),
-        'username' => env('DB_USERNAME','root'),
-        'password' => env('DB_PASSWORD',''),
-        'charset' => env('DB_CHARSET','utf8'),
-        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX',''),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -99,38 +99,38 @@ return [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
             PDO::ATTR_STRINGIFY_FETCHES => false,
-            // If you are using a non-native MySQL or a DB provided by a cloud vendor, such as a database/analytic instance that does not support the MySQL prepare protocol, set this to true
+            // If you are using a non-native MySQL database or a DB provided by a cloud vendor (such as a slave instance/analytical instance) that does not support the MySQL prepare protocol, set this to true
             PDO::ATTR_EMULATE_PREPARES => false,
         ],
     ],
 ];
 ```
 
-### Read and write separation
+### Read/Write Splitting
 
-Sometimes you want the `SELECT` statement to use one database connection and the `INSERT`, `UPDATE`, and `DELETE` statements to use another database connection. This is easy to implement in Hyperf, regardless whether you are using a native query, query builder, or model.
+Sometimes you want `SELECT` statements to use one database connection, and `INSERT`, `UPDATE`, and `DELETE` statements to use another. In `Hyperf`, whether you are using native queries, the query builder, or models, this can be easily achieved.
 
-In order to understand how the read-write separation is configured, let's first look at an example:
+To understand how read/write splitting is configured, let's look at an example:
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER','mysql'),
+        'driver' => env('DB_DRIVER', 'mysql'),
         'read' => [
             'host' => ['192.168.1.1'],
         ],
         'write' => [
             'host' => ['196.168.1.2'],
         ],
-        'sticky' => true,
-        'database' => env('DB_DATABASE','hyperf'),
-        'username' => env('DB_USERNAME','root'),
-        'password' => env('DB_PASSWORD',''),
-        'charset' => env('DB_CHARSET','utf8'),
-        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX',''),
+        'sticky'    => true,
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -141,31 +141,32 @@ return [
         ],
     ],
 ];
+
 ```
 
-Note that in the above example, three keys have been added to the configuration array, namely `read`, `write` and `sticky`. The keys of `read` and `write` both contain an array with the key `host`.
+Note that in the example above, three keys have been added to the configuration array: `read`, `write`, and `sticky`. Both `read` and `write` keys contain an array with a `host` key. Other database configurations for `read` and `write` are shared from the `mysql` array.
 
-If you want to rewrite the configuration in the main array, you only need to modify the `read` and `write` arrays. So, in this example: 192.168.1.1 will be used as the "read" connection host, and 192.168.1.2 will be used as the "write" connection host. The two connections will share various configurations of the mysql array, such as database credentials (username/password), prefix, character encoding, etc.
+If you want to override configurations from the main array, simply modify the `read` and `write` arrays. Therefore, in this example: 192.168.1.1 will be used as the "read" connection host, while 192.168.1.2 will be used as the "write" connection host. Both connections will share the configurations from the `mysql` array, such as database credentials (username/password), prefix, character encoding, etc.
 
-`sticky` is an optional value that can be used to immediately read the records that have been written to the database during the current request cycle. If the `sticky` option is enabled and a "write" operation has been performed in the current request cycle, then any "read" operation will use the "write" connection. This ensures that the data written in the same request cycle can be read immediately, thereby avoiding the problem of data inconsistency caused by master-slave delay. However, whether this option should be enabled depends on the needs of the application.
+`sticky` is an optional value that can be used to immediately read records that have been written to the database during the current request cycle. If the `sticky` option is enabled, and a "write" operation has been performed during the current request cycle, any "read" operation will use the "write" connection. This ensures that data written during the same request cycle can be read immediately, thereby avoiding data inconsistency issues caused by master-slave replication lag. Whether to enable it, however, depends on the needs of the application.
 
-### Configuring multiple database connections
+### Multiple Database Configurations
 
-The multi-database configuration is as follows.
+Multiple database configurations are as follows:
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER','mysql'),
-        'host' => env('DB_HOST','localhost'),
-        'database' => env('DB_DATABASE','hyperf'),
-        'username' => env('DB_USERNAME','root'),
-        'password' => env('DB_PASSWORD',''),
-        'charset' => env('DB_CHARSET','utf8'),
-        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX',''),
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -176,14 +177,14 @@ return [
         ],
     ],
     'test'=>[
-        'driver' => env('DB_DRIVER','mysql'),
-        'host' => env('DB_HOST2','localhost'),
-        'database' => env('DB_DATABASE','hyperf'),
-        'username' => env('DB_USERNAME','root'),
-        'password' => env('DB_PASSWORD',''),
-        'charset' => env('DB_CHARSET','utf8'),
-        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX',''),
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST2', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8'),
+        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -195,7 +196,8 @@ return [
     ],
 ];
 ```
-To use different connections, you only need to specify `connection` via the query builder:
+
+When using it, just specify `connection` as `test` to use the configuration from `test`, as follows:
 
 ```php
 <?php
@@ -209,9 +211,7 @@ Db::connection('default')->select('SELECT * FROM user;');
 Db::connection('test')->select('SELECT * FROM user;');
 ```
 
-You can change the default connection used by a certain model by setting the value of `$connection` inside the model class:
-
-> Note that the property visibility must be set as `protected`
+In the model, modify the `connection` property to use the corresponding configuration. For example, the following `Model` uses the `test` configuration:
 
 ```php
 <?php
@@ -220,10 +220,10 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link https://www.hyperf.io
+ * @link     https://www.hyperf.io
  * @document https://doc.hyperf.io
- * @contact group@hyperf.io
- * @license https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace App\Model;
@@ -240,38 +240,37 @@ class User extends Model
      *
      * @var string
      */
-    protected $table ='user';
+    protected $table = 'user';
 
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection ='test';
+    protected $connection = 'test';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id','mobile','realname'];
+    protected $fillable = ['id', 'mobile', 'realname'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' =>'integer'];
+    protected $casts = ['id' => 'integer'];
 }
 ```
 
-## Executing native SQL statements
+## Executing Native SQL Statements
 
-After configuring the database, you can use `Hyperf\DbConnection\Db` to query.
+Once the database is configured, you can use `Hyperf\DbConnection\Db` to perform queries.
 
-### Querying data
-
-This includes query statements such as `select`, stored procedures and functions that read SQL data.
+### Query Class
+This mainly includes `Select`, stored procedures with `READS SQL DATA` attribute, functions, and other query statements.
 
 The `select` method will always return an array, and each result in the array is a `StdClass` object.
 
@@ -280,34 +279,33 @@ The `select` method will always return an array, and each result in the array is
 
 use Hyperf\DbConnection\Db;
 
-$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]); // return array
+$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]);  // Returns an array
 
 foreach($users as $user){
     echo $user->name;
 }
 ```
 
-### Modifying data
-
-This includes execution statements such as `Insert`, `Update`, `Delete`, and stored procedures that modify SQL data.
+### Execute Class
+This mainly includes `Insert`, `Update`, `Delete`, and stored procedures with `MODIFIES SQL DATA` attribute and other execution statements.
 
 ```php
 <?php
 
 use Hyperf\DbConnection\Db;
 
-$inserted = Db::insert('INSERT INTO user (id, name) VALUES (?, ?)', [1,'Hyperf']); // Returns whether it is successful bool
+$inserted = Db::insert('INSERT INTO user (id, name) VALUES (?, ?)', [1, 'Hyperf']); // Returns success bool
 
-$affected = Db::update('UPDATE user set name =? WHERE id = ?', ['John', 1]); // Returns the number of affected rows int
+$affected = Db::update('UPDATE user set name = ? WHERE id = ?', ['John', 1]); // Returns the number of affected rows (int)
 
-$affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // Returns the number of affected rows int
+$affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // Returns the number of affected rows (int)
 
-$result = Db::statement("CALL pro_test(?,'?')", [1,'your words']); // return bool CALL pro_test(?,?) is a stored procedure, the attribute is MODIFIES SQL DATA
+$result = Db::statement("CALL pro_test(?, '?')", [1, 'your words']);  // Returns bool. CALL pro_test(?, ?) is a stored procedure with attribute MODIFIES SQL DATA
 ```
 
-### Automatically manage database transactions
+### Automatic Database Transaction Management
 
-You can use the `transaction` method of `Db` to run a set of operations as a database transaction. If an exception occurs in the transaction closure, the transaction will be rolled back. If the transaction closure is executed successfully, the transaction will be committed automatically. This means that you don't have to worry about rollbacks or commits when using the `transaction` method:
+You can use the `transaction` method of `Db` to run a set of operations within a database transaction. If an exception occurs in the `Closure` of the transaction, the transaction will be rolled back. If the `Closure` of the transaction executes successfully, the transaction will be automatically committed. Once you use `transaction`, you no longer need to worry about manual rollback or commit:
 
 ```php
 <?php
@@ -318,12 +316,11 @@ Db::transaction(function () {
 
     Db::table('posts')->delete();
 });
-
 ```
 
-### Manually manage database transactions
+### Manual Database Transaction Management
 
-If you want to manually start a transaction and have complete control over rollback and commit, you can use `beginTransaction`, `commit`, `rollBack` methods:
+If you want to manually start a transaction and have full control over rollback and commit, you can use `beginTransaction`, `commit`, and `rollBack` of `Db`:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -339,11 +336,11 @@ try{
 }
 ```
 
-## Logging the raw SQL queries
+## Printing the Recently Executed SQL
 
-> The current method can only be used in the development environment and must be removed before online deployment, otherwise it will cause serious memory leaks and data consistency issues.
+> The current method can only be used in the development environment. It must be removed before deployment to production, otherwise it will cause serious memory leaks and data confusion.
 
-You can use the [database event listener](en/db/event) to record the SQL queries:
+To log `SQL` in production, please use [Event Listening](/en/db/event)
 
 ```php
 <?php
@@ -352,38 +349,38 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Collection\Arr;
 use App\Model\Book;
 
-// Enable SQL data logging function
-// WARNING: causes a memory leak and data consistency problems in the Swoole CLI environment, local development and debugging only!
+// Enable SQL query logging
 Db::enableQueryLog();
 
 $book = Book::query()->find(1);
 
-// Print the last SQL query
+// Print the last SQL related data
 var_dump(Arr::last(Db::getQueryLog()));
 ```
 
-## Driver list
+## Driver List
 
-Different from [illuminate/database](https://github.com/illuminate/database), [hyperf/database](https://github.com/hyperf/database) only provides MySQL driver by default, and currently also provides [PgSQL](https://github.com/hyperf/database-pgsql), [SQLite](https://github.com/hyperf/database-sqlite) and [SQL Server](https://github.com/hyperf/database-sqlserver-incubator) and other drivers
-If the default mysql cannot meet the usage needs, you can install the corresponding driver yourself.
+Unlike [illuminate/database](https://github.com/illuminate/database), [hyperf/database](https://github.com/hyperf/database) only provides MySQL driver by default. Currently, it also provides drivers like [PgSQL](https://github.com/hyperf/database-pgsql), [SQLite](https://github.com/hyperf/database-sqlite), and [SQL Server](https://github.com/hyperf/database-sqlserver-incubator).
 
-### PgSql driver
+If the default MySQL driver does not meet your needs, you can install the corresponding driver yourself:
 
-#### Install
+### PgSql Driver
 
-Requires `Swoole >= 5.1.0` and `--enable-swoole-pgsql` is enabled when compiling
+#### Installation
+
+Requires `Swoole >= 5.1.0` and `--enable-swoole-pgsql` enabled during compilation.
 
 ```bash
 composer require hyperf/database-pgsql
 ```
 
-#### Configuration file
+#### Configuration File
 
 ```php
 // config/autoload/databases.php
 return [
-    // Other configurations
-    'pgsql'=> [
+     // Other configurations
+    'pgsql'=>[
         'driver' => env('DB_DRIVER', 'pgsql'),
         'host' => env('DB_HOST', 'localhost'),
         'database' => env('DB_DATABASE', 'hyperf'),
@@ -395,50 +392,50 @@ return [
 ];
 ```
 
-### SQLite driver
+### SQLite Driver
 
-#### Install
+#### Installation
 
-Requires `Swoole >= 5.1.0` and `--enable-swoole-sqlite` is enabled when compiling
+Requires `Swoole >= 5.1.0` and `--enable-swoole-sqlite` enabled during compilation.
 
 ```bash
 composer require hyperf/database-sqlite
 ```
 
-#### Configuration file
+#### Configuration File
 
 ```php
 // config/autoload/databases.php
 return [
-    // Other configurations
+     // Other configurations
     'sqlite'=>[
         'driver' => env('DB_DRIVER', 'sqlite'),
         'host' => env('DB_HOST', 'localhost'),
-        // :memory: For an in-memory database, you can also specify the absolute path to the file.
+        // :memory: is an in-memory database, or you can specify the absolute file path
         'database' => env('DB_DATABASE', ':memory:'),
         // other sqlite config
     ]
 ];
 ```
 
-### SQL Server driver
+### SQL Server Driver
 
-#### Install
+#### Installation
 
-> In the incubation stage, we currently cannot guarantee that all functions will work properly. Feedback is welcome.
+> This is in the incubation stage. We cannot guarantee that all functions work properly at present. Feedback is welcome.
 
-Requirements `Swoole >= 5.1.0` depends on pdo_odbc, and needs to be enabled during compilation `--with-swoole-odbc`
+Requires `Swoole >= 5.1.0` and depends on `pdo_odbc`. It requires `--with-swoole-odbc` enabled during compilation.
 
 ```bash
 composer require hyperf/database-sqlserver-incubator
 ```
 
-#### Configuration file
+#### Configuration File
 
 ```php
 // config/autoload/databases.php
 return [
-    // Other configurations
+     // Other configurations
     'sqlserver' => [
         'driver' => env('DB_DRIVER', 'sqlsrv'),
         'host' => env('DB_HOST', 'mssql'),
