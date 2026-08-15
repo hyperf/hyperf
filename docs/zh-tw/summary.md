@@ -19,6 +19,7 @@
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
   * [影片教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
+  * [IDE外掛](zh-tw/quick-start/plugins.md)
 
 * 核心架構
 
