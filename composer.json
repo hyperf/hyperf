@@ -33,7 +33,7 @@
         "symfony/polyfill-php85": "^1.33"
     },
     "require-dev": {
-        "doctrine/dbal": "^3.6",
+        "doctrine/dbal": "^4.2",
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^3.0",
