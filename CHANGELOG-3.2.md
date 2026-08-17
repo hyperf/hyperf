@@ -1,5 +1,10 @@
 # v3.2.5 - TBD
 
+## Optimized
+
+- [#7779](https://github.com/hyperf/hyperf/pull/7779) Remove useless `$filename` for `Hyperf\Memory\LockManager`.
+- [#7779](https://github.com/hyperf/hyperf/pull/7779) Enhance `validateStartsWith` `validateUppercase` and `validateEndsWith` to be type-safe and defensive.
+
 # v3.2.4 - 2026-08-10
 
 ## Added
