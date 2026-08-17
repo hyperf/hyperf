@@ -26,4 +26,31 @@ return [
         'enable' => false,
         'heartbeat' => 10,
     ],
+    'service' => [
+        'enable' => true,
+        'service_name' => 'service_name',
+        'namespace_id' => 'public',
+        'group_name' => 'api',
+        'protect_threshold' => 0.0,
+        'metadata' => [
+        ],
+        'selector' => [
+        ],
+
+        'instance' => [
+            // If the instance is ephemeral, it will be removed when the service is down.
+            // If the instance is not ephemeral, it will be removed when the service is removed.
+            // If the instance is null, it will be determined by the nacos server.
+            'ephemeral' => null,
+            // The cluster name of the instance.
+            // If the cluster name is null, it will be determined by the nacos server.
+            'cluster' => null,
+            // The weight of the instance.
+            // If the weight is null, it will be determined by the nacos server.
+            'weight' => null,
+            // The heartbeat interval of the instance.
+            // If the heartbeat interval is null, it will be determined by the nacos server.
+            'heartbeat' => 5,
+        ],
+    ],
 ];
