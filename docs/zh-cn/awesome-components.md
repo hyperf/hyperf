@@ -40,6 +40,7 @@
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基于 `hyperf/gotask` 实现的协程化 `MongoDB` 客户端
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 为模型提供多语言能力
 - [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 为模型提供多租户字段区分
+- [richard8768/hyperf-softdelete](https://github.com/richard8768/hyperf-softdelete) 扩展Hyperf软删除 支持自定义软删除字段及删除标识值 便于创建包含软删除字段的唯一复合索引
 
 ## 搜索引擎
 
