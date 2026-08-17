@@ -342,6 +342,42 @@ trait ReplacesAttributes
     }
 
     /**
+     * Replace all place-holders for the prohibited_if rule.
+     */
+    protected function replaceProhibitedIf(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        $parameters[1] = $this->getDisplayableValue($parameters[0], Arr::get($this->data, $parameters[0]));
+
+        $parameters[0] = $this->getDisplayableAttribute($parameters[0]);
+
+        return str_replace([':other', ':value'], $parameters, $message);
+    }
+
+    /**
+     * Replace all place-holders for the prohibited_unless rule.
+     */
+    protected function replaceProhibitedUnless(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        $other = $this->getDisplayableAttribute($parameters[0]);
+
+        $values = [];
+
+        foreach (array_slice($parameters, 1) as $value) {
+            $values[] = $this->getDisplayableValue($parameters[0], $value);
+        }
+
+        return str_replace([':other', ':values'], [$other, implode(', ', $values)], $message);
+    }
+
+    /**
+     * Replace all place-holders for the prohibited_with rule.
+     */
+    protected function replaceProhibits(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':other', implode(' / ', $this->getAttributeList($parameters)), $message);
+    }
+
+    /**
      * Replace all place-holders for the same rule.
      */
     protected function replaceSame(string $message, string $attribute, string $rule, array $parameters): string
@@ -455,14 +491,5 @@ trait ReplacesAttributes
         }
 
         return str_replace(':values', implode(', ', $parameters), $message);
-    }
-
-    /**
-     * Replace all place-holders for the prohibited_with rule.
-     * @param array<int,string> $parameters
-     */
-    protected function replaceProhibits(string $message, string $attribute, string $rule, array $parameters): string
-    {
-        return str_replace(':other', implode(' / ', $this->getAttributeList($parameters)), $message);
     }
 }
