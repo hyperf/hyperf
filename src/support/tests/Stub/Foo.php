@@ -14,7 +14,7 @@ namespace HyperfTest\Support\Stub;
 
 use HyperfTest\Support\Stub\Traits\FooTrait;
 
-class Foo
+class Foo implements BarInterface
 {
     use FooTrait;
 }

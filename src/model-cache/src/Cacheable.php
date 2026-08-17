@@ -26,7 +26,7 @@ trait Cacheable
     /**
      * Fetch a model from cache.
      * @param mixed $id
-     * @return null|self
+     * @return null|static
      */
     public static function findFromCache($id): ?Model
     {
@@ -38,7 +38,7 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
-     * @return Collection<int, self>
+     * @return Collection<int, static>
      */
     public static function findManyFromCache(array $ids): Collection
     {
@@ -138,7 +138,7 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
-     * @return Builder|static
+     * @return Builder<static>
      */
     public static function query(bool $cache = false): Builder
     {

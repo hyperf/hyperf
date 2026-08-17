@@ -411,22 +411,6 @@ class Builder
     }
 
     /**
-     * Set the force indexes which the query should be used.
-     * @deprecated It will be removed in v3.1, please use `forceIndex` instead
-     */
-    public function forceIndexes(array $forceIndexes): static
-    {
-        $values = [];
-        foreach ($forceIndexes as $forceIndex) {
-            $values[] = '`' . str_replace('`', '``', $forceIndex) . '`';
-        }
-
-        $this->indexHint = new IndexHint('force', implode(',', $values));
-
-        return $this;
-    }
-
-    /**
      * Add an index hint to suggest a query index.
      */
     public function useIndex(string $index): static

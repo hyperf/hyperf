@@ -12,31 +12,32 @@ declare(strict_types=1);
 
 namespace HyperfTest\Support;
 
+use Exception;
+use Hyperf\Support\Exception\InvalidArgumentException;
 use HyperfTest\Support\Exception\RetryException;
 use HyperfTest\Support\Stub\Bar;
+use HyperfTest\Support\Stub\BarInterface;
 use HyperfTest\Support\Stub\Foo;
 use HyperfTest\Support\Stub\FooClosure;
 use HyperfTest\Support\Stub\Traits\BarTrait;
 use HyperfTest\Support\Stub\Traits\FooTrait;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
+use function Hyperf\Support\assert_instanceof;
 use function Hyperf\Support\call;
 use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\env;
+use function Hyperf\Support\existent;
 use function Hyperf\Support\retry;
 use function Hyperf\Support\swoole_hook_flags;
 use function Hyperf\Support\value;
 
 /**
  * @internal
- * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class FunctionTest extends TestCase
 {
     public function testCall()
@@ -170,5 +171,54 @@ class FunctionTest extends TestCase
             ],
             class_uses_recursive(Bar::class)
         );
+    }
+
+    public function testExistent()
+    {
+        $this->assertSame('foo', existent('foo'));
+        $this->assertSame(0, existent(0));
+        $this->assertFalse(existent(false));
+        $this->assertSame('', existent(''));
+        $this->assertSame([], existent([]));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The value cannot be null');
+        existent(null);
+    }
+
+    public function testAssertInstanceof()
+    {
+        $foo = new Foo();
+        $this->assertSame($foo, assert_instanceof($foo, Foo::class));
+
+        // A subclass is also an instance of its parent class.
+        $bar = new Bar();
+        $this->assertSame($bar, assert_instanceof($bar, Foo::class));
+    }
+
+    public function testAssertInstanceofWithInterface()
+    {
+        $exception = new Exception();
+        $this->assertSame($exception, assert_instanceof($exception, Throwable::class));
+
+        assert_instanceof(new Bar(), Foo::class);
+        assert_instanceof(new Bar(), BarInterface::class);
+        assert_instanceof(new Foo(), BarInterface::class);
+    }
+
+    public function testAssertInstanceofThrowsExceptionForNonInstance()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Expected instance of %s, got %s', Bar::class, Foo::class));
+
+        assert_instanceof(new Foo(), Bar::class);
+    }
+
+    public function testAssertInstanceofThrowsExceptionForNonObject()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Expected instance of %s, got %s', Foo::class, 'string'));
+
+        assert_instanceof('foo', Foo::class);
     }
 }

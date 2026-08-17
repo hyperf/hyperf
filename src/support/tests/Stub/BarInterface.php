@@ -10,11 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Tracer\Adapter;
+namespace HyperfTest\Support\Stub;
 
-/**
- * @deprecated v3.0, will remove in v3.1, use \Hyperf\Tracer\Adapter\Reporter\HttpClientFactory instead.
- */
-class HttpClientFactory extends Reporter\HttpClientFactory
+interface BarInterface
 {
 }

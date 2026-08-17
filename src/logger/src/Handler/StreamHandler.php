@@ -232,7 +232,14 @@ class StreamHandler extends AbstractProcessingHandler
 
         $dir = $this->getDirFromStream($url);
         if ($dir !== null && ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            try {
+                mkdir($dir, 0777, true);
+            } catch (Throwable $exception) {
+                if (! str_contains($exception->getMessage(), 'File exists')) {
+                    echo (string) $exception;
+                    throw $exception;
+                }
+            }
         }
         $this->dirCreated = true;
     }

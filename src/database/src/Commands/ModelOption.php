@@ -36,6 +36,8 @@ class ModelOption
 
     protected ?bool $withIde = null;
 
+    protected ?bool $propertyNullable = null;
+
     protected array $tableMapping = [];
 
     protected array $ignoreTables = [];
@@ -188,6 +190,17 @@ class ModelOption
     public function setPropertyCase($propertyCase): static
     {
         $this->propertyCase = (int) $propertyCase;
+        return $this;
+    }
+
+    public function isPropertyNullable(): ?bool
+    {
+        return $this->propertyNullable;
+    }
+
+    public function setPropertyNullable(?bool $propertyNullable): static
+    {
+        $this->propertyNullable = $propertyNullable;
         return $this;
     }
 }

@@ -73,7 +73,7 @@ declare (strict_types=1);
         $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
-        $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
+        $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption()->setPropertyNullable(true));
         $traverser->addVisitor($visitor);
         $stms = $traverser->traverse($stms);
         $code = (new Standard())->prettyPrintFile($stms);
@@ -81,13 +81,13 @@ declare (strict_types=1);
 namespace HyperfTest\Database\Stubs\Model;
 
 /**
- * @property int $id 
- * @property int $count 
- * @property string $float_num 
- * @property string $str 
- * @property string $json 
- * @property \Carbon\Carbon $created_at 
- * @property string $updated_at 
+ * @property ?int $id 
+ * @property ?int $count 
+ * @property ?string $float_num 
+ * @property ?string $str 
+ * @property ?string $json 
+ * @property ?\Carbon\Carbon $created_at 
+ * @property ?string $updated_at 
  */
 class UserExtEmpty extends Model
 {

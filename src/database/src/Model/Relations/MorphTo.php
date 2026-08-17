@@ -317,7 +317,7 @@ class MorphTo extends BelongsTo
     protected function replayMacros(Builder $query)
     {
         foreach ($this->macroBuffer as $macro) {
-            $query->{$macro['method']}(...$macro['parameters']);
+            $query->{$macro['name']}(...$macro['arguments']);
         }
 
         return $query;
