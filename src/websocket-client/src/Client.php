@@ -61,7 +61,7 @@ class Client
         $this->close();
     }
 
-    public function recv(float $timeout = -1)
+    public function recv(float $timeout = -1): mixed
     {
         $ret = $this->client->recv($timeout);
 
@@ -83,5 +83,10 @@ class Client
     public function close(): bool
     {
         return $this->client->close();
+    }
+
+    public function getClient(): Coroutine\Http\Client
+    {
+        return $this->client;
     }
 }
