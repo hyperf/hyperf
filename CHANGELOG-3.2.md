@@ -2,6 +2,7 @@
 
 ## Optimized
 
+- [#7803](https://github.com/hyperf/hyperf/pull/7803) Remove `func_get_args()` from `HasAttributes::isDirty()` `isClean()` and `wasChanged()`.
 - [#7779](https://github.com/hyperf/hyperf/pull/7779) Remove useless `$filename` for `Hyperf\Memory\LockManager`.
 - [#7779](https://github.com/hyperf/hyperf/pull/7779) Enhance `validateStartsWith` `validateUppercase` and `validateEndsWith` to be type-safe and defensive.
 
