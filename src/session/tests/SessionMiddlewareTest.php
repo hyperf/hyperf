@@ -30,6 +30,7 @@ use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -73,6 +74,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60)->andReturn(5 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_secure', null)->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_same_site')->andReturn(null);
 
         $sessionManager = new SessionManager($container, $config);
@@ -120,6 +122,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60 * 60)->andReturn(10 * 60 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_secure', null)->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_same_site')->andReturn(null);
 
         $sessionManager = new SessionManager($container, $config);
@@ -215,6 +218,37 @@ class SessionMiddlewareTest extends TestCase
         $this->assertSame('hyperf.wiki', $response->getCookies()['hyperf.wiki']['/']['test']->getDomain());
     }
 
+    #[DataProvider('provideSessionOptionsCookieSecure')]
+    public function testSessionOptionsCookieSecure(string $uri, array $options, bool $expected)
+    {
+        $config = new Config([
+            'session' => [
+                'options' => array_merge([
+                    'expire_on_close' => true,
+                    'domain' => null,
+                    'cookie_same_site' => 'none',
+                ], $options),
+            ],
+        ]);
+
+        $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
+        $method = (new ReflectionClass($middleware))->getMethod('addCookieToResponse');
+        $request = new Request('GET', new Uri($uri));
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class));
+        /** @var Response $response */
+        $response = $method->invokeArgs($middleware, [$request, new Response(), $session]);
+
+        $this->assertSame($expected, $response->getCookies()['hyperf.io']['/']['test']->isSecure());
+    }
+
+    public static function provideSessionOptionsCookieSecure(): iterable
+    {
+        yield 'force secure for HTTP' => ['http://hyperf.io', ['cookie_secure' => true], true];
+        yield 'disable secure for HTTPS' => ['https://hyperf.io', ['cookie_secure' => false], false];
+        yield 'detect insecure HTTP when null' => ['http://hyperf.io', ['cookie_secure' => null], false];
+        yield 'detect secure HTTPS when missing' => ['https://hyperf.io', [], true];
+    }
+
     public function testSessionStoreCurrentUrl()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -247,6 +281,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60 * 60)->andReturn(5 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_secure', null)->andReturn(null);
         $config->shouldReceive('get')->with('session.options.cookie_same_site')->andReturn(null);
 
         $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
