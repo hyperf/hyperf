@@ -54,6 +54,60 @@ class ConsumerTest extends TestCase
         $this->assertSame(5, $concurrent->getLimit());
     }
 
+    public function testConsumerConcurrentLimitExpandedWhenLessThanPrefetchCount()
+    {
+        $container = ContainerStub::getContainer();
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')->once()->withArgs(function (string $message) {
+            $this->assertStringContainsString('concurrent.limit[5]', $message);
+            $this->assertStringContainsString('prefetch_count[10]', $message);
+            $this->assertStringContainsString('automatically expanded to 10', $message);
+            return true;
+        });
+
+        $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), $logger);
+        $ref = new ReflectionClass($consumer);
+        $method = $ref->getMethod('getConcurrent');
+        /** @var Concurrent $concurrent */
+        $concurrent = $method->invokeArgs($consumer, ['co', 10]);
+        $this->assertSame(10, $concurrent->getLimit());
+    }
+
+    public function testConsumerConcurrentLimitExpandedWhenLimitIsOne()
+    {
+        $container = ContainerStub::getContainer();
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')->once()->withArgs(function (string $message) {
+            $this->assertStringContainsString('concurrent.limit[1]', $message);
+            $this->assertStringContainsString('prefetch_count[10]', $message);
+            return true;
+        });
+
+        $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), $logger);
+        $ref = new ReflectionClass($consumer);
+        $method = $ref->getMethod('getConcurrent');
+        /** @var Concurrent $concurrent */
+        $concurrent = $method->invokeArgs($consumer, ['serial', 10]);
+        $this->assertSame(10, $concurrent->getLimit());
+    }
+
+    public function testConsumerConcurrentLimitNotExpandedWhenGreaterOrEqualPrefetchCount()
+    {
+        $container = ContainerStub::getContainer();
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')->never();
+
+        $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), $logger);
+        $ref = new ReflectionClass($consumer);
+        $method = $ref->getMethod('getConcurrent');
+        /** @var Concurrent $concurrent */
+        $concurrent = $method->invokeArgs($consumer, ['default', 1]);
+        $this->assertSame(10, $concurrent->getLimit());
+
+        $concurrent = $method->invokeArgs($consumer, ['default', 10]);
+        $this->assertSame(10, $concurrent->getLimit());
+    }
+
     public function testWaitChannel()
     {
         $connection = new AMQPConnectionStub();
