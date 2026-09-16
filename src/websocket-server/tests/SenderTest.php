@@ -95,4 +95,34 @@ class SenderTest extends TestCase
 
         return $container;
     }
+
+    public function testPushReturnsFalseWhenProxyFailedInProcessMode()
+    {
+        $container = $this->getContainer();
+        $server = Mockery::mock(Server::class);
+        $server->mode = SWOOLE_PROCESS;
+        $server->shouldReceive('connection_info')->andReturn(['websocket_status' => WEBSOCKET_STATUS_CLOSING]);
+        $server->shouldNotReceive('sendMessage');
+        $container->shouldReceive('get')->with(Server::class)->andReturn($server);
+        $sender = new Sender($container);
+        $sender->setWorkerId(0);
+
+        $this->assertFalse($sender->push(1, 'data'));
+        $this->assertFalse($sender->disconnect(1));
+    }
+
+    public function testPushReturnsTrueWhenFallbackToPipeMessageInBaseMode()
+    {
+        $container = $this->getContainer();
+        $server = Mockery::mock(Server::class);
+        $server->mode = SWOOLE_BASE;
+        $server->setting = ['worker_num' => 2];
+        $server->shouldReceive('connection_info')->andReturn(['websocket_status' => WEBSOCKET_STATUS_CLOSING]);
+        $server->shouldReceive('sendMessage')->once();
+        $container->shouldReceive('get')->with(Server::class)->andReturn($server);
+        $sender = new Sender($container);
+        $sender->setWorkerId(0);
+
+        $this->assertTrue($sender->push(1, 'data'));
+    }
 }
