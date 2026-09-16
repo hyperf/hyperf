@@ -78,10 +78,18 @@ class Sender
             return false;
         }
 
-        if (! $this->proxy($fd, $method, $arguments)) {
-            $this->sendPipeMessage($name, $arguments);
+        if ($this->proxy($fd, $method, $arguments)) {
+            return true;
         }
-        return true;
+
+        // BASE: the fd may just belong to another worker, and the broadcast result is not knowable here.
+        if ($this->getServer()->mode === SWOOLE_BASE) {
+            $this->sendPipeMessage($name, $arguments);
+            return true;
+        }
+
+        // PROCESS: connection_info() is shared, so a failed proxy() means the fd is dead.
+        return false;
     }
 
     public function pushFrame(int $fd, FrameInterface $frame): bool
