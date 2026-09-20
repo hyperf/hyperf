@@ -53,7 +53,14 @@ class EncodedConnection extends Connection
     public function subscribe(string $subject, Closure $callback): string
     {
         $c = function ($message) use ($callback) {
-            $message->setBody($this->encoder->decode($message->getBody()));
+            $payload = $this->encoder->decode($message->getBody());
+
+            $message->setPayload($payload);
+
+            if (is_string($payload)) {
+                $message->setBody($payload);
+            }
+
             $callback($message);
         };
         return parent::subscribe($subject, $c);
@@ -69,7 +76,14 @@ class EncodedConnection extends Connection
     public function queueSubscribe(string $subject, string $queue, Closure $callback): string
     {
         $c = function ($message) use ($callback) {
-            $message->setBody($this->encoder->decode($message->getBody()));
+            $payload = $this->encoder->decode($message->getBody());
+
+            $message->setPayload($payload);
+
+            if (is_string($payload)) {
+                $message->setBody($payload);
+            }
+
             $callback($message);
         };
         return parent::queueSubscribe($subject, $queue, $c);
