@@ -13,6 +13,7 @@ return [
     'enable' => true,
     'port' => 9500,
     'json_dir' => BASE_PATH . '/storage/swagger',
+    'yaml_dir' => null,
     'html' => null,
     'url' => '/swagger',
     'auto_generate' => true,
