@@ -24,7 +24,7 @@
         "hyperf/engine": "^2.0",
         "hyperf/stringable": "~3.2.0",
         "symfony/yaml": "^6.4 || ^7.0 || ^8.0",
-        "zircote/swagger-php": "^4.6"
+        "zircote/swagger-php": "^6.0"
     },
     "suggest": {
         "hyperf/validation": "Required to use SwaggerRequest."

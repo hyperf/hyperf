@@ -34,9 +34,9 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
-      - name: Select swagger-php version
-        if: matrix.swagger == '6'
-        run: composer require 'zircote/swagger-php:^6.0' --dev --no-update
+      - name: Select swagger-php 4.x
+        if: matrix.swagger == '4'
+        run: composer require 'zircote/swagger-php:^4.6' --dev --no-update
       - name: Install dependencies
         run: composer update --no-interaction --no-progress --prefer-dist -W
       - name: Run Swagger tests

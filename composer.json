@@ -99,7 +99,7 @@
         "thecodingmachine/graphqlite": "^7.0 || ^8.1",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0",
-        "zircote/swagger-php": "^4.6"
+        "zircote/swagger-php": "^6.0"
     },
     "replace": {
         "hyperf/amqp": "*",
