@@ -1,0 +1,43 @@
+name: Swagger Compatibility
+
+on:
+  push:
+    branches:
+      - master
+      - 'compat/**'
+    paths:
+      - 'src/swagger/**'
+      - 'composer.json'
+      - '.github/workflows/swagger-compatibility.yml'
+  pull_request:
+    paths:
+      - 'src/swagger/**'
+      - 'composer.json'
+      - '.github/workflows/swagger-compatibility.yml'
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }} / swagger-php ${{ matrix.swagger }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.4', '8.5']
+        swagger: ['4', '6']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: phpize
+          extensions: redis, pdo, bcmath, swoole
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Select swagger-php 4.x
+        if: matrix.swagger == '4'
+        run: composer require 'zircote/swagger-php:^4.6' --dev --no-update
+      - name: Install dependencies
+        run: composer update --no-interaction --no-progress --prefer-dist -W
+      - name: Run Swagger tests
+        run: vendor/bin/phpunit src/swagger
