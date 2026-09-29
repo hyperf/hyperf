@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection;
 
 use Hyperf\Context\Context;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -37,6 +38,9 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get a database connection instance.
+     *
+     * When the connection is configured as lazy (databases.{name}.lazy), a LazyConnection
+     * proxy is returned instead, which resolves the pooled connection on first real use.
      */
     public function connection(?string $name = null): ConnectionInterface
     {
@@ -51,20 +55,42 @@ class ConnectionResolver implements ConnectionResolverInterface
         }
 
         if (! $connection instanceof ConnectionInterface) {
-            $pool = $this->factory->getPool($name);
-            $connection = $pool->get();
-            try {
-                // PDO is initialized as an anonymous function, so there is no IO exception,
-                // but if other exceptions are thrown, the connection will not return to the connection pool properly.
-                $connection = $connection->getConnection();
+            if ($this->isLazyConnection($name)) {
+                $connection = new LazyConnection($this->container, $this, $name);
                 Context::set($id, $connection);
-            } finally {
-                if (Coroutine::inCoroutine()) {
-                    defer(function () use ($connection, $id) {
-                        Context::set($id, null);
-                        $connection->release();
-                    });
-                }
+            } else {
+                $connection = $this->resolveConnection($name);
+            }
+        }
+
+        return $connection;
+    }
+
+    /**
+     * Resolve a real connection from the pool and bind it to the coroutine context.
+     * The connection is released back to the pool when the coroutine is destructed.
+     */
+    public function resolveConnection(string $name): ConnectionInterface
+    {
+        $id = $this->getContextKey($name);
+        $connection = Context::get($id);
+        if ($connection instanceof ConnectionInterface && ! $connection instanceof LazyConnection) {
+            return $connection;
+        }
+
+        $pool = $this->factory->getPool($name);
+        $connection = $pool->get();
+        try {
+            // PDO is initialized as an anonymous function, so there is no IO exception,
+            // but if other exceptions are thrown, the connection will not return to the connection pool properly.
+            $connection = $connection->getConnection();
+            Context::set($id, $connection);
+        } finally {
+            if (Coroutine::inCoroutine()) {
+                defer(function () use ($connection, $id) {
+                    Context::set($id, null);
+                    $connection->release();
+                });
             }
         }
 
@@ -85,6 +111,16 @@ class ConnectionResolver implements ConnectionResolverInterface
     public function setDefaultConnection(string $name): void
     {
         $this->default = $name;
+    }
+
+    /**
+     * Determine whether the connection should be resolved lazily,
+     * enabled by the `databases.{name}.lazy` option, default false.
+     */
+    protected function isLazyConnection(string $name): bool
+    {
+        return (bool) $this->container->get(ConfigInterface::class)
+            ->get(sprintf('databases.%s.lazy', $name), false);
     }
 
     /**
