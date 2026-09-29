@@ -101,6 +101,16 @@ class SQLiteBuilder extends Builder
 
         return false;
     }
+    
+    /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(bool $withSize = false): array
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection($this->grammar->compileTables($withSize))
+        );
+    }
 
     /**
      * Drop all tables from the database.
@@ -132,6 +142,16 @@ class SQLiteBuilder extends Builder
         $this->connection->select($this->grammar->compileDisableWriteableSchema());
 
         $this->connection->select($this->grammar->compileRebuild());
+    }
+
+    /**
+     * Get all of the table names for the database.
+     */
+    public function getAllTables(): array
+    {
+        return $this->connection->select(
+            $this->grammar->compileGetAllTables()
+        );
     }
 
     /**
