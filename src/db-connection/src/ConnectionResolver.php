@@ -19,6 +19,7 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 use function Hyperf\Coroutine\defer;
 
@@ -56,7 +57,7 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             if ($this->isLazyConnection($name)) {
-                $connection = new LazyConnection($this->container, $this, $name);
+                $connection = new LazyConnection($this->container, $this, $name, $this->isReleaseAfterUse($name));
                 Context::set($id, $connection);
             } else {
                 $connection = $this->resolveConnection($name);
@@ -69,8 +70,11 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Resolve a real connection from the pool and bind it to the coroutine context.
      * The connection is released back to the pool when the coroutine is destructed.
+     *
+     * In unmanaged mode the context and the defer callback are skipped, the caller
+     * (e.g. LazyConnection in release-after-use mode) manages the lifecycle itself.
      */
-    public function resolveConnection(string $name): ConnectionInterface
+    public function resolveConnection(string $name, bool $managed = true): ConnectionInterface
     {
         $id = $this->getContextKey($name);
         $connection = Context::get($id);
@@ -84,14 +88,19 @@ class ConnectionResolver implements ConnectionResolverInterface
             // PDO is initialized as an anonymous function, so there is no IO exception,
             // but if other exceptions are thrown, the connection will not return to the connection pool properly.
             $connection = $connection->getConnection();
-            Context::set($id, $connection);
-        } finally {
-            if (Coroutine::inCoroutine()) {
-                defer(function () use ($connection, $id) {
-                    Context::set($id, null);
-                    $connection->release();
-                });
+            if ($managed) {
+                Context::set($id, $connection);
             }
+        } catch (Throwable $exception) {
+            $connection->release();
+            throw $exception;
+        }
+
+        if ($managed && Coroutine::inCoroutine()) {
+            defer(function () use ($connection, $id) {
+                Context::set($id, null);
+                $connection->release();
+            });
         }
 
         return $connection;
@@ -114,21 +123,34 @@ class ConnectionResolver implements ConnectionResolverInterface
     }
 
     /**
+     * The key to identify the connection object in coroutine context.
+     * @param mixed $name
+     */
+    public function getContextKey($name): string
+    {
+        return sprintf('database.connection.%s', $name);
+    }
+
+    /**
      * Determine whether the connection should be resolved lazily,
      * enabled by the `databases.{name}.lazy` option, default false.
+     * The `databases.{name}.release_after_use` option implies lazy.
      */
     protected function isLazyConnection(string $name): bool
     {
         return (bool) $this->container->get(ConfigInterface::class)
-            ->get(sprintf('databases.%s.lazy', $name), false);
+            ->get(sprintf('databases.%s.lazy', $name), false)
+            || $this->isReleaseAfterUse($name);
     }
 
     /**
-     * The key to identify the connection object in coroutine context.
-     * @param mixed $name
+     * Determine whether the pooled connection should be released right after
+     * each use (when not in transaction), enabled by the
+     * `databases.{name}.release_after_use` option, default false.
      */
-    private function getContextKey($name): string
+    protected function isReleaseAfterUse(string $name): bool
     {
-        return sprintf('database.connection.%s', $name);
+        return (bool) $this->container->get(ConfigInterface::class)
+            ->get(sprintf('databases.%s.release_after_use', $name), false);
     }
 }

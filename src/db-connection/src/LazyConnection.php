@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Closure;
+use Generator;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Database\Connection as DatabaseConnection;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -23,6 +27,8 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\DbConnection\Traits\DbConnection;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Coroutine\defer;
 
 /**
  * A lazy proxy of the pooled connection.
@@ -38,13 +44,19 @@ use Psr\Container\ContainerInterface;
  *
  * Any method that is not specially handled resolves the pooled connection first
  * and then forwards the call, which falls back to the eager behavior.
+ *
+ * When release-after-use is enabled (databases.{name}.release_after_use), the
+ * resolved connection is released back to the pool right after a query finishes
+ * (when not in transaction), and the next query resolves a (possibly different)
+ * connection from the pool again.
  */
 class LazyConnection implements ConnectionInterface, DbConnectionInterface
 {
     use DbConnection;
 
     /**
-     * The resolved pooled connection, null until the first real use.
+     * The resolved pooled connection, null until the first real use,
+     * or after it has been released in release-after-use mode.
      */
     protected ?DbConnectionInterface $connection = null;
 
@@ -53,10 +65,25 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      */
     protected ?DatabaseConnection $metadataConnection = null;
 
+    /**
+     * Whether a write has been performed through this proxy since the
+     * last (re)acquisition. Tracked by the proxy itself because the real
+     * connection only exposes recordsHaveBeenModified() as a marker.
+     */
+    protected bool $recordsModified = false;
+
+    /**
+     * Whether the query log is enabled through this proxy.
+     */
+    protected bool $loggingEnabled = false;
+
+    protected bool $deferRegistered = false;
+
     public function __construct(
         protected ContainerInterface $container,
         protected ConnectionResolver $resolver,
-        protected string $name
+        protected string $name,
+        protected bool $releaseAfterUse = false
     ) {
     }
 
@@ -70,7 +97,25 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      */
     public function getConnection(): DbConnectionInterface
     {
-        return $this->connection ??= $this->resolver->resolveConnection($this->name);
+        if ($this->connection === null) {
+            $this->connection = $this->resolver->resolveConnection($this->name, ! $this->releaseAfterUse);
+            if ($this->releaseAfterUse) {
+                // The resolver does not manage the lifecycle in release-after-use
+                // mode, register the coroutine-end cleanup by ourselves.
+                $this->registerDeferOnce();
+            }
+        }
+
+        return $this->connection;
+    }
+
+    /**
+     * Get the resolved pooled connection without triggering a resolution,
+     * null when no pooled connection is held right now.
+     */
+    public function getResolvedConnection(): ?DbConnectionInterface
+    {
+        return $this->connection;
     }
 
     public function reconnect(): bool
@@ -106,7 +151,10 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function release(): void
     {
         if ($this->connection instanceof ConnectionInterface) {
-            $this->connection->release();
+            $connection = $this->connection;
+            $this->connection = null;
+            $this->recordsModified = false;
+            $connection->release();
         }
     }
 
@@ -137,6 +185,172 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function raw($value): Expression
     {
         return $this->getMetadataConnection()->raw($value);
+    }
+
+    public function select(string $query, array $bindings = [], bool $useReadPdo = true): array
+    {
+        try {
+            return $this->getConnection()->select($query, $bindings, $useReadPdo);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
+    {
+        try {
+            return $this->getConnection()->selectOne($query, $bindings, $useReadPdo);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function scalar(string $query, array $bindings = [], bool $useReadPdo = true): mixed
+    {
+        try {
+            // Not a method of DbConnectionInterface, forward through __call.
+            return $this->__call(__FUNCTION__, func_get_args());
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): Generator
+    {
+        $connection = $this->getConnection();
+        try {
+            // The inner cursor executes the statement on the first iteration,
+            // so the connection can only be released after the generator is
+            // exhausted or closed.
+            yield from $connection->cursor($query, $bindings, $useReadPdo);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function insert(string $query, array $bindings = []): bool
+    {
+        $this->recordsModified = true;
+        // Never released here: Processor::processInsertGetId() performs insert()
+        // and getPdo()->lastInsertId() as two separate calls which must share
+        // one and the same connection.
+        return $this->getConnection()->insert($query, $bindings);
+    }
+
+    public function update(string $query, array $bindings = []): int
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->update($query, $bindings);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function delete(string $query, array $bindings = []): int
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->delete($query, $bindings);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function statement(string $query, array $bindings = []): bool
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->statement($query, $bindings);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function affectingStatement(string $query, array $bindings = []): int
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->affectingStatement($query, $bindings);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function unprepared(string $query): bool
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->unprepared($query);
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function transaction(Closure $callback, $attempts = 1)
+    {
+        $this->recordsModified = true;
+        try {
+            return $this->getConnection()->transaction($callback, $attempts);
+        } finally {
+            // The inner commit/rollBack runs on the real connection and never
+            // passes this proxy, so check the release condition here.
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function beginTransaction(): void
+    {
+        $this->recordsModified = true;
+        // Never released here: the connection is held for the whole transaction.
+        $this->getConnection()->beginTransaction();
+    }
+
+    public function commit(): void
+    {
+        try {
+            $this->getConnection()->commit();
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function rollBack($toLevel = null): void
+    {
+        try {
+            // The $toLevel argument is not declared on DbConnectionInterface,
+            // forward through __call.
+            $this->__call(__FUNCTION__, func_get_args());
+        } finally {
+            $this->releaseAfterUse();
+        }
+    }
+
+    public function transactionLevel(): int
+    {
+        return $this->connection?->transactionLevel() ?? 0;
+    }
+
+    /**
+     * Determine whether the connection is in a transaction,
+     * without resolving the pooled connection.
+     */
+    public function isTransaction(): bool
+    {
+        return $this->transactionLevel() > 0;
+    }
+
+    public function enableQueryLog()
+    {
+        $this->loggingEnabled = true;
+        // Not a method of DbConnectionInterface, forward through __call.
+        $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function disableQueryLog()
+    {
+        $this->loggingEnabled = false;
+        $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function getQueryGrammar()
@@ -172,6 +386,52 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function getTablePrefix(): string
     {
         return $this->getMetadataConnection()->getTablePrefix();
+    }
+
+    /**
+     * Release the resolved connection back to the pool right after a use,
+     * so that the pool slot is not occupied for the rest of the coroutine.
+     *
+     * The connection is kept when it is still needed:
+     * in a transaction, when the query log is enabled, or after a write on
+     * a sticky read/write connection (following reads must hit the write PDO).
+     */
+    protected function releaseAfterUse(): void
+    {
+        if (! $this->releaseAfterUse) {
+            return;
+        }
+        $connection = $this->connection;
+        if (! $connection instanceof ConnectionInterface) {
+            return;
+        }
+        if ($connection->transactionLevel() > 0 || $this->loggingEnabled) {
+            return;
+        }
+        if ($this->recordsModified && $this->getConfig('sticky')) {
+            return;
+        }
+        $this->release();
+    }
+
+    /**
+     * Register the coroutine-end cleanup for release-after-use mode, in which
+     * the resolver does not bind the connection to the context nor registers
+     * a defer callback. Registered once per proxy (i.e. once per coroutine).
+     */
+    protected function registerDeferOnce(): void
+    {
+        if ($this->deferRegistered || ! Coroutine::inCoroutine()) {
+            return;
+        }
+        $this->deferRegistered = true;
+        $id = $this->resolver->getContextKey($this->name);
+        defer(function () use ($id) {
+            Context::set($id, null);
+            // Releases only when a connection is still held, mid-coroutine
+            // releases have cleared it already, so no double release here.
+            $this->release();
+        });
     }
 
     /**

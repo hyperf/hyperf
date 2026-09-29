@@ -62,6 +62,12 @@ class PDOStatementStubPHP8 extends PDOStatement
     }
 
     #[ReturnTypeWillChange]
+    public function rowCount(): int
+    {
+        return 1;
+    }
+
+    #[ReturnTypeWillChange]
     public function setFetchMode($mode, $className = null, ...$params)
     {
         return true;

@@ -1,5 +1,10 @@
 # v3.2.6 - TBD
 
+## Added
+
+- [#xxxx](https://github.com/hyperf/hyperf/pull/xxxx) Added `databases.{name}.lazy` option for `hyperf/db-connection`. When enabled, the resolver returns a `Hyperf\DbConnection\LazyConnection` proxy which does not occupy a pooled connection when building queries (e.g. `Model::query()`), but resolves one from the pool on the first real use such as `get()`, `insert()` or `beginTransaction()`.
+- [#xxxx](https://github.com/hyperf/hyperf/pull/xxxx) Added `databases.{name}.release_after_use` option for `hyperf/db-connection` (implies `lazy`). When enabled, the pooled connection is released back to the pool right after each query finishes when it is not in a transaction, and the next query resolves a (possibly different) connection from the pool again. The connection is still held during transactions, after writes on sticky read/write connections, and while the query log is enabled.
+
 # v3.2.5 - 2026-09-15
 
 ## Optimized
