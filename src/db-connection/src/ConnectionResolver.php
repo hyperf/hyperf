@@ -32,6 +32,13 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     protected PoolFactory $factory;
 
+    /**
+     * The runtime overrides of the `release_after_use` option, keyed by
+     * connection name. An override takes priority over the configuration,
+     * and applies to all coroutines from the moment it is set.
+     */
+    protected array $releaseAfterUseOverrides = [];
+
     public function __construct(protected ContainerInterface $container)
     {
         $this->factory = $container->get(PoolFactory::class);
@@ -57,7 +64,7 @@ class ConnectionResolver implements ConnectionResolverInterface
 
         if (! $connection instanceof ConnectionInterface) {
             if ($this->isLazyConnection($name)) {
-                $connection = new LazyConnection($this->container, $this, $name, $this->isReleaseAfterUse($name));
+                $connection = new LazyConnection($this->container, $this, $name);
                 Context::set($id, $connection);
             } else {
                 $connection = $this->resolveConnection($name);
@@ -132,6 +139,40 @@ class ConnectionResolver implements ConnectionResolverInterface
     }
 
     /**
+     * Override the `release_after_use` option at runtime, with priority
+     * over the configuration. Applies to all coroutines from the moment
+     * it is set. Use `resetReleaseAfterUse()` to follow the config again.
+     */
+    public function setReleaseAfterUse(string $name, bool $value): void
+    {
+        $this->releaseAfterUseOverrides[$name] = $value;
+    }
+
+    /**
+     * Remove the runtime override of the `release_after_use` option,
+     * so the connection follows the configuration again.
+     */
+    public function resetReleaseAfterUse(string $name): void
+    {
+        unset($this->releaseAfterUseOverrides[$name]);
+    }
+
+    /**
+     * Determine whether the pooled connection should be released right after
+     * each use (when not in transaction). A runtime override set by
+     * `setReleaseAfterUse()` takes priority over the
+     * `databases.{name}.release_after_use` option, default false.
+     */
+    public function isReleaseAfterUse(string $name): bool
+    {
+        if (array_key_exists($name, $this->releaseAfterUseOverrides)) {
+            return $this->releaseAfterUseOverrides[$name];
+        }
+        return (bool) $this->container->get(ConfigInterface::class)
+            ->get(sprintf('databases.%s.release_after_use', $name), false);
+    }
+
+    /**
      * Determine whether the connection should be resolved lazily,
      * enabled by the `databases.{name}.lazy` option, default false.
      * The `databases.{name}.release_after_use` option implies lazy.
@@ -141,16 +182,5 @@ class ConnectionResolver implements ConnectionResolverInterface
         return (bool) $this->container->get(ConfigInterface::class)
             ->get(sprintf('databases.%s.lazy', $name), false)
             || $this->isReleaseAfterUse($name);
-    }
-
-    /**
-     * Determine whether the pooled connection should be released right after
-     * each use (when not in transaction), enabled by the
-     * `databases.{name}.release_after_use` option, default false.
-     */
-    protected function isReleaseAfterUse(string $name): bool
-    {
-        return (bool) $this->container->get(ConfigInterface::class)
-            ->get(sprintf('databases.%s.release_after_use', $name), false);
     }
 }

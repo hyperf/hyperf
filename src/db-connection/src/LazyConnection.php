@@ -45,10 +45,12 @@ use function Hyperf\Coroutine\defer;
  * Any method that is not specially handled resolves the pooled connection first
  * and then forwards the call, which falls back to the eager behavior.
  *
- * When release-after-use is enabled (databases.{name}.release_after_use), the
- * resolved connection is released back to the pool right after a query finishes
- * (when not in transaction), and the next query resolves a (possibly different)
- * connection from the pool again.
+ * When release-after-use is enabled (databases.{name}.release_after_use, or
+ * a runtime override via Db::enableReleaseAfterUse()), the resolved connection
+ * is released back to the pool right after a query finishes (when not in
+ * transaction), and the next query resolves a (possibly different) connection
+ * from the pool again. The flag is checked on every release decision, so a
+ * runtime toggle takes effect immediately.
  */
 class LazyConnection implements ConnectionInterface, DbConnectionInterface
 {
@@ -77,13 +79,18 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      */
     protected bool $loggingEnabled = false;
 
+    /**
+     * The coroutine-local override of the release-after-use flag, null to
+     * follow the resolver (runtime override first, then the configuration).
+     */
+    protected ?bool $releaseAfterUse = null;
+
     protected bool $deferRegistered = false;
 
     public function __construct(
         protected ContainerInterface $container,
         protected ConnectionResolver $resolver,
-        protected string $name,
-        protected bool $releaseAfterUse = false
+        protected string $name
     ) {
     }
 
@@ -98,12 +105,12 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function getConnection(): DbConnectionInterface
     {
         if ($this->connection === null) {
-            $this->connection = $this->resolver->resolveConnection($this->name, ! $this->releaseAfterUse);
-            if ($this->releaseAfterUse) {
-                // The resolver does not manage the lifecycle in release-after-use
-                // mode, register the coroutine-end cleanup by ourselves.
-                $this->registerDeferOnce();
-            }
+            // The context always holds this proxy instead of the resolved
+            // connection, and the coroutine-end cleanup is registered by
+            // the proxy itself, so a runtime toggle of the release-after-use
+            // flag never leaves a stale connection behind.
+            $this->connection = $this->resolver->resolveConnection($this->name, false);
+            $this->registerDeferOnce();
         }
 
         return $this->connection;
@@ -116,6 +123,16 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function getResolvedConnection(): ?DbConnectionInterface
     {
         return $this->connection;
+    }
+
+    /**
+     * Override the release-after-use flag for this proxy only (i.e. the
+     * current coroutine), with priority over the runtime override and the
+     * configuration. Pass null to follow them again.
+     */
+    public function setReleaseAfterUse(?bool $value): void
+    {
+        $this->releaseAfterUse = $value;
     }
 
     public function reconnect(): bool
@@ -398,7 +415,7 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      */
     protected function releaseAfterUse(): void
     {
-        if (! $this->releaseAfterUse) {
+        if (! $this->isReleaseAfterUse()) {
             return;
         }
         $connection = $this->connection;
@@ -415,9 +432,20 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     }
 
     /**
-     * Register the coroutine-end cleanup for release-after-use mode, in which
-     * the resolver does not bind the connection to the context nor registers
-     * a defer callback. Registered once per proxy (i.e. once per coroutine).
+     * Determine whether the pooled connection should be released right after
+     * a use. The coroutine-local override set by `setReleaseAfterUse()` takes
+     * priority, then the runtime override on the resolver, then the
+     * `databases.{name}.release_after_use` configuration.
+     */
+    protected function isReleaseAfterUse(): bool
+    {
+        return $this->releaseAfterUse ?? $this->resolver->isReleaseAfterUse($this->name);
+    }
+
+    /**
+     * Register the coroutine-end cleanup, which releases the connection still
+     * held and clears the context. Registered once per proxy (i.e. once per
+     * coroutine), in both lazy and release-after-use mode.
      */
     protected function registerDeferOnce(): void
     {

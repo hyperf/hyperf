@@ -158,7 +158,7 @@ class ContainerStub
         return $container;
     }
 
-    public static function mockLazyContainer(bool $releaseAfterUse = false)
+    public static function mockLazyContainer(bool $releaseAfterUse = false, bool $lazy = true)
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
@@ -182,7 +182,7 @@ class ContainerStub
                     'charset' => 'utf8',
                     'collation' => 'utf8_unicode_ci',
                     'prefix' => '',
-                    'lazy' => true,
+                    'lazy' => $lazy,
                     'release_after_use' => $releaseAfterUse,
                     'pool' => [
                         'min_connections' => 1,
