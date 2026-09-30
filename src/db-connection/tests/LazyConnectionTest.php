@@ -254,10 +254,65 @@ class LazyConnectionTest extends TestCase
         // With sticky read/write config, the connection is held after a write,
         // so following reads still hit the write PDO.
         $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
-        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+        $real = $connection->getResolvedConnection();
+        $this->assertInstanceOf(Connection::class, $real);
 
+        // The impact of the hold: for the rest of the coroutine every query
+        // reuses the very same connection without any release/re-acquire
+        // cycle (release-after-use is effectively disabled after a write
+        // under sticky), and reads are routed to the write host
+        // (read-your-write).
         $connection->select('SELECT 1;');
-        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+        $this->assertSame($real, $connection->getResolvedConnection());
+        $this->assertStringContainsString('192.168.1.2', $connection->getReadPdo()->dsn);
+
+        $connection->delete('DELETE FROM user WHERE id = ?', [1]);
+        $this->assertSame($real, $connection->getResolvedConnection());
+    }
+
+    public function testStickyWriteHoldIsResetBetweenCoroutines()
+    {
+        $container = ContainerStub::mockLazyStickyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+
+        $ids = [];
+        parallel([
+            function () use ($container, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                /** @var LazyConnection $connection */
+                $connection = $resolver->connection();
+
+                // A write under sticky holds the connection until the
+                // coroutine ends, then the defer releases it.
+                $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+                $real = $connection->getResolvedConnection();
+                $this->assertInstanceOf(Connection::class, $real);
+                $this->assertStringContainsString('192.168.1.2', $connection->getReadPdo()->dsn);
+                $ids[0] = spl_object_id($real);
+            },
+        ]);
+
+        parallel([
+            function () use ($container, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                /** @var LazyConnection $connection */
+                $connection = $resolver->connection();
+
+                // The very same pooled connection is reused, with the sticky
+                // flag of the inner connection reset by Connection::release():
+                // reads hit the read host again, and a read-only coroutine
+                // releases right after each query as usual.
+                $connection->select('SELECT 1;');
+                $this->assertNull($connection->getResolvedConnection());
+
+                $real = $connection->getConnection();
+                $ids[1] = spl_object_id($real);
+                $this->assertStringContainsString('192.168.1.1', $connection->getReadPdo()->dsn);
+            },
+        ]);
+
+        $this->assertSame($ids[0], $ids[1]);
+        $this->assertSame(1, $pool->getCurrentConnections());
     }
 
     public function testCursorReleaseAfterIteration()
