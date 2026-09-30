@@ -85,6 +85,11 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      */
     protected ?bool $releaseAfterUse = null;
 
+    /**
+     * Number of cursors currently streaming through this proxy.
+     */
+    protected int $streamingCursors = 0;
+
     protected bool $deferRegistered = false;
 
     public function __construct(
@@ -235,12 +240,18 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
     public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): Generator
     {
         $connection = $this->getConnection();
+        // While a cursor is streaming, nested statements forwarded through this
+        // proxy must not release the connection: the statement being iterated
+        // still depends on it, and a released connection could be taken by
+        // another coroutine, which breaks unbuffered cursors.
+        ++$this->streamingCursors;
         try {
             // The inner cursor executes the statement on the first iteration,
             // so the connection can only be released after the generator is
             // exhausted or closed.
             yield from $connection->cursor($query, $bindings, $useReadPdo);
         } finally {
+            --$this->streamingCursors;
             $this->releaseAfterUse();
         }
     }
@@ -410,8 +421,9 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
      * so that the pool slot is not occupied for the rest of the coroutine.
      *
      * The connection is kept when it is still needed:
-     * in a transaction, when the query log is enabled, or after a write on
-     * a sticky read/write connection (following reads must hit the write PDO).
+     * in a transaction, when the query log is enabled, while a cursor is
+     * streaming, or after a write on a sticky read/write connection
+     * (following reads must hit the write PDO).
      */
     protected function releaseAfterUse(): void
     {
@@ -422,7 +434,7 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface
         if (! $connection instanceof ConnectionInterface) {
             return;
         }
-        if ($connection->transactionLevel() > 0 || $this->loggingEnabled) {
+        if ($connection->transactionLevel() > 0 || $this->loggingEnabled || $this->streamingCursors > 0) {
             return;
         }
         if ($this->recordsModified && $this->getConfig('sticky')) {

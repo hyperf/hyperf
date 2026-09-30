@@ -23,6 +23,7 @@ use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\LazyConnection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
+use HyperfTest\DbConnection\Stubs\PDOStatementStubPHP8;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,7 @@ class LazyConnectionTest extends TestCase
         Mockery::close();
         Context::set('database.connection.default', null);
         Register::unsetConnectionResolver();
+        PDOStatementStubPHP8::$rows = [];
     }
 
     public function testMetadataMethodsDoNotOccupyPool()
@@ -275,6 +277,43 @@ class LazyConnectionTest extends TestCase
         }
         // Released after the generator is exhausted.
         $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testNestedStatementDuringCursorIteration()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // The outer cursor yields one row, the nested cursor yields one row.
+        PDOStatementStubPHP8::$rows = [['id' => 1], ['id' => 2]];
+
+        $real = null;
+        foreach ($connection->cursor('SELECT 1;') as $row) {
+            $real = $connection->getResolvedConnection();
+            $this->assertInstanceOf(Connection::class, $real);
+
+            // Nested statements must not release the connection while the
+            // cursor is still streaming, a released connection could be taken
+            // by another coroutine and breaks the statement being iterated.
+            $connection->select('SELECT 1;');
+            $this->assertSame($real, $connection->getResolvedConnection());
+            $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+            $this->assertSame($real, $connection->getResolvedConnection());
+
+            // Neither does an exhausted nested cursor while the outer one
+            // is still streaming.
+            foreach ($connection->cursor('SELECT 2;') as $inner);
+
+            $this->assertSame($real, $connection->getResolvedConnection());
+        }
+
+        // Released once the outer cursor is exhausted.
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertSame(1, $pool->getCurrentConnections());
     }
 
     public function testQueryLogPreventsRelease()
