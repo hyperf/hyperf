@@ -35,10 +35,10 @@ class IpcSubject implements MessageBusInterface
         $this->isSubscribed = false;
     }
 
-    public function __call($method, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $this->init();
-        return $this->subject->{$method}(...$arguments);
+        return $this->subject->{$name}(...$arguments);
     }
 
     /**

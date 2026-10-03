@@ -58,7 +58,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $result = $statement->execute($this->prepareBindings($bindings));
             if ($result === false) {
-                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode), $this->getName());
             }
 
             $this->recordsHaveBeenModified();
@@ -84,7 +84,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $count = $statement->affectedRows();
             if ($count === false) {
-                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode), $this->getName());
             }
 
             $this->recordsHaveBeenModified($count > 0);
@@ -108,7 +108,7 @@ class PostgreSqlSwooleExtConnection extends Connection
             $result = $statement->execute($this->prepareBindings($bindings));
 
             if ($result === false || ! empty($statement->error)) {
-                throw new QueryException($query, [], new Exception($statement->error));
+                throw new QueryException($query, [], new Exception($statement->error), $this->getName());
             }
 
             return $statement->fetchAll($this->fetchMode) ?: [];
@@ -150,21 +150,10 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $result = $statement->execute($bindings);
         if (! $result) {
-            throw new QueryException($query, [], new Exception($statement->error));
+            throw new QueryException($query, [], new Exception($statement->error), $this->getName());
         }
 
         return $statement->fetchAll();
-    }
-
-    /**
-     * @param string $needle
-     * @param string $replace
-     * @param string $haystack
-     * @deprecated ,using `strReplaceOnce` instead
-     */
-    public function str_replace_once($needle, $replace, $haystack): array|string
-    {
-        return $this->strReplaceOnce($needle, $replace, $haystack);
     }
 
     public function strReplaceOnce(string $needle, string $replace, string $haystack): array|string
@@ -247,7 +236,7 @@ class PostgreSqlSwooleExtConnection extends Connection
         $pdo = $this->getPdoForSelect($useReadPdo);
         $statement = $pdo->prepare($query);
         if (! $statement) {
-            throw new QueryException($query, [], new Exception($pdo->error));
+            throw new QueryException($query, [], new Exception($pdo->error), $this->getName());
         }
 
         return $statement;

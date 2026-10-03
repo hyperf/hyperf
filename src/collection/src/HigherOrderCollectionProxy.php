@@ -43,10 +43,10 @@ class HigherOrderCollectionProxy
     /**
      * Proxy a method call onto the collection items.
      */
-    public function __call(string $method, array $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->collection->{$this->method}(function ($value) use ($method, $parameters) {
-            return $value->{$method}(...$parameters);
+        return $this->collection->{$this->method}(function ($value) use ($name, $arguments) {
+            return $value->{$name}(...$arguments);
         });
     }
 }

@@ -48,11 +48,11 @@ function test(
     assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Builder\User>', $query->findOr([1], callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User', $query->findOrFail(1));
     assertType('Hyperf\Types\Builder\User|null', $query->find(1));
-    assertType('Hyperf\Types\Builder\User|int', $query->findOr(1, fn () => 42));
-    assertType('Hyperf\Types\Builder\User|int', $query->findOr(1, callback: fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->findOr(1, fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->findOr(1, callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User|null', $query->first());
-    assertType('Hyperf\Types\Builder\User|int', $query->firstOr(fn () => 42));
-    assertType('Hyperf\Types\Builder\User|int', $query->firstOr(callback: fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->firstOr(fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->firstOr(callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User', $query->firstOrNew(['id' => 1]));
     assertType('Hyperf\Types\Builder\User', $query->findOrNew(1));
     assertType('Hyperf\Types\Builder\User', $query->firstOrCreate(['id' => 1]));
@@ -196,7 +196,7 @@ function test(
 
 class User extends Model
 {
-    /** @return HasMany<Post, $this> */
+    /** @return HasMany<Post, static> */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
@@ -205,13 +205,13 @@ class User extends Model
 
 class Post extends Model
 {
-    /** @return BelongsTo<User, $this> */
+    /** @return BelongsTo<User, static> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Model, static> */
     public function taggable(): MorphTo
     {
         return $this->morphTo();

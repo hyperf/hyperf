@@ -1,4 +1,28 @@
-# v3.1.70 - TBD
+# v3.1.73 - TBD
+
+# v3.1.72 - 2026-09-15
+
+## Optimized
+
+- [#7808](https://github.com/hyperf/hyperf/pull/7808) Optimized AMQP consumer to log an error and automatically expand `concurrent.limit` when it is less than `qos.prefetch_count`, to avoid `AMQPInvalidFrameException`.
+
+# v3.1.71 - 2026-08-07
+
+## Fixed
+
+- [#7764](https://github.com/hyperf/hyperf/pull/7764) Fixed bug that `Hyperf\Coordinator\Timer::tick()` caps the callback by the default 10s timeout of `Hyperf\Coroutine\wait()`.
+- [#7791](https://github.com/hyperf/hyperf/pull/7791) Fixed bug that `Hyperf\Validation\Concerns\ValidatesAttributes::validateMultipleOf()` cannot support the latest version for `brick/math`.
+
+## Optimized
+
+- [#7791](https://github.com/hyperf/hyperf/pull/7791) Optimized the type of `Content-Type` to `string` from `int` for `Hyperf\Tracer\Adapter\Reporter\HttpClientFactory`.
+
+# v3.1.70 - 2026-06-15
+
+## Optimized
+
+- [#7761](https://github.com/hyperf/hyperf/pull/7761) Optimized `Hyperf\Coordinator\Timer::tick()` to run the callback inside `Hyperf\Coroutine\wait()` so it executes in a properly managed coroutine context.
+- [#7761](https://github.com/hyperf/hyperf/pull/7761) Optimize the `wait()` method to check whether `Hyperf\Coroutine\Waiter` exists in the `Container`.
 
 # v3.1.69 - 2026-05-09
 

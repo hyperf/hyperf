@@ -33,6 +33,12 @@ class AstVisitorRegistry
         throw new InvalidArgumentException('Invalid method for ' . __CLASS__);
     }
 
+    /**
+     * 经测试 enterNode 和 leaveNode 符合洋葱模型，权重高的 enterNode 先执行，但是 leaveNode 后执行
+     * According to tests, both enterNode and leaveNode conform to the onion model: enterNode with higher priority executes first, while leaveNode executes later.
+     * @param string $value
+     * @param int $priority
+     */
     public static function insert($value, $priority = 0)
     {
         static::$values[] = $value;

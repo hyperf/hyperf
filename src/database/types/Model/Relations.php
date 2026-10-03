@@ -114,59 +114,59 @@ function test(User $user, Post $post, Comment $comment, ChildUser $child): void
 
 class User extends Model
 {
-    /** @return HasOne<Address, $this> */
+    /** @return HasOne<Address, static> */
     public function address(): HasOne
     {
         $hasOne = $this->hasOne(Address::class);
-        assertType('Hyperf\Database\Model\Relations\HasOne<Hyperf\Types\Relations\Address, $this(Hyperf\Types\Relations\User)>', $hasOne);
+        assertType('Hyperf\Database\Model\Relations\HasOne<Hyperf\Types\Relations\Address, static(Hyperf\Types\Relations\User)>', $hasOne);
 
         return $hasOne;
     }
 
-    /** @return HasMany<Post, $this> */
+    /** @return HasMany<Post, static> */
     public function posts(): HasMany
     {
         $hasMany = $this->hasMany(Post::class);
-        assertType('Hyperf\Database\Model\Relations\HasMany<Hyperf\Types\Relations\Post, $this(Hyperf\Types\Relations\User)>', $hasMany);
+        assertType('Hyperf\Database\Model\Relations\HasMany<Hyperf\Types\Relations\Post, static(Hyperf\Types\Relations\User)>', $hasMany);
 
         return $hasMany;
     }
 
-    /** @return BelongsToMany<Role, $this> */
+    /** @return BelongsToMany<Role, static> */
     public function roles(): BelongsToMany
     {
         $belongsToMany = $this->belongsToMany(Role::class);
-        assertType('Hyperf\Database\Model\Relations\BelongsToMany<Hyperf\Types\Relations\Role, $this(Hyperf\Types\Relations\User), Hyperf\Database\Model\Relations\Pivot, \'pivot\'>', $belongsToMany);
+        assertType('Hyperf\Database\Model\Relations\BelongsToMany<Hyperf\Types\Relations\Role, static(Hyperf\Types\Relations\User), Hyperf\Database\Model\Relations\Pivot, \'pivot\'>', $belongsToMany);
 
         return $belongsToMany;
     }
 
-    /** @return HasOne<Mechanic, $this> */
+    /** @return HasOne<Mechanic, static> */
     public function mechanic(): HasOne
     {
         return $this->hasOne(Mechanic::class);
     }
 
-    /** @return HasMany<Mechanic, $this> */
+    /** @return HasMany<Mechanic, static> */
     public function mechanics(): HasMany
     {
         return $this->hasMany(Mechanic::class);
     }
 
-    /** @return HasOneThrough<Car, Mechanic, $this> */
+    /** @return HasOneThrough<Car, Mechanic, static> */
     public function car(): HasOneThrough
     {
         $hasOneThrough = $this->hasOneThrough(Car::class, Mechanic::class);
-        assertType('Hyperf\Database\Model\Relations\HasOneThrough<Hyperf\Types\Relations\Car, Hyperf\Types\Relations\Mechanic, $this(Hyperf\Types\Relations\User)>', $hasOneThrough);
+        assertType('Hyperf\Database\Model\Relations\HasOneThrough<Hyperf\Types\Relations\Car, Hyperf\Types\Relations\Mechanic, static(Hyperf\Types\Relations\User)>', $hasOneThrough);
 
         return $hasOneThrough;
     }
 
-    /** @return HasManyThrough<Part, Mechanic, $this> */
+    /** @return HasManyThrough<Part, Mechanic, static> */
     public function parts(): HasManyThrough
     {
         $hasManyThrough = $this->hasManyThrough(Part::class, Mechanic::class);
-        assertType('Hyperf\Database\Model\Relations\HasManyThrough<Hyperf\Types\Relations\Part, Hyperf\Types\Relations\Mechanic, $this(Hyperf\Types\Relations\User)>', $hasManyThrough);
+        assertType('Hyperf\Database\Model\Relations\HasManyThrough<Hyperf\Types\Relations\Part, Hyperf\Types\Relations\Mechanic, static(Hyperf\Types\Relations\User)>', $hasManyThrough);
 
         return $hasManyThrough;
     }
@@ -174,38 +174,38 @@ class User extends Model
 
 class Post extends Model
 {
-    /** @return BelongsTo<User, $this> */
+    /** @return BelongsTo<User, static> */
     public function user(): BelongsTo
     {
         $belongsTo = $this->belongsTo(User::class);
-        assertType('Hyperf\Database\Model\Relations\BelongsTo<Hyperf\Types\Relations\User, $this(Hyperf\Types\Relations\Post)>', $belongsTo);
+        assertType('Hyperf\Database\Model\Relations\BelongsTo<Hyperf\Types\Relations\User, static(Hyperf\Types\Relations\Post)>', $belongsTo);
 
         return $belongsTo;
     }
 
-    /** @return MorphOne<Image, $this> */
+    /** @return MorphOne<Image, static> */
     public function image(): MorphOne
     {
         $morphOne = $this->morphOne(Image::class, 'imageable');
-        assertType('Hyperf\Database\Model\Relations\MorphOne<Hyperf\Types\Relations\Image, $this(Hyperf\Types\Relations\Post)>', $morphOne);
+        assertType('Hyperf\Database\Model\Relations\MorphOne<Hyperf\Types\Relations\Image, static(Hyperf\Types\Relations\Post)>', $morphOne);
 
         return $morphOne;
     }
 
-    /** @return MorphMany<Comment, $this> */
+    /** @return MorphMany<Comment, static> */
     public function comments(): MorphMany
     {
         $morphMany = $this->morphMany(Comment::class, 'commentable');
-        assertType('Hyperf\Database\Model\Relations\MorphMany<Hyperf\Types\Relations\Comment, $this(Hyperf\Types\Relations\Post)>', $morphMany);
+        assertType('Hyperf\Database\Model\Relations\MorphMany<Hyperf\Types\Relations\Comment, static(Hyperf\Types\Relations\Post)>', $morphMany);
 
         return $morphMany;
     }
 
-    /** @return MorphToMany<Tag, $this> */
+    /** @return MorphToMany<Tag, static> */
     public function tags(): MorphToMany
     {
         $morphToMany = $this->morphedByMany(Tag::class, 'taggable');
-        assertType('Hyperf\Database\Model\Relations\MorphToMany<Hyperf\Types\Relations\Tag, $this(Hyperf\Types\Relations\Post), Hyperf\Database\Model\Relations\MorphPivot, \'pivot\'>', $morphToMany);
+        assertType('Hyperf\Database\Model\Relations\MorphToMany<Hyperf\Types\Relations\Tag, static(Hyperf\Types\Relations\Post), Hyperf\Database\Model\Relations\MorphPivot, \'pivot\'>', $morphToMany);
 
         return $morphToMany;
     }
@@ -213,11 +213,11 @@ class Post extends Model
 
 class Comment extends Model
 {
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Model, static> */
     public function commentable(): MorphTo
     {
         $morphTo = $this->morphTo();
-        assertType('Hyperf\Database\Model\Relations\MorphTo<Hyperf\Database\Model\Model, $this(Hyperf\Types\Relations\Comment)>', $morphTo);
+        assertType('Hyperf\Database\Model\Relations\MorphTo<Hyperf\Database\Model\Model, static(Hyperf\Types\Relations\Comment)>', $morphTo);
 
         return $morphTo;
     }
@@ -225,11 +225,11 @@ class Comment extends Model
 
 class Tag extends Model
 {
-    /** @return MorphToMany<Post, $this> */
+    /** @return MorphToMany<Post, static> */
     public function posts(): MorphToMany
     {
         $morphToMany = $this->morphToMany(Post::class, 'taggable');
-        assertType('Hyperf\Database\Model\Relations\MorphToMany<Hyperf\Types\Relations\Post, $this(Hyperf\Types\Relations\Tag), Hyperf\Database\Model\Relations\MorphPivot, \'pivot\'>', $morphToMany);
+        assertType('Hyperf\Database\Model\Relations\MorphToMany<Hyperf\Types\Relations\Post, static(Hyperf\Types\Relations\Tag), Hyperf\Database\Model\Relations\MorphPivot, \'pivot\'>', $morphToMany);
 
         return $morphToMany;
     }
@@ -237,13 +237,13 @@ class Tag extends Model
 
 class Mechanic extends Model
 {
-    /** @return HasOne<Car, $this> */
+    /** @return HasOne<Car, static> */
     public function car(): HasOne
     {
         return $this->hasOne(Car::class);
     }
 
-    /** @return HasMany<Part, $this> */
+    /** @return HasMany<Part, static> */
     public function parts(): HasMany
     {
         return $this->hasMany(Part::class);

@@ -195,7 +195,7 @@ if (! function_exists('data_forget')) {
  */
 function head($array)
 {
-    return reset($array);
+    return empty($array) ? false : array_first($array);
 }
 
 /**
@@ -206,7 +206,7 @@ function head($array)
  */
 function last($array)
 {
-    return end($array);
+    return empty($array) ? false : array_last($array);
 }
 
 /**

@@ -15,6 +15,7 @@ namespace Hyperf\Context;
 use ArrayObject;
 use Closure;
 use Hyperf\Engine\Coroutine;
+use Hyperf\Macroable\Macroable;
 
 use function Hyperf\Support\value;
 
@@ -24,6 +25,8 @@ use function Hyperf\Support\value;
  */
 class Context
 {
+    use Macroable;
+
     /**
      * @var array<TKey, TValue>
      */

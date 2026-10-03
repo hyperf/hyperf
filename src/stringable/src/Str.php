@@ -19,7 +19,6 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
-use JsonException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -1091,7 +1090,7 @@ class Str
         $radius = $options['radius'] ?? 100;
         $omission = $options['omission'] ?? '...';
 
-        preg_match('/^(.*?)(' . preg_quote((string) $phrase) . ')(.*)$/iu', (string) $text, $matches);
+        preg_match('/^(.*?)(' . preg_quote((string) $phrase, '/') . ')(.*)$/iu', (string) $text, $matches);
 
         if (empty($matches)) {
             return null;
@@ -1125,17 +1124,7 @@ class Str
             return false;
         }
 
-        if (function_exists('json_validate')) {
-            return json_validate($value, 512);
-        }
-
-        try {
-            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            return false;
-        }
-
-        return true;
+        return json_validate($value, 512);
     }
 
     /**
@@ -1151,33 +1140,34 @@ class Str
     /**
      * Generate a random, secure password.
      *
-     * @param int $length
      * @param bool $letters
      * @param bool $numbers
      * @param bool $symbols
      * @param bool $spaces
      * @return string
      */
-    public static function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
+    public static function password(int $length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
     {
-        return (new Collection())
-            ->when($letters, fn ($c) => $c->merge([
+        /** @var Collection<int, string> $collection */
+        $collection = new Collection();
+        return $collection
+            ->when($letters, fn (Collection $c) => $c->merge([
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
                 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
                 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
                 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
             ]))
-            ->when($numbers, fn ($c) => $c->merge([
+            ->when($numbers, fn (Collection $c) => $c->merge([
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             ]))
-            ->when($symbols, fn ($c) => $c->merge([
+            ->when($symbols, fn (Collection $c) => $c->merge([
                 '~', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-',
                 '_', '.', ',', '<', '>', '?', '/', '\\', '{', '}', '[',
                 ']', '|', ':', ';',
             ]))
-            ->when($spaces, fn ($c) => $c->merge([' ']))
-            ->pipe(fn ($c) => Collection::times($length, fn () => $c[random_int(0, $c->count() - 1)]))
+            ->when($spaces, fn (Collection $c) => $c->merge([' ']))
+            ->pipe(fn (Collection $c) => Collection::times($length, fn () => $c[random_int(0, $c->count() - 1)]))
             ->implode('');
     }
 

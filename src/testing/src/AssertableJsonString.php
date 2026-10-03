@@ -255,7 +255,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * Assert that the response has a given JSON structure.
      *
      * @param null|array $responseData
-     * @return $this
+     * @return static
      */
     public function assertStructure(?array $structure = null, $responseData = null)
     {

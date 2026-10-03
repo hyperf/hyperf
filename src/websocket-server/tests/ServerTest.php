@@ -47,6 +47,7 @@ class ServerTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(WebSocketStub::class)->andReturn(new WebSocketStub());
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnTrue();
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
 
         $server = new Server(

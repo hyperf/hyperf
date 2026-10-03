@@ -36,7 +36,7 @@ class RedisConnectionStub extends RedisConnection
         $this->id = uniqid();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return sprintf('db:%d name:%s argument:%s', $this->db, $name, implode(',', $arguments));
     }

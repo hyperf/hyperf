@@ -101,6 +101,25 @@ class ModelMorphEagerLoadingTest extends TestCase
         }
     }
 
+    public function testMorphEagerLoadWithColumns()
+    {
+        $this->getContainer();
+        $images = Image::query()->with(['imageable:id,name'])->where('imageable_type', 'user')->get();
+
+        $this->assertInstanceOf(User::class, $images[1]->imageable);
+        $this->assertSame(2, $images[1]->imageable->id);
+
+        $sqls = [
+            'select * from `images` where `imageable_type` = ?',
+            'select `id`, `name` from `user` where `user`.`id` in (1, 2)',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testMorphAssociationEmpty()
     {
         $this->getContainer();

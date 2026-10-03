@@ -154,6 +154,7 @@ class FormRequestTest extends TestCase
         RequestContext::set($psrRequest);
         ResponseContext::set(new Response());
         $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnTrue();
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
         ApplicationContext::setContainer($container);
         $translator = new Translator(new ArrayLoader(), 'en');

@@ -30,7 +30,7 @@ class ClassInvoker
         return $property->getValue($this->instance);
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $method = $this->reflection->getMethod($name);
 

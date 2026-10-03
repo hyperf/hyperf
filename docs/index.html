@@ -29,7 +29,7 @@
     mermaid.initialize({ startOnLoad: false });
 
     // Set html "lang" attribute based on URL
-    var lang = location.hash.match(/#\/(zh-tw|zh-hk|en)\//);
+    var lang = location.hash.match(/#\/(zh-tw|zh-hk|en|id)\//);
     if (lang) {
       document.documentElement.setAttribute('lang', lang[1]);
     }
@@ -51,6 +51,7 @@
         depth: 6,
         noData: {
           '/en/': 'No results!',
+          '/id/': 'Hasil tidak ditemukan!',
           '/zh-cn/': '没有找到结果!',
           '/zh-hk/': '沒有找到結果!',
           '/zh-tw/': '沒有找到結果!',
@@ -59,12 +60,13 @@
         paths: 'auto',
         placeholder: {
           '/en/': 'Type to Search',
+          '/id/': 'Ketik untuk Mencari',
           '/zh-cn/': '输入关键词搜索',
           '/zh-hk/': '輸入關鍵詞搜索',
           '/zh-tw/': '輸入關鍵詞搜索',
           '/': '输入关键词搜索'
         },
-        pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en']
+        pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en', '/id']
       },
       alias: {
         '/summary.md': '/zh-cn/summary.md',
@@ -73,6 +75,7 @@
         '/zh-tw/.*/summary.md': '/zh-tw/summary.md',
         '/zh-hk/.*/summary.md': '/zh-hk/summary.md',
         '/en/.*/summary.md': '/en/summary.md',
+        '/id/.*/summary.md': '/id/summary.md',
         '/(.*)/utils': '/$1/support',
       },
       nameLink: {
@@ -80,13 +83,14 @@
         '/zh-tw/': '#/zh-tw/',
         '/zh-hk/': '#/zh-hk/',
         '/en/': '#/en/',
+        '/id/': '#/id/',
         '/': '#/',
       },
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/'),
         function(hook, vm) {
           hook.beforeEach(function(content) {
-            var shortMatches = ['en'],
+            var shortMatches = ['en', 'id'],
                     // zh-cn is the default so is not present
                     fullMatches = ['zh-tw', 'zh-hk'],
                     locale = (navigator.languages
@@ -105,7 +109,7 @@
               }
             }
 
-            let hash = window.location.hash.split(/\/(en|zh-cn|zh-tw|zh-hk)\//);
+            let hash = window.location.hash.split(/\/(en|id|zh-cn|zh-tw|zh-hk)\//);
             let lang = hash[1] ?? '';
             let path = hash[2] ?? '';
 

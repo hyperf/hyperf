@@ -65,16 +65,16 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
             case $node instanceof Node\Stmt\Class_:
                 $inheritance = $this->option->getInheritance();
                 if (is_object($node->extends) && ! empty($inheritance)) {
-                    $node->extends->parts = [$inheritance];
+                    $node->extends->name = $inheritance;
                 }
                 return $node;
             case $node instanceof Node\Stmt\UseUse:
-                $class = implode('\\', $node->name->parts);
+                $class = implode('\\', $node->name->getParts());
                 $alias = is_object($node->alias) ? $node->alias->name : null;
                 if ($class == $this->parentClass) {
                     // The parent class is exists.
                     $this->shouldAddUseUse = false;
-                    if (end($node->name->parts) !== $this->option->getInheritance() && $alias !== $this->option->getInheritance()) {
+                    if ($node->name->getLast() !== $this->option->getInheritance() && $alias !== $this->option->getInheritance()) {
                         // Rewrite the alias, if the class is not equal with inheritance.
                         $node->alias = new Identifier($this->option->getInheritance());
                     }

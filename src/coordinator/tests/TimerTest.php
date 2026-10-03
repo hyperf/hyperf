@@ -13,11 +13,14 @@ declare(strict_types=1);
 namespace HyperfTest\Coordinator;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Waiter;
+use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -77,6 +80,10 @@ class TimerTest extends TestCase
 
     public function testTick()
     {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnFalse();
+
         $this->wait(function () {
             $id = 0;
             $timer = new Timer();
@@ -92,6 +99,10 @@ class TimerTest extends TestCase
 
     public function testTickWhenReturnStop()
     {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnFalse();
+
         $this->wait(function () {
             $id = 0;
             $timer = new Timer();

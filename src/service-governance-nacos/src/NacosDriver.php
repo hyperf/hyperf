@@ -66,7 +66,12 @@ class NacosDriver implements DriverInterface
         }
 
         $data = Json::decode((string) $response->getBody());
-        $hosts = $data['hosts'] ?? [];
+        $hosts = match (true) {
+            is_array($data['hosts'] ?? null) => $data['hosts'],
+            is_array($data['data']['hosts'] ?? null) => $data['data']['hosts'],
+            is_array($data['data'] ?? null) && array_is_list($data['data']) => $data['data'],
+            default => [],
+        };
         $nodes = [];
         foreach ($hosts as $node) {
             if (isset($node['ip'], $node['port']) && ($node['healthy'] ?? false)) {

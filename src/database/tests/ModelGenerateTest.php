@@ -30,14 +30,8 @@ class ModelGenerateTest extends TestCase
 {
     public function setUp(): void
     {
-        $this->lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->lexer = new Emulative();
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
     }
 

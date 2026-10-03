@@ -822,7 +822,7 @@ trait ValidatesAttributes
      */
     public function validateLowercase(string $attribute, mixed $value, array $parameters): bool
     {
-        return Str::lower($value) === $value;
+        return is_string($value) && Str::lower($value) === $value;
     }
 
     /**
@@ -832,7 +832,7 @@ trait ValidatesAttributes
      */
     public function validateUppercase(string $attribute, mixed $value, array $parameters): bool
     {
-        return Str::upper($value) === $value;
+        return is_string($value) && Str::upper($value) === $value;
     }
 
     /**
@@ -960,17 +960,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        if (function_exists('json_validate')) {
-            return json_validate($value);
-        }
-
-        try {
-            json_decode($value, flags: JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
-            return false;
-        }
-
-        return true;
+        return json_validate($value);
     }
 
     /**
@@ -1173,8 +1163,8 @@ trait ValidatesAttributes
         }
 
         try {
-            $numerator = BigDecimal::of($this->trim($value));
-            $denominator = BigDecimal::of($this->trim($parameters[0]));
+            $numerator = BigDecimal::of((string) $this->trim($value));
+            $denominator = BigDecimal::of((string) $this->trim($parameters[0]));
 
             if ($numerator->isZero() && $denominator->isZero()) {
                 return false;
@@ -1542,12 +1532,18 @@ trait ValidatesAttributes
      */
     public function validateStartsWith(string $attribute, $value, array $parameters): bool
     {
-        return Str::startsWith($value, $parameters);
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+        return Str::startsWith((string) $value, $parameters);
     }
 
     public function validateDoesntStartWith(string $attribute, mixed $value, array $parameters): bool
     {
-        return ! Str::startsWith($value, $parameters);
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+        return ! Str::startsWith((string) $value, $parameters);
     }
 
     /**
@@ -1557,12 +1553,18 @@ trait ValidatesAttributes
      */
     public function validateEndsWith(string $attribute, $value, array $parameters): bool
     {
-        return Str::endsWith($value, $parameters);
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+        return Str::endsWith((string) $value, $parameters);
     }
 
     public function validateDoesntEndWith($attribute, $value, $parameters): bool
     {
-        return ! Str::endsWith($value, $parameters);
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+        return ! Str::endsWith((string) $value, $parameters);
     }
 
     /**
@@ -2072,6 +2074,10 @@ trait ValidatesAttributes
      */
     protected function trim($value)
     {
+        if (is_float($value)) {
+            $value = (string) $value;
+        }
+
         return is_string($value) ? trim($value) : $value;
     }
 }

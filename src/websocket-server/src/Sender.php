@@ -55,7 +55,7 @@ class Sender
         }
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         [$fd, $method] = $this->getFdAndMethodFromProxyMethod($name, $arguments);
 

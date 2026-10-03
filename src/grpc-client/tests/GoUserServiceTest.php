@@ -43,7 +43,7 @@ class GoUserServiceTest extends TestCase
 
         $userId = new UserId();
         $userId->setId($id = rand(10000, 9999999));
-        [$userInfo] = $client->info($userId);
+        [$userInfo] = $client->info($userId)->wait();
         $this->assertSame($id, $userInfo->getId());
         $this->assertSame('Hyperf', $userInfo->getName());
     }

@@ -24,10 +24,10 @@ trait LazyProxyTrait
         }
     }
 
-    public function __call($method, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $obj = $this->getInstance();
-        return call_user_func([$obj, $method], ...$arguments);
+        return call_user_func([$obj, $name], ...$arguments);
     }
 
     public function __get($name)

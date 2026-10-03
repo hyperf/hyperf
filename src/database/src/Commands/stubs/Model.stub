@@ -20,11 +20,13 @@ class %CLASS% extends %INHERITANCE%
 
     /**
      * The attributes that are mass assignable.
+     * @var list<string>
      */
     protected array $fillable = [];
 
     /**
      * The attributes that should be cast to native types.
+     * @var array<string, mixed>
      */
     protected array $casts = [];
 }

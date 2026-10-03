@@ -14,69 +14,57 @@ namespace Hyperf\Testing\Concerns;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Testing\Attributes\NonCoroutine;
+use ReflectionClass;
 use Swoole\Coroutine;
 use Swoole\Timer;
 use Throwable;
 
-/**
- * @method string name()
- */
 trait RunTestsInCoroutine
 {
-    protected bool $enableCoroutine = true;
-
-    protected string $realTestName = '';
-
-    final protected function runTestsInCoroutine(...$arguments)
+    public function runBare(): void
     {
-        parent::setName($this->realTestName);
+        if ($this->isCoroutineEnabled()) {
+            $exception = null;
 
-        $testResult = null;
-        $exception = null;
+            /* @phpstan-ignore-next-line */
+            \Swoole\Coroutine\run(function () use (&$exception) {
+                try {
+                    parent::runBare();
+                } catch (Throwable $e) {
+                    $exception = $e;
+                } finally {
+                    Timer::clearAll();
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+                }
+            });
 
-        /* @phpstan-ignore-next-line */
-        \Swoole\Coroutine\run(function () use (&$testResult, &$exception, $arguments) {
-            try {
-                $this->invokeBeforeHookMethods();
-                $testResult = $this->{$this->realTestName}(...$arguments);
-            } catch (Throwable $e) {
-                $exception = $e;
-            } finally {
-                $this->invokeAfterHookMethods();
-                Timer::clearAll();
-                CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+            if ($exception) {
+                throw $exception;
             }
-        });
 
-        if ($exception) {
-            throw $exception;
+            return;
         }
 
-        return $testResult;
+        parent::runBare();
     }
 
-    final protected function runTest(): mixed
+    private function isCoroutineEnabled(): bool
     {
-        if (extension_loaded('swoole') && Coroutine::getCid() === -1 && $this->enableCoroutine) {
-            $this->realTestName = $this->name();
-            parent::setName('runTestsInCoroutine');
+        if (! extension_loaded('swoole') || Coroutine::getCid() !== -1) {
+            return false;
         }
 
-        /* @phpstan-ignore-next-line */
-        return parent::runTest();
-    }
-
-    private function invokeBeforeHookMethods(): void
-    {
-        if (method_exists($this, 'beforeTestInCoroutine')) {
-            call_user_func([$this, 'beforeTestInCoroutine']);
+        $refClass = new ReflectionClass(static::class);
+        foreach ($refClass->getAttributes(NonCoroutine::class) as $attribute) {
+            return false;
         }
-    }
 
-    private function invokeAfterHookMethods(): void
-    {
-        if (method_exists($this, 'afterTestInCoroutine')) {
-            call_user_func([$this, 'afterTestInCoroutine']);
+        $refMethod = $refClass->getMethod($this->name());
+        foreach ($refMethod->getAttributes(NonCoroutine::class) as $attribute) {
+            return false;
         }
+
+        return true;
     }
 }

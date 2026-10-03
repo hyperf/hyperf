@@ -21,6 +21,7 @@ use Hyperf\Collection\MultipleItemsFoundException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 use function Hyperf\Collection\collect;
 
@@ -975,6 +976,37 @@ class CollectionTest extends TestCase
     }
 
     #[DataProvider('collectionClassProvider')]
+    public function testDuplicates($collection)
+    {
+        $duplicates = $collection::make([1, 2, 1, 'laravel', null, 'laravel', 'php', null])->duplicates()->all();
+        $this->assertSame([2 => 1, 5 => 'laravel', 7 => null], $duplicates);
+
+        // does loose comparison
+        $duplicates = $collection::make([2, '2', [], null])->duplicates()->all();
+        $this->assertSame([1 => '2', 3 => null], $duplicates);
+
+        // works with mix of primitives
+        $duplicates = $collection::make([1, '2', ['laravel'], ['laravel'], null, '2'])->duplicates()->all();
+        $this->assertSame([3 => ['laravel'], 5 => '2'], $duplicates);
+
+        // returns empty when no duplicates exist
+        $duplicates = $collection::make(['foo' => 'bar', 'baz' => 'qux'])->duplicates()->all();
+        $this->assertSame([], $duplicates);
+
+        // works with callback
+        $duplicates = $collection::make([
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'abigail@example.com', 'name' => 'Abigail'],
+            ['email' => 'barry@example.com', 'name' => 'Barry'],
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'barry@example.com', 'name' => 'Barry'],
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'abigail@example.com', 'name' => 'Abigail'],
+        ])->duplicates('email')->all();
+        $this->assertSame([3 => 'taylor@example.com', 4 => 'barry@example.com', 5 => 'taylor@example.com', 6 => 'abigail@example.com'], $duplicates);
+    }
+
+    #[DataProvider('collectionClassProvider')]
     public function testDuplicatesWithStrict($collection)
     {
         $duplicates = $collection::make([1, 2, 1, 'laravel', null, 'laravel', 'php', null])->duplicatesStrict()->all();
@@ -1149,6 +1181,7 @@ class CollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testSortBy($collection)
     {
+        /** @var class-string<Collection> $collection */
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'e'],
@@ -1182,7 +1215,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a'],
             ]
         ))->sortBy(['id', 'asc']);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1209,7 +1242,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NUMERIC);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1236,7 +1269,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_STRING);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1263,9 +1296,16 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a1'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NATURAL);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
-        setlocale(LC_COLLATE, 'en_US.utf8');
+        $localeArray = ['en_US.utf8', 'en_US.UTF-8'];
+        $locale = setlocale(LC_COLLATE, ...$localeArray);
+
+        // ensure the locale set successfully.
+        $this->assertTrue(in_array($locale, $localeArray));
+
+        setlocale(LC_COLLATE, 'en_US.UTF-8');
+
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
@@ -1275,13 +1315,12 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'c'],
             ]
         ))->sortBy('name', SORT_LOCALE_STRING);
-        $this->assertEquals(json_encode([
-            1 => ['id' => 4, 'name' => 'a'],
-            0 => ['id' => 5, 'name' => 'A'],
-            3 => ['id' => 2, 'name' => 'b'],
-            2 => ['id' => 3, 'name' => 'B'],
-            4 => ['id' => 1, 'name' => 'c'],
-        ]), (string) $data);
+
+        // name sort by locale string
+        $nameArray = $data->pluck('name')->toArray();
+        asort($nameArray, SORT_LOCALE_STRING);
+        $this->assertEquals(json_encode(array_values($nameArray)), (string) $data->values()->pluck('name'));
+
         $dataMany = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
@@ -1291,7 +1330,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'c'],
             ]
         ))->sortBy([['name', 'asc']], SORT_LOCALE_STRING);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1325,7 +1364,7 @@ class CollectionTest extends TestCase
                 ['id' => 5, 'name' => 'e'],
             ]
         ))->sortByDesc(['id']);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $dataMany = (new $collection(
             [
@@ -1401,5 +1440,66 @@ class CollectionTest extends TestCase
             [Collection::class],
             [LazyCollection::class],
         ];
+    }
+
+    public function testPopReturnsAndRemovesLastItemInCollection()
+    {
+        $c = new Collection(['foo', 'bar']);
+
+        $this->assertSame('bar', $c->pop());
+        $this->assertSame('foo', $c->first());
+    }
+
+    public function testPopReturnsAndRemovesLastXItemsInCollection()
+    {
+        $c = new Collection(['foo', 'bar', 'baz']);
+
+        $this->assertEquals(new Collection(['baz', 'bar']), $c->pop(2));
+        $this->assertSame('foo', $c->first());
+    }
+
+    public function testShiftReturnsAndRemovesFirstItemInCollection()
+    {
+        $data = new Collection(['foo', 'bar']);
+
+        $this->assertSame('foo', $data->shift());
+        $this->assertSame('bar', $data->first());
+        $this->assertSame('bar', $data->shift());
+        $this->assertNull($data->first());
+    }
+
+    public function testShiftReturnsAndRemovesFirstXItemsInCollection()
+    {
+        $data = new Collection(['foo', 'bar', 'baz']);
+
+        $this->assertEquals(new Collection(['foo', 'bar']), $data->shift(2));
+        $this->assertSame('baz', $data->first());
+
+        $this->assertEquals(new Collection(['foo', 'bar', 'baz']), (new Collection(['foo', 'bar', 'baz']))->shift(6));
+
+        $data = new Collection(['foo', 'bar', 'baz']);
+
+        $this->assertEquals(collect(['foo', 'bar', 'baz']), $data);
+
+        $this->expectException('InvalidArgumentException');
+        $count = rand(-2, 0);
+        $this->assertEquals(new Collection([]), $data->shift($count));
+    }
+
+    public function testShiftReturnsNullOnEmptyCollection()
+    {
+        $itemFoo = new stdClass();
+        $itemFoo->text = 'f';
+        $itemBar = new stdClass();
+        $itemBar->text = 'x';
+
+        $items = collect([$itemFoo, $itemBar]);
+
+        $foo = $items->shift();
+        $bar = $items->shift();
+
+        $this->assertSame('f', $foo?->text);
+        $this->assertSame('x', $bar?->text);
+        $this->assertNull($items->shift());
     }
 }

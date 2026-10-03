@@ -66,19 +66,15 @@ class Optional implements ArrayAccess
 
     /**
      * Dynamically pass a method to the underlying object.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
         if (is_object($this->value)) {
-            return $this->value->{$method}(...$parameters);
+            return $this->value->{$name}(...$arguments);
         }
 
         return null;

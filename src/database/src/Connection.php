@@ -977,6 +977,9 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the table prefix and return the grammar.
+     * @template T of Grammar
+     * @param T $grammar
+     * @return T
      */
     public function withTablePrefix(Grammar $grammar): Grammar
     {
@@ -1186,13 +1189,15 @@ class Connection implements ConnectionInterface
                 throw new UniqueConstraintViolationException(
                     $query,
                     $this->prepareBindings($bindings),
-                    $e
+                    $e,
+                    $this->getName(),
                 );
             }
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
-                $e
+                $e,
+                $this->getName()
             );
         } catch (Throwable $throwable) {
             ++$this->errorCount;

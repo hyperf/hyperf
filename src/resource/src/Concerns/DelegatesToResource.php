@@ -54,14 +54,10 @@ trait DelegatesToResource
 
     /**
      * Dynamically pass method calls to the underlying resource.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->forwardCallTo($this->resource, $method, $parameters);
+        return $this->forwardCallTo($this->resource, $name, $arguments);
     }
 
     /**

@@ -16,6 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Waiter;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Container\ContainerInterface;
@@ -46,6 +47,7 @@ class ContainerStub
             $logger->shouldReceive('log')->andReturn(null);
             return $logger;
         });
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnFalse();
         return $container;
     }
 }

@@ -65,7 +65,9 @@ class Consumer extends Builder
                 throw $exception;
             }
 
-            $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+            $qos = $consumerMessage->getQos() ?? [];
+            $prefetchCount = isset($qos['prefetch_count']) ? (int) $qos['prefetch_count'] : null;
+            $concurrent = $this->getConcurrent($consumerMessage->getPoolName(), $prefetchCount);
             $maxConsumption = $consumerMessage->getMaxConsumption();
             $currentConsumption = 0;
 
@@ -159,12 +161,24 @@ class Consumer extends Builder
         }
     }
 
-    protected function getConcurrent(string $pool): ?Concurrent
+    protected function getConcurrent(string $pool, ?int $prefetchCount = null): ?Concurrent
     {
         $config = $this->container->get(ConfigInterface::class);
-        $concurrent = (int) $config->get('amqp.' . $pool . '.concurrent.limit', 0);
-        if ($concurrent > 1) {
-            return new Concurrent($concurrent);
+        $configuredLimit = (int) $config->get('amqp.' . $pool . '.concurrent.limit', 0);
+        $limit = $configuredLimit > 1 ? $configuredLimit : 1;
+
+        if ($prefetchCount !== null && $prefetchCount > $limit) {
+            $this->logger->error(sprintf(
+                'The AMQP concurrent.limit[%d] is less than qos.prefetch_count[%d], which may cause AMQPInvalidFrameException. The concurrent.limit has been automatically expanded to %d.',
+                $limit,
+                $prefetchCount,
+                $prefetchCount
+            ));
+            $limit = $prefetchCount;
+        }
+
+        if ($limit > 1) {
+            return new Concurrent($limit);
         }
 
         return null;

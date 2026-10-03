@@ -18,6 +18,7 @@ trait HasChunk
 {
     public function write(string $content): bool
     {
+        // @phpstan-ignore instanceof.alwaysTrue
         if (isset($this->connection) && $this->connection instanceof Writable) {
             return $this->connection->write($content);
         }

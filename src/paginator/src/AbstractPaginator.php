@@ -89,9 +89,9 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     /**
      * Make dynamic calls into the collection.
      */
-    public function __call(string $method, array $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->forwardCallTo($this->getCollection(), $method, $parameters);
+        return $this->forwardCallTo($this->getCollection(), $name, $arguments);
     }
 
     /**

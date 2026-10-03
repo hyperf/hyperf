@@ -47,7 +47,7 @@ class HttpClientFactory implements ClientFactoryInterface
                 $additionalHeaders = $options['headers'] ?? [];
                 $requiredHeaders = [
                     'Content-Type' => 'application/json',
-                    'Content-Length' => strlen($payload),
+                    'Content-Length' => (string) strlen($payload),
                     'b3' => '0',
                 ];
                 $headers = array_merge($additionalHeaders, $requiredHeaders);

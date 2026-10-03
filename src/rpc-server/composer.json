@@ -17,13 +17,13 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
-        "hyperf/context": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/coordinator": "~3.1.0",
-        "hyperf/http-server": "~3.1.0",
-        "hyperf/rpc": "~3.1.0",
-        "hyperf/stringable": "~3.1.0"
+        "php": ">=8.2",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/http-server": "~3.2.0",
+        "hyperf/rpc": "~3.2.0",
+        "hyperf/stringable": "~3.2.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."
@@ -43,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.1-dev"
+            "dev-master": "3.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\RpcServer\\ConfigProvider"

@@ -16,6 +16,7 @@ The configuration file is located at `config/autoload/async_queue.php`, which ca
 
 |     Configuration      |  Type  |                   Default Value                    |        Memo        |
 |:-------------:|:------:|:-------------------------------------------:|:------------------:|
+|    enable     |  bool  |                    false                    | Enable auto-create consumer processes |
 |    driver     | string | Hyperf\AsyncQueue\Driver\RedisDriver::class |         None         |
 |    channel    | string |                    queue                    |      The prefix of the queue      |
 | retry_seconds |  int   |                      5                      | Retry the interval after failure |
@@ -26,6 +27,7 @@ The configuration file is located at `config/autoload/async_queue.php`, which ca
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => 5,
@@ -38,6 +40,14 @@ return [
 ## Usage
 
 ### Consume the message
+
+The component provides two ways to configure async queue consumers: `process configuration` and `parameter configuration`.
+
+#### 1. Parameter configuration
+
+Based on the `enable` parameter in the configuration file `config/autoload/async_queue.php` mentioned above, consumer processes are automatically created.
+
+#### 2. Process configuration
 
 The component has provided the default child process, just configure the child process into `config/autoload/processes.php`.
 

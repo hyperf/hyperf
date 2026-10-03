@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Scout\Cases;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
@@ -46,7 +46,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testUpdateAddsObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -68,7 +68,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testDeleteRemovesObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -86,7 +86,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testSearchSendsCorrectParametersToElasticsearch()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('search')->with([
             'index' => 'scout',
             'type' => 'table',
@@ -115,14 +115,14 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testBuilderCallbackCanManipulateSearchParametersToElasticsearch()
     {
-        /** @var Client|MockInterface $client */
-        $client = Mockery::mock(Client::class);
+        /** @var Client|ClientInterface|MockInterface $client */
+        $client = $this->mockClient();
         $client->shouldReceive('search')->with(['modified_by_callback']);
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = new Builder(
             new ElasticsearchEngineTestModel(),
             'huayra',
-            function (Client $client, $query, $params) {
+            function ($client, $query, $params) {
                 $this->assertNotEmpty($params);
                 $this->assertEquals('huayra', $query);
                 $params = ['modified_by_callback'];
@@ -150,7 +150,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testMapCorrectlyMapsResultsToModels()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = Mockery::mock(Builder::class);
         $model = Mockery::mock(Model::class);
@@ -172,7 +172,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testGetTotalCount()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $engine = new ElasticsearchEngine($client, 'scout');
         $this->assertSame(1, $engine->getTotalCount([
             'hits' => [
@@ -187,5 +187,10 @@ class ElasticsearchEngineTest extends TestCase
                 ],
             ],
         ]));
+    }
+
+    private function mockClient()
+    {
+        return Mockery::mock(ClientInterface::class);
     }
 }

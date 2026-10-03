@@ -36,6 +36,7 @@ class WaiterTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
+        $container->shouldReceive('has')->with(Waiter::class)->andReturnTrue();
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
     }
 
