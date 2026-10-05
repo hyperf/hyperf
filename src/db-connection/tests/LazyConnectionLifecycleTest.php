@@ -20,9 +20,13 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectorInterface;
 use Hyperf\Database\MySqlConnection;
 use Hyperf\Database\PgSQL\Listener\RegisterConnectionListener;
+use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\SQLite\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
 use Hyperf\Database\Sqlsrv\Query\SqlServerBuilder;
+use Hyperf\DbConnection\ConnectionLease;
 use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\LazyConnection;
 use Hyperf\DbConnection\Pool\PoolFactory;
@@ -126,6 +130,18 @@ class LazyConnectionLifecycleTest extends TestCase
         $this->connection->statement('INSERT INTO writes VALUES (5)');
         $this->assertSame(1, $this->connection->scalar('SELECT COUNT(*) FROM writes'));
         $this->assertFalse($this->connection->pretending());
+    }
+
+    public function testPretendQueriesAreIncludedInTheLogicalQueryLog(): void
+    {
+        $this->connection->statement('CREATE TABLE writes (id INTEGER)');
+        $this->connection->enableQueryLog();
+        $this->connection->select('SELECT 1');
+        $preview = $this->connection->pretend(fn ($db) => $db->statement('INSERT INTO writes VALUES (1)'));
+        $this->assertCount(1, $preview);
+        $this->assertSame(['SELECT 1', 'INSERT INTO writes VALUES (1)'], array_column($this->connection->getQueryLog(), 'query'));
+        $this->connection->disableQueryLog();
+        $this->assertSame(0, $this->connection->scalar('SELECT COUNT(*) FROM writes'));
     }
 
     public function testExecutionHookCannotReturnTheOuterLease(): void
@@ -254,6 +270,145 @@ class LazyConnectionLifecycleTest extends TestCase
         $this->assertSame(2, $this->pool()->getConnectionsInChannel());
     }
 
+    public function testLeaseCannotBeConstructedOnAnIdleWrapper(): void
+    {
+        $lease = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $wrapper = $lease->getConnection();
+        $lease->release();
+        $this->assertSame(0, $wrapper->getLeaseGeneration());
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('actively borrowed');
+        new ConnectionLease($wrapper);
+    }
+
+    public function testExternalReleaseRestoresStateAndPreservesTheBusinessException(): void
+    {
+        $done = new Channel(1);
+        parallel([function () use ($done) {
+            defer(fn () => $done->push(true));
+            $db = $this->container->get(ConnectionResolverInterface::class)->connection();
+            $db->setTablePrefix('tenant_');
+            try {
+                $db->runOperation(function () use ($db) {
+                    $wrapper = $db->getResolvedConnection();
+                    $wrapper->release();
+                    $wrapper->release();
+                    throw new RuntimeException('business failure');
+                });
+                $this->fail('Cleanup must preserve the business exception.');
+            } catch (RuntimeException $exception) {
+                $this->assertSame('business failure', $exception->getMessage());
+            }
+            try {
+                $db->select('SELECT 1');
+                $this->fail('A session whose wrapper was returned externally must reject reuse.');
+            } catch (LogicException $exception) {
+                $this->assertStringContainsString('session is closed', $exception->getMessage());
+            }
+        }]);
+        $done->pop();
+        $this->assertSame(1, $this->pool()->getConnectionsInChannel());
+        $next = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $this->assertSame('', $next->getDatabaseConnection()->getTablePrefix());
+        $this->assertSame('', $next->getDatabaseConnection()->getSchemaGrammar()->getTablePrefix());
+        $next->release();
+    }
+
+    public function testStaleSessionCleanupCannotInvalidateAnotherCoroutinesTransaction(): void
+    {
+        $ready = new Channel(1);
+        $acquired = new Channel(1);
+        $cleaned = new Channel(1);
+        $done = new Channel(2);
+        parallel([
+            function () use ($ready, $acquired, $cleaned, $done) {
+                defer(fn () => $done->push(true));
+                $db = $this->container->get(ConnectionResolverInterface::class)->connection();
+                // Raw access also exercises stale cleanup's invalidation path.
+                $wrapper = $db->getConnection();
+                try {
+                    $db->runOperation(function () use ($wrapper, $ready, $acquired) {
+                        $wrapper->release();
+                        $ready->push($wrapper);
+                        $acquired->pop();
+                        throw new RuntimeException('original failure');
+                    });
+                } catch (RuntimeException $exception) {
+                    $this->assertSame('original failure', $exception->getMessage());
+                } finally {
+                    $cleaned->push(true);
+                }
+            },
+            function () use ($ready, $acquired, $cleaned, $done) {
+                defer(fn () => $done->push(true));
+                $wrapper = $ready->pop();
+                $lease = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+                $this->assertSame($wrapper, $lease->getConnection());
+                $driver = $lease->getDatabaseConnection();
+                $pdo = $driver->getPdo();
+                $driver->setTablePrefix('new_');
+                $driver->beginTransaction();
+                $acquired->push(true);
+                $cleaned->pop();
+                $this->assertSame(0, $this->pool()->getConnectionsInChannel());
+                $this->assertSame(1, $driver->transactionLevel());
+                $this->assertSame('new_', $driver->getTablePrefix());
+                $this->assertSame($pdo, $driver->getPdo());
+                $this->assertSame(1, $driver->scalar('SELECT 1'));
+                $driver->rollBack();
+                $lease->release();
+            },
+        ]);
+        $done->pop();
+        $done->pop();
+        $this->assertSame(1, $this->pool()->getCurrentConnections());
+        $this->assertSame(1, $this->pool()->getConnectionsInChannel());
+    }
+
+    public function testEagerCleanupRestoresAnInitiallyAbsentSchemaGrammar(): void
+    {
+        $config = $this->container->get(ConfigInterface::class);
+        $config->set('databases.default.lazy', false);
+        $config->set('databases.default.release_after_use', false);
+        $config->set('databases.default.foreign_key_constraints', null);
+        $done = new Channel(1);
+        parallel([function () use ($done) {
+            defer(fn () => $done->push(true));
+            $db = $this->container->get(ConnectionResolverInterface::class)->connection();
+            $this->assertNull($db->getInitializedSchemaGrammar());
+            $db->setTablePrefix('tenant_');
+            $this->assertSame('tenant_', $db->getSchemaGrammar()->getTablePrefix());
+        }]);
+        $done->pop();
+        $lease = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $driver = $lease->getDatabaseConnection();
+        $this->assertNull($driver->getInitializedSchemaGrammar());
+        $this->assertSame('select * from "users"', $driver->table('users')->toSql());
+        $driver->getSchemaBuilder()->create('users', fn ($table) => $table->integer('id'));
+        $this->assertSame(0, $driver->table('users')->count());
+        $this->assertSame('', $driver->getSchemaGrammar()->getTablePrefix());
+        $lease->release();
+    }
+
+    public function testLeaseRestoresAnAlreadyInitializedCustomSchemaGrammar(): void
+    {
+        $wrapper = $this->pool()->get();
+        $schema = new class extends SchemaGrammar {};
+        $schema->setTablePrefix('original_');
+        $wrapper->setSchemaGrammar($schema);
+        $wrapper->release();
+        $lease = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $driver = $lease->getDatabaseConnection();
+        $driver->getSchemaGrammar()->setTablePrefix('tenant_');
+        $driver->setSchemaGrammar(new SchemaGrammar());
+        $lease->release();
+        $next = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $restored = $next->getDatabaseConnection()->getInitializedSchemaGrammar();
+        $this->assertInstanceOf(get_class($schema), $restored);
+        $this->assertSame('original_', $restored->getTablePrefix());
+        $next->release();
+    }
+
     public function testCleanupRejectsCapturedSessionReacquisition(): void
     {
         $errors = 0;
@@ -287,12 +442,21 @@ class LazyConnectionLifecycleTest extends TestCase
 
     public function testFreshResolverSessionWorksInLateDefer(): void
     {
-        parallel([function () {
-            defer(function () {
-                $this->container->get(ConnectionResolverInterface::class)->connection()->select('SELECT 1');
+        $done = new Channel(1);
+        $initial = null;
+        parallel([function () use ($done, &$initial) {
+            defer(fn () => $done->push(true));
+            defer(function () use (&$initial) {
+                $fresh = $this->container->get(ConnectionResolverInterface::class)->connection();
+                $this->assertNotSame($initial, $fresh);
+                $fresh->setReleaseAfterUse(false);
+                $fresh->select('SELECT 1');
+                $this->assertSame(0, $this->pool()->getConnectionsInChannel());
             });
-            $this->container->get(ConnectionResolverInterface::class)->connection()->select('SELECT 2');
+            $initial = $this->container->get(ConnectionResolverInterface::class)->connection();
+            $initial->select('SELECT 2');
         }]);
+        $done->pop();
         $this->assertSame(1, $this->pool()->getCurrentConnections());
         $this->assertSame(1, $this->pool()->getConnectionsInChannel());
     }
@@ -369,6 +533,33 @@ class LazyConnectionLifecycleTest extends TestCase
         $this->assertInstanceOf(MySqlGrammar::class, $this->connection->getQueryGrammar());
         $this->connection->select('SELECT 1');
         $this->assertNotNull($this->connection->getResolvedConnection());
+    }
+
+    public function testSchemaLessDriverSupportsMetadataFallback(): void
+    {
+        $this->registerSchemaLessDriver(false);
+        $this->assertSame('select * from "users"', $this->connection->table('users')->toSql());
+        $this->assertNotNull($this->connection->getResolvedConnection());
+        $this->connection->setTablePrefix('tenant_');
+        $this->connection->statement('CREATE TABLE tenant_users (id INTEGER)');
+        $this->connection->table('users')->insert(['id' => 7]);
+        $this->assertSame(7, $this->connection->table('users')->first()->id);
+    }
+
+    public function testSchemaLessDriverSupportsRegisteredMetadata(): void
+    {
+        $this->registerSchemaLessDriver(true);
+        $this->connection->setTablePrefix('tenant_');
+        $this->assertSame('select * from "tenant_users"', $this->connection->table('users')->toSql());
+        $this->assertSame(0, $this->container->opens);
+        $this->connection->statement('CREATE TABLE tenant_users (id INTEGER)');
+        $this->connection->table('users')->insert(['id' => 7]);
+        $this->assertSame(7, $this->connection->table('users')->first()->id);
+        $this->assertNull($this->connection->getResolvedConnection());
+        $lease = $this->container->get(ConnectionResolverInterface::class)->acquireLease('default');
+        $this->assertNull($lease->getDatabaseConnection()->getInitializedSchemaGrammar());
+        $this->assertSame('', $lease->getDatabaseConnection()->getTablePrefix());
+        $lease->release();
     }
 
     public function testScopePoliciesDoNotAffectOtherCoroutines(): void
@@ -485,6 +676,12 @@ class LazyConnectionLifecycleTest extends TestCase
         } catch (LogicException) {
             $this->assertSame($raw, $current->getConnection());
         }
+        $current->getDatabaseConnection()->beginTransaction();
+        $stale->release(true);
+        $stale->release();
+        $this->assertSame(1, $current->getDatabaseConnection()->transactionLevel());
+        $this->assertSame(0, $this->pool()->getConnectionsInChannel());
+        $current->getDatabaseConnection()->rollBack();
         $current->release();
         $this->assertSame(1, $this->pool()->getConnectionsInChannel());
     }
@@ -581,6 +778,24 @@ class LazyConnectionLifecycleTest extends TestCase
         $this->assertSame(1, $this->pool()->getConnectionsInChannel());
         $this->connection->select('SELECT 1');
         $this->assertNull($this->connection->getResolvedConnection());
+    }
+
+    private function registerSchemaLessDriver(bool $withMetadata): void
+    {
+        $name = $withMetadata ? 'review-schema-less-metadata' : 'review-schema-less';
+        DatabaseConnection::resolverFor(
+            $name,
+            static fn ($pdo, $database, $prefix, $config) => new DatabaseConnection($pdo, $database, $prefix, $config),
+            $withMetadata ? static fn (array $config) => new ConnectionMetadata(
+                $config,
+                new Grammar(),
+                new Processor(),
+                $config['database'],
+                $config['prefix']
+            ) : null
+        );
+        $this->container->get(ConfigInterface::class)->set('databases.default.driver', $name);
+        $this->container->entries['db.connector.' . $name] = $this->container->entries['db.connector.sqlite'];
     }
 
     private function pool()

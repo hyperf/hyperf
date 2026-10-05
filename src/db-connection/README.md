@@ -31,8 +31,10 @@ write statement follows the driver's existing write-marker behavior.
 
 Query logs are stored by the logical session. Enabling logs does not reserve
 a pool slot; `getQueryLog()` remains available after connections are returned.
-`pretend()` keeps the entire callback on one lease and restores both logging
-and dry-run state on normal return, nested calls and exceptions.
+`pretend()` keeps the entire callback on one lease and restores the driver's
+temporary logging and dry-run state on normal return, nested calls and exceptions.
+When logical query logging is enabled, preview queries are also appended to the
+session log; `pretend()` returns its own preview log without removing those entries.
 
 ## Commands that need the same connection
 
@@ -65,9 +67,16 @@ the pool wrapper is retained and reconnects on its next acquisition. Raw APIs
 inside an explicit scope also invalidate at scope exit. Ordinary query-builder
 operations reuse pooled PDO connections.
 
+Even a one-shot call such as `getPdo()->lastInsertId()` outside a scope pins the
+lease for the remaining coroutine lifetime and rebuilds the driver on return.
+Prefer `insertGetId()` or a bounded `withConnection()` scope in long-running workers.
+
 `getResolvedConnection()` is a diagnostic view only. Do not execute commands
 or return the displayed pool wrapper yourself. `release()` is rejected while
 an operation, transaction or explicit scope still uses the connection.
+If a wrapper is nevertheless returned externally, cleanup restores compilation
+state before pooling; the old logical session rejects subsequent execution.
+Its stale cleanup cannot reset, invalidate or return a newer borrower's connection.
 
 ## Temporary and worker policies
 
@@ -102,6 +111,10 @@ and removes it from Context. Using a captured session after cleanup throws
 A late `defer()` callback may obtain a fresh session through `Db::connection()`.
 Do not retain sessions or builders in static properties or across coroutines.
 An abandoned active cursor invalidates its physical connection before reuse.
+
+Both eager and lazy leases restore query grammar, processor, table prefix,
+database name and nullable Schema grammar on return. Schema state is inspected
+without initializing it, so query-only custom drivers need no Schema support.
 
 Outside coroutine execution, explicitly close sessions when their work ends;
 there is no automatic coroutine cleanup.
@@ -151,6 +164,8 @@ settings come from `HYPERF_MYSQL_HOST`, `HYPERF_MYSQL_PORT`, `HYPERF_MYSQL_USER`
 and `HYPERF_MYSQL_PASSWORD`. Defaults are localhost:3306, root and an empty
 password. Use a database where the test account can create and drop tables.
 Tests create randomly named `hyperf_pr7819_*` tables and clean them up afterward.
+The main PHPUnit CI workflow sets `HYPERF_MYSQL_DATABASE=hyperf` against its
+existing MySQL service, so these tests run in the PHP/Swoole matrix.
 
 From the repository root, with those variables set, run:
 

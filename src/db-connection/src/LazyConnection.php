@@ -72,6 +72,8 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface, Conn
     ) {
         $this->owner = Coroutine::id();
         if (Coroutine::inCoroutine()) {
+            // Late defer callbacks can create fresh sessions: the coroutine engine
+            // must also execute cleanup callbacks registered while draining defer.
             defer(function () {
                 $this->closed = true;
                 $id = $this->resolver->getContextKey($this->name);
@@ -523,6 +525,13 @@ class LazyConnection implements ConnectionInterface, DbConnectionInterface, Conn
 
     private function releaseIfIdle(): void
     {
+        if ($this->lease !== null && ! $this->lease->isActive()) {
+            // External wrapper release already ran cleanup. Preserve any callback
+            // exception and leave a newer borrower's driver and pool slot untouched.
+            $this->closed = true;
+            $this->releaseLease();
+            return;
+        }
         if ($this->closed || $this->operations > 0 || $this->pins > 0 || $this->escaped || $this->lease === null) {
             return;
         }

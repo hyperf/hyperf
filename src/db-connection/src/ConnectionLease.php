@@ -18,7 +18,6 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionMetadata;
 use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use LogicException;
-use Throwable;
 
 /**
  * One borrow from the pool. Only its owning session may use or return it.
@@ -34,10 +33,16 @@ final class ConnectionLease
 
     private ?SchemaGrammar $originalSchemaGrammar = null;
 
-    public function __construct(private ?Connection $connection)
+    private ?Connection $connection;
+
+    public function __construct(Connection $connection)
     {
+        $this->connection = $connection;
         $this->owner = Coroutine::id();
         $this->generation = $connection->getLeaseGeneration();
+        if ($this->generation === 0) {
+            throw new LogicException('A database lease requires an actively borrowed connection.');
+        }
         $database = $connection->getDatabaseConnection();
         if ($database instanceof DatabaseConnection) {
             $this->original = new ConnectionMetadata(
@@ -47,13 +52,25 @@ final class ConnectionLease
                 $database->getDatabaseName(),
                 $database->getTablePrefix()
             );
+            $schemaGrammar = $database->getInitializedSchemaGrammar();
+            $this->originalSchemaGrammar = $schemaGrammar === null ? null : clone $schemaGrammar;
         }
+        $connection->setReleaseCallback($this->generation, fn (Connection $connection) => $this->restoreMetadata($connection));
+    }
+
+    public function isActive(): bool
+    {
+        return $this->owner === Coroutine::id() && $this->connection !== null
+            && $this->connection->getLeaseGeneration() === $this->generation;
     }
 
     public function getConnection(): Connection
     {
-        if ($this->owner !== Coroutine::id() || $this->connection === null || $this->connection->getLeaseGeneration() !== $this->generation) {
+        if ($this->owner !== Coroutine::id() || $this->connection === null) {
             throw new LogicException('The database lease is closed or belongs to another coroutine.');
+        }
+        if ($this->connection->getLeaseGeneration() !== $this->generation) {
+            throw new LogicException('The database lease has already been returned to the pool.');
         }
         return $this->connection;
     }
@@ -67,12 +84,11 @@ final class ConnectionLease
     {
         $database = $this->getDatabaseConnection();
         if ($database instanceof DatabaseConnection) {
-            $this->originalSchemaGrammar ??= clone $database->getSchemaGrammar();
             $database->setQueryGrammar($metadata->grammar);
             $database->setTablePrefix($metadata->prefix);
             $database->setPostProcessor($metadata->processor);
             $database->setDatabaseName($metadata->database);
-            $database->getSchemaGrammar()->setTablePrefix($metadata->prefix);
+            $database->getInitializedSchemaGrammar()?->setTablePrefix($metadata->prefix);
         }
     }
 
@@ -81,29 +97,36 @@ final class ConnectionLease
         if ($this->connection === null) {
             return;
         }
-        $connection = $this->getConnection();
+        if ($this->owner !== Coroutine::id()) {
+            throw new LogicException('The database lease belongs to another coroutine.');
+        }
+        $connection = $this->connection;
         $this->connection = null;
-        try {
-            if ($invalidate) {
-                $connection->invalidate();
-            } elseif ($this->original !== null) {
-                $database = $connection->getDatabaseConnection();
-                if ($database instanceof DatabaseConnection) {
-                    $database->setQueryGrammar($this->original->grammar);
-                    $database->setTablePrefix($this->original->prefix);
-                    $database->setPostProcessor($this->original->processor);
-                    $database->setDatabaseName($this->original->database);
-                    if ($this->originalSchemaGrammar !== null) {
-                        $database->setSchemaGrammar($this->originalSchemaGrammar);
-                    }
-                }
-            }
-        } catch (Throwable $exception) {
-            // Cleanup must not replace a query/callback exception. Discard the
-            // driver and report the reset failure before returning its pool slot.
-            $connection->invalidate($exception);
-        } finally {
-            $connection->release();
+        // An external return may have transferred this wrapper to a new borrower.
+        // Its cleanup owns the current generation; never reset or invalidate it here.
+        if ($connection->getLeaseGeneration() !== $this->generation) {
+            return;
+        }
+        if ($invalidate) {
+            $connection->invalidate();
+        }
+        $connection->release();
+    }
+
+    private function restoreMetadata(Connection $connection): void
+    {
+        if ($this->original === null) {
+            return;
+        }
+        // Invalidated drivers have no state to restore and reconnect on the next borrow.
+        $database = $connection->getDatabaseConnection();
+        if ($database instanceof DatabaseConnection) {
+            // Restore the grammar first so setTablePrefix cannot mutate session metadata.
+            $database->setQueryGrammar($this->original->grammar);
+            $database->setTablePrefix($this->original->prefix);
+            $database->setPostProcessor($this->original->processor);
+            $database->setDatabaseName($this->original->database);
+            $database->restoreSchemaGrammar($this->originalSchemaGrammar);
         }
     }
 }

@@ -834,6 +834,18 @@ class Connection implements ConnectionInterface
         return $this->schemaGrammar;
     }
 
+    /** @internal Inspect compilation state without initializing optional Schema support. */
+    public function getInitializedSchemaGrammar(): ?SchemaGrammar
+    {
+        return $this->schemaGrammar;
+    }
+
+    /** @internal Restore the Schema state captured before a pool borrow. */
+    public function restoreSchemaGrammar(?SchemaGrammar $grammar): void
+    {
+        $this->schemaGrammar = $grammar;
+    }
+
     /**
      * Set the schema grammar used by the connection.
      *

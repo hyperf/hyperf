@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
@@ -38,6 +39,8 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     private int $leaseGeneration = 0;
 
     private bool $borrowed = false;
+
+    private ?Closure $releaseCallback = null;
 
     public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
@@ -66,6 +69,15 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     public function getLeaseGeneration(): int
     {
         return $this->borrowed ? $this->leaseGeneration : 0;
+    }
+
+    /** @internal Attach lease cleanup to every return path, including raw wrapper release. */
+    public function setReleaseCallback(int $generation, Closure $callback): void
+    {
+        if ($generation === 0 || $generation !== $this->getLeaseGeneration() || $this->releaseCallback !== null) {
+            throw new ConnectionException('Only the active database lease may register cleanup.');
+        }
+        $this->releaseCallback = $callback;
     }
 
     public function getDatabaseConnection(): DbConnectionInterface
@@ -154,6 +166,16 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             return;
         }
         $this->borrowed = false;
+        $releaseCallback = $this->releaseCallback;
+        $this->releaseCallback = null;
+        try {
+            if ($this->connection !== null) {
+                $releaseCallback?->__invoke($this);
+            }
+        } catch (Throwable $exception) {
+            // Restore before pooling, even when the wrapper was released externally.
+            $this->invalidate($exception);
+        }
         try {
             if ($this->connection instanceof \Hyperf\Database\Connection) {
                 // Request state and observers must not follow the connection into the pool.
