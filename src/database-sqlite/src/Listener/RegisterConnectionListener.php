@@ -14,6 +14,9 @@ namespace Hyperf\Database\SQLite\Listener;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionMetadata;
+use Hyperf\Database\SQLite\Query\Grammars\SQLiteGrammar;
+use Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor;
 use Hyperf\Database\SQLite\SQLiteConnection;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -46,7 +49,13 @@ class RegisterConnectionListener implements ListenerInterface
             }
 
             return new SQLiteConnection($connection, $database, $prefix, $config);
-        });
+        }, static fn (array $config) => new ConnectionMetadata(
+            $config,
+            new SQLiteGrammar(),
+            new SQLiteProcessor(),
+            $config['database'],
+            $config['prefix']
+        ));
     }
 
     protected function createPersistentPdoResolver($connection, $config)

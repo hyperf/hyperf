@@ -1,0 +1,534 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace HyperfTest\DbConnection;
+
+use Hyperf\Context\Context;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Register;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Query\Grammars\MySqlGrammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\DbConnection\Connection;
+use Hyperf\DbConnection\Db;
+use Hyperf\DbConnection\LazyConnection;
+use Hyperf\DbConnection\Pool\PoolFactory;
+use HyperfTest\DbConnection\Stubs\ContainerStub;
+use HyperfTest\DbConnection\Stubs\PDOStatementStubPHP8;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\parallel;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
+class LazyConnectionTest extends TestCase
+{
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        Context::set('database.connection.default', null);
+        Register::unsetConnectionResolver();
+        PDOStatementStubPHP8::$rows = [];
+    }
+
+    public function testMetadataMethodsDoNotOccupyPool()
+    {
+        $container = ContainerStub::mockLazyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(LazyConnection::class, $connection);
+        $this->assertSame(0, $pool->getCurrentConnections());
+
+        // Metadata methods are answered by a lightweight connection,
+        // without occupying a pooled connection.
+        $this->assertInstanceOf(MySqlGrammar::class, $connection->getQueryGrammar());
+        $this->assertInstanceOf(Processor::class, $connection->getPostProcessor());
+        $this->assertInstanceOf(Expression::class, $connection->raw('1'));
+        $this->assertSame('default', $connection->getName());
+        $this->assertSame('mysql', $connection->getDriverName());
+        $this->assertSame('mysql', $connection->getConfig('driver'));
+        $this->assertSame('hyperf', $connection->getDatabaseName());
+        $this->assertSame('', $connection->getTablePrefix());
+        $this->assertSame(0, $pool->getCurrentConnections());
+
+        // Building a query does not occupy a pooled connection either.
+        $sql = $connection->table('user')->where('id', 1)->toSql();
+        $this->assertSame('select * from `user` where `id` = ?', $sql);
+        $this->assertSame(0, $pool->getCurrentConnections());
+
+        // The lazy proxy is cached in the context.
+        $this->assertSame($connection, $resolver->connection());
+    }
+
+    public function testExecutionResolvesPoolConnectionOnce()
+    {
+        $container = ContainerStub::mockLazyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(LazyConnection::class, $connection);
+
+        // The first execution resolves the pooled connection.
+        $this->assertSame([], $connection->select('SELECT 1;'));
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        // The resolution is memoized, following executions reuse it.
+        $connection->select('SELECT 1;');
+        $connection->table('user')->where('id', 1)->get();
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        // The context always holds the lazy proxy itself, and the resolver
+        // keeps returning it, while getConnection() exposes the real one.
+        $this->assertSame($connection, Context::get('database.connection.default'));
+        $this->assertSame($connection, $resolver->connection());
+        $this->assertInstanceOf(Connection::class, $connection->getConnection());
+        $this->assertSame($connection->getConnection(), $connection->getResolvedConnection());
+    }
+
+    public function testModelQueryIsLazyUntilExecution()
+    {
+        $container = ContainerStub::mockLazyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+
+        $sql = FooModel::query()->where('id', 1)->toSql();
+        $this->assertSame('select * from `foo_models` where `id` = ?', $sql);
+        $this->assertSame(0, $pool->getCurrentConnections());
+
+        FooModel::query()->where('id', 1)->get();
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
+    public function testReleaseWithoutResolveDoesNothing()
+    {
+        $container = ContainerStub::mockLazyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(LazyConnection::class, $connection);
+        $connection->release();
+        $this->assertSame(0, $pool->getCurrentConnections());
+    }
+
+    public function testReleaseWhenCoroutineDestruct()
+    {
+        $container = ContainerStub::mockLazyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+
+        $ids = [];
+        parallel([
+            function () use ($container, $pool, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                $connection = $resolver->connection();
+                $this->assertInstanceOf(LazyConnection::class, $connection);
+                defer(function () {
+                    $this->assertTrue(Context::has('database.connection.default'));
+                });
+                $connection->select('SELECT 1;');
+                $this->assertSame(1, $pool->getCurrentConnections());
+                $ids[0] = spl_object_id($connection->getConnection());
+            },
+        ]);
+
+        // The connection was released back to the pool when the coroutine destructed,
+        // so a new coroutine reuses the very same pooled connection.
+        parallel([
+            function () use ($container, $pool, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                $connection = $resolver->connection();
+                $this->assertInstanceOf(LazyConnection::class, $connection);
+                $connection->select('SELECT 1;');
+                $ids[1] = spl_object_id($connection->getConnection());
+                $this->assertSame(1, $pool->getCurrentConnections());
+            },
+        ]);
+
+        $this->assertSame($ids[0], $ids[1]);
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
+    public function testSelectReleaseConnectionAfterUse()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(LazyConnection::class, $connection);
+
+        // Released right after the query finished.
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        // The context always holds the lazy proxy itself.
+        $this->assertSame($connection, Context::get('database.connection.default'));
+
+        // The next query resolves from the pool again, and the released
+        // connection in the pool is reused.
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        // update() is released as well when sticky is not configured.
+        $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testInsertReleasesAfterUse()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // insertGetId has its own operation scope; plain insert can return the lease.
+        $connection->insert('INSERT INTO user (name) VALUES (?)', ['hyperf']);
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testTransactionHoldAndCommitRelease()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+        $this->assertSame(0, $connection->transactionLevel());
+        $this->assertFalse($connection->isTransaction());
+
+        $connection->beginTransaction();
+        $real = $connection->getResolvedConnection();
+        $this->assertInstanceOf(Connection::class, $real);
+        $this->assertSame(1, $connection->transactionLevel());
+        $this->assertTrue($connection->isTransaction());
+
+        // The connection is held during the transaction.
+        $connection->select('SELECT 1;');
+        $this->assertSame($real, $connection->getResolvedConnection());
+
+        // Released after the transaction is committed.
+        $connection->commit();
+        $this->assertSame(0, $connection->transactionLevel());
+        $this->assertNull($connection->getResolvedConnection());
+
+        // The same goes for transaction(Closure).
+        $connection->transaction(function () use ($connection) {
+            $connection->select('SELECT 1;');
+        });
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testWriteHoldOnStickyConnection()
+    {
+        $container = ContainerStub::mockLazyStickyContainer();
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // With sticky read/write config, the connection is held after a write,
+        // so following reads still hit the write PDO.
+        $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+        $real = $connection->getResolvedConnection();
+        $this->assertInstanceOf(Connection::class, $real);
+
+        // The impact of the hold: for the rest of the coroutine every query
+        // reuses the very same connection without any release/re-acquire
+        // cycle (release-after-use is effectively disabled after a write
+        // under sticky), and reads are routed to the write host
+        // (read-your-write).
+        $connection->select('SELECT 1;');
+        $this->assertSame($real, $connection->getResolvedConnection());
+        $this->assertStringContainsString('192.168.1.2', $connection->getReadPdo()->dsn);
+
+        $connection->delete('DELETE FROM user WHERE id = ?', [1]);
+        $this->assertSame($real, $connection->getResolvedConnection());
+    }
+
+    public function testStickyWriteHoldIsResetBetweenCoroutines()
+    {
+        $container = ContainerStub::mockLazyStickyContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+
+        $ids = [];
+        parallel([
+            function () use ($container, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                /** @var LazyConnection $connection */
+                $connection = $resolver->connection();
+
+                // A write under sticky holds the connection until the
+                // coroutine ends, then the defer releases it.
+                $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+                $real = $connection->getResolvedConnection();
+                $this->assertInstanceOf(Connection::class, $real);
+                $this->assertStringContainsString('192.168.1.2', $connection->getReadPdo()->dsn);
+                $ids[0] = spl_object_id($real);
+            },
+        ]);
+
+        parallel([
+            function () use ($container, &$ids) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
+                /** @var LazyConnection $connection */
+                $connection = $resolver->connection();
+
+                // The very same pooled connection is reused, with the sticky
+                // flag of the inner connection reset by Connection::release():
+                // reads hit the read host again, and a read-only coroutine
+                // releases right after each query as usual.
+                $connection->select('SELECT 1;');
+                $this->assertNull($connection->getResolvedConnection());
+
+                $real = $connection->getConnection();
+                $ids[1] = spl_object_id($real);
+                $this->assertStringContainsString('192.168.1.1', $connection->getReadPdo()->dsn);
+            },
+        ]);
+
+        $this->assertSame($ids[0], $ids[1]);
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
+    public function testCursorReleaseAfterIteration()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        $cursor = $connection->cursor('SELECT 1;');
+        // Nothing is resolved before the generator is iterated.
+        $this->assertNull($connection->getResolvedConnection());
+
+        foreach ($cursor as $row) {
+            // The stubbed statement returns no rows.
+        }
+        // Released after the generator is exhausted.
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testNestedStatementDuringCursorIteration()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // The outer cursor yields one row, the nested cursor yields one row.
+        PDOStatementStubPHP8::$rows = [['id' => 1], ['id' => 2]];
+
+        $real = null;
+        foreach ($connection->cursor('SELECT 1;') as $row) {
+            $real = $connection->getResolvedConnection();
+            $this->assertInstanceOf(Connection::class, $real);
+
+            // Nested statements must not release the connection while the
+            // cursor is still streaming, a released connection could be taken
+            // by another coroutine and breaks the statement being iterated.
+            $connection->select('SELECT 1;');
+            $this->assertSame($real, $connection->getResolvedConnection());
+            $connection->update('UPDATE user SET name = ? WHERE id = ?', ['hyperf', 1]);
+            $this->assertSame($real, $connection->getResolvedConnection());
+
+            // Neither does an exhausted nested cursor while the outer one
+            // is still streaming.
+            foreach ($connection->cursor('SELECT 2;') as $inner);
+
+            $this->assertSame($real, $connection->getResolvedConnection());
+        }
+
+        // Released once the outer cursor is exhausted.
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
+    public function testQueryLogBelongsToLogicalSession()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        $connection->enableQueryLog();
+        $connection->select('SELECT 1;');
+        // Logs survive release and re-acquisition without pinning the physical connection.
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertCount(1, $connection->getQueryLog());
+
+        $connection->disableQueryLog();
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testReleaseAfterUseInCoroutine()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+
+        $ids = [];
+        foreach ([0, 1] as $i) {
+            parallel([
+                function () use ($container, $pool, &$ids, $i) {
+                    $resolver = $container->get(ConnectionResolverInterface::class);
+                    $connection = $resolver->connection();
+                    $this->assertInstanceOf(LazyConnection::class, $connection);
+                    defer(function () {
+                        $this->assertTrue(Context::has('database.connection.default'));
+                    });
+
+                    // Read queries are released right after use.
+                    $connection->select('SELECT 1;');
+                    $this->assertNull($connection->getResolvedConnection());
+
+                    // A transaction holds the connection, commit releases it.
+                    $connection->beginTransaction();
+                    $real = $connection->getResolvedConnection();
+                    $this->assertInstanceOf(Connection::class, $real);
+                    $connection->select('SELECT 1;');
+                    $this->assertSame($real, $connection->getResolvedConnection());
+                    $connection->commit();
+                    $this->assertNull($connection->getResolvedConnection());
+
+                    $ids[$i] = spl_object_id($real);
+                    $this->assertSame(1, $pool->getCurrentConnections());
+                },
+            ]);
+        }
+
+        // Both coroutines reused the very same pooled connection, which proves
+        // the mid-coroutine releases and the coroutine-end defer never released
+        // one connection twice.
+        $this->assertSame($ids[0], $ids[1]);
+        $this->assertSame(1, $pool->getCurrentConnections());
+    }
+
+    public function testRuntimeDisableOverridesConfig()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // Enabled by the configuration.
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+
+        // The runtime override takes priority over the configuration,
+        // and applies to the live proxy of the current coroutine immediately.
+        Db::disableReleaseAfterUse();
+        $connection->select('SELECT 1;');
+        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+
+        // After the override is removed, the configuration is followed again.
+        Db::resetReleaseAfterUse();
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+    }
+
+    public function testRuntimeEnableOverridesConfig()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: false);
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // Lazy, but not released after use by the configuration.
+        $connection->select('SELECT 1;');
+        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+
+        Db::enableReleaseAfterUse();
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+        $this->assertSame(1, $pool->getCurrentConnections());
+
+        Db::resetReleaseAfterUse();
+        $connection->select('SELECT 1;');
+        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+    }
+
+    public function testRuntimeEnableImpliesLazy()
+    {
+        $container = ContainerStub::mockLazyContainer(lazy: false);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        // Without the configuration, the resolver returns the pooled
+        // connection directly.
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(Connection::class, $connection);
+        $this->assertNotInstanceOf(LazyConnection::class, $connection);
+
+        // Enabled at runtime: newly resolved connections become lazy proxies
+        // with release-after-use, even though nothing is configured.
+        Db::enableReleaseAfterUse();
+        Context::set('database.connection.default', null);
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(LazyConnection::class, $connection);
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+
+        // Disabled at runtime: the resolver returns the pooled connection again.
+        Db::disableReleaseAfterUse();
+        Context::set('database.connection.default', null);
+        $connection = $resolver->connection();
+        $this->assertInstanceOf(Connection::class, $connection);
+        $this->assertNotInstanceOf(LazyConnection::class, $connection);
+    }
+
+    public function testProxyLevelToggle()
+    {
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+
+        // The coroutine-local override wins over the enabled configuration.
+        $connection->setReleaseAfterUse(false);
+        $connection->select('SELECT 1;');
+        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+
+        // Back to following the configuration.
+        $connection->setReleaseAfterUse(null);
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+
+        // The other direction: enable it locally while the config disables it.
+        Context::destroy('database.connection.default');
+        $container = ContainerStub::mockLazyContainer(releaseAfterUse: false);
+        $resolver = $container->get(ConnectionResolverInterface::class);
+
+        /** @var LazyConnection $connection */
+        $connection = $resolver->connection();
+        $connection->setReleaseAfterUse(true);
+        $connection->select('SELECT 1;');
+        $this->assertNull($connection->getResolvedConnection());
+    }
+}

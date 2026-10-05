@@ -145,6 +145,12 @@ class Connection implements ConnectionInterface
      */
     protected static array $resolvers = [];
 
+    /** @var array<string, Closure(array): ConnectionMetadata> */
+    protected static array $metadataResolvers = [];
+
+    /** @var null|Closure(string, array, ?float): void */
+    protected ?Closure $queryObserver = null;
+
     /**
      * All the callbacks that should be invoked before a query is executed.
      *
@@ -433,16 +439,18 @@ class Connection implements ConnectionInterface
     public function pretend(Closure $callback): array
     {
         return $this->withFreshQueryLog(function () use ($callback) {
+            $pretending = $this->pretending;
             $this->pretending = true;
 
             // Basically to make the database connection "pretend", we will just return
             // the default values for all the query methods, then we will return an
             // array of queries that were "executed" within the Closure callback.
-            $callback($this);
-
-            $this->pretending = false;
-
-            return $this->queryLog;
+            try {
+                $callback($this);
+                return $this->queryLog;
+            } finally {
+                $this->pretending = $pretending;
+            }
         });
     }
 
@@ -487,6 +495,9 @@ class Connection implements ConnectionInterface
      */
     public function logQuery(string $query, array $bindings, ?float $time = null, $result = null)
     {
+        if ($this->queryObserver !== null) {
+            ($this->queryObserver)($query, $bindings, $time);
+        }
         $this->event(new QueryExecuted($query, $bindings, $time, $this, $result));
 
         if ($this->loggingQueries) {
@@ -590,9 +601,30 @@ class Connection implements ConnectionInterface
         }
     }
 
+    /** Determine whether this physical connection has performed a write. */
+    public function hasModifiedRecords(): bool
+    {
+        return $this->recordsModified;
+    }
+
     /**
-     * Reset $recordsModified property to false.
+     * Clear framework-managed state before another session borrows this connection.
      */
+    public function resetSessionState(): void
+    {
+        $this->recordsModified = false;
+        $this->loggingQueries = false;
+        $this->pretending = false;
+        $this->queryLog = [];
+        $this->queryObserver = null;
+    }
+
+    public function setQueryObserver(?Closure $observer): void
+    {
+        $this->queryObserver = $observer;
+    }
+
+    /** Reset the sticky write marker. */
     public function resetRecordsModified(): void
     {
         $this->recordsModified = false;
@@ -802,6 +834,18 @@ class Connection implements ConnectionInterface
         return $this->schemaGrammar;
     }
 
+    /** @internal Inspect compilation state without initializing optional Schema support. */
+    public function getInitializedSchemaGrammar(): ?SchemaGrammar
+    {
+        return $this->schemaGrammar;
+    }
+
+    /** @internal Restore the Schema state captured before a pool borrow. */
+    public function restoreSchemaGrammar(?SchemaGrammar $grammar): void
+    {
+        $this->schemaGrammar = $grammar;
+    }
+
     /**
      * Set the schema grammar used by the connection.
      *
@@ -991,9 +1035,18 @@ class Connection implements ConnectionInterface
     /**
      * Register a connection resolver.
      */
-    public static function resolverFor(string $driver, Closure $callback)
+    public static function resolverFor(string $driver, Closure $callback, ?Closure $metadataResolver = null)
     {
         static::$resolvers[$driver] = $callback;
+        unset(static::$metadataResolvers[$driver]);
+        if ($metadataResolver !== null) {
+            static::$metadataResolvers[$driver] = $metadataResolver;
+        }
+    }
+
+    public static function getMetadataResolver(string $driver): ?Closure
+    {
+        return static::$metadataResolvers[$driver] ?? null;
     }
 
     /**
@@ -1104,6 +1157,7 @@ class Connection implements ConnectionInterface
     protected function withFreshQueryLog($callback)
     {
         $loggingQueries = $this->loggingQueries;
+        $queryLog = $this->queryLog;
 
         // First we will back up the value of the logging queries property and then
         // we'll be ready to run callbacks. This query log will also get cleared
@@ -1115,11 +1169,12 @@ class Connection implements ConnectionInterface
         // Now we'll execute this callback and capture the result. Once it has been
         // executed we will restore the value of query logging and give back the
         // value of the callback so the original callers can have the results.
-        $result = $callback();
-
-        $this->loggingQueries = $loggingQueries;
-
-        return $result;
+        try {
+            return $callback();
+        } finally {
+            $this->loggingQueries = $loggingQueries;
+            $this->queryLog = $queryLog;
+        }
     }
 
     /**

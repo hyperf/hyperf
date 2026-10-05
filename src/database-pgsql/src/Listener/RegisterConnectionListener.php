@@ -13,8 +13,12 @@ declare(strict_types=1);
 namespace Hyperf\Database\PgSQL\Listener;
 
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionMetadata;
 use Hyperf\Database\PgSQL\PostgreSqlConnection;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
+use Hyperf\Database\PgSQL\Query\Grammars\PostgresGrammar;
+use Hyperf\Database\PgSQL\Query\Grammars\PostgresSqlSwooleExtGrammar;
+use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
@@ -42,9 +46,21 @@ class RegisterConnectionListener implements ListenerInterface
     {
         Connection::resolverFor('pgsql', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlConnection($connection, $database, $prefix, $config);
-        });
+        }, static fn (array $config) => new ConnectionMetadata(
+            $config,
+            new PostgresGrammar(),
+            new PostgresProcessor(),
+            $config['database'],
+            $config['prefix']
+        ));
         Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
-        });
+        }, static fn (array $config) => new ConnectionMetadata(
+            $config,
+            new PostgresSqlSwooleExtGrammar(),
+            new PostgresProcessor(),
+            $config['database'],
+            $config['prefix']
+        ));
     }
 }

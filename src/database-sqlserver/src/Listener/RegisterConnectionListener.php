@@ -13,6 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Database\Sqlsrv\Listener;
 
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionMetadata;
+use Hyperf\Database\Sqlsrv\Query\Grammars\SqlServerGrammar;
+use Hyperf\Database\Sqlsrv\Query\Processors\SqlServerProcessor;
+use Hyperf\Database\Sqlsrv\Query\SqlServerBuilder;
 use Hyperf\Database\Sqlsrv\SqlServerConnection;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -41,6 +45,13 @@ class RegisterConnectionListener implements ListenerInterface
     {
         Connection::resolverFor('sqlsrv', static function ($connection, $database, $prefix, $config) {
             return new SqlServerConnection($connection, $database, $prefix, $config);
-        });
+        }, static fn (array $config) => new ConnectionMetadata(
+            $config,
+            new SqlServerGrammar(),
+            new SqlServerProcessor(),
+            $config['database'],
+            $config['prefix'],
+            SqlServerBuilder::class
+        ));
     }
 }

@@ -18,6 +18,12 @@ use ReturnTypeWillChange;
 
 class PDOStatementStubPHP8 extends PDOStatement
 {
+    /**
+     * The rows returned by fetch() one by one, for tests that need the
+     * statement to yield something. Defaults to none.
+     */
+    public static array $rows = [];
+
     public $statement;
 
     public function __construct($statement)
@@ -34,7 +40,7 @@ class PDOStatementStubPHP8 extends PDOStatement
     #[ReturnTypeWillChange]
     public function fetch(int $mode = PDO::FETCH_DEFAULT, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0): mixed
     {
-        return null;
+        return array_shift(self::$rows);
     }
 
     #[ReturnTypeWillChange]
@@ -59,6 +65,12 @@ class PDOStatementStubPHP8 extends PDOStatement
     public function fetchAll(int $mode = PDO::FETCH_BOTH, mixed ...$args): array
     {
         return [];
+    }
+
+    #[ReturnTypeWillChange]
+    public function rowCount(): int
+    {
+        return 1;
     }
 
     #[ReturnTypeWillChange]
