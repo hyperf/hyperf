@@ -44,6 +44,15 @@ class DbPool extends Pool
         parent::__construct($container, $options);
     }
 
+    public function get(): ConnectionInterface
+    {
+        $connection = parent::get();
+        if ($connection instanceof Connection) {
+            $connection->markBorrowed();
+        }
+        return $connection;
+    }
+
     public function getName(): string
     {
         return $this->name;

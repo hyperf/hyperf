@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Hyperf\DbConnection;
 
+use Closure;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
+use LogicException;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
@@ -75,42 +77,65 @@ class ConnectionResolver implements ConnectionResolverInterface
     }
 
     /**
-     * Resolve a real connection from the pool and bind it to the coroutine context.
-     * The connection is released back to the pool when the coroutine is destructed.
-     *
-     * In unmanaged mode the context and the defer callback are skipped, the caller
-     * (e.g. LazyConnection in release-after-use mode) manages the lifecycle itself.
+     * Each acquisition creates a new lease; it never adopts a Context connection
+     * whose cleanup already belongs to another session.
+     * @internal
      */
-    public function resolveConnection(string $name, bool $managed = true): ConnectionInterface
+    public function acquireLease(string $name): ConnectionLease
     {
-        $id = $this->getContextKey($name);
-        $connection = Context::get($id);
-        if ($connection instanceof ConnectionInterface && ! $connection instanceof LazyConnection) {
-            return $connection;
-        }
-
-        $pool = $this->factory->getPool($name);
-        $connection = $pool->get();
+        $connection = $this->factory->getPool($name)->get();
         try {
-            // PDO is initialized as an anonymous function, so there is no IO exception,
-            // but if other exceptions are thrown, the connection will not return to the connection pool properly.
-            $connection = $connection->getConnection();
-            if ($managed) {
-                Context::set($id, $connection);
+            if (! $connection instanceof Connection) {
+                throw new LogicException('The database pool must return a db-connection Connection.');
             }
+            $connection->getConnection();
+            return new ConnectionLease($connection);
         } catch (Throwable $exception) {
             $connection->release();
             throw $exception;
         }
+    }
 
-        if ($managed && Coroutine::inCoroutine()) {
-            defer(function () use ($connection, $id) {
-                Context::set($id, null);
-                $connection->release();
-            });
+    /**
+     * Use the current connection for a bounded group of session commands.
+     */
+    public function withConnection(Closure $callback, ?string $name = null): mixed
+    {
+        $connection = $this->connection($name);
+        if ($connection instanceof LazyConnection) {
+            return $connection->withConnection($callback);
         }
+        return $callback($connection);
+    }
 
-        return $connection;
+    /**
+     * A temporary release policy belongs to this coroutine, never to the worker.
+     * Enable it before obtaining an eager connection; existing eager handles cannot
+     * be replaced safely while the caller may still retain them.
+     */
+    public function withReleaseAfterUse(bool $value, Closure $callback, ?string $name = null): mixed
+    {
+        $name ??= $this->getDefaultConnection();
+        $existing = Context::get($this->getContextKey($name));
+        if ($existing instanceof ConnectionInterface && ! $existing instanceof LazyConnection) {
+            throw new LogicException('Set a scoped release policy before obtaining an eager connection, or enable lazy in configuration.');
+        }
+        $key = $this->getPolicyContextKey($name);
+        $previous = Context::get($key);
+        Context::set($key, $value);
+        try {
+            $connection = $this->connection($name);
+            if (! $connection instanceof LazyConnection) {
+                throw new LogicException('Scoped release policies require a logical connection.');
+            }
+        } finally {
+            if ($previous === null) {
+                Context::destroy($key);
+            } else {
+                Context::set($key, $previous);
+            }
+        }
+        return $connection->withReleaseAfterUse($value, $callback);
     }
 
     /**
@@ -140,8 +165,8 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Override the `release_after_use` option at runtime, with priority
-     * over the configuration. Applies to all coroutines from the moment
-     * it is set. Use `resetReleaseAfterUse()` to follow the config again.
+     * over the configuration. Applies to logical sessions in this worker on their next release decision.
+     * Existing eager handles retain their original lifecycle. Use `resetReleaseAfterUse()` to follow the config again.
      */
     public function setReleaseAfterUse(string $name, bool $value): void
     {
@@ -165,11 +190,35 @@ class ConnectionResolver implements ConnectionResolverInterface
      */
     public function isReleaseAfterUse(string $name): bool
     {
+        $local = Context::get($this->getPolicyContextKey($name));
+        if (is_bool($local)) {
+            return $local;
+        }
         if (array_key_exists($name, $this->releaseAfterUseOverrides)) {
             return $this->releaseAfterUseOverrides[$name];
         }
-        return (bool) $this->container->get(ConfigInterface::class)
-            ->get(sprintf('databases.%s.release_after_use', $name), false);
+        return filter_var($this->container->get(ConfigInterface::class)
+            ->get(sprintf('databases.%s.release_after_use', $name), false), FILTER_VALIDATE_BOOL);
+    }
+
+    /**
+     * Keep the pre-existing eager API when neither lazy nor scoped policy is enabled.
+     */
+    protected function resolveConnection(string $name): ConnectionInterface
+    {
+        $lease = $this->acquireLease($name);
+        $connection = $lease->getConnection();
+        $id = $this->getContextKey($name);
+        Context::set($id, $connection);
+        if (Coroutine::inCoroutine()) {
+            defer(function () use ($lease, $connection, $id) {
+                if (Context::get($id) === $connection) {
+                    Context::destroy($id);
+                }
+                $lease->release();
+            });
+        }
+        return $connection;
     }
 
     /**
@@ -177,10 +226,16 @@ class ConnectionResolver implements ConnectionResolverInterface
      * enabled by the `databases.{name}.lazy` option, default false.
      * The `databases.{name}.release_after_use` option implies lazy.
      */
+    protected function getPolicyContextKey(string $name): string
+    {
+        return sprintf('database.release_after_use.%s', $name);
+    }
+
     protected function isLazyConnection(string $name): bool
     {
-        return (bool) $this->container->get(ConfigInterface::class)
-            ->get(sprintf('databases.%s.lazy', $name), false)
+        return Context::has($this->getPolicyContextKey($name))
+            || filter_var($this->container->get(ConfigInterface::class)
+                ->get(sprintf('databases.%s.lazy', $name), false), FILTER_VALIDATE_BOOL)
             || $this->isReleaseAfterUse($name);
     }
 }

@@ -140,7 +140,7 @@ class LazyConnectionTest extends TestCase
                 $connection = $resolver->connection();
                 $this->assertInstanceOf(LazyConnection::class, $connection);
                 defer(function () {
-                    $this->assertFalse(Context::has('database.connection.default'));
+                    $this->assertTrue(Context::has('database.connection.default'));
                 });
                 $connection->select('SELECT 1;');
                 $this->assertSame(1, $pool->getCurrentConnections());
@@ -193,7 +193,7 @@ class LazyConnectionTest extends TestCase
         $this->assertNull($connection->getResolvedConnection());
     }
 
-    public function testInsertDoesNotReleaseAfterUse()
+    public function testInsertReleasesAfterUse()
     {
         $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
         $resolver = $container->get(ConnectionResolverInterface::class);
@@ -201,14 +201,9 @@ class LazyConnectionTest extends TestCase
         /** @var LazyConnection $connection */
         $connection = $resolver->connection();
 
-        // insert() never releases: Processor::processInsertGetId() performs
-        // insert() and getPdo()->lastInsertId() as two separate calls which
-        // must share one and the same connection.
+        // insertGetId has its own operation scope; plain insert can return the lease.
         $connection->insert('INSERT INTO user (name) VALUES (?)', ['hyperf']);
-        $real = $connection->getResolvedConnection();
-        $this->assertInstanceOf(Connection::class, $real);
-        $connection->getPdo();
-        $this->assertSame($real, $connection->getResolvedConnection());
+        $this->assertNull($connection->getResolvedConnection());
     }
 
     public function testTransactionHoldAndCommitRelease()
@@ -371,7 +366,7 @@ class LazyConnectionTest extends TestCase
         $this->assertSame(1, $pool->getCurrentConnections());
     }
 
-    public function testQueryLogPreventsRelease()
+    public function testQueryLogBelongsToLogicalSession()
     {
         $container = ContainerStub::mockLazyContainer(releaseAfterUse: true);
         $resolver = $container->get(ConnectionResolverInterface::class);
@@ -381,9 +376,8 @@ class LazyConnectionTest extends TestCase
 
         $connection->enableQueryLog();
         $connection->select('SELECT 1;');
-        // The connection is held while the query log is enabled,
-        // so getQueryLog() keeps working.
-        $this->assertInstanceOf(Connection::class, $connection->getResolvedConnection());
+        // Logs survive release and re-acquisition without pinning the physical connection.
+        $this->assertNull($connection->getResolvedConnection());
         $this->assertCount(1, $connection->getQueryLog());
 
         $connection->disableQueryLog();
@@ -404,7 +398,7 @@ class LazyConnectionTest extends TestCase
                     $connection = $resolver->connection();
                     $this->assertInstanceOf(LazyConnection::class, $connection);
                     defer(function () {
-                        $this->assertFalse(Context::has('database.connection.default'));
+                        $this->assertTrue(Context::has('database.connection.default'));
                     });
 
                     // Read queries are released right after use.
@@ -527,6 +521,7 @@ class LazyConnectionTest extends TestCase
         $this->assertNull($connection->getResolvedConnection());
 
         // The other direction: enable it locally while the config disables it.
+        Context::destroy('database.connection.default');
         $container = ContainerStub::mockLazyContainer(releaseAfterUse: false);
         $resolver = $container->get(ConnectionResolverInterface::class);
 

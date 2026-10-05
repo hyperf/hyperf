@@ -35,6 +35,10 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     protected LoggerInterface $logger;
 
+    private int $leaseGeneration = 0;
+
+    private bool $borrowed = false;
+
     public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
         parent::__construct($container, $pool);
@@ -49,9 +53,47 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return $this->connection->{$name}(...$arguments);
     }
 
+    /** @internal Called only when the pool lends this wrapper. */
+    public function markBorrowed(): void
+    {
+        if ($this->borrowed) {
+            throw new ConnectionException('A database connection cannot have two borrowers.');
+        }
+        $this->borrowed = true;
+        ++$this->leaseGeneration;
+    }
+
+    public function getLeaseGeneration(): int
+    {
+        return $this->borrowed ? $this->leaseGeneration : 0;
+    }
+
+    public function getDatabaseConnection(): DbConnectionInterface
+    {
+        if ($this->connection === null) {
+            throw new ConnectionException('Database connection is closed.');
+        }
+        return $this->connection;
+    }
+
+    public function invalidate(?Throwable $cause = null): void
+    {
+        if ($cause !== null) {
+            $this->logger->error('Discarding database session state: ' . $cause);
+        }
+        try {
+            $this->close();
+        } catch (Throwable $exception) {
+            $this->logger->error('Closing database connection failed: ' . $exception);
+            $this->connection = null;
+        } finally {
+            $this->lastUseTime = 0.0;
+        }
+    }
+
     public function getActiveConnection(): DbConnectionInterface
     {
-        if ($this->check()) {
+        if ($this->connection !== null && $this->check()) {
             return $this;
         }
 
@@ -69,6 +111,8 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         $this->connection = $this->factory->make($this->config);
 
         if ($this->connection instanceof \Hyperf\Database\Connection) {
+            // Driver initialization statements are not writes by the borrowing session.
+            $this->connection->resetSessionState();
             // Reset event dispatcher after db reconnect.
             if ($this->container->has(EventDispatcherInterface::class)) {
                 $dispatcher = $this->container->get(EventDispatcherInterface::class);
@@ -94,7 +138,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             $this->connection->disconnect();
         }
 
-        unset($this->connection);
+        $this->connection = null;
 
         return true;
     }
@@ -106,10 +150,14 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function release(): void
     {
+        if (! $this->borrowed) {
+            return;
+        }
+        $this->borrowed = false;
         try {
             if ($this->connection instanceof \Hyperf\Database\Connection) {
-                // Reset $recordsModified property of connection to false before the connection release into the pool.
-                $this->connection->resetRecordsModified();
+                // Request state and observers must not follow the connection into the pool.
+                $this->connection->resetSessionState();
                 if ($this->connection->getErrorCount() > 100) {
                     // If the error count of connection is more than 100, we think it is a bad connection,
                     // So we'll reset it at the next time
@@ -117,14 +165,13 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
                 }
             }
 
-            if ($this->transactionLevel() > 0) {
+            if ($this->connection !== null && $this->transactionLevel() > 0) {
                 $this->rollBack(0);
                 $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
             }
         } catch (Throwable $exception) {
             $this->logger->error('Rollback connection failed, caused by ' . $exception);
-            // Ensure that the connection must be reset the next time after broken.
-            $this->lastUseTime = 0.0;
+            $this->invalidate();
         }
 
         parent::release();

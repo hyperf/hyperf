@@ -82,7 +82,7 @@ class Db
     /**
      * Enable releasing the pooled connection right after each use at runtime,
      * with priority over the `databases.{name}.release_after_use` option.
-     * Applies to all coroutines from the moment it is called.
+     * Changes the default in this worker. Existing eager handles are unaffected.
      */
     public static function enableReleaseAfterUse(?string $name = null): void
     {
@@ -93,7 +93,7 @@ class Db
     /**
      * Disable releasing the pooled connection right after each use at runtime,
      * with priority over the `databases.{name}.release_after_use` option.
-     * Applies to all coroutines from the moment it is called.
+     * Changes the default in this worker. Existing eager handles are unaffected.
      */
     public static function disableReleaseAfterUse(?string $name = null): void
     {
@@ -109,6 +109,27 @@ class Db
     {
         $resolver = static::releaseAfterUseResolver();
         $resolver->resetReleaseAfterUse($name ?? $resolver->getDefaultConnection());
+    }
+
+    /**
+     * Run commands on one connection without opening a transaction.
+     * Do not retain physical handles obtained inside the callback.
+     */
+    public static function withConnection(Closure $callback, ?string $name = null): mixed
+    {
+        $resolver = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class);
+        if ($resolver instanceof ConnectionResolver) {
+            return $resolver->withConnection($callback, $name);
+        }
+        return $callback($resolver->connection($name));
+    }
+
+    /**
+     * Temporarily override release-after-use for the current coroutine.
+     */
+    public static function withReleaseAfterUse(bool $value, Closure $callback, ?string $name = null): mixed
+    {
+        return static::releaseAfterUseResolver()->withReleaseAfterUse($value, $callback, $name);
     }
 
     private static function releaseAfterUseResolver(): ConnectionResolver
