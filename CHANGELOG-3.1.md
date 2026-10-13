@@ -1,4 +1,10 @@
-# v3.1.72 - TBD
+# v3.1.73 - TBD
+
+# v3.1.72 - 2026-09-15
+
+## Optimized
+
+- [#7808](https://github.com/hyperf/hyperf/pull/7808) Optimized AMQP consumer to log an error and automatically expand `concurrent.limit` when it is less than `qos.prefetch_count`, to avoid `AMQPInvalidFrameException`.
 
 # v3.1.71 - 2026-08-07
 

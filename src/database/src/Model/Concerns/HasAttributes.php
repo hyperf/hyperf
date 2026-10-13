@@ -566,36 +566,41 @@ trait HasAttributes
      * Determine if the model or given attribute(s) have been modified.
      *
      * @param null|array|string $attributes
+     * @param string ...$extra
      */
-    public function isDirty($attributes = null): bool
+    public function isDirty($attributes = null, ...$extra): bool
     {
-        return $this->hasChanges(
-            $this->getDirty(),
-            is_array($attributes) ? $attributes : func_get_args()
-        );
+        if (! is_array($attributes)) {
+            $attributes = is_null($attributes) && $extra === [] ? [] : [$attributes, ...$extra];
+        }
+
+        return $this->hasChanges($this->getDirty(), $attributes);
     }
 
     /**
      * Determine if the model or given attribute(s) have remained the same.
      *
      * @param null|array|string $attributes
+     * @param string ...$extra
      */
-    public function isClean($attributes = null): bool
+    public function isClean($attributes = null, ...$extra): bool
     {
-        return ! $this->isDirty(...func_get_args());
+        return ! $this->isDirty($attributes, ...$extra);
     }
 
     /**
      * Determine if the model or given attribute(s) have been modified.
      *
      * @param null|array|string $attributes
+     * @param string ...$extra
      */
-    public function wasChanged($attributes = null): bool
+    public function wasChanged($attributes = null, ...$extra): bool
     {
-        return $this->hasChanges(
-            $this->getChanges(),
-            is_array($attributes) ? $attributes : func_get_args()
-        );
+        if (! is_array($attributes)) {
+            $attributes = is_null($attributes) && $extra === [] ? [] : [$attributes, ...$extra];
+        }
+
+        return $this->hasChanges($this->getChanges(), $attributes);
     }
 
     /**

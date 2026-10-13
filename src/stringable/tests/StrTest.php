@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
+use TypeError;
 
 /**
  * @internal
@@ -1253,5 +1254,21 @@ class StrTest extends TestCase
 
             $this->assertSame($expected, Str::chopEnd($subject, $needle));
         }
+    }
+
+    public function testLower()
+    {
+        $this->assertSame('hello', Str::lower('Hello'));
+
+        $this->expectException(TypeError::class);
+        $this->assertSame('123', Str::lower(123));
+    }
+
+    public function testUpper()
+    {
+        $this->assertSame('HELLO', Str::upper('Hello'));
+
+        $this->expectException(TypeError::class);
+        $this->assertSame('123', Str::upper(123));
     }
 }

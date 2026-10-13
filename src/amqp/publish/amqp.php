@@ -22,6 +22,7 @@ return [
         'password' => env('AMQP_PASSWORD', 'guest'),
         'vhost' => env('AMQP_VHOST', '/'),
         'open_ssl' => false,
+        // Should be greater than or equal to qos.prefetch_count, otherwise it will be expanded automatically.
         'concurrent' => [
             'limit' => 2,
         ],

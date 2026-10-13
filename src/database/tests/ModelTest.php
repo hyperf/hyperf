@@ -178,6 +178,36 @@ class ModelTest extends TestCase
         $this->assertFalse($model->isClean(['foo', 'bar']));
     }
 
+    public function testWasChangedAttributes()
+    {
+        $model = new ModelStub(['foo' => '1', 'bar' => 2, 'baz' => 3]);
+        $model->syncOriginal();
+        $model->foo = 1;
+        $model->bar = 20;
+        $model->baz = 30;
+
+        // Changes have not been synced yet, so no attribute was changed.
+        $this->assertFalse($model->wasChanged());
+        $this->assertFalse($model->wasChanged('bar'));
+
+        $model->syncChanges();
+
+        $this->assertTrue($model->wasChanged());
+        $this->assertFalse($model->wasChanged('foo'));
+        $this->assertTrue($model->wasChanged('bar'));
+        $this->assertTrue($model->wasChanged('foo', 'bar'));
+        $this->assertTrue($model->wasChanged(['foo', 'bar']));
+
+        // All attributes are equivalent to their original values.
+        $model->syncOriginal();
+        $model->syncChanges();
+
+        $this->assertFalse($model->wasChanged());
+        $this->assertFalse($model->wasChanged('bar'));
+        $this->assertFalse($model->wasChanged('foo', 'bar'));
+        $this->assertFalse($model->wasChanged(['foo', 'bar']));
+    }
+
     public function testCalculatedAttributes()
     {
         $model = new ModelStub();
