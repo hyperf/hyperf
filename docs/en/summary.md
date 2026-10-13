@@ -17,6 +17,7 @@
   * [Quick Start](en/quick-start/overview.md)
   * [FAQ](en/quick-start/questions.md)
   * [Notice for use](en/quick-start/important.md)
+  * [IDE Plugins](en/quick-start/plugins.md)
   
 * Core Architecture
 

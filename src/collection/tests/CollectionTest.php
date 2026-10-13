@@ -976,6 +976,37 @@ class CollectionTest extends TestCase
     }
 
     #[DataProvider('collectionClassProvider')]
+    public function testDuplicates($collection)
+    {
+        $duplicates = $collection::make([1, 2, 1, 'laravel', null, 'laravel', 'php', null])->duplicates()->all();
+        $this->assertSame([2 => 1, 5 => 'laravel', 7 => null], $duplicates);
+
+        // does loose comparison
+        $duplicates = $collection::make([2, '2', [], null])->duplicates()->all();
+        $this->assertSame([1 => '2', 3 => null], $duplicates);
+
+        // works with mix of primitives
+        $duplicates = $collection::make([1, '2', ['laravel'], ['laravel'], null, '2'])->duplicates()->all();
+        $this->assertSame([3 => ['laravel'], 5 => '2'], $duplicates);
+
+        // returns empty when no duplicates exist
+        $duplicates = $collection::make(['foo' => 'bar', 'baz' => 'qux'])->duplicates()->all();
+        $this->assertSame([], $duplicates);
+
+        // works with callback
+        $duplicates = $collection::make([
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'abigail@example.com', 'name' => 'Abigail'],
+            ['email' => 'barry@example.com', 'name' => 'Barry'],
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'barry@example.com', 'name' => 'Barry'],
+            ['email' => 'taylor@example.com', 'name' => 'Taylor'],
+            ['email' => 'abigail@example.com', 'name' => 'Abigail'],
+        ])->duplicates('email')->all();
+        $this->assertSame([3 => 'taylor@example.com', 4 => 'barry@example.com', 5 => 'taylor@example.com', 6 => 'abigail@example.com'], $duplicates);
+    }
+
+    #[DataProvider('collectionClassProvider')]
     public function testDuplicatesWithStrict($collection)
     {
         $duplicates = $collection::make([1, 2, 1, 'laravel', null, 'laravel', 'php', null])->duplicatesStrict()->all();
