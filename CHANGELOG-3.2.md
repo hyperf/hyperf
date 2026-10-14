@@ -1,5 +1,9 @@
 # v3.2.6 - TBD
 
+## Fixed
+
+- [#7820](https://github.com/hyperf/hyperf/pull/7820) Fixed bug that command cannot work for `PHP 8.5`.
+
 # v3.2.5 - 2026-09-15
 
 ## Optimized
