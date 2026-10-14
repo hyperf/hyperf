@@ -1,4 +1,10 @@
-# v3.1.73 - TBD
+# v3.1.74 - TBD
+
+# v3.1.73 - 2026-10-14
+
+## Optimized
+
+- [#7824](https://github.com/hyperf/hyperf/pull/7824) Avoid broadcasting configuration to the current process when using `config-center`.
 
 # v3.1.72 - 2026-09-15
 
