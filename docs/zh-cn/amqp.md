@@ -211,7 +211,7 @@ class DemoConsumer extends ConsumerMessage
 | 返回值                       | 行为                                                                 |
 |------------------------------|----------------------------------------------------------------------|
 | \Hyperf\Amqp\Result::ACK     | 确认消息正确被消费掉了                                               |
-| \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
+| \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应，并使消息重新入列（默认情况）  |
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
 
