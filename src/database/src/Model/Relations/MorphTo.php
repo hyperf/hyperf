@@ -245,9 +245,15 @@ class MorphTo extends BelongsTo
     protected function buildDictionary(Collection $models)
     {
         foreach ($models as $model) {
-            if ($model->{$this->morphType}) {
-                $this->dictionary[$model->{$this->morphType}][$model->{$this->foreignKey}][] = $model;
+            // Both are nullable, and using null as an array offset is deprecated since PHP 8.1
+            $type = $model->{$this->morphType};
+            $key = $model->{$this->foreignKey};
+
+            if (empty($type) || $key === null) {
+                continue;
             }
+
+            $this->dictionary[$type][$key][] = $model;
         }
     }
 
