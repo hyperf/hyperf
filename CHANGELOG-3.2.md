@@ -1,5 +1,9 @@
 # v3.2.6 - TBD
 
+## Fixed
+
+- [#7821](https://github.com/hyperf/hyperf/pull/7821) Fixed PHP 8.1 deprecation warnings caused by null array offsets in `BelongsTo` and `MorphTo` relationships.
+
 # v3.2.5 - 2026-09-15
 
 ## Optimized
