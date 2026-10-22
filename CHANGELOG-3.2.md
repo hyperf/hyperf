@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#7820](https://github.com/hyperf/hyperf/pull/7820) Fixed bug that command cannot work for `PHP 8.5`.
 - [#7821](https://github.com/hyperf/hyperf/pull/7821) Fixed PHP 8.1 deprecation warnings caused by null array offsets in `BelongsTo` and `MorphTo` relationships.
 
 # v3.2.5 - 2026-09-15
