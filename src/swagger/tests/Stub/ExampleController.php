@@ -15,6 +15,8 @@ namespace HyperfTest\Swagger\Stub;
 use Hyperf\Swagger\Annotation as SA;
 use Hyperf\Swagger\Request\SwaggerRequest;
 
+#[SA\Info(title: 'Swagger compatibility test', version: '1.0.0')]
+#[SA\HyperfServer('http')]
 class ExampleController
 {
     #[SA\Post('/hyperf/example/index', summary: '单测 index', tags: ['hyperf'])]
