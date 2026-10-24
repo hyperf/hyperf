@@ -107,6 +107,15 @@ class ExecutorTest extends TestCase
         $this->assertEquals('ok', $chan->pop());
     }
 
+    public function testExecuteCommandDisableEventDispatcher()
+    {
+        $this->assertTrue($this->executeCommandOption(['command' => 'demo']));
+        $this->assertFalse($this->executeCommandOption([
+            'command' => 'demo',
+            '--disable-event-dispatcher' => false,
+        ]));
+    }
+
     public function testExecuteClosure()
     {
         $container = $this->getContainer();
@@ -124,6 +133,41 @@ class ExecutorTest extends TestCase
             $crontab
         );
         $this->assertEquals('closure', $chan->pop());
+    }
+
+    private function executeCommandOption(array $callback): bool
+    {
+        $chan = new Channel(1);
+        $command = new class($chan) extends Command {
+            private $chan;
+
+            public function __construct(Channel $chan)
+            {
+                parent::__construct('demo');
+                $this->chan = $chan;
+            }
+
+            public function handle()
+            {
+                $this->chan->push($this->input->getOption('disable-event-dispatcher'));
+            }
+        };
+
+        $container = $this->getContainer();
+        $app = new Application();
+        $app->add($command);
+        $container->shouldReceive('get')->with(ApplicationInterface::class)->andReturn($app);
+
+        $crontab = Mockery::mock(Crontab::class);
+        $crontab->shouldReceive('getExecuteTime')->andReturn(Carbon::now());
+        $crontab->shouldReceive('getType')->andReturn('command');
+        $crontab->shouldReceive('isSingleton')->andReturnFalse();
+        $crontab->shouldReceive('isOnOneServer')->andReturnFalse();
+        $crontab->shouldReceive('getCallback')->andReturn($callback);
+        $crontab->shouldReceive('complete')->andReturnNull();
+        (new Executor($container))->execute($crontab);
+
+        return $chan->pop();
     }
 
     // public function testDiffInRealSeconds()

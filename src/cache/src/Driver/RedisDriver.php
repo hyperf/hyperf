@@ -53,7 +53,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         $seconds = $this->secondsUntil($ttl);
         $res = $this->packer->pack($value);
         if ($seconds > 0) {
-            return $this->redis->set($this->getCacheKey($key), $res, $seconds);
+            return $this->redis->set($this->getCacheKey($key), $res, ['EX' => $seconds]);
         }
 
         return $this->redis->set($this->getCacheKey($key), $res);
@@ -98,7 +98,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         $seconds = $this->secondsUntil($ttl);
         if ($seconds > 0) {
             foreach ($cacheKeys as $key => $value) {
-                $this->redis->set($key, $value, $seconds);
+                $this->redis->set($key, $value, ['EX' => $seconds]);
             }
 
             return true;
