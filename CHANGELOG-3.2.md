@@ -1,10 +1,20 @@
-# v3.2.5 - TBD
+# v3.2.6 - TBD
+
+## Fixed
+
+- [#7830](https://github.com/hyperf/hyperf/pull/7830) Fixed bug that command crontab closes the worker-exit coordinator.
+- [#7820](https://github.com/hyperf/hyperf/pull/7820) Fixed bug that command cannot work for `PHP 8.5`.
+- [#7821](https://github.com/hyperf/hyperf/pull/7821) Fixed PHP 8.1 deprecation warnings caused by null array offsets in `BelongsTo` and `MorphTo` relationships.
+- [#7830](https://github.com/hyperf/hyperf/pull/7830) Fixed crontab command tasks closing worker-exit coordinator and failing other tasks.
+
+# v3.2.5 - 2026-09-15
 
 ## Optimized
 
 - [#7779](https://github.com/hyperf/hyperf/pull/7779) Remove useless `$filename` for `Hyperf\Memory\LockManager`.
 - [#7779](https://github.com/hyperf/hyperf/pull/7779) Enhance `validateStartsWith` `validateUppercase` and `validateEndsWith` to be type-safe and defensive.
 - [#7803](https://github.com/hyperf/hyperf/pull/7803) Use explicit variadic params instead of `func_get_args()` in `HasAttributes::isDirty/isClean/wasChanged`.
+- [#7808](https://github.com/hyperf/hyperf/pull/7808) Optimized AMQP consumer to log an error and automatically expand `concurrent.limit` when it is less than `qos.prefetch_count`, to avoid `AMQPInvalidFrameException`.
 
 # v3.2.4 - 2026-08-10
 

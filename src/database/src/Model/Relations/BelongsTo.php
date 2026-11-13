@@ -152,15 +152,23 @@ class BelongsTo extends Relation
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$result->getAttribute($owner)] = $result;
+            // The owner key can be null when not selected; null as an array offset is deprecated since PHP 8.1
+            $key = $result->getAttribute($owner);
+
+            if ($key !== null) {
+                $dictionary[$key] = $result;
+            }
         }
 
         // Once we have the dictionary constructed, we can loop through all the parents
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
         foreach ($models as $model) {
-            if (isset($dictionary[$model->{$foreign}])) {
-                $model->setRelation($relation, $dictionary[$model->{$foreign}]);
+            // The foreign key is nullable, and using null as an array offset is deprecated since PHP 8.1
+            $key = $model->{$foreign};
+
+            if ($key !== null && isset($dictionary[$key])) {
+                $model->setRelation($relation, $dictionary[$key]);
             }
         }
 

@@ -50,6 +50,11 @@ class ContainerStub
                             'limit' => 5,
                         ],
                     ],
+                    'serial' => [
+                        'concurrent' => [
+                            'limit' => 1,
+                        ],
+                    ],
                 ],
             ]);
         });

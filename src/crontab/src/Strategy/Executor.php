@@ -86,7 +86,11 @@ class Executor
                     }
                     break;
                 case 'command':
-                    $input = make(ArrayInput::class, [$crontab->getCallback()]);
+                    $parameters = $crontab->getCallback();
+                    if (! isset($parameters['--disable-event-dispatcher'])) {
+                        $parameters['--disable-event-dispatcher'] = true;
+                    }
+                    $input = make(ArrayInput::class, [$parameters]);
                     $output = make(NullOutput::class);
                     /** @var Application */
                     $application = $this->container->get(ApplicationInterface::class);
