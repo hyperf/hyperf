@@ -100,7 +100,8 @@ class SessionMiddleware implements MiddlewareInterface
     ): ResponseInterface {
         $uri = $request->getUri();
         $path = '/';
-        $secure = strtolower($uri->getScheme()) === 'https';
+        $secure = $this->config->get('session.options.cookie_secure', null);
+        $secure ??= strtolower($uri->getScheme()) === 'https';
 
         $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
 
