@@ -613,6 +613,26 @@ class ModelTest extends TestCase
         $this->assertNull($model->fromDateTime(null));
     }
 
+   public function testToArrayWithNullUpdatedAt()
+    {
+        $model = new class extends Model {
+            public const CREATED_AT = 'create_time';
+            public const UPDATED_AT = null;
+            
+            protected ?string $dateFormat = 'Y-m-d H:i:s';
+        };
+        $model->setRawAttributes([
+                                 'id' => 1,
+                                 'create_time' => '2026-11-12 12:00:00',
+                                 ]);
+        
+        $this->assertSame(['create_time'], $model->getDates());
+        $this->assertSame([
+                          'id' => 1,
+                          'create_time' => '2026-11-12 12:00:00',
+                          ], $model->toArray());
+    }
+    
     public function testInsertProcess()
     {
         $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
