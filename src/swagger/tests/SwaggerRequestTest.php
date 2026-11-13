@@ -25,13 +25,11 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Swagger\Request\ValidationCollector;
 use HyperfTest\Swagger\Stub\ExampleController;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-/**
- * @internal
- * @coversNothing
- */
+#[CoversNothing]
 class SwaggerRequestTest extends TestCase
 {
     public function testMediaTypeRequestBodyAndQueryParameter()
