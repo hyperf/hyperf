@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "egulias/email-validator": "^3.0",
+        "egulias/email-validator": "^3.0 || ^4.0",
         "hyperf/collection": "~3.2.0",
         "hyperf/conditionable": "~3.2.0",
         "hyperf/context": "~3.2.0",
