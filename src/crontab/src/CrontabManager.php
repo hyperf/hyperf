@@ -39,7 +39,10 @@ class CrontabManager
     {
         $result = [];
         $crontabs = $this->getCrontabs();
-        $last = time();
+        // Parse schedules from the beginning of the current minute. Using the
+        // current second as the base shifts second-level rules (e.g. */5) by
+        // that second and causes already elapsed slots to execute immediately.
+        $last = (int) (time() / 60) * 60;
         foreach ($crontabs as $key => $crontab) {
             if (! $crontab instanceof Crontab) {
                 unset($this->crontabs[$key]);
