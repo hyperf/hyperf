@@ -126,6 +126,10 @@ trait ValidatesAttributes
      */
     public function validateAscii(string $attribute, mixed $value): bool
     {
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+
         if ($value === '') {
             return true;
         }
