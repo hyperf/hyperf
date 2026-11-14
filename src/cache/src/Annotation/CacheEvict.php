@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
-#[Attribute(Attribute::TARGET_METHOD)]
-class CacheEvict extends AbstractAnnotation
+#[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class CacheEvict extends AbstractMultipleAnnotation
 {
     public function __construct(
         public ?string $prefix = null,

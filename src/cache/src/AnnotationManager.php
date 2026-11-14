@@ -23,6 +23,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 
 class AnnotationManager
 {
@@ -58,20 +59,22 @@ class AnnotationManager
 
     public function getCacheEvictValue(string $className, string $method, array $arguments): array
     {
-        /** @var CacheEvict $annotation */
-        $annotation = $this->getAnnotation(CacheEvict::class, $className, $method);
+        return $this->getCacheEvictValues($className, $method, $arguments)[0];
+    }
 
-        $prefix = $annotation->prefix;
-        $all = $annotation->all;
-        $group = $annotation->group;
-
-        if (! $all) {
-            $key = $this->getFormattedKey($prefix, $arguments, $annotation->value);
-        } else {
-            $key = $prefix . ':';
+    public function getCacheEvictValues(string $className, string $method, array $arguments): array
+    {
+        $values = [];
+        foreach ($this->getAnnotations(CacheEvict::class, $className, $method) as $annotation) {
+            /** @var CacheEvict $annotation */
+            $all = $annotation->all;
+            $key = $all
+                ? $annotation->prefix . ':'
+                : $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
+            $values[] = [$key, $all, $annotation->group, $annotation];
         }
 
-        return [$key, $all, $group, $annotation];
+        return $values;
     }
 
     public function getCachePutValue(string $className, string $method, array $arguments): array
@@ -119,6 +122,24 @@ class AnnotationManager
         }
 
         return $result;
+    }
+
+    /**
+     * @return AbstractAnnotation[]
+     */
+    protected function getAnnotations(string $annotation, string $className, string $method): array
+    {
+        $collector = AnnotationCollector::get($className);
+        $result = $collector['_m'][$method][$annotation] ?? null;
+        $annotations = $result instanceof MultipleAnnotationInterface ? $result->toAnnotations() : [$result];
+
+        foreach ($annotations as $item) {
+            if (! $item instanceof $annotation) {
+                throw new CacheException(sprintf('Annotation %s in %s:%s not exist.', $annotation, $className, $method));
+            }
+        }
+
+        return $annotations;
     }
 
     protected function getFormattedKey(string $prefix, array $arguments, ?string $value = null): string
