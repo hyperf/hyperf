@@ -30,6 +30,7 @@ use Swoole\Process;
 use Swoole\Server;
 use Throwable;
 
+use function getmypid;
 use function Hyperf\Support\retry;
 
 abstract class AbstractDriver implements DriverInterface
@@ -168,12 +169,21 @@ abstract class AbstractDriver implements DriverInterface
         $processes = ProcessCollector::all();
         if ($processes) {
             $string = serialize($message);
+            $currentPid = getmypid();
+            $updateCurrentProcess = false;
             /** @var Process $process */
             foreach ($processes as $process) {
+                if ($process->pid === $currentPid) {
+                    $updateCurrentProcess = true;
+                    continue;
+                }
                 $result = $process->exportSocket()->send($string, 10);
                 if ($result === false) {
                     $this->logger->error('Configuration synchronization failed. Please restart the server.');
                 }
+            }
+            if ($updateCurrentProcess) {
+                $this->onPipeMessage($message);
             }
         }
     }
