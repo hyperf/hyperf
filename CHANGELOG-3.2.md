@@ -1,4 +1,6 @@
-# v3.2.6 - TBD
+# v3.2.7 - TBD
+
+# v3.2.6 - 2026-11-14
 
 ## Fixed
 
@@ -10,6 +12,7 @@
 
 ## Optimized
 
+- [#7824](https://github.com/hyperf/hyperf/pull/7824) Avoid broadcasting configuration to the current process when using `config-center`.
 - [#7833](https://github.com/hyperf/hyperf/pull/7833) Optimized the constraint of `egulias/email-validator` to `^3.0 || ^4.0` for `hyperf/validation`.
 
 # v3.2.5 - 2026-09-15
