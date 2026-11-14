@@ -153,7 +153,7 @@ class CreateUsersTable extends Migration
 ```php
 // 指定表儲存引擎
 $table->engine = 'InnoDB';
-// 指定資料表的預設字符集
+// 指定資料表的預設字元集
 $table->charset = 'utf8';
 // 指定資料表預設的排序規則
 $table->collation = 'utf8_unicode_ci';
@@ -169,9 +169,9 @@ $table->temporary();
 Schema::rename($from, $to);
 ```
 
-### 重新命名帶外來鍵的資料表
+### 重新命名帶外部索引鍵的資料表
 
-在重命名錶之前，您應該驗證表上的所有外來鍵約束在遷移檔案中都有明確的名稱，而不是讓遷移程式按照約定來設定一個名稱，否則，外來鍵的約束名稱將引用舊錶名。
+在重命名錶之前，您應該驗證表上的所有外部索引鍵約束在遷移檔案中都有明確的名稱，而不是讓遷移程式按照約定來設定一個名稱，否則，外部索引鍵的約束名稱將引用舊錶名。
 
 ## 刪除資料表
 
@@ -464,9 +464,9 @@ Schema:table('users', function (Blueprint $table) {
 });
 ```
 
-### 外來鍵約束
+### 外部索引鍵約束
 
-我們還可以透過 `foreign`、`references`、`on` 方法建立資料庫層的外來鍵約束。比如我們讓 `posts` 表定義一個引用 `users` 表的 `id` 欄位的 `user_id` 欄位：
+我們還可以透過 `foreign`、`references`、`on` 方法建立資料庫層的外部索引鍵約束。比如我們讓 `posts` 表定義一個引用 `users` 表的 `id` 欄位的 `user_id` 欄位：
 
 ```php
 Schema::table('posts', function (Blueprint $table) {
@@ -484,7 +484,7 @@ $table->foreign('user_id')
       ->onDelete('cascade');
 ```
 
-您可以透過 `dropForeign` 方法來刪除外來鍵。外來鍵約束採用的命名方式與索引相同，然後加上 `_foreign` 字尾：
+您可以透過 `dropForeign` 方法來刪除外部索引鍵。外部索引鍵約束採用的命名方式與索引相同，然後加上 `_foreign` 字尾：
 
 ```php
 $table->dropForeign('posts_user_id_foreign');
@@ -496,11 +496,11 @@ $table->dropForeign('posts_user_id_foreign');
 $table->dropForeign(['user_id'']);
 ```
 
-您可以在遷移檔案中使用以下方法來開啟或關閉外來鍵約束：
+您可以在遷移檔案中使用以下方法來開啟或關閉外部索引鍵約束：
 
 ```php
-// 開啟外來鍵約束
+// 開啟外部索引鍵約束
 Schema::enableForeignKeyConstraints();
-// 停用外來鍵約束
+// 停用外部索引鍵約束
 Schema::disableForeignKeyConstraints();
 ```
