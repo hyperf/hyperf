@@ -53,7 +53,7 @@ class CrontabManagerTest extends TestCase
 
     public function testParseUsesCurrentMinuteAsStartTime(): void
     {
-        /** @var Parser&MockObject $parser */
+        /** @var MockObject&Parser $parser */
         $parser = $this->createMock(Parser::class);
         $parser->expects($this->once())
             ->method('isValid')
