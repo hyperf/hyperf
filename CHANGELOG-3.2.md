@@ -7,6 +7,7 @@
 - [#7821](https://github.com/hyperf/hyperf/pull/7821) Fixed PHP 8.1 deprecation warnings caused by null array offsets in `BelongsTo` and `MorphTo` relationships.
 - [#7829](https://github.com/hyperf/hyperf/pull/7829) Fixed bug that `Hyperf\Crontab\Strategy\Executor` triggers a deprecation warning by calling `Carbon::floatDiffInRealSeconds()`.
 - [#7830](https://github.com/hyperf/hyperf/pull/7830) Fixed crontab command tasks closing worker-exit coordinator and failing other tasks.
+- [#7832](https://github.com/hyperf/hyperf/pull/7832) Fixed `insertGetId` failing with `TypeError` for the ODBC connection of `database-sqlserver`.
 
 ## Optimized
 
