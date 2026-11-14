@@ -377,7 +377,7 @@ trait HasAttributes
      */
     public function getDates(): array
     {
-        $defaults = [static::CREATED_AT, static::UPDATED_AT];
+        $defaults = array_filter([static::CREATED_AT, static::UPDATED_AT], static fn ($value) => $value !== null);
 
         return $this->usesTimestamps()
             ? array_unique(array_merge($this->dates, $defaults))
