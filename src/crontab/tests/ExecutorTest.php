@@ -135,6 +135,38 @@ class ExecutorTest extends TestCase
         $this->assertEquals('closure', $chan->pop());
     }
 
+    public function testExecuteDelayIsSignedSubSecond()
+    {
+        $executor = new class($this->getContainer()) extends Executor {
+            public function delay(?Carbon $executeTime): float
+            {
+                return $this->getExecuteDelay($executeTime);
+            }
+        };
+
+        $deprecations = [];
+        set_error_handler(static function (int $severity, string $message) use (&$deprecations): bool {
+            if ($severity === E_USER_DEPRECATED || $severity === E_DEPRECATED) {
+                $deprecations[] = $message;
+
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            Carbon::setTestNow(Carbon::parse('2024-06-01 12:00:00'));
+            $this->assertEqualsWithDelta(1.5, $executor->delay(Carbon::parse('2024-06-01 12:00:01.500000')), 0.000001);
+            $this->assertEqualsWithDelta(-0.25, $executor->delay(Carbon::parse('2024-06-01 11:59:59.750000')), 0.000001);
+        } finally {
+            restore_error_handler();
+            Carbon::setTestNow(null);
+        }
+
+        $this->assertSame([], $deprecations);
+    }
+
     private function executeCommandOption(array $callback): bool
     {
         $chan = new Channel(1);
@@ -168,37 +200,5 @@ class ExecutorTest extends TestCase
         (new Executor($container))->execute($crontab);
 
         return $chan->pop();
-    }
-
-    public function testExecuteDelayIsSignedSubSecond()
-    {
-        $executor = new class($this->getContainer()) extends Executor {
-            public function delay(?Carbon $executeTime): float
-            {
-                return $this->getExecuteDelay($executeTime);
-            }
-        };
-
-        $deprecations = [];
-        set_error_handler(static function (int $severity, string $message) use (&$deprecations): bool {
-            if ($severity === E_USER_DEPRECATED || $severity === E_DEPRECATED) {
-                $deprecations[] = $message;
-
-                return true;
-            }
-
-            return false;
-        });
-
-        try {
-            Carbon::setTestNow(Carbon::parse('2024-06-01 12:00:00'));
-            $this->assertEqualsWithDelta(1.5, $executor->delay(Carbon::parse('2024-06-01 12:00:01.500000')), 0.000001);
-            $this->assertEqualsWithDelta(-0.25, $executor->delay(Carbon::parse('2024-06-01 11:59:59.750000')), 0.000001);
-        } finally {
-            restore_error_handler();
-            Carbon::setTestNow(null);
-        }
-
-        $this->assertSame([], $deprecations);
     }
 }
