@@ -1,6 +1,6 @@
 # Socket.io 服務
 
-Socket.io 是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 傳輸協議。
+Socket.io 是一款非常流行的應用層即時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 傳輸協議。
 
 ## 安裝
 

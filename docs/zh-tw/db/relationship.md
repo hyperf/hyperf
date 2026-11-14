@@ -58,7 +58,7 @@ class User extends Model
 }
 ```
 
-記住一點，`Hyperf` 將會自動確定 `Book` 模型的外來鍵屬性。按照約定，`Hyperf` 將會使用所屬模型名稱的 『snake case』形式，再加上 `_id` 字尾作為外來鍵欄位。因此，在上面這個例子中，`Hyperf` 將假定 `User` 對應到 `Book` 模型上的外來鍵就是 `user_id`。
+記住一點，`Hyperf` 將會自動確定 `Book` 模型的外部索引鍵屬性。按照約定，`Hyperf` 將會使用所屬模型名稱的 『snake case』形式，再加上 `_id` 字尾作為外部索引鍵欄位。因此，在上面這個例子中，`Hyperf` 將假定 `User` 對應到 `Book` 模型上的外部索引鍵就是 `user_id`。
 
 一旦關係被定義好以後，就可以透過訪問 `User` 模型的 `books` 屬性來獲取評論的集合。記住，由於 Hyperf 提供了『動態屬性』 ，所以我們可以像訪問模型的屬性一樣訪問關聯方法：
 
@@ -150,7 +150,7 @@ $roles = User::find(1)->roles()->orderBy('name')->get();
 return $this->belongsToMany(Role::class, 'role_user');
 ```
 
-除了自定義連線表的表名，你還可以透過傳遞額外的引數到 `belongsToMany` 方法來定義該表中欄位的鍵名。第三個引數是定義此關聯的模型在連線表裡的外來鍵名，第四個引數是另一個模型在連線表裡的外來鍵名：
+除了自定義連線表的表名，你還可以透過傳遞額外的引數到 `belongsToMany` 方法來定義該表中欄位的鍵名。第三個引數是定義此關聯的模型在連線表裡的外部索引鍵名，第四個引數是另一個模型在連線表裡的外部索引鍵名：
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
