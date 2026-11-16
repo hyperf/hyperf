@@ -39,7 +39,10 @@ class SwowServer implements ServerInterface
 {
     protected ?ServerConfig $config = null;
 
-    protected ?Socket $server = null;
+    /**
+     * Since Swow 2.x, the HTTP server no longer extends `Swow\Socket`.
+     */
+    protected null|HttpServer|Socket $server = null;
 
     protected bool $mainServerStarted = false;
 
@@ -89,7 +92,7 @@ class SwowServer implements ServerInterface
         waitAll();
     }
 
-    public function getServer(): Socket
+    public function getServer(): HttpServer|Socket
     {
         return $this->server;
     }
