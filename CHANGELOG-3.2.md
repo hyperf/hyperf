@@ -1,5 +1,9 @@
 # v3.2.7 - TBD
 
+## Fixed
+
+- [#7841](https://github.com/hyperf/hyperf/pull/7841) Fixed bug that `socketio:clear` and `RedisAdapter::cleanUp()` cannot work when the redis `prefix` option is set.
+
 # v3.2.6 - 2026-11-14
 
 ## Fixed
