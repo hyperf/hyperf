@@ -113,6 +113,12 @@ class Connection implements ConnectionInterface
     protected int $transactions = 0;
 
     /**
+     * The transaction manager instance.
+     * @var DatabaseTransactionsManager
+     */
+    protected DatabaseTransactionsManager $transactionsManager;
+
+    /**
      * Indicates if changes have been made to the database.
      */
     protected bool $recordsModified = false;
@@ -860,6 +866,17 @@ class Connection implements ConnectionInterface
     public function unsetEventDispatcher()
     {
         $this->events = null;
+    }
+
+    /**
+     * @param DatabaseTransactionsManager $manager
+     * @return $this
+     */
+    public function setTransactionManager(DatabaseTransactionsManager $manager): static
+    {
+        $this->transactionsManager = $manager;
+
+        return $this;
     }
 
     /**
