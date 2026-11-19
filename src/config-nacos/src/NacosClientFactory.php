@@ -45,6 +45,7 @@ class NacosClientFactory
             'port' => $options['port'] ?? null,
             'grpc' => $options['grpc'] ?? [],
             'version' => $options['version'] ?? null,
+            'cloud_name' => $options['cloud_name'] ?? null,
         ]));
     }
 }
