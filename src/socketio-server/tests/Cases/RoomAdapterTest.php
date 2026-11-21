@@ -26,6 +26,7 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
+use Hyperf\SocketIOServer\Command\RemoveRedisGarbage;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
@@ -34,7 +35,12 @@ use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Redis;
+use Symfony\Component\Console\Input\ArrayInput;
 use Throwable;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal
@@ -147,6 +153,56 @@ class RoomAdapterTest extends AbstractTestCase
         $room->renew('not_exist');
         $room->cleanUpExpiredOnce();
         $this->assertNotContains('not_exist', $room->clients('foo'));
+    }
+
+    #[DataProvider('redisPrefixOptionsProvider')]
+    public function testRedisAdapterCleanUpWithPrefixOption(array $options)
+    {
+        // RedisAdapter::add() calls multi(), which keeps the connection in the coroutine context.
+        // Use a new coroutine, so that this test does not reuse a connection without the prefix option.
+        wait(function () use ($options) {
+            $nsp = Mockery::Mock(NamespaceInterface::class);
+            $nsp->shouldReceive('getNamespace')->andReturn('test');
+            $redis = $this->getRedis($options);
+            $server = Mockery::Mock(Sender::class);
+            $sidProvider = new LocalSidProvider();
+            $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
+            $room->add('42', 'universe');
+            $this->assertContains('42', $room->clients('universe'));
+            $room->cleanUp();
+            $this->assertNotContains('42', $room->clients('universe'));
+            $this->assertEmpty($room->clientRooms('42'));
+        });
+    }
+
+    #[DataProvider('redisPrefixOptionsProvider')]
+    public function testRemoveRedisGarbageWithPrefixOption(array $options)
+    {
+        // RedisAdapter::add() calls multi(), which keeps the connection in the coroutine context.
+        // Use a new coroutine, so that this test does not reuse a connection without the prefix option.
+        wait(function () use ($options) {
+            $nsp = Mockery::Mock(NamespaceInterface::class);
+            $nsp->shouldReceive('getNamespace')->andReturn('test');
+            $redis = $this->getRedis($options);
+            $server = Mockery::Mock(Sender::class);
+            $sidProvider = new LocalSidProvider();
+            $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
+            $room->add('42', 'universe');
+            $this->assertContains('42', $room->clients('universe'));
+            $command = new RemoveRedisGarbage($redis);
+            $command->setInput(new ArrayInput(['namespace' => 'test'], $command->getDefinition()));
+            $command->handle();
+            $this->assertNotContains('42', $room->clients('universe'));
+            $this->assertEmpty($room->clientRooms('42'));
+        });
+    }
+
+    public static function redisPrefixOptionsProvider(): array
+    {
+        return [
+            'prefix' => [['prefix' => 'socketio-test:']],
+            'prefix with SCAN_PREFIX' => [['prefix' => 'socketio-test:', 'scan' => Redis::SCAN_PREFIX]],
+        ];
     }
 
     private function getRedis($options = [])

@@ -161,13 +161,22 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             $this->redisPrefix,
             $this->nsp->getNamespace(),
         ]);
+        // SCAN returns full key names and adds Redis::OPT_PREFIX to the pattern only with Redis::SCAN_PREFIX, while DEL always adds it.
+        $clientPrefix = (string) $this->redis->getOption(Redis::OPT_PREFIX);
+        $pattern = "{$prefix}*";
+        if ($clientPrefix !== '' && ! ((int) $this->redis->getOption(Redis::OPT_SCAN) & Redis::SCAN_PREFIX)) {
+            $pattern = $clientPrefix . $pattern;
+        }
         $iterator = null;
         while (true) {
-            $keys = $this->redis->scan($iterator, "{$prefix}*");
+            $keys = $this->redis->scan($iterator, $pattern);
             if ($keys === false) {
                 return;
             }
             if (! empty($keys)) {
+                if ($clientPrefix !== '') {
+                    $keys = array_map(fn ($key) => substr($key, strlen($clientPrefix)), $keys);
+                }
                 $this->redis->del(...$keys);
             }
         }
