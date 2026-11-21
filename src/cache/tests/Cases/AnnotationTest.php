@@ -14,13 +14,17 @@ namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\Annotation\CacheAhead;
+use Hyperf\Cache\Annotation\CacheEvict;
 use Hyperf\Cache\Annotation\CachePut;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * @internal
@@ -29,6 +33,59 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class AnnotationTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        AnnotationCollector::clear(CacheEvictStub::class);
+        Mockery::close();
+    }
+
+    public function testCacheEvictCanBeRepeated(): void
+    {
+        $attributes = (new ReflectionMethod(CacheEvictStub::class, 'handle'))->getAttributes(CacheEvict::class);
+
+        foreach ($attributes as $attribute) {
+            $attribute->newInstance()->collectMethod(CacheEvictStub::class, 'handle');
+        }
+
+        $annotation = AnnotationCollector::getClassMethodAnnotation(CacheEvictStub::class, 'handle')[CacheEvict::class];
+        $this->assertInstanceOf(MultipleAnnotationInterface::class, $annotation);
+
+        $annotations = $annotation->toAnnotations();
+        $this->assertCount(2, $annotations);
+        $this->assertSame('user', $annotations[0]->prefix);
+        $this->assertSame('role', $annotations[1]->prefix);
+    }
+
+    public function testCacheEvictValues(): void
+    {
+        $attributes = (new ReflectionMethod(CacheEvictStub::class, 'handle'))->getAttributes(CacheEvict::class);
+        foreach ($attributes as $attribute) {
+            $attribute->newInstance()->collectMethod(CacheEvictStub::class, 'handle');
+        }
+        $singleAttribute = (new ReflectionMethod(CacheEvictStub::class, 'handleSingle'))->getAttributes(CacheEvict::class)[0];
+        $singleAttribute->newInstance()->collectMethod(CacheEvictStub::class, 'handleSingle');
+
+        $manager = new AnnotationManager(
+            Mockery::mock(ConfigInterface::class),
+            Mockery::mock(StdoutLoggerInterface::class)
+        );
+        $values = $manager->getCacheEvictValues(CacheEvictStub::class, 'handle', ['id' => 7]);
+
+        $this->assertSame('user:user_7', $values[0][0]);
+        $this->assertFalse($values[0][1]);
+        $this->assertSame('default', $values[0][2]);
+        $this->assertSame('user', $values[0][3]->prefix);
+        $this->assertSame('role:', $values[1][0]);
+        $this->assertTrue($values[1][1]);
+        $this->assertSame('secondary', $values[1][2]);
+        $this->assertTrue($values[1][3]->collect);
+        $this->assertSame($values[0], $manager->getCacheEvictValue(CacheEvictStub::class, 'handle', ['id' => 7]));
+        $this->assertSame(
+            ['single:7', false, 'default'],
+            array_slice($manager->getCacheEvictValue(CacheEvictStub::class, 'handleSingle', ['id' => 7]), 0, 3)
+        );
+    }
+
     public function testIntCacheableAndCachePut()
     {
         $annotation = new Cacheable(
@@ -102,5 +159,19 @@ class AnnotationTest extends TestCase
         [$key, $ttl] = $manager->getCacheAheadValue('Foo', 'test', ['id' => $id = uniqid()]);
         $this->assertSame('test:' . $id, $key);
         $this->assertSame(3600, $ttl);
+    }
+}
+
+class CacheEvictStub
+{
+    #[CacheEvict(prefix: 'user', value: 'user_#{id}')]
+    #[CacheEvict(prefix: 'role', all: true, group: 'secondary', collect: true)]
+    public function handle(int $id): void
+    {
+    }
+
+    #[CacheEvict(prefix: 'single')]
+    public function handleSingle(int $id): void
+    {
     }
 }
