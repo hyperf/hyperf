@@ -15,6 +15,7 @@ namespace HyperfTest\Validation\Cases;
 use HyperfTest\Validation\Cases\Stub\ValidatesAttributesStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Stringable;
 
 /**
@@ -94,6 +95,9 @@ class ValidateAttributesTest extends TestCase
         $this->assertFalse($validator->validateAscii('', '你好'));
         $this->assertFalse($validator->validateAscii('', 'ユニコードを基盤技術と-_123'));
         $this->assertFalse($validator->validateAscii('', 'नमस्कार-_'));
+        $this->assertFalse($validator->validateAscii('', []));
+        $this->assertFalse($validator->validateAscii('', null));
+        $this->assertFalse($validator->validateAscii('', new stdClass()));
     }
 
     public function testValidateJson()
