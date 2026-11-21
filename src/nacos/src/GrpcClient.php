@@ -150,6 +150,10 @@ class GrpcClient
 
     public function listen(): void
     {
+        if (empty($this->configListenContexts)) {
+            return;
+        }
+
         $request = new ConfigBatchListenRequest(true, array_values($this->configListenContexts));
         $response = $this->request($request);
         if ($response instanceof ConfigChangeBatchListenResponse) {
