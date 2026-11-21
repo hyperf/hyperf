@@ -131,6 +131,7 @@ class SqlServerProcessor extends Processor
 
         $row = $result[0];
 
-        return is_object($row) ? $row->insertid : $row['insertid'];
+        // pdo_odbc returns every column as a string.
+        return (int) (is_object($row) ? $row->insertid : $row['insertid']);
     }
 }
