@@ -36,6 +36,7 @@ class ApplicationFactory
             'host' => $config['host'] ?? null,
             'port' => $config['port'] ?? null,
             'version' => $config['version'] ?? null,
+            'cloud_name' => $config['cloud_name'] ?? null,
         ]));
     }
 }
