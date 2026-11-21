@@ -16,7 +16,10 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionMetadata;
 use Hyperf\Database\MySqlConnection;
+use Hyperf\Database\Query\Grammars\MySqlGrammar;
+use Hyperf\Database\Query\Processors\MySqlProcessor;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -46,6 +49,27 @@ class ConnectionFactory
         }
 
         return $this->createSingleConnection($config);
+    }
+
+    /**
+     * Return compilation settings without constructing an executable connection.
+     * Custom drivers can register an IO-free metadata resolver via resolverFor().
+     * A null result asks the caller to use a pinned real connection for compatibility.
+     */
+    public function makeMetadata(array $config, ?string $name = null): ?ConnectionMetadata
+    {
+        $config = $this->parseConfig($config, $name);
+        if (isset($config['read'])) {
+            $config = $this->getWriteConfig($config);
+        }
+        $driver = $config['driver'];
+        if ($resolver = Connection::getMetadataResolver($driver)) {
+            return $resolver($config);
+        }
+        if ($driver === 'mysql' && Connection::getResolver($driver) === null) {
+            return new ConnectionMetadata($config, new MySqlGrammar(), new MySqlProcessor(), $config['database'], $config['prefix']);
+        }
+        return null;
     }
 
     /**

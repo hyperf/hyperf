@@ -26,6 +26,7 @@ use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Concerns\ExplainsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionOperationInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Model\Relations\Relation;
@@ -2697,6 +2698,13 @@ class Builder
 
         $values = $this->cleanBindings($values);
 
+        if ($this->connection instanceof ConnectionOperationInterface) {
+            return $this->connection->runOperation(function (ConnectionInterface $connection) use ($sql, $values, $sequence) {
+                $query = clone $this;
+                $query->connection = $connection;
+                return $this->processor->processInsertGetId($query, $sql, $values, $sequence);
+            });
+        }
         return $this->processor->processInsertGetId($this, $sql, $values, $sequence);
     }
 

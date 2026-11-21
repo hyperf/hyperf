@@ -54,6 +54,7 @@ jobs:
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       MYSQL_VERSION: "8.0"
+      HYPERF_MYSQL_DATABASE: hyperf
       PGSQL_VERSION: "14"
     steps:
       - name: Checkout

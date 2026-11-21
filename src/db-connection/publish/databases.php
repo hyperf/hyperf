@@ -24,6 +24,9 @@ return [
         'charset' => env('DB_CHARSET', 'utf8'),
         'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
         'prefix' => env('DB_PREFIX', ''),
+        // Connection lifecycle options belong here, outside the pool options.
+        'lazy' => false,
+        'release_after_use' => false,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

@@ -20,6 +20,7 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
+use LogicException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -76,5 +77,67 @@ class Db
     public static function beforeExecuting(Closure $closure): void
     {
         Conn::beforeExecuting($closure);
+    }
+
+    /**
+     * Enable releasing the pooled connection right after each use at runtime,
+     * with priority over the `databases.{name}.release_after_use` option.
+     * Changes the default in this worker. Existing eager handles are unaffected.
+     */
+    public static function enableReleaseAfterUse(?string $name = null): void
+    {
+        $resolver = static::releaseAfterUseResolver();
+        $resolver->setReleaseAfterUse($name ?? $resolver->getDefaultConnection(), true);
+    }
+
+    /**
+     * Disable releasing the pooled connection right after each use at runtime,
+     * with priority over the `databases.{name}.release_after_use` option.
+     * Changes the default in this worker. Existing eager handles are unaffected.
+     */
+    public static function disableReleaseAfterUse(?string $name = null): void
+    {
+        $resolver = static::releaseAfterUseResolver();
+        $resolver->setReleaseAfterUse($name ?? $resolver->getDefaultConnection(), false);
+    }
+
+    /**
+     * Remove the runtime override of release-after-use,
+     * so the connection follows the configuration again.
+     */
+    public static function resetReleaseAfterUse(?string $name = null): void
+    {
+        $resolver = static::releaseAfterUseResolver();
+        $resolver->resetReleaseAfterUse($name ?? $resolver->getDefaultConnection());
+    }
+
+    /**
+     * Run commands on one connection without opening a transaction.
+     * Do not retain physical handles obtained inside the callback.
+     */
+    public static function withConnection(Closure $callback, ?string $name = null): mixed
+    {
+        $resolver = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class);
+        if ($resolver instanceof ConnectionResolver) {
+            return $resolver->withConnection($callback, $name);
+        }
+        return $callback($resolver->connection($name));
+    }
+
+    /**
+     * Temporarily override release-after-use for the current coroutine.
+     */
+    public static function withReleaseAfterUse(bool $value, Closure $callback, ?string $name = null): mixed
+    {
+        return static::releaseAfterUseResolver()->withReleaseAfterUse($value, $callback, $name);
+    }
+
+    private static function releaseAfterUseResolver(): ConnectionResolver
+    {
+        $resolver = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class);
+        if (! $resolver instanceof ConnectionResolver) {
+            throw new LogicException(sprintf('The connection resolver must be an instance of %s to toggle release-after-use at runtime.', ConnectionResolver::class));
+        }
+        return $resolver;
     }
 }
