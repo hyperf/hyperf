@@ -4,6 +4,7 @@
   * [繁體中文(港)](zh-hk/)
   * [English](en/)
   * [Bahasa Indonesia](id/)
+  * [Português (Brasil)](pt-br/)
 
 * 历史版本/Versions
   * [3.0](https://hyperf.wiki/3.0/)
