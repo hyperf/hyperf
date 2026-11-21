@@ -51,6 +51,7 @@ class SqlListener implements ListenerInterface
                 fn ($event) => $event->connectionName
             )
             ->flatMap(
+                /** @phpstan-ignore-next-line */
                 fn ($group) => $group->throttle(1000)
             )
             ->map(
