@@ -40,6 +40,16 @@ class Message implements Stringable
     private Connection $conn;
 
     /**
+     * Decoded message payload.
+     */
+    private mixed $payload = null;
+
+    /**
+     * Whether the message payload has been decoded.
+     */
+    private bool $payloadDecoded = false;
+
+    /**
      * Message constructor.
      *
      * @param string $subject message subject
@@ -159,5 +169,34 @@ class Message implements Stringable
             $this->subject,
             $body
         );
+    }
+
+    /**
+     * Set decoded message payload.
+     */
+    public function setPayload(mixed $payload): static
+    {
+        $this->payload = $payload;
+        $this->payloadDecoded = true;
+
+        return $this;
+    }
+
+    /**
+     * Get decoded message payload.
+     *
+     * Returns the raw body when the payload has not been decoded.
+     */
+    public function getPayload(): mixed
+    {
+        return $this->payloadDecoded ? $this->payload : $this->body;
+    }
+
+    /**
+     * Determine whether the message payload has been decoded.
+     */
+    public function hasPayload(): bool
+    {
+        return $this->payloadDecoded;
     }
 }
