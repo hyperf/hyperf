@@ -1140,6 +1140,9 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
 
     protected function getConnection()
     {
-        return m::mock(Connection::class);
+        $connection = m::mock(Connection::class);
+        $connection->shouldReceive('getDriverName')->andReturn('pgsql');
+
+        return $connection;
     }
 }

@@ -18,7 +18,6 @@ use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Support\Fluent;
 
@@ -1449,7 +1448,7 @@ class Blueprint
      */
     protected function ensureCommandsAreValid(Connection $connection)
     {
-        if ($connection instanceof SQLiteConnection) {
+        if ($connection->getDriverName() === 'sqlite') {
             if ($this->commandsNamed(['dropColumn', 'renameColumn'])->count() > 1) {
                 throw new BadMethodCallException(
                     "SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification."
