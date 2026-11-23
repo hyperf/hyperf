@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Serializer;
 
+use ArrayObject;
 use Countable;
 use Hyperf\Contract\NormalizerInterface as Normalizer;
 use Symfony\Component\Serializer\Encoder\ChainDecoder;
@@ -141,7 +142,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
         return $this->denormalize($data, $type, $format, $context);
     }
 
-    public function normalize($object, ?string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = []): null|array|ArrayObject|bool|float|int|string
     {
         // If a normalizer supports the given data, use it
         if ($normalizer = $this->getNormalizer($object, $format, $context)) {
@@ -180,7 +181,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
      * @param mixed $data
      * @throws NotNormalizableValueException
      */
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = []): mixed
     {
         if (isset(self::SCALAR_TYPES[$type])) {
             if (is_scalar($data)) {

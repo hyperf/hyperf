@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace HyperfTest\Serializer;
 
+use Hyperf\Serializer\Serializer;
 use Hyperf\Serializer\SerializerFactory;
 use Hyperf\Serializer\SymfonyNormalizer;
 use HyperfTest\Serializer\Stub\Foo;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 
 /**
@@ -40,6 +42,20 @@ class SymfonySerializerTest extends TestCase
 
         $ret = $serializer->normalize([1, '2']);
         $this->assertEquals([1, '2'], $ret);
+    }
+
+    public function testSignaturesKeepTheReturnTypesOfSymfonyInterfaces()
+    {
+        $normalize = new ReflectionMethod(Serializer::class, 'normalize');
+        $types = array_map(
+            fn ($type) => $type->getName(),
+            $normalize->getReturnType()->getTypes()
+        );
+        sort($types);
+        $this->assertSame(['ArrayObject', 'array', 'bool', 'float', 'int', 'null', 'string'], $types);
+
+        $denormalize = new ReflectionMethod(Serializer::class, 'denormalize');
+        $this->assertSame('mixed', (string) $denormalize->getReturnType());
     }
 
     public function testDenormalize()
