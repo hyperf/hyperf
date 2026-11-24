@@ -26,6 +26,10 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionMethod;
+use Swoole\Coroutine;
+use Swoole\Coroutine\Http\Server;
+use Throwable;
 
 /**
  * @internal
@@ -62,6 +66,66 @@ class PoolHandlerTest extends TestCase
         $this->assertSame(1, $handler->count);
         $client->get('/stats?format=json');
         $this->assertSame(1, $handler->count);
+    }
+
+    public function testPoolHandlerReusesConnectionAfterStreamedBody()
+    {
+        $handler = new PoolHandlerStub($this->getContainer()->get(PoolFactory::class), []);
+        if (! (new ReflectionMethod($handler, 'supportsStreamBody'))->invoke($handler)) {
+            $this->markTestSkipped('The installed Swoole version does not support streaming request bodies.');
+        }
+
+        $port = 19512;
+        $received = [];
+        $server = new Server('127.0.0.1', $port, false);
+        $server->set(['package_max_length' => 8 * 1024 * 1024]);
+        Coroutine::create(function () use ($server, &$received) {
+            $server->handle('/upload', function ($request, $response) use ($server, &$received) {
+                $received[] = [
+                    'body' => $request->rawContent(),
+                    'content_length' => $request->header['content-length'] ?? null,
+                    'transfer_encoding' => $request->header['transfer-encoding'] ?? null,
+                ];
+                $response->end('ok');
+                if (count($received) >= 2) {
+                    Coroutine::create(function () use ($server) {
+                        Coroutine::sleep(0.01);
+                        $server->shutdown();
+                    });
+                }
+            });
+            $server->start();
+        });
+        Coroutine::sleep(0.1);
+
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+        $path = $dir . uniqid('pool_stream_', true);
+        $content = str_repeat('a', 1024 * 1024 + 4096);
+        file_put_contents($path, $content);
+
+        try {
+            $client = new Client([
+                'handler' => $handler,
+                'base_uri' => "http://127.0.0.1:{$port}",
+            ]);
+
+            $this->assertSame(200, $client->put('/upload', ['body' => fopen($path, 'rb')])->getStatusCode());
+            $this->assertSame(200, $client->post('/upload', ['body' => 'small'])->getStatusCode());
+
+            $this->assertSame(1, $handler->count);
+            $this->assertCount(2, $received);
+            $this->assertSame($content, $received[0]['body']);
+            $this->assertSame((string) strlen($content), (string) $received[0]['content_length']);
+            $this->assertNull($received[0]['transfer_encoding']);
+            $this->assertSame('small', $received[1]['body']);
+        } finally {
+            @unlink($path);
+            try {
+                $server->shutdown();
+            } catch (Throwable) {
+            }
+        }
     }
 
     protected function get()

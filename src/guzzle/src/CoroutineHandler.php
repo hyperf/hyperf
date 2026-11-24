@@ -19,22 +19,31 @@ use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Stream as Psr7Stream;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
+use Hyperf\Engine\Exception\HttpClientException;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use ReflectionMethod;
+use Throwable;
 
 /**
  * Http handler that uses Swoole/Swow Coroutine as a transport layer.
  */
 class CoroutineHandler
 {
+    /**
+     * Request bodies smaller than this (or without a readable file source) are sent as a string.
+     */
+    protected const STREAM_BODY_THRESHOLD = 1024 * 1024;
+
     /**
      * @see Uri::$defaultPorts
      */
@@ -75,7 +84,7 @@ class CoroutineHandler
         $ms = microtime(true);
 
         try {
-            $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
+            $raw = $this->sendRequest($client, $request, $path, $headers);
         } catch (Exception $exception) {
             $message = sprintf('Failed to connecting to %s port %s, %s', $host, $port, $exception->getMessage());
             $exception = new ConnectException($message, $request, null, [
@@ -92,6 +101,150 @@ class CoroutineHandler
     protected function makeClient(string $host, int $port, bool $ssl): Client
     {
         return new Client($host, $port, $ssl);
+    }
+
+    protected function sendRequest(Client $client, RequestInterface $request, string $path, array $headers): RawResponse
+    {
+        $body = $request->getBody();
+        $source = $this->createStreamBodySource($body);
+        if ($source === null) {
+            return $client->request($request->getMethod(), $path, $headers, (string) $body);
+        }
+
+        [$resource, $length] = $source;
+        try {
+            return $this->requestWithStreamBody($client, $request, $path, $headers, $resource, $length);
+        } finally {
+            fclose($resource);
+        }
+    }
+
+    /**
+     * Create a new file handle for a file-backed request body so that it can be streamed.
+     *
+     * PSR-7 streams do not expose the underlying resource, and detaching it would break the
+     * rewind behavior required by Guzzle's redirect and retry middlewares. Reopening the file
+     * keeps the original stream untouched.
+     *
+     * The body is sent from the beginning of the file, matching Guzzle's cURL handler and the
+     * string fallback, which rewinds seekable streams before reading them.
+     *
+     * @return null|array{0: resource, 1: int}
+     */
+    protected function createStreamBodySource(StreamInterface $body): ?array
+    {
+        if (! $this->supportsStreamBody() || ! $body instanceof Psr7Stream || ! $body->isSeekable()) {
+            return null;
+        }
+
+        try {
+            $size = $body->getSize();
+            if ($size === null || $size < static::STREAM_BODY_THRESHOLD) {
+                return null;
+            }
+
+            $uri = $body->getMetadata('uri');
+            if (! is_string($uri) || $uri === '') {
+                return null;
+            }
+
+            $path = realpath($uri);
+            if ($path === false || ! is_file($path) || ! is_readable($path)) {
+                return null;
+            }
+
+            $resource = @fopen($path, 'rb');
+            if ($resource === false) {
+                return null;
+            }
+
+            $stat = fstat($resource);
+            if ($stat === false || $stat['size'] < static::STREAM_BODY_THRESHOLD) {
+                fclose($resource);
+                return null;
+            }
+
+            return [$resource, $stat['size']];
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Whether the installed Swoole version supports streaming raw request bodies.
+     */
+    protected function supportsStreamBody(): bool
+    {
+        static $supported;
+
+        if ($supported === null) {
+            $supported = false;
+            try {
+                // Swoole < 6.3 (and the Swow engine) only accept a single argument.
+                $supported = method_exists(Client::class, 'setData')
+                    && (new ReflectionMethod(Client::class, 'setData'))->getNumberOfParameters() >= 2;
+            } catch (Throwable) {
+            }
+        }
+
+        return $supported;
+    }
+
+    /**
+     * @param resource $resource
+     */
+    protected function requestWithStreamBody(
+        Client $client,
+        RequestInterface $request,
+        string $path,
+        array $headers,
+        $resource,
+        int $length
+    ): RawResponse {
+        $client->setMethod($request->getMethod());
+        /* @phpstan-ignore-next-line The second parameter was added in Swoole 6.3. */
+        $client->setData($resource, $length);
+        $client->setHeaders($this->encodeHeaders($headers));
+        $client->execute($path);
+
+        if ($client->errCode !== 0) {
+            throw new HttpClientException($client->errMsg, $client->errCode);
+        }
+
+        return new RawResponse(
+            $client->statusCode,
+            $this->decodeHeaders($client),
+            (string) $client->body,
+            '1.1'
+        );
+    }
+
+    /**
+     * @param string[][] $headers
+     * @return string[]
+     */
+    protected function encodeHeaders(array $headers): array
+    {
+        $result = [];
+        foreach ($headers as $name => $value) {
+            $result[$name] = is_array($value) ? implode(',', $value) : $value;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string[][]
+     */
+    protected function decodeHeaders(Client $client): array
+    {
+        $result = [];
+        foreach ((array) $client->headers as $name => $header) {
+            $result[$name] = is_array($header) ? $header : [$header];
+        }
+        if ($client->set_cookie_headers) {
+            $result['set-cookie'] = $client->set_cookie_headers;
+        }
+        return $result;
     }
 
     protected function initHeaders(RequestInterface $request, array $options): array

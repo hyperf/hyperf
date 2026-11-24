@@ -137,6 +137,28 @@ $client = make(Client::class, [
 ]);
 ```
 
+## 大文件上传
+
+当请求体是由 `fopen()` 打开的文件流，且文件大小不小于 1MB 时，`CoroutineHandler` 和 `PoolHandler` 会交由 Swoole 分块发送，不会把整个文件读入 PHP 内存。
+
+```php
+<?php
+use GuzzleHttp\Client;
+use Hyperf\Guzzle\HandlerStackFactory;
+
+$client = new Client([
+    'handler' => (new HandlerStackFactory())->create(),
+]);
+
+$response = $client->put('/api/database/table/_stream_load', [
+    'body' => fopen($file, 'rb'),
+]);
+```
+
+- 需要 Swoole 支持 `setData($resource, $length)`（master / 6.3 及以上）；否则自动回退到原有方式，行为不变；
+- 文件始终从开头发送，与 Guzzle 的 cURL handler 及回退路径一致；原 PSR-7 流不会被关闭，redirect/retry 仍可 `rewind()`；
+- 仅支持 `GuzzleHttp\Psr7\Stream`（例如 `fopen()` 的返回值）；`LazyOpenStream`、`MultipartStream`、`CachingStream`、`LimitStream` 等装饰器流不会走流式路径。
+
 ## 使用 `ClassMap` 替换 `GuzzleHttp\Client`
 
 如果第三方组件并没有提供可以替换 `Handler` 的接口，我们也可以通过 `ClassMap` 功能，直接替换 `Client` 来达到将客户端协程化的目的。
