@@ -139,6 +139,28 @@ $client = make(Client::class, [
 ]);
 ```
 
+## Large file uploads
+
+When the request body is a file stream opened with `fopen()` and the file is at least 1MB, `CoroutineHandler` and `PoolHandler` hand it to Swoole for chunked sending without loading the whole file into PHP memory.
+
+```php
+<?php
+use GuzzleHttp\Client;
+use Hyperf\Guzzle\HandlerStackFactory;
+
+$client = new Client([
+    'handler' => (new HandlerStackFactory())->create(),
+]);
+
+$response = $client->put('/api/database/table/_stream_load', [
+    'body' => fopen($file, 'rb'),
+]);
+```
+
+- Requires Swoole's `setData($resource, $length)` support (master / 6.3+); otherwise it falls back to the original behavior;
+- The file is sent from the beginning, matching Guzzle's cURL handler and the fallback path. The original PSR-7 stream is not closed and can still be rewound by redirect/retry middlewares;
+- Only `GuzzleHttp\Psr7\Stream` bodies (for example, the result of `fopen()`) are supported; decorator streams such as `LazyOpenStream`, `MultipartStream`, `CachingStream` and `LimitStream` are not streamed.
+
 ## Use `ClassMap` to replace `GuzzleHttp\Client`
 
 If the third-party component does not provide an interface that can replace the `Handler`, we can also use the `ClassMap` to directly replace the `Client` to achieve the purpose of coroutineization of client.

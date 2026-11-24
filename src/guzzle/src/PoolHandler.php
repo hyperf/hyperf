@@ -78,7 +78,7 @@ class PoolHandler extends CoroutineHandler
             $ms = microtime(true);
 
             try {
-                $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
+                $raw = $this->sendRequest($client, $request, $path, $headers);
             } catch (Exception $exception) {
                 $connection->close();
                 $exception = new ConnectException($exception->getMessage(), $request, null, [
